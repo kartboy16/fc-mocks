@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Direction C — Icon cards · FC Share #168</title>
+  <style>
+    :root {
+      --bg: #f4f8fc;
+      --bg-alt: #fafafa;
+      --card: #ffffff;
+      --ink: #1e2a4a;
+      --ink-soft: #2c3e50;
+      --muted: #5b6572;
+      --blue: #2b7de9;
+      --blue-mid: #4a96e0;
+      --blue-bright: #2196f3;
+      --border: #d4e4f2;
+      --mint: #e6f1fb;
+      --radius-card: 12px;
+      --radius-btn: 8px;
+      --radius-pill: 999px;
+      --font: Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: var(--font);
+      background: var(--bg);
+      color: var(--ink);
+      min-height: 100vh;
+      line-height: 1.45;
+    }
+
+    .thesis {
+      background: linear-gradient(135deg, #1e2a4a 0%, #2c3e50 100%);
+      color: #fff;
+      padding: 14px 20px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px 20px;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .thesis strong { font-size: 13px; letter-spacing: 0.04em; text-transform: uppercase; opacity: 0.85; }
+    .thesis p { font-size: 14px; max-width: 720px; opacity: 0.95; }
+    .thesis .nav { display: flex; gap: 12px; font-size: 13px; }
+    .thesis .nav a { color: #a8d0ff; text-decoration: none; }
+    .thesis .nav a:hover { text-decoration: underline; }
+
+    .stage { max-width: 520px; margin: 24px auto 40px; padding: 0 16px; }
+    .stage-wrap { position: relative; }
+
+    .fake-post {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-card);
+      padding: 16px;
+      filter: brightness(0.72);
+      pointer-events: none;
+      user-select: none;
+    }
+    .fake-post .meta { display: flex; gap: 10px; align-items: center; margin-bottom: 10px; }
+    .fake-post .avatar {
+      width: 36px; height: 36px; border-radius: 50%;
+      background: var(--mint); border: 1px solid var(--border);
+    }
+    .fake-post h2 { font-size: 15px; color: var(--ink); margin-bottom: 4px; }
+    .fake-post .sub { font-size: 12px; color: var(--muted); }
+    .fake-post .body { font-size: 13px; color: var(--ink-soft); margin-top: 8px; }
+    .fake-post .thumb {
+      margin-top: 12px; height: 100px; border-radius: 8px;
+      background: linear-gradient(135deg, var(--mint), #d4e4f2);
+    }
+
+    .dim-layer {
+      position: absolute; inset: 0;
+      background: rgba(30, 42, 74, 0.42);
+      border-radius: var(--radius-card);
+      z-index: 1;
+    }
+
+    .sheet {
+      position: relative;
+      z-index: 2;
+      margin-top: -180px;
+      background: var(--card);
+      border-radius: 16px 16px 12px 12px;
+      border: 1px solid var(--border);
+      box-shadow: 0 -8px 40px rgba(30, 42, 74, 0.18);
+      padding: 16px 16px 20px;
+    }
+    .sheet-handle {
+      width: 36px; height: 4px; border-radius: 999px;
+      background: var(--border); margin: 0 auto 12px;
+    }
+
+    .sheet-header {
+      display: flex; justify-content: space-between; align-items: flex-start;
+      gap: 12px; margin-bottom: 4px;
+    }
+    .sheet-title {
+      font-size: 17px; font-weight: 650; color: var(--ink);
+    }
+    .select-all {
+      background: none; border: none; color: var(--blue);
+      font-family: inherit; font-size: 13px; font-weight: 600;
+      cursor: pointer; padding: 2px 0; white-space: nowrap;
+    }
+    .select-all:hover { color: var(--blue-mid); }
+    .sheet-sub { font-size: 13px; color: var(--muted); margin-bottom: 12px; }
+
+    .before {
+      background: var(--bg-alt);
+      border: 1px dashed #c5cdd6;
+      border-radius: 8px;
+      padding: 8px 10px;
+      margin-bottom: 14px;
+      opacity: 0.72;
+    }
+    .before-label {
+      font-size: 10px; font-weight: 700; letter-spacing: 0.08em;
+      color: var(--muted); margin-bottom: 4px;
+    }
+    .before-list {
+      font-size: 11px; color: var(--muted); line-height: 1.5;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+
+    .count-bar {
+      font-size: 12px; color: var(--muted); font-weight: 500;
+      margin-bottom: 10px;
+    }
+
+    .cards {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+    @media (min-width: 420px) {
+      .cards { grid-template-columns: repeat(3, 1fr); }
+    }
+
+    .card-btn {
+      position: relative;
+      display: flex; flex-direction: column; align-items: center;
+      text-align: center;
+      padding: 16px 10px 14px;
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-card);
+      background: var(--card);
+      cursor: pointer;
+      font-family: inherit;
+      transition: border-color 0.15s, background 0.15s, box-shadow 0.15s;
+    }
+    .card-btn:hover { border-color: var(--blue-mid); }
+    .card-btn[aria-pressed="true"] {
+      border-color: var(--blue);
+      background: var(--mint);
+      box-shadow: 0 0 0 2px rgba(43, 125, 233, 0.35);
+    }
+    .card-check {
+      position: absolute; top: 8px; right: 8px;
+      width: 20px; height: 20px; border-radius: 50%;
+      border: 2px solid var(--border);
+      background: #fff;
+      display: flex; align-items: center; justify-content: center;
+      color: #fff;
+    }
+    .card-btn[aria-pressed="true"] .card-check {
+      background: var(--blue); border-color: var(--blue);
+    }
+    .card-check svg { width: 12px; height: 12px; opacity: 0; }
+    .card-btn[aria-pressed="true"] .card-check svg { opacity: 1; }
+
+    .card-icon {
+      width: 48px; height: 48px; border-radius: 12px;
+      background: var(--mint);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 22px; margin-bottom: 10px;
+    }
+    .card-btn[aria-pressed="true"] .card-icon { background: #fff; }
+    .card-label { font-size: 14px; font-weight: 650; color: var(--ink); }
+    .card-help { font-size: 11px; color: var(--muted); margin-top: 4px; line-height: 1.3; }
+
+    .btn-primary {
+      width: 100%;
+      padding: 12px 16px;
+      border: none;
+      border-radius: var(--radius-btn);
+      background: var(--blue);
+      color: #fff;
+      font-family: inherit;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: opacity 0.15s, background 0.15s;
+    }
+    .btn-primary:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+      background: var(--muted);
+    }
+    .btn-primary:not(:disabled):hover { background: var(--blue-mid); }
+
+    .foot {
+      text-align: center; font-size: 12px; color: var(--muted);
+      padding: 8px 16px 32px;
+    }
+    .foot a { color: var(--blue); text-decoration: none; }
+  </style>
+</head>
+<body>
+  <header class="thesis">
+    <div>
+      <strong>Direction C · Icon cards</strong>
+      <p>Three equal cards — row on desktop, stack on mobile. Tap for selected ring + check. More visual; still scannable in one glance.</p>
+    </div>
+    <nav class="nav">
+      <a href="../../index.html">Hub</a>
+      <a href="../a/index.html">A</a>
+      <a href="../b/index.html">B</a>
+      <a href="../../compare.html">Compare</a>
+    </nav>
+  </header>
+
+  <div class="stage">
+    <div class="stage-wrap">
+      <article class="fake-post" aria-hidden="true">
+        <div class="meta">
+          <div class="avatar"></div>
+          <div>
+            <h2>RRSP tips for clients</h2>
+            <div class="sub">FinancialContent · Draft post</div>
+          </div>
+        </div>
+        <p class="body">Three practical talking points advisors can share before contribution season — contribution room, spousal RRSPs, and timing withdrawals.</p>
+        <div class="thumb"></div>
+      </article>
+      <div class="dim-layer" aria-hidden="true"></div>
+
+      <div class="sheet" role="dialog" aria-labelledby="sheet-title">
+        <div class="sheet-handle"></div>
+        <div class="sheet-header">
+          <h1 class="sheet-title" id="sheet-title">Share</h1>
+          <button type="button" class="select-all" id="selectAll">Select all</button>
+        </div>
+        <p class="sheet-sub">Tap channels to include. Any mix works.</p>
+
+        <div class="before">
+          <div class="before-label">BEFORE — current ~307px combo dropdown</div>
+          <div class="before-list">Email full article · Website and Social · Website and Email · Website, Social and Email</div>
+        </div>
+
+        <div class="count-bar" id="count" aria-live="polite">0 of 3 selected</div>
+
+        <div class="cards" role="group" aria-label="Share destinations">
+          <button type="button" class="card-btn" data-channel="email" aria-pressed="false">
+            <span class="card-check" aria-hidden="true">
+              <svg viewBox="0 0 12 12" fill="none"><path d="M2 6.5L4.5 9L10 3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </span>
+            <span class="card-icon" aria-hidden="true">✉</span>
+            <span class="card-label">Email</span>
+            <span class="card-help">Client list</span>
+          </button>
+          <button type="button" class="card-btn" data-channel="social" aria-pressed="false">
+            <span class="card-check" aria-hidden="true">
+              <svg viewBox="0 0 12 12" fill="none"><path d="M2 6.5L4.5 9L10 3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </span>
+            <span class="card-icon" aria-hidden="true">↗</span>
+            <span class="card-label">Social</span>
+            <span class="card-help">Networks</span>
+          </button>
+          <button type="button" class="card-btn" data-channel="website" aria-pressed="false">
+            <span class="card-check" aria-hidden="true">
+              <svg viewBox="0 0 12 12" fill="none"><path d="M2 6.5L4.5 9L10 3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </span>
+            <span class="card-icon" aria-hidden="true">◎</span>
+            <span class="card-label">Website</span>
+            <span class="card-help">Your site</span>
+          </button>
+        </div>
+
+        <button type="button" class="btn-primary" id="continue" disabled>Continue</button>
+      </div>
+    </div>
+  </div>
+
+  <p class="foot"><a href="../../index.html">← Pages hub</a> · GitHub #168 · Direction C</p>
+
+  <script>
+    (function () {
+      var cards = Array.prototype.slice.call(document.querySelectorAll('.card-btn'));
+      var selectAll = document.getElementById('selectAll');
+      var countEl = document.getElementById('count');
+      var continueBtn = document.getElementById('continue');
+
+      function selected() {
+        return cards.filter(function (c) { return c.getAttribute('aria-pressed') === 'true'; });
+      }
+
+      function sync() {
+        var n = selected().length;
+        countEl.textContent = n + ' of 3 selected';
+        continueBtn.disabled = n < 1;
+        selectAll.textContent = n === 3 ? 'Clear all' : 'Select all';
+      }
+
+      cards.forEach(function (card) {
+        card.addEventListener('click', function () {
+          var on = card.getAttribute('aria-pressed') === 'true';
+          card.setAttribute('aria-pressed', on ? 'false' : 'true');
+          sync();
+        });
+      });
+
+      selectAll.addEventListener('click', function () {
+        var allOn = selected().length === 3;
+        cards.forEach(function (c) {
+          c.setAttribute('aria-pressed', allOn ? 'false' : 'true');
+        });
+        sync();
+      });
+
+      sync();
+    })();
+  </script>
+</body>
+</html>
