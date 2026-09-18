@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="en-CA">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Direction C — Split Ops | FC Ads Phase 1</title>
+<style>
+  :root {
+    --bg: #f4f8fc;
+    --bg-alt: #fafafa;
+    --card: #ffffff;
+    --ink: #1e2a4a;
+    --ink-alt: #2c3e50;
+    --muted: #5b6572;
+    --accent: #4a96e0;
+    --blue: #2b7de9;
+    --mui: #2196f3;
+    --mui-dark: #1976d2;
+    --border: #d4e4f2;
+    --mint: #e6f1fb;
+    --success: #1E8449;
+    --warning: #B7950B;
+    --danger: #C0392B;
+    --pending: #8E44AD;
+    --radius-card: 12px;
+    --radius-btn: 8px;
+    --radius-pill: 999px;
+    --font: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: var(--font);
+    background: var(--bg);
+    color: var(--ink);
+    line-height: 1.45;
+    padding: 24px;
+  }
+  .page-header {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-card);
+    padding: 20px 24px;
+    margin-bottom: 24px;
+  }
+  .page-header .dir-label {
+    display: inline-block;
+    background: var(--blue);
+    color: #fff;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    padding: 4px 12px;
+    border-radius: var(--radius-pill);
+    margin-bottom: 8px;
+  }
+  .page-header h1 { font-size: 22px; font-weight: 700; color: var(--ink); margin-bottom: 6px; }
+  .page-header .thesis { color: var(--muted); font-size: 14px; max-width: 740px; }
+
+  .legend {
+    display: flex; flex-wrap: wrap; gap: 10px; align-items: center;
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: var(--radius-card); padding: 12px 16px; margin-bottom: 24px;
+  }
+  .legend-title { font-size: 12px; font-weight: 600; color: var(--muted); margin-right: 4px; }
+  .chip {
+    display: inline-flex; align-items: center; gap: 4px;
+    font-size: 11px; font-weight: 600; padding: 3px 10px; border-radius: var(--radius-pill);
+  }
+  .chip::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+  .chip-draft { background: var(--mint); color: var(--blue); }
+  .chip-pending { background: #F5EEF8; color: var(--pending); }
+  .chip-live { background: #E8F8F5; color: var(--success); }
+  .chip-paused { background: #FEF9E7; color: var(--warning); }
+  .chip-rejected { background: #FDEDEC; color: var(--danger); }
+
+  .grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin-bottom: 24px;
+  }
+  @media (max-width: 900px) { .grid { grid-template-columns: 1fr; } }
+
+  .panel {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-card);
+    overflow: hidden;
+  }
+  .panel-label {
+    background: var(--mint);
+    border-bottom: 1px solid var(--border);
+    padding: 8px 14px;
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .panel-label h2 { font-size: 13px; font-weight: 700; color: var(--blue); }
+  .panel-label .annot { font-size: 11px; color: var(--muted); font-style: italic; }
+  .panel-body { padding: 14px; min-height: 220px; }
+
+  /* Role tabs */
+  .role-tabs {
+    display: flex; gap: 0; background: var(--bg-alt); border-bottom: 1px solid var(--border);
+  }
+  .role-tab {
+    flex: 1; text-align: center; padding: 8px; font-size: 11px; font-weight: 600;
+    color: var(--muted); border-bottom: 2px solid transparent;
+  }
+  .role-tab.active {
+    color: var(--blue); border-bottom-color: var(--blue); background: var(--card);
+  }
+
+  .wf-shell { display: flex; border: 1px solid var(--border); border-radius: 10px; overflow: hidden; font-size: 11px; min-height: 210px; }
+  .wf-nav {
+    width: 56px; background: #fff; border-right: 1px solid var(--border);
+    padding: 10px 4px; display: flex; flex-direction: column; gap: 4px; flex-shrink: 0; align-items: center;
+  }
+  .wf-nav .nav-item {
+    width: 40px; padding: 8px 2px; border-radius: 8px; text-align: center; font-size: 8px; color: var(--muted);
+  }
+  .wf-nav .nav-item.active { background: var(--mint); color: var(--blue); font-weight: 700; }
+  .wf-main { flex: 1; background: var(--bg); display: flex; flex-direction: column; min-width: 0; }
+  .wf-header {
+    background: #fff; border-bottom: 1px solid var(--border);
+    padding: 8px 10px; display: flex; justify-content: space-between; align-items: center;
+  }
+  .wf-header .title { font-weight: 700; font-size: 12px; color: var(--ink); }
+  .wf-content { padding: 10px; flex: 1; }
+
+  .filter-chips { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 8px; }
+  .fchip {
+    font-size: 9px; padding: 3px 10px; border-radius: var(--radius-pill);
+    border: 1px solid var(--border); color: var(--ink-alt); background: #fff;
+  }
+  .fchip.on { background: var(--blue); color: #fff; border-color: var(--blue); }
+
+  /* Expandable list rows with mini charts */
+  .camp-row {
+    background: #fff; border: 1px solid var(--border); border-radius: 10px;
+    margin-bottom: 6px; overflow: hidden;
+  }
+  .camp-row-head {
+    display: flex; align-items: center; gap: 8px; padding: 8px 10px; cursor: default;
+  }
+  .camp-row-head .name { flex: 1; font-weight: 600; font-size: 11px; }
+  .camp-row-head .spend { font-size: 9px; color: var(--muted); min-width: 70px; }
+  .mini-spark {
+    width: 48px; height: 18px; background: linear-gradient(90deg, var(--mint), var(--accent));
+    border-radius: 3px; opacity: 0.7;
+  }
+  .camp-row-expand {
+    border-top: 1px solid var(--border); padding: 8px 10px; background: var(--bg-alt);
+    display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 6px;
+  }
+  .mini-kpi { text-align: center; font-size: 9px; }
+  .mini-kpi .v { font-size: 12px; font-weight: 700; color: var(--blue); display: block; }
+  .mini-chart {
+    grid-column: 1 / -1; height: 28px; background: linear-gradient(180deg, var(--mint), #fff);
+    border: 1px dashed var(--border); border-radius: 6px;
+    display: flex; align-items: center; justify-content: center; font-size: 8px; color: var(--muted);
+  }
+
+  .btn {
+    font-size: 10px; padding: 5px 12px; border-radius: var(--radius-btn);
+    border: none; font-weight: 600; cursor: default; font-family: inherit;
+  }
+  .btn-primary { background: var(--blue); color: #fff; }
+  .btn-ghost { background: #fff; color: var(--muted); border: 1px solid var(--border); }
+  .btn-approve { background: var(--success); color: #fff; }
+  .btn-reject { background: var(--danger); color: #fff; }
+  .btn-row { display: flex; gap: 6px; }
+
+  /* Split wizard: left rail + right preview */
+  .split-wiz { display: flex; min-height: 220px; }
+  .wiz-rail {
+    width: 110px; background: #fff; border-right: 1px solid var(--border);
+    padding: 10px 6px; flex-shrink: 0;
+  }
+  .wiz-rail .s {
+    font-size: 9px; padding: 5px 6px; color: var(--muted); margin-bottom: 2px;
+    border-radius: 6px;
+  }
+  .wiz-rail .s.done { color: var(--success); }
+  .wiz-rail .s.cur { background: var(--mint); color: var(--blue); font-weight: 700; }
+  .wiz-form { flex: 1; padding: 10px; background: var(--bg); }
+  .wiz-form h3 { font-size: 12px; margin-bottom: 6px; }
+  .field {
+    background: #fff; border: 1px solid var(--border); border-radius: var(--radius-btn);
+    padding: 7px 8px; font-size: 10px; color: var(--muted); margin-bottom: 6px;
+  }
+  .wiz-preview {
+    width: 100px; background: var(--bg-alt); border-left: 1px solid var(--border);
+    padding: 8px 6px; flex-shrink: 0;
+  }
+  .wiz-preview .lbl { font-size: 8px; color: var(--muted); text-align: center; margin-bottom: 4px; font-weight: 600; }
+  .preview-phone {
+    border: 1.5px solid var(--ink-alt); border-radius: 10px; background: #fff;
+    padding: 6px 4px; min-height: 140px; font-size: 7px;
+  }
+  .preview-phone .hero { background: var(--blue); color: #fff; padding: 6px 3px; border-radius: 4px; text-align: center; margin-bottom: 4px; }
+  .preview-phone .inp { height: 10px; background: var(--bg); border: 1px solid var(--border); border-radius: 2px; margin-bottom: 3px; }
+
+  /* Approver queue */
+  .approver-card {
+    background: #fff; border: 1px solid var(--border); border-radius: var(--radius-card);
+    padding: 10px; margin-bottom: 8px;
+  }
+  .approver-card h4 { font-size: 12px; margin-bottom: 2px; }
+  .approver-card .meta { font-size: 9px; color: var(--muted); margin-bottom: 6px; }
+  .preview-box {
+    height: 48px; background: var(--mint); border: 1px dashed var(--border); border-radius: 6px;
+    display: flex; align-items: center; justify-content: center; font-size: 9px; color: var(--muted); margin-bottom: 6px;
+  }
+
+  /* Phone landing */
+  .phone-frame {
+    width: 124px; margin: 0 auto; border: 2px solid var(--ink-alt); border-radius: 14px;
+    padding: 8px 6px; background: #fff; min-height: 200px;
+  }
+  .phone-notch { width: 40px; height: 4px; background: var(--ink-alt); border-radius: 2px; margin: 0 auto 8px; }
+  .phone-hero { background: var(--blue); color: #fff; padding: 10px 6px; border-radius: 6px; font-size: 9px; text-align: center; margin-bottom: 6px; }
+  .phone-input { height: 16px; background: var(--bg); border: 1px solid var(--border); border-radius: 4px; margin-bottom: 4px; }
+  .casl-note { font-size: 7px; color: var(--muted); line-height: 1.3; margin-top: 4px; }
+  .compliance { font-size: 7px; color: var(--warning); background: #FEF9E7; padding: 3px; border-radius: 3px; margin-top: 4px; }
+
+  /* Funding nav item */
+  .funding-page {
+    display: flex; flex-direction: column; gap: 8px;
+  }
+  .bal-card {
+    background: var(--mint); border: 1px solid var(--border); border-radius: var(--radius-card);
+    padding: 12px; display: flex; justify-content: space-between; align-items: center;
+  }
+  .bal-card .bal { font-size: 20px; font-weight: 700; color: var(--blue); }
+  .bal-card .meta { font-size: 10px; color: var(--muted); }
+  .fund-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+  .fund-opt {
+    background: #fff; border: 1px solid var(--border); border-radius: var(--radius-btn);
+    padding: 8px; font-size: 10px; text-align: center;
+  }
+  .fund-opt.on { border-color: var(--blue); background: var(--mint); font-weight: 600; color: var(--blue); }
+
+  .callout {
+    margin-top: 8px; padding: 6px 8px; background: var(--mint); border-left: 3px solid var(--blue);
+    font-size: 10px; color: var(--muted); border-radius: 0 4px 4px 0;
+  }
+
+  .footer {
+    background: var(--card); border: 1px solid var(--border); border-radius: var(--radius-card);
+    padding: 16px 20px;
+  }
+  .footer h3 { font-size: 12px; margin-bottom: 10px; color: var(--muted); }
+  .scope-row { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
+  .scope-in {
+    background: #E8F8F5; color: var(--success); border: 1px solid #A9DFBF;
+    font-size: 11px; padding: 4px 10px; border-radius: var(--radius-pill); font-weight: 500;
+  }
+  .scope-out {
+    background: var(--bg-alt); color: var(--muted); border: 1px solid var(--border);
+    font-size: 11px; padding: 4px 10px; border-radius: var(--radius-pill); text-decoration: line-through;
+  }
+  .footer .note { font-size: 11px; color: var(--muted); }
+
+  .package-bar { display:flex; justify-content:space-between; align-items:center; gap:12px; margin:-8px 0 20px; padding:9px 12px; background:#fff; border:1px solid var(--border); border-radius:var(--radius-btn, 8px); font-size:12px; }
+  .package-bar a { color:var(--blue); font-weight:700; text-decoration:none; }
+  .package-bar a:hover { text-decoration:underline; }
+  .package-bar .package-label { color:var(--muted); font-weight:700; letter-spacing:.06em; text-transform:uppercase; }
+</style>
+</head>
+<body>
+<div class="package-bar"><a href="../index.html">← All directions</a><span class="package-label">Direction C</span></div>
+
+<div class="page-header">
+  <span class="dir-label">Direction C</span>
+  <h1>Split Ops</h1>
+  <p class="thesis">Role-aware top tabs separate Advisor workspace from Approver queue; the wizard uses a left-rail step list with a live landing/ad preview on the right; Funding is its own left-nav item; and performance lives as mini charts inside expandable campaign list rows — built for teams that both create and approve.</p>
+</div>
+
+<div class="legend">
+  <span class="legend-title">Status chips</span>
+  <span class="chip chip-draft">Draft</span>
+  <span class="chip chip-pending">Pending approval</span>
+  <span class="chip chip-live">Live</span>
+  <span class="chip chip-paused">Paused</span>
+  <span class="chip chip-rejected">Rejected</span>
+</div>
+
+<div class="grid">
+
+  <!-- 1. Ads home — advisor mode with expand rows -->
+  <div class="panel">
+    <div class="panel-label">
+      <h2>1. Ads home — advisor workspace</h2>
+      <span class="annot">Role tabs · expandable rows + mini charts</span>
+    </div>
+    <div class="panel-body">
+      <div class="wf-shell" style="flex-direction:column;">
+        <div class="role-tabs">
+          <div class="role-tab active">Advisor workspace</div>
+          <div class="role-tab">Approver queue</div>
+        </div>
+        <div style="display:flex;flex:1;min-height:0;">
+          <div class="wf-nav">
+            <div class="nav-item">Library</div>
+            <div class="nav-item active">Ads</div>
+            <div class="nav-item">Funding</div>
+            <div class="nav-item">Contacts</div>
+          </div>
+          <div class="wf-main">
+            <div class="wf-header">
+              <span class="title">Campaigns</span>
+              <span class="btn btn-primary">+ New</span>
+            </div>
+            <div class="wf-content">
+              <div class="filter-chips">
+                <span class="fchip on">All</span>
+                <span class="fchip">Live</span>
+                <span class="fchip">Pending</span>
+                <span class="fchip">Draft</span>
+                <span class="fchip">Paused</span>
+              </div>
+              <div class="camp-row">
+                <div class="camp-row-head">
+                  <span class="chip chip-live">Live</span>
+                  <span class="name">RRSP Q1 Leads</span>
+                  <span class="spend">$820 / $1,500</span>
+                  <span class="mini-spark" title="sparkline"></span>
+                </div>
+                <div class="camp-row-expand">
+                  <div class="mini-kpi"><span class="v">42</span>Leads</div>
+                  <div class="mini-kpi"><span class="v">$19.52</span>CPL</div>
+                  <div class="mini-kpi"><span class="v">1.8%</span>CTR</div>
+                  <div class="mini-chart">Expanded row · mini performance chart</div>
+                </div>
+              </div>
+              <div class="camp-row">
+                <div class="camp-row-head">
+                  <span class="chip chip-pending">Pending</span>
+                  <span class="name">TFSA Awareness</span>
+                  <span class="spend">— / $800</span>
+                </div>
+              </div>
+              <div class="camp-row">
+                <div class="camp-row-head">
+                  <span class="chip chip-draft">Draft</span>
+                  <span class="name">Estate Planning</span>
+                  <span class="spend">— / $1,200</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="callout">Annotation: Performance embeds in row expand — no separate detail trip for a quick read. Filter chips match FC library pattern.</div>
+    </div>
+  </div>
+
+  <!-- 2. Wizard split preview -->
+  <div class="panel">
+    <div class="panel-label">
+      <h2>2. Create wizard — rail + live preview</h2>
+      <span class="annot">Left steps · right landing/ad preview</span>
+    </div>
+    <div class="panel-body">
+      <div class="wf-shell" style="flex-direction:column;">
+        <div class="role-tabs">
+          <div class="role-tab active">Advisor workspace</div>
+          <div class="role-tab">Approver queue</div>
+        </div>
+        <div class="split-wiz">
+          <div class="wiz-rail">
+            <div class="s done">✓ Goal</div>
+            <div class="s done">✓ Geo</div>
+            <div class="s cur">3 Channel</div>
+            <div class="s">4 Creative</div>
+            <div class="s">5 Budget</div>
+            <div class="s">6 Funding</div>
+            <div class="s">7 Review</div>
+          </div>
+          <div class="wiz-form">
+            <h3>Channel &amp; targeting</h3>
+            <div class="field">Admin: [Pick advisor ▾]</div>
+            <div class="field">○ Google Search+location &nbsp; ● Meta Lead Ads</div>
+            <div class="field">Geo: Canada · GTA municipalities</div>
+            <div class="btn-row" style="margin-top:8px;">
+              <span class="btn btn-ghost">Back</span>
+              <span class="btn btn-primary">Continue</span>
+            </div>
+          </div>
+          <div class="wiz-preview">
+            <div class="lbl">Live preview</div>
+            <div class="preview-phone">
+              <div class="hero">Ad / LP</div>
+              <div class="inp"></div>
+              <div class="inp"></div>
+              <div class="inp"></div>
+              <div style="background:var(--blue);color:#fff;text-align:center;padding:3px;border-radius:3px;margin-top:2px;">CTA</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="callout">Annotation: Preview updates as creative/geo/channel change. Same wizard for self-serve and CS-on-behalf.</div>
+    </div>
+  </div>
+
+  <!-- 3. Approver queue -->
+  <div class="panel">
+    <div class="panel-label">
+      <h2>3. Approval — Approver queue mode</h2>
+      <span class="annot">Role tab switch · Approve / Reject</span>
+    </div>
+    <div class="panel-body">
+      <div class="wf-shell" style="flex-direction:column;">
+        <div class="role-tabs">
+          <div class="role-tab">Advisor workspace</div>
+          <div class="role-tab active">Approver queue</div>
+        </div>
+        <div class="wf-content" style="background:var(--bg);">
+          <div style="font-size:10px;color:var(--pending);font-weight:600;margin-bottom:8px;">3 campaigns awaiting approval</div>
+          <div class="approver-card">
+            <h4>TFSA Awareness</h4>
+            <div class="meta">J. Chen · Meta · $800 · GTA · submitted 2h ago</div>
+            <div class="preview-box">Creative + FC landing preview</div>
+            <div class="btn-row">
+              <span class="btn btn-approve">Approve</span>
+              <span class="btn btn-reject">Reject</span>
+            </div>
+          </div>
+          <div class="approver-card">
+            <h4>RRSP Push</h4>
+            <div class="meta">M. Patel · Search · $1,200 · BC</div>
+            <div class="preview-box">Creative + FC landing preview</div>
+            <div class="btn-row">
+              <span class="btn btn-approve">Approve</span>
+              <span class="btn btn-reject">Reject</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="callout">Annotation: Approvers never leave the Ads area — flip the top role tab. Approve-before-spend required.</div>
+    </div>
+  </div>
+
+  <!-- 4. Landing -->
+  <div class="panel">
+    <div class="panel-label">
+      <h2>4. Public landing + CASL form</h2>
+      <span class="annot">Mobile-ish · matches wizard preview</span>
+    </div>
+    <div class="panel-body">
+      <div class="phone-frame">
+        <div class="phone-notch"></div>
+        <div class="phone-hero"><strong>Plan your RRSP</strong><br><small>with [Advisor] · FC</small></div>
+        <div class="phone-input"></div>
+        <div class="phone-input"></div>
+        <div class="phone-input"></div>
+        <span class="btn btn-primary" style="display:block;text-align:center;padding:7px;">Get in touch</span>
+        <p class="casl-note">☐ I consent to receive emails under CASL. Unsubscribe anytime.</p>
+        <p class="compliance">[COMPLIANCE PLACEHOLDER]</p>
+      </div>
+      <div class="callout">Annotation: FC-hosted only → Contacts. Preview pane in wizard mirrors this frame.</div>
+    </div>
+  </div>
+
+  <!-- 5. Performance in list -->
+  <div class="panel">
+    <div class="panel-label">
+      <h2>5. Performance — row expand charts</h2>
+      <span class="annot">Mini KPIs in list · optional full view</span>
+    </div>
+    <div class="panel-body">
+      <div class="wf-shell">
+        <div class="wf-nav"><div class="nav-item active">Ads</div></div>
+        <div class="wf-main">
+          <div class="wf-header"><span class="title">RRSP Q1 Leads · expanded</span><span class="chip chip-live">Live</span></div>
+          <div class="wf-content">
+            <div class="camp-row">
+              <div class="camp-row-head">
+                <span class="name">Performance snapshot</span>
+                <span class="btn btn-ghost" style="font-size:9px;">Open full dashboard</span>
+              </div>
+              <div class="camp-row-expand">
+                <div class="mini-kpi"><span class="v">$820</span>Spend</div>
+                <div class="mini-kpi"><span class="v">42</span>Leads</div>
+                <div class="mini-kpi"><span class="v">$19.52</span>CPL</div>
+                <div class="mini-chart">7-day spend &amp; leads sparkline</div>
+              </div>
+            </div>
+            <div style="font-size:9px;color:var(--muted);margin-top:6px;">Full dashboard available from row action — Phase 1 still ships the metrics surface.</div>
+          </div>
+        </div>
+      </div>
+      <div class="callout">Annotation: Default path is inline expand; “full dashboard” is secondary for deep dives.</div>
+    </div>
+  </div>
+
+  <!-- 6. Funding as nav -->
+  <div class="panel">
+    <div class="panel-label">
+      <h2>6. Wallet / funding — left-nav item</h2>
+      <span class="annot">Dedicated Funding section</span>
+    </div>
+    <div class="panel-body">
+      <div class="wf-shell">
+        <div class="wf-nav">
+          <div class="nav-item">Ads</div>
+          <div class="nav-item active">Funding</div>
+        </div>
+        <div class="wf-main">
+          <div class="wf-header"><span class="title">Funding &amp; wallet</span></div>
+          <div class="wf-content funding-page">
+            <div class="bal-card">
+              <div>
+                <div class="meta">Available balance</div>
+                <div class="bal">$2,450.00 CAD</div>
+              </div>
+              <span class="btn btn-primary">Add funds</span>
+            </div>
+            <div class="fund-grid">
+              <div class="fund-opt on">Charge wallet</div>
+              <div class="fund-opt">Pay by card</div>
+              <div class="fund-opt">+$500</div>
+              <div class="fund-opt">+$1,000</div>
+            </div>
+            <div class="field">Recent: Top-up $1,000 · Campaign charge RRSP Q1 $820</div>
+          </div>
+        </div>
+      </div>
+      <div class="callout">Annotation: Funding is first-class nav (not only a header chip). Card AND wallet both supported.</div>
+    </div>
+  </div>
+
+</div>
+
+<footer class="footer">
+  <h3>Scope legend</h3>
+  <div class="scope-row">
+    <span class="scope-in">Phase 1 in-scope: Canada-only</span>
+    <span class="scope-in">Google Search+location</span>
+    <span class="scope-in">Meta Lead Ads</span>
+    <span class="scope-in">Advisor self-serve + admin/CS wizard</span>
+    <span class="scope-in">Card + wallet funding</span>
+    <span class="scope-in">Approve-before-spend</span>
+    <span class="scope-in">FC-hosted LP → Contacts</span>
+    <span class="scope-in">Performance dashboard</span>
+  </div>
+  <div class="scope-row">
+    <span class="scope-out">Out: LinkedIn / TikTok</span>
+    <span class="scope-out">Out: US / multi-country</span>
+    <span class="scope-out">Out: External LP hosts</span>
+    <span class="scope-out">Out: Auto-approve spend</span>
+    <span class="scope-out">Out: Full clickable prototype</span>
+  </div>
+  <p class="note">FC Ads Phase 1 visual direction · Split Ops · Staging tokens · Not a production mock — annotated wireframes for layout philosophy only.</p>
+</footer>
+
+</body>
+</html>

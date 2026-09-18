@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en-CA">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Compare directions · FC Ads Phase 1</title>
+<style>
+  :root { --bg:#f4f8fc; --card:#fff; --ink:#1e2a4a; --muted:#5b6572; --blue:#2b7de9; --border:#d4e4f2; --mint:#e6f1fb; --success:#1e8449; --radius:12px; }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif; background:var(--bg); color:var(--ink); line-height:1.5; padding:24px; }
+  main { max-width:1200px; margin:0 auto; }
+  .topbar { display:flex; justify-content:space-between; align-items:center; gap:12px; margin-bottom:28px; }
+  .back { color:var(--blue); text-decoration:none; font-size:14px; font-weight:700; }
+  .back:hover { text-decoration:underline; }
+  .label { color:var(--muted); font-size:12px; font-weight:700; letter-spacing:.08em; text-transform:uppercase; }
+  header { margin-bottom:24px; }
+  .eyebrow { color:var(--blue); font-size:12px; font-weight:700; letter-spacing:.08em; text-transform:uppercase; margin-bottom:10px; }
+  h1 { font-size:clamp(28px,4vw,42px); line-height:1.1; letter-spacing:-.03em; margin-bottom:10px; }
+  .lede { color:var(--muted); max-width:720px; }
+  .table-wrap { overflow-x:auto; background:var(--card); border:1px solid var(--border); border-radius:var(--radius); box-shadow:0 2px 8px rgba(30,42,74,.04); }
+  table { width:100%; min-width:780px; border-collapse:collapse; font-size:14px; }
+  caption { position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); }
+  th, td { padding:16px 18px; border-bottom:1px solid var(--border); text-align:left; vertical-align:top; }
+  thead th { background:var(--mint); color:var(--ink); font-size:15px; }
+  thead th:first-child { width:19%; }
+  thead th:not(:first-child) { color:var(--blue); }
+  tbody tr:last-child th, tbody tr:last-child td { border-bottom:0; }
+  tbody th { color:var(--ink); font-size:13px; font-weight:700; background:#fbfdff; }
+  td { color:var(--muted); }
+  .scope { margin-top:24px; display:grid; grid-template-columns:1fr 1fr; gap:18px; }
+  .scope-card { background:var(--card); border:1px solid var(--border); border-radius:var(--radius); padding:20px; }
+  .scope-card h2 { font-size:16px; margin-bottom:12px; }
+  ul { list-style:none; display:grid; gap:8px; color:var(--muted); font-size:14px; }
+  li::before { content:"•"; color:var(--blue); font-weight:800; margin-right:9px; }
+  .out li::before { color:var(--muted); }
+  @media (max-width:700px) { body { padding:18px 14px 28px; } .topbar { align-items:flex-start; flex-direction:column; } .scope { grid-template-columns:1fr; } }
+</style>
+</head>
+<body>
+<main>
+  <div class="topbar"><a class="back" href="index.html">← All directions</a><span class="label">FC Ads · Phase 1</span></div>
+  <header>
+    <div class="eyebrow">Decision matrix</div>
+    <h1>Compare visual directions</h1>
+    <p class="lede">A side-by-side view of the three layout and interaction philosophies for the Canada-only paid ads experience.</p>
+  </header>
+
+  <div class="table-wrap">
+    <table>
+      <caption>Comparison of Console Dense, Guided Wizard-First, and Split Ops directions</caption>
+      <thead><tr><th scope="col">Criteria</th><th scope="col">A — Console Dense</th><th scope="col">B — Guided Wizard-First</th><th scope="col">C — Split Ops</th></tr></thead>
+      <tbody>
+        <tr><th scope="row">Density</th><td>High — data table, tight rows</td><td>Medium — card grid, softer spacing</td><td>Medium-high — list + expand + role chrome</td></tr>
+        <tr><th scope="row">Wizard pattern</th><td>Right drawer / multi-step panel over list</td><td>Full-page stepped wizard + progress rail</td><td>Left-rail steps + right live LP/ad preview</td></tr>
+        <tr><th scope="row">Approval UX</th><td>Separate admin queue page</td><td>Large creative-preview modal (or review screen)</td><td>Approver queue via role-aware top tab</td></tr>
+        <tr><th scope="row">Mobile story</th><td>Desktop-console first; LP is mobile frame only</td><td>LP mobile-forward; app still desktop</td><td>LP mirrors wizard preview phone; app desktop</td></tr>
+        <tr><th scope="row">Performance</th><td>Tabs on campaign detail</td><td>Dedicated dashboard, big KPI cards</td><td>Mini charts in list row expand (+ optional full)</td></tr>
+        <tr><th scope="row">Wallet / funding</th><td>Header wallet chip + funding step</td><td>Soft funding card inside wizard</td><td><strong>Dedicated Funding</strong> left-nav item</td></tr>
+        <tr><th scope="row">Admin pick-advisor</th><td>Field in drawer wizard</td><td>Field early in full-page wizard</td><td>Field in rail wizard (same flow)</td></tr>
+        <tr><th scope="row">Best if…</th><td>Power users / CS want table density and stay-on-list create</td><td>First-time advisors need a clear guided create path</td><td>Teams both create and approve; want preview + funding IA</td></tr>
+        <tr><th scope="row">Watch-outs</th><td>Drawer can feel cramped for creative + compliance</td><td>Card home weaker for scanning 20+ campaigns</td><td>Role tabs + rail + preview = more UI surface</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <section class="scope" aria-label="Shared scope">
+    <article class="scope-card"><h2>Shared Phase 1 constraints</h2><ul><li>Canada-only · Google Search+location + Meta Lead Ads</li><li>Advisor self-serve or FC admin/CS on behalf (same wizard)</li><li>Card and wallet funding · required approve-before-spend</li><li>FC-hosted landing/form only → Contacts · performance dashboard in scope</li><li>Compliance copy flagged as [COMPLIANCE PLACEHOLDER]</li></ul></article>
+    <article class="scope-card out"><h2>Out of scope</h2><ul><li>LinkedIn / TikTok</li><li>US / multi-country</li><li>External LP hosts</li><li>Auto-approve spend</li><li>Full clickable prototype (boards only)</li></ul></article>
+  </section>
+</main>
+</body>
+</html>

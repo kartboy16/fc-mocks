@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="en-CA">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Create campaign · Ads</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body class="wizard-page">
+<div class="app-shell">
+  <aside class="sidebar">
+    <div class="sidebar-logo">FC<span>FinancialContent</span></div>
+    <div id="sidebarNav"></div>
+    <div class="sidebar-spacer"></div>
+    <div class="nav-profile">JL</div>
+  </aside>
+  <div class="main-wrap">
+    <header class="topbar">
+      <div class="topbar-search">
+        <span>🔍</span>
+        <input type="search" placeholder="Search…" disabled>
+      </div>
+      <div class="topbar-actions">
+        <a class="wallet-chip" href="funding.html" id="walletChip">💰 $2,450 CAD</a>
+        <a class="btn btn-sm btn-ghost" href="index.html">← Ads home</a>
+      </div>
+    </header>
+
+    <div class="wizard-shell">
+      <nav class="wizard-rail" aria-label="Campaign steps">
+        <h2>Create campaign</h2>
+        <div class="rail-step current" data-step="1"><span class="step-num">1</span> Goal</div>
+        <div class="rail-step" data-step="2"><span class="step-num">2</span> Geo</div>
+        <div class="rail-step" data-step="3"><span class="step-num">3</span> Channel</div>
+        <div class="rail-step" data-step="4"><span class="step-num">4</span> Creative</div>
+        <div class="rail-step" data-step="5"><span class="step-num">5</span> Budget</div>
+        <div class="rail-step" data-step="6"><span class="step-num">6</span> Funding</div>
+        <div class="rail-step" data-step="7"><span class="step-num">7</span> Review</div>
+      </nav>
+
+      <div class="wizard-main">
+        <div class="admin-banner" id="adminBanner">
+          <label for="advisorPicker">Acting for</label>
+          <select id="advisorPicker">
+            <option value="Jordan Lee, CFP">Jordan Lee, CFP</option>
+            <option value="Sam Patel, CFP">Sam Patel, CFP</option>
+            <option value="Alex Rivera, CFP">Alex Rivera, CFP</option>
+            <option value="Morgan Chen, CFP">Morgan Chen, CFP</option>
+          </select>
+          <label style="margin-left:8px;font-weight:500;color:var(--muted)">
+            <input type="checkbox" id="adminMode" checked> Admin mode (show picker)
+          </label>
+        </div>
+
+        <!-- Step 1 Goal -->
+        <section class="step-panel active" data-step="1">
+          <h1 class="wizard-step-title">What’s your goal?</h1>
+          <p class="wizard-step-help">Phase 1 supports lead generation only. Other goals will unlock later.</p>
+          <div class="choice-cards" id="goalCards">
+            <div class="choice-card selected locked" data-goal="leads">
+              <div class="choice-icon">🎯</div>
+              <strong>Leads</strong>
+              <p>Capture contact info via FC landing or Meta forms.</p>
+              <span class="lock-badge">Phase 1 · Selected</span>
+            </div>
+            <div class="choice-card" style="opacity:0.45;pointer-events:none" title="Coming later">
+              <div class="choice-icon">👀</div>
+              <strong>Awareness</strong>
+              <p>Coming in a later phase.</p>
+            </div>
+            <div class="choice-card" style="opacity:0.45;pointer-events:none" title="Coming later">
+              <div class="choice-icon">🌐</div>
+              <strong>Website traffic</strong>
+              <p>Coming in a later phase.</p>
+            </div>
+          </div>
+        </section>
+
+        <!-- Step 2 Geo -->
+        <section class="step-panel" data-step="2">
+          <h1 class="wizard-step-title">Where should ads run?</h1>
+          <p class="wizard-step-help">Canada only. Choose address + radius, city, or postal FSA.</p>
+          <div class="form-group" id="geoTypeGroup">
+            <div class="radio-list">
+              <label class="radio-item selected" data-geo="radius">
+                <input type="radio" name="geoType" value="radius" checked>
+                <div><strong>Address + radius</strong><span>Target a pin and radius in km</span></div>
+              </label>
+              <label class="radio-item" data-geo="city">
+                <input type="radio" name="geoType" value="city">
+                <div><strong>City</strong><span>e.g. Toronto, Vancouver, Calgary</span></div>
+              </label>
+              <label class="radio-item" data-geo="fsa">
+                <input type="radio" name="geoType" value="fsa">
+                <div><strong>Postal FSA</strong><span>Canadian Forward Sortation Area (e.g. M5V)</span></div>
+              </label>
+            </div>
+          </div>
+          <div class="form-group" id="geoInputGroup">
+            <label class="form-label" for="geoValue">Location</label>
+            <input class="form-control" id="geoValue" placeholder="123 Bay St, Toronto, ON" value="123 Bay St, Toronto, ON">
+            <div class="form-error">Enter a location to continue.</div>
+          </div>
+          <div class="form-group" id="radiusGroup">
+            <label class="form-label" for="radiusKm">Radius (km)</label>
+            <input class="form-control" id="radiusKm" type="number" min="5" max="100" value="25">
+          </div>
+        </section>
+
+        <!-- Step 3 Channel -->
+        <section class="step-panel" data-step="3">
+          <h1 class="wizard-step-title">Which channels?</h1>
+          <p class="wizard-step-help">Select one or both. Phase 1: Google Search + location extensions, Meta Lead Ads.</p>
+          <div class="form-group" id="channelGroup">
+            <div class="check-list">
+              <label class="check-item selected" data-ch="google">
+                <input type="checkbox" name="channel" value="Google" checked>
+                <div><strong>Google Search + location</strong><span>Search ads with location targeting for local intent</span></div>
+              </label>
+              <label class="check-item selected" data-ch="meta">
+                <input type="checkbox" name="channel" value="Meta" checked>
+                <div><strong>Meta Lead Ads</strong><span>In-feed forms that sync leads to Contacts</span></div>
+              </label>
+            </div>
+            <div class="form-error">Select at least one channel.</div>
+          </div>
+        </section>
+
+        <!-- Step 4 Creative -->
+        <section class="step-panel" data-step="4">
+          <h1 class="wizard-step-title">Creative</h1>
+          <p class="wizard-step-help">Pick a template, then customize. Compliance rails are required.</p>
+          <div class="choice-cards" id="templateCards" style="margin-bottom:20px">
+            <div class="choice-card selected" data-tpl="rrsp">
+              <div class="choice-icon">📈</div>
+              <strong>RRSP / Investing</strong>
+              <p>Growth &amp; contribution season</p>
+            </div>
+            <div class="choice-card" data-tpl="retire">
+              <div class="choice-icon">🏖️</div>
+              <strong>Retirement</strong>
+              <p>Discovery call focused</p>
+            </div>
+            <div class="choice-card" data-tpl="tax">
+              <div class="choice-icon">📋</div>
+              <strong>Tax planning</strong>
+              <p>Year-end / TFSA</p>
+            </div>
+          </div>
+          <div class="form-group" id="headlineGroup">
+            <label class="form-label" for="headline">Headline</label>
+            <input class="form-control" id="headline" maxlength="90" value="Plan your next financial move with confidence">
+            <div class="form-error">Headline is required.</div>
+          </div>
+          <div class="form-group" id="bodyGroup">
+            <label class="form-label" for="bodyCopy">Body</label>
+            <textarea class="form-control" id="bodyCopy" rows="3">Book a complimentary discovery call. We’ll review your goals and outline a clear next step.</textarea>
+            <div class="form-error">Body copy is required.</div>
+          </div>
+          <div class="compliance-rail">
+            <strong>[COMPLIANCE PLACEHOLDER]</strong> — Required disclaimer / risk disclosure rail. Final legal copy TBD by compliance. Do not publish without approved language.
+          </div>
+          <div class="compliance-rail" style="border-left-color:var(--accent);background:var(--mint);border-color:var(--border)">
+            <strong>[COMPLIANCE PLACEHOLDER]</strong> — Advisor credentials &amp; firm disclosure will appear on the public landing and Meta form footer.
+          </div>
+        </section>
+
+        <!-- Step 5 Budget -->
+        <section class="step-panel" data-step="5">
+          <h1 class="wizard-step-title">Budget &amp; schedule</h1>
+          <p class="wizard-step-help">Set daily and lifetime caps with a flight date range.</p>
+          <div class="form-row">
+            <div class="form-group" id="dailyGroup">
+              <label class="form-label" for="dailyBudget">Daily budget (CAD)</label>
+              <input class="form-control" id="dailyBudget" type="number" min="10" value="50">
+              <div class="form-error">Enter a daily budget.</div>
+            </div>
+            <div class="form-group" id="lifetimeGroup">
+              <label class="form-label" for="lifetimeBudget">Lifetime budget (CAD)</label>
+              <input class="form-control" id="lifetimeBudget" type="number" min="50" value="800">
+              <div class="form-error">Enter a lifetime budget.</div>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label" for="startDate">Start date</label>
+              <input class="form-control" id="startDate" type="date" value="2026-09-22">
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="endDate">End date</label>
+              <input class="form-control" id="endDate" type="date" value="2026-10-22">
+            </div>
+          </div>
+        </section>
+
+        <!-- Step 6 Funding -->
+        <section class="step-panel" data-step="6">
+          <h1 class="wizard-step-title">How will you pay?</h1>
+          <p class="wizard-step-help">Wallet balance must cover the first charge, or use card / split.</p>
+          <div class="banner banner-info show" id="walletInfo">Wallet balance: $2,450 CAD</div>
+          <div class="form-group" id="fundingGroup">
+            <div class="radio-list">
+              <label class="radio-item selected" data-fund="wallet">
+                <input type="radio" name="funding" value="wallet" checked>
+                <div><strong>Charge wallet</strong><span>Use available prepaid balance</span></div>
+              </label>
+              <label class="radio-item" data-fund="card">
+                <input type="radio" name="funding" value="card">
+                <div><strong>Pay by card</strong><span>Visa ···· 4242 (mock)</span></div>
+              </label>
+              <label class="radio-item" data-fund="split">
+                <input type="radio" name="funding" value="split">
+                <div><strong>Split</strong><span>Part wallet + part card</span></div>
+              </label>
+            </div>
+          </div>
+          <p class="form-hint"><a href="funding.html">Manage wallet &amp; add funds →</a></p>
+        </section>
+
+        <!-- Step 7 Review -->
+        <section class="step-panel" data-step="7">
+          <h1 class="wizard-step-title">Review &amp; submit</h1>
+          <p class="wizard-step-help">Confirm details. Submitting sends the campaign to the Approvals queue.</p>
+          <div class="form-group" id="nameGroup">
+            <label class="form-label" for="campName">Campaign name</label>
+            <input class="form-control" id="campName" value="New Lead Campaign — Sep 2026">
+            <div class="form-error">Campaign name is required.</div>
+          </div>
+          <div class="review-summary" id="reviewSummary"></div>
+          <div class="compliance-rail" style="margin-top:16px">
+            <strong>[COMPLIANCE PLACEHOLDER]</strong> — By submitting you confirm creative meets firm policy. Approver must sign off before go-live.
+          </div>
+        </section>
+
+        <div class="wizard-footer">
+          <button type="button" class="btn btn-secondary" id="btnBack">← Back</button>
+          <div style="display:flex;gap:8px;align-items:center">
+            <button type="button" class="btn btn-ghost btn-sm" id="btnValidateDemo" title="Demo: show validation">Force validation error</button>
+            <button type="button" class="btn btn-primary" id="btnNext">Next →</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="successModal" class="modal-backdrop">
+  <div class="modal" style="text-align:center;max-width:420px">
+    <div style="font-size:48px;margin-bottom:8px">✅</div>
+    <h2 style="margin-bottom:8px">Submitted for approval</h2>
+    <p style="color:var(--muted);font-size:14px;margin-bottom:20px">Your campaign is in the Approvals queue. You’ll be notified when it’s reviewed.</p>
+    <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
+      <a class="btn btn-primary" href="index.html?submitted=1">Go to Ads home</a>
+      <a class="btn btn-secondary" href="approvals.html">View Approvals</a>
+    </div>
+  </div>
+</div>
+
+<div id="loadingOverlay" class="loading-overlay">
+  <div class="spinner"></div>
+  <div style="font-weight:600;color:var(--ink)">Submitting for approval…</div>
+</div>
+<div id="toast" class="toast"></div>
+
+<script src="app.js"></script>
+<script>
+(function () {
+  document.getElementById('sidebarNav').innerHTML = FCAds.shellNav('ads');
+  var wallet = FCAds.getWallet();
+  document.getElementById('walletChip').textContent = '💰 ' + FCAds.fmtCAD(wallet);
+  document.getElementById('walletInfo').textContent = 'Wallet balance: ' + FCAds.fmtCAD(wallet);
+
+  var step = 1;
+  var total = 7;
+  var forceError = false;
+
+  var templates = {
+    rrsp: { h: 'Plan your next financial move with confidence', b: 'Book a complimentary discovery call. We’ll review your goals and outline a clear next step.' },
+    retire: { h: 'Retirement readiness starts with a conversation', b: 'See if you’re on track. Schedule a short discovery call with your advisor.' },
+    tax: { h: 'Make the most of TFSA & year-end tax planning', b: 'Get a clear checklist tailored to your situation. Book your planning session today.' }
+  };
+
+  document.getElementById('adminMode').addEventListener('change', function () {
+    document.getElementById('advisorPicker').style.display = this.checked ? '' : 'none';
+    document.querySelector('#adminBanner label[for="advisorPicker"]').style.display = this.checked ? '' : 'none';
+  });
+
+  // Geo radios
+  document.querySelectorAll('#geoTypeGroup .radio-item').forEach(function (el) {
+    el.addEventListener('click', function () {
+      document.querySelectorAll('#geoTypeGroup .radio-item').forEach(function (x) { x.classList.remove('selected'); });
+      el.classList.add('selected');
+      el.querySelector('input').checked = true;
+      var t = el.getAttribute('data-geo');
+      var input = document.getElementById('geoValue');
+      var radius = document.getElementById('radiusGroup');
+      if (t === 'radius') { input.placeholder = '123 Bay St, Toronto, ON'; radius.classList.remove('hidden'); }
+      if (t === 'city') { input.placeholder = 'Toronto, ON'; radius.classList.add('hidden'); }
+      if (t === 'fsa') { input.placeholder = 'M5V'; radius.classList.add('hidden'); }
+    });
+  });
+
+  document.querySelectorAll('#channelGroup .check-item').forEach(function (el) {
+    el.addEventListener('click', function (e) {
+      if (e.target.tagName === 'INPUT') {
+        el.classList.toggle('selected', e.target.checked);
+        return;
+      }
+      var cb = el.querySelector('input');
+      cb.checked = !cb.checked;
+      el.classList.toggle('selected', cb.checked);
+    });
+  });
+
+  document.querySelectorAll('#fundingGroup .radio-item').forEach(function (el) {
+    el.addEventListener('click', function () {
+      document.querySelectorAll('#fundingGroup .radio-item').forEach(function (x) { x.classList.remove('selected'); });
+      el.classList.add('selected');
+      el.querySelector('input').checked = true;
+    });
+  });
+
+  document.querySelectorAll('#templateCards .choice-card').forEach(function (el) {
+    el.addEventListener('click', function () {
+      document.querySelectorAll('#templateCards .choice-card').forEach(function (x) { x.classList.remove('selected'); });
+      el.classList.add('selected');
+      var t = templates[el.getAttribute('data-tpl')];
+      if (t) {
+        document.getElementById('headline').value = t.h;
+        document.getElementById('bodyCopy').value = t.b;
+      }
+    });
+  });
+
+  function clearErrors() {
+    document.querySelectorAll('.form-group.has-error').forEach(function (g) { g.classList.remove('has-error'); });
+  }
+
+  function validateStep(s) {
+    clearErrors();
+    if (forceError && s !== 1 && s !== 7) {
+      // leave force for demo button
+    }
+    if (s === 2) {
+      var v = document.getElementById('geoValue').value.trim();
+      if (!v || forceError) {
+        document.getElementById('geoInputGroup').classList.add('has-error');
+        forceError = false;
+        return false;
+      }
+    }
+    if (s === 3) {
+      var ch = document.querySelectorAll('#channelGroup input:checked');
+      if (!ch.length || forceError) {
+        document.getElementById('channelGroup').classList.add('has-error');
+        forceError = false;
+        return false;
+      }
+    }
+    if (s === 4) {
+      var ok = true;
+      if (!document.getElementById('headline').value.trim() || forceError) {
+        document.getElementById('headlineGroup').classList.add('has-error');
+        ok = false;
+      }
+      if (!document.getElementById('bodyCopy').value.trim()) {
+        document.getElementById('bodyGroup').classList.add('has-error');
+        ok = false;
+      }
+      forceError = false;
+      return ok;
+    }
+    if (s === 5) {
+      var ok5 = true;
+      if (!document.getElementById('dailyBudget').value || forceError) {
+        document.getElementById('dailyGroup').classList.add('has-error');
+        ok5 = false;
+      }
+      if (!document.getElementById('lifetimeBudget').value) {
+        document.getElementById('lifetimeGroup').classList.add('has-error');
+        ok5 = false;
+      }
+      forceError = false;
+      return ok5;
+    }
+    if (s === 7) {
+      if (!document.getElementById('campName').value.trim() || forceError) {
+        document.getElementById('nameGroup').classList.add('has-error');
+        forceError = false;
+        return false;
+      }
+    }
+    forceError = false;
+    return true;
+  }
+
+  function geoLabel() {
+    var t = document.querySelector('#geoTypeGroup input:checked').value;
+    var v = document.getElementById('geoValue').value.trim();
+    if (t === 'radius') return v + ' · ' + document.getElementById('radiusKm').value + ' km';
+    if (t === 'fsa') return 'FSA ' + v;
+    return v;
+  }
+
+  function channels() {
+    return Array.prototype.map.call(
+      document.querySelectorAll('#channelGroup input:checked'),
+      function (i) { return i.value; }
+    );
+  }
+
+  function fundingLabel() {
+    var m = { wallet: 'Charge wallet', card: 'Pay by card', split: 'Split wallet + card' };
+    return m[document.querySelector('#fundingGroup input:checked').value];
+  }
+
+  function buildReview() {
+    var rows = [
+      ['Advisor', document.getElementById('advisorPicker').value],
+      ['Goal', 'Leads'],
+      ['Geo', geoLabel()],
+      ['Channels', channels().join(' · ') || '—'],
+      ['Headline', document.getElementById('headline').value],
+      ['Daily / Lifetime', FCAds.fmtMoney(document.getElementById('dailyBudget').value) + ' / ' + FCAds.fmtMoney(document.getElementById('lifetimeBudget').value)],
+      ['Dates', document.getElementById('startDate').value + ' → ' + document.getElementById('endDate').value],
+      ['Funding', fundingLabel()]
+    ];
+    document.getElementById('reviewSummary').innerHTML = rows.map(function (r) {
+      return '<div class="review-row"><span class="rk">' + r[0] + '</span><span class="rv">' + escapeHtml(r[1]) + '</span></div>';
+    }).join('');
+  }
+
+  function escapeHtml(s) {
+    return String(s || '').replace(/[&<>"']/g, function (m) {
+      return ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[m];
+    });
+  }
+
+  function go(n) {
+    step = n;
+    document.querySelectorAll('.step-panel').forEach(function (p) {
+      p.classList.toggle('active', Number(p.getAttribute('data-step')) === step);
+    });
+    document.querySelectorAll('.rail-step').forEach(function (r) {
+      var s = Number(r.getAttribute('data-step'));
+      r.classList.remove('current', 'done');
+      if (s === step) r.classList.add('current');
+      else if (s < step) {
+        r.classList.add('done');
+        r.querySelector('.step-num').textContent = '✓';
+      } else {
+        r.querySelector('.step-num').textContent = String(s);
+      }
+    });
+    document.getElementById('btnBack').style.visibility = step === 1 ? 'hidden' : 'visible';
+    document.getElementById('btnNext').textContent = step === total ? 'Submit for approval' : 'Next →';
+    if (step === 7) buildReview();
+    window.scrollTo(0, 0);
+  }
+
+  document.getElementById('btnBack').addEventListener('click', function () {
+    if (step > 1) go(step - 1);
+  });
+
+  document.getElementById('btnValidateDemo').addEventListener('click', function () {
+    forceError = true;
+    FCAds.showToast('Next click will show a validation error', 'error');
+  });
+
+  document.getElementById('btnNext').addEventListener('click', function () {
+    if (!validateStep(step)) {
+      FCAds.showToast('Please fix the highlighted fields', 'error');
+      return;
+    }
+    if (step < total) {
+      go(step + 1);
+      return;
+    }
+    // Submit
+    FCAds.showLoading(true);
+    setTimeout(function () {
+      var camp = {
+        id: FCAds.uid(),
+        name: document.getElementById('campName').value.trim(),
+        status: 'pending',
+        channels: channels(),
+        spend: 0,
+        budget: Number(document.getElementById('lifetimeBudget').value) || 0,
+        leads: 0,
+        cpl: null,
+        advisor: document.getElementById('advisorPicker').value,
+        geo: geoLabel(),
+        created: new Date().toISOString().slice(0, 10),
+        headline: document.getElementById('headline').value,
+        body: document.getElementById('bodyCopy').value + ' [COMPLIANCE PLACEHOLDER]',
+        goal: 'Leads',
+        funding: fundingLabel(),
+        daily: Number(document.getElementById('dailyBudget').value)
+      };
+      FCAds.upsertCampaign(camp);
+      FCAds.showLoading(false);
+      document.getElementById('successModal').classList.add('open');
+    }, 900);
+  });
+
+  // Deep-link funding step
+  var jump = FCAds.qs('step');
+  if (jump === 'funding') go(6);
+  else go(1);
+})();
+</script>
+</body>
+</html>

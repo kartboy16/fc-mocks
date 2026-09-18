@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en-CA">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Funding · Ads</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div class="app-shell">
+  <aside class="sidebar">
+    <div class="sidebar-logo">FC<span>FinancialContent</span></div>
+    <div id="sidebarNav"></div>
+    <div class="sidebar-spacer"></div>
+    <div class="nav-profile">JL</div>
+  </aside>
+  <div class="main-wrap">
+    <header class="topbar">
+      <div class="topbar-search">
+        <span>🔍</span>
+        <input type="search" placeholder="Search…" disabled>
+      </div>
+      <div class="topbar-actions">
+        <a class="wallet-chip" href="funding.html" id="walletChip">💰 $2,450 CAD</a>
+      </div>
+    </header>
+    <main class="content">
+      <h1 class="page-title">Funding</h1>
+      <p class="page-sub">Prepaid wallet for campaign spend. Enough balance to fund a new campaign.</p>
+
+      <div class="balance-hero">
+        <div class="bal-label">Available balance</div>
+        <div class="bal-amt" id="balAmt">$2,450</div>
+        <div style="font-size:13px;opacity:0.9;margin-top:4px">CAD · Mock wallet</div>
+        <div class="bal-actions">
+          <button type="button" class="btn-white" id="btnAddFunds">＋ Add funds (card)</button>
+          <a class="btn btn-secondary" href="wizard.html?step=funding" style="background:rgba(255,255,255,0.15);color:#fff;border-color:rgba(255,255,255,0.35)">Continue to wizard funding →</a>
+        </div>
+      </div>
+
+      <div class="banner banner-success" id="addSuccess">Funds added. Balance updated (mock).</div>
+
+      <div class="card card-pad" style="margin-bottom:24px;max-width:480px" id="addPanel">
+        <h2 class="section-title">Add funds</h2>
+        <div class="form-group">
+          <label class="form-label" for="addAmt">Amount (CAD)</label>
+          <input class="form-control" id="addAmt" type="number" min="50" step="50" value="500">
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="cardMock">Card</label>
+          <input class="form-control" id="cardMock" value="Visa ···· 4242" disabled>
+          <p class="form-hint">Mock only — no payment processed.</p>
+        </div>
+        <button type="button" class="btn btn-primary" id="btnConfirmAdd">Charge card</button>
+      </div>
+
+      <h2 class="section-title">Recent transactions</h2>
+      <div class="list-card" id="txList">
+        <div class="tx-row">
+          <div>
+            <div style="font-weight:600">Wallet top-up</div>
+            <div style="font-size:12px;color:var(--muted)">Sep 12, 2026 · Visa ···· 4242</div>
+          </div>
+          <div class="tx-amt pos">+$1,000.00</div>
+        </div>
+        <div class="tx-row">
+          <div>
+            <div style="font-weight:600">RRSP Spring Outreach · ad spend</div>
+            <div style="font-size:12px;color:var(--muted)">Sep 10, 2026 · Google + Meta</div>
+          </div>
+          <div class="tx-amt neg">−$842.00</div>
+        </div>
+        <div class="tx-row">
+          <div>
+            <div style="font-weight:600">Year-End Tax Planning · ad spend</div>
+            <div style="font-size:12px;color:var(--muted)">Sep 5, 2026 · Google</div>
+          </div>
+          <div class="tx-amt neg">−$390.00</div>
+        </div>
+        <div class="tx-row">
+          <div>
+            <div style="font-weight:600">Wallet top-up</div>
+            <div style="font-size:12px;color:var(--muted)">Aug 28, 2026 · Visa ···· 4242</div>
+          </div>
+          <div class="tx-amt pos">+$2,000.00</div>
+        </div>
+        <div class="tx-row">
+          <div>
+            <div style="font-weight:600">Estate Planning Webinar · ad spend</div>
+            <div style="font-size:12px;color:var(--muted)">Aug 22, 2026</div>
+          </div>
+          <div class="tx-amt neg">−$410.00</div>
+        </div>
+      </div>
+
+      <p style="margin-top:20px"><a href="index.html">← Ads home</a> · <a href="wizard.html">Create campaign</a></p>
+    </main>
+  </div>
+</div>
+<div id="toast" class="toast"></div>
+<script src="app.js"></script>
+<script>
+(function () {
+  document.getElementById('sidebarNav').innerHTML = FCAds.shellNav('funding');
+
+  function refresh() {
+    var w = FCAds.getWallet();
+    document.getElementById('balAmt').textContent = FCAds.fmtMoney(w);
+    document.getElementById('walletChip').textContent = '💰 ' + FCAds.fmtCAD(w);
+  }
+
+  document.getElementById('btnAddFunds').addEventListener('click', function () {
+    document.getElementById('addPanel').scrollIntoView({ behavior: 'smooth' });
+    document.getElementById('addAmt').focus();
+  });
+
+  document.getElementById('btnConfirmAdd').addEventListener('click', function () {
+    var amt = Number(document.getElementById('addAmt').value) || 0;
+    if (amt < 50) {
+      FCAds.showToast('Minimum top-up is $50', 'error');
+      return;
+    }
+    FCAds.showLoading(true);
+    setTimeout(function () {
+      var w = FCAds.getWallet() + amt;
+      FCAds.setWallet(w);
+      refresh();
+      FCAds.showLoading(false);
+      document.getElementById('addSuccess').classList.add('show');
+      FCAds.showToast('Added ' + FCAds.fmtMoney(amt) + ' to wallet', 'success');
+      var list = document.getElementById('txList');
+      var row = document.createElement('div');
+      row.className = 'tx-row';
+      row.innerHTML = '<div><div style="font-weight:600">Wallet top-up</div><div style="font-size:12px;color:var(--muted)">Just now · Visa ···· 4242</div></div><div class="tx-amt pos">+$' + amt.toFixed(2) + '</div>';
+      list.insertBefore(row, list.firstChild);
+    }, 600);
+  });
+
+  // Ensure loading overlay exists
+  if (!document.getElementById('loadingOverlay')) {
+    var el = document.createElement('div');
+    el.id = 'loadingOverlay';
+    el.className = 'loading-overlay';
+    el.innerHTML = '<div class="spinner"></div><div style="font-weight:600;color:var(--ink)">Processing…</div>';
+    document.body.appendChild(el);
+  }
+
+  refresh();
+})();
+</script>
+</body>
+</html>

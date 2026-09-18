@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en-CA">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Approvals · Ads</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div class="app-shell">
+  <aside class="sidebar">
+    <div class="sidebar-logo">FC<span>FinancialContent</span></div>
+    <div id="sidebarNav"></div>
+    <div class="sidebar-spacer"></div>
+    <div class="nav-profile">AH</div>
+  </aside>
+  <div class="main-wrap">
+    <header class="topbar">
+      <div class="topbar-search">
+        <span>🔍</span>
+        <input type="search" placeholder="Search pending…" disabled>
+      </div>
+      <div class="topbar-actions">
+        <a class="wallet-chip" href="funding.html" id="walletChip">💰 $2,450 CAD</a>
+      </div>
+    </header>
+    <main class="content">
+      <h1 class="page-title">Approvals</h1>
+      <p class="page-sub">Review pending campaigns before they go live.</p>
+
+      <div class="demo-bar">
+        <strong>Demo:</strong>
+        <button type="button" class="btn btn-sm btn-secondary" id="btnEmptyQ">Toggle empty queue</button>
+        <a class="btn btn-sm btn-ghost" href="index.html">← Ads home</a>
+      </div>
+
+      <div id="successBanner" class="banner banner-success"></div>
+      <div id="rejectBanner" class="banner banner-info"></div>
+
+      <div id="queue" class="list-card"></div>
+      <div id="emptyQueue" class="empty-state hidden">
+        <div class="empty-icon">✅</div>
+        <h3>Queue is clear</h3>
+        <p>No campaigns waiting for approval. New submissions from the wizard appear here.</p>
+        <a class="btn btn-primary" href="wizard.html">Create a campaign</a>
+      </div>
+    </main>
+  </div>
+</div>
+
+<div id="reviewModal" class="modal-backdrop">
+  <div class="modal modal-lg">
+    <div class="modal-head">
+      <div>
+        <h2 id="modalTitle">Campaign review</h2>
+        <p style="font-size:13px;color:var(--muted);margin-top:4px" id="modalSub"></p>
+      </div>
+      <button type="button" class="modal-close" id="modalClose" aria-label="Close">×</button>
+    </div>
+
+    <div class="creative-preview">
+      <div style="font-size:11px;font-weight:700;color:var(--muted);margin-bottom:10px;text-transform:uppercase;letter-spacing:0.05em">Creative preview</div>
+      <div class="ad-mock">
+        <h4 id="prevHeadline">Headline</h4>
+        <p id="prevBody">Body</p>
+        <div class="compliance-rail" style="margin:10px 0 0;font-size:11px">
+          <strong>[COMPLIANCE PLACEHOLDER]</strong> Disclaimer rail on ad / landing.
+        </div>
+      </div>
+    </div>
+
+    <div class="detail-grid" id="modalDetails"></div>
+
+    <div id="rejectBox" class="hidden" style="margin-top:8px">
+      <label class="form-label" for="rejectReason">Rejection reason</label>
+      <textarea class="form-control" id="rejectReason" placeholder="Explain what must change before resubmit…"></textarea>
+      <div class="form-error" id="rejectError" style="display:none">A reason is required to reject.</div>
+    </div>
+
+    <div class="modal-actions" id="modalActions">
+      <button type="button" class="btn btn-secondary" id="btnShowReject">Reject…</button>
+      <button type="button" class="btn btn-success" id="btnApprove">Approve</button>
+    </div>
+    <div class="modal-actions hidden" id="rejectActions">
+      <button type="button" class="btn btn-ghost" id="btnCancelReject">Cancel</button>
+      <button type="button" class="btn btn-danger" id="btnConfirmReject">Confirm reject</button>
+    </div>
+  </div>
+</div>
+
+<div id="approveSuccess" class="modal-backdrop">
+  <div class="modal" style="text-align:center;max-width:400px">
+    <div style="font-size:48px;margin-bottom:8px">🎉</div>
+    <h2 style="margin-bottom:8px">Approved</h2>
+    <p style="color:var(--muted);font-size:14px;margin-bottom:20px" id="approveMsg">Campaign is now live (mock).</p>
+    <button type="button" class="btn btn-primary" id="approveOk">Done</button>
+  </div>
+</div>
+
+<div id="toast" class="toast"></div>
+<script src="app.js"></script>
+<script>
+(function () {
+  document.getElementById('sidebarNav').innerHTML = FCAds.shellNav('approvals');
+  document.getElementById('walletChip').textContent = '💰 ' + FCAds.fmtCAD(FCAds.getWallet());
+
+  var current = null;
+  var forceEmpty = false;
+
+  function pending() {
+    if (forceEmpty) return [];
+    return FCAds.loadCampaigns().filter(function (c) { return c.status === 'pending'; });
+  }
+
+  function escapeHtml(s) {
+    return String(s || '').replace(/[&<>"']/g, function (m) {
+      return ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[m];
+    });
+  }
+
+  function render() {
+    var list = pending();
+    var q = document.getElementById('queue');
+    var empty = document.getElementById('emptyQueue');
+    if (!list.length) {
+      q.innerHTML = '';
+      q.classList.add('hidden');
+      empty.classList.remove('hidden');
+      return;
+    }
+    empty.classList.add('hidden');
+    q.classList.remove('hidden');
+    q.innerHTML = list.map(function (c) {
+      return (
+        '<div class="list-row" data-id="' + escapeHtml(c.id) + '">' +
+          '<div class="list-main">' +
+            '<h4>' + escapeHtml(c.name) + '</h4>' +
+            '<div class="list-meta">' + escapeHtml(c.advisor) + ' · ' + escapeHtml((c.channels || []).join(', ')) + ' · ' + escapeHtml(c.geo || '') + '</div>' +
+          '</div>' +
+          '<span class="chip chip-pending">Pending</span>' +
+          '<span style="color:var(--muted);font-size:12px">Review →</span>' +
+        '</div>'
+      );
+    }).join('');
+  }
+
+  function openModal(c) {
+    current = c;
+    document.getElementById('modalTitle').textContent = c.name;
+    document.getElementById('modalSub').textContent = 'Submitted by ' + c.advisor + ' · ' + (c.created || '');
+    document.getElementById('prevHeadline').textContent = c.headline || 'Plan your retirement with confidence';
+    document.getElementById('prevBody').textContent = c.body || 'Book a complimentary discovery call. [COMPLIANCE PLACEHOLDER]';
+    var details = [
+      ['Advisor', c.advisor],
+      ['Geo', c.geo || '—'],
+      ['Channels', (c.channels || []).join(', ')],
+      ['Budget', FCAds.fmtMoney(c.budget) + ' lifetime'],
+      ['Goal', c.goal || 'Leads'],
+      ['Funding', c.funding || 'Wallet']
+    ];
+    document.getElementById('modalDetails').innerHTML = details.map(function (d) {
+      return '<div class="detail-item"><div class="dk">' + d[0] + '</div><div class="dv">' + escapeHtml(d[1]) + '</div></div>';
+    }).join('');
+    document.getElementById('rejectBox').classList.add('hidden');
+    document.getElementById('modalActions').classList.remove('hidden');
+    document.getElementById('rejectActions').classList.add('hidden');
+    document.getElementById('rejectReason').value = '';
+    document.getElementById('rejectError').style.display = 'none';
+    document.getElementById('reviewModal').classList.add('open');
+  }
+
+  function closeModal() {
+    document.getElementById('reviewModal').classList.remove('open');
+    current = null;
+  }
+
+  document.getElementById('queue').addEventListener('click', function (e) {
+    var row = e.target.closest('.list-row');
+    if (!row) return;
+    var c = FCAds.getCampaign(row.getAttribute('data-id'));
+    if (c) openModal(c);
+  });
+
+  document.getElementById('modalClose').addEventListener('click', closeModal);
+  document.getElementById('reviewModal').addEventListener('click', function (e) {
+    if (e.target === this) closeModal();
+  });
+
+  document.getElementById('btnShowReject').addEventListener('click', function () {
+    document.getElementById('rejectBox').classList.remove('hidden');
+    document.getElementById('modalActions').classList.add('hidden');
+    document.getElementById('rejectActions').classList.remove('hidden');
+  });
+
+  document.getElementById('btnCancelReject').addEventListener('click', function () {
+    document.getElementById('rejectBox').classList.add('hidden');
+    document.getElementById('modalActions').classList.remove('hidden');
+    document.getElementById('rejectActions').classList.add('hidden');
+  });
+
+  document.getElementById('btnApprove').addEventListener('click', function () {
+    if (!current) return;
+    current.status = 'live';
+    current.spend = current.spend || 0;
+    current.leads = current.leads || 0;
+    FCAds.upsertCampaign(current);
+    closeModal();
+    document.getElementById('approveMsg').textContent = '"' + current.name + '" is now Live (mock).';
+    document.getElementById('approveSuccess').classList.add('open');
+    var b = document.getElementById('successBanner');
+    b.textContent = 'Approved — campaign is Live. Advisor can track performance.';
+    b.classList.add('show');
+    document.getElementById('rejectBanner').classList.remove('show');
+    render();
+  });
+
+  document.getElementById('approveOk').addEventListener('click', function () {
+    document.getElementById('approveSuccess').classList.remove('open');
+  });
+
+  document.getElementById('btnConfirmReject').addEventListener('click', function () {
+    var reason = document.getElementById('rejectReason').value.trim();
+    if (!reason) {
+      document.getElementById('rejectError').style.display = 'block';
+      return;
+    }
+    if (!current) return;
+    current.status = 'draft';
+    current.rejectReason = reason;
+    FCAds.upsertCampaign(current);
+    var name = current.name;
+    closeModal();
+    var b = document.getElementById('rejectBanner');
+    b.textContent = '"' + name + '" returned to Draft. Advisor sees rejection messaging and can edit & resubmit.';
+    b.classList.add('show');
+    document.getElementById('successBanner').classList.remove('show');
+    FCAds.showToast('Rejected — returned to draft', 'error');
+    render();
+  });
+
+  document.getElementById('btnEmptyQ').addEventListener('click', function () {
+    forceEmpty = !forceEmpty;
+    this.textContent = forceEmpty ? 'Show queue' : 'Toggle empty queue';
+    render();
+  });
+
+  // Deep link ?id=
+  var id = FCAds.qs('id');
+  render();
+  if (id) {
+    var c = FCAds.getCampaign(id);
+    if (c && c.status === 'pending') openModal(c);
+  }
+})();
+</script>
+</body>
+</html>
