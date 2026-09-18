@@ -1,0 +1,129 @@
+<!DOCTYPE html><html lang="en-CA"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Build contract — Share picker #168 Direction A</title>
+<style>body{font-family:Inter,system-ui,sans-serif;max-width:860px;margin:40px auto;padding:0 20px;color:#1e2a4a;line-height:1.5}
+a{color:#2b7de9} pre{white-space:pre-wrap;background:#fff;border:1px solid #d4e4f2;border-radius:12px;padding:24px}</style></head><body>
+<p><a href="index.html">← Hub</a> · <a href="mock-a/">Mock</a></p>
+<pre># Build contract — Share destination picker (Direction A)
+
+**Issue:** [kartboy16/content-library#168](https://github.com/kartboy16/content-library/issues/168)  
+**Direction:** A — Checklist rows  
+**Audience:** Software developer (staging build after mock approval)
+
+---
+
+## One-liner
+
+Replace the Share combo dropdown with three independent checklist channels (Email · Social · Website); advisors multi-select any non-empty subset (or Select all), then Continue into existing per-channel draft/preview flows.
+
+---
+
+## Screens / routes
+
+| Mock path | Product analogue | Notes |
+|-----------|------------------|--------|
+| `index.html` | Content library + Share control | App shell; Share opens picker |
+| Picker (popover / sheet) | Share destination UI | Anchored ~320–360px popover on desktop; bottom sheet ≤640px |
+| `flow.html` | Post-Continue channel summary / handoff | Chips of selected channels + stub next-step cards |
+| `mobile.html` | Responsive / phone proof | Same picker as sheet inside ~375px frame |
+
+**Smoke path:** Library → Share → select ≥1 channel → Continue → summary stubs.
+
+---
+
+## Interaction rules
+
+1. **Independent multi-select** — Email, Social, Website are separate toggles (checkbox rows). Any non-empty subset is valid (1, 2, or 3).
+2. **Select all** — Text button above the list selects all three. When all three are on, the same control reads **Clear all** (or use optional **Clear** link).
+3. **Continue gate** — Primary **Continue** is enabled only when `selectedCount ≥ 1`; otherwise disabled (grey / not-allowed).
+4. **Cancel / close** — Cancel button, × close, **Escape**, and click outside (overlay) dismiss the picker without navigating.
+5. **Empty guard** — If Continue is reached with zero channels (deep link / empty query), bounce to guard UI with link back to library (do not proceed into channel stubs).
+6. **Keyboard** — Rows act as checkboxes (click / Space / Enter); Escape closes.
+
+---
+
+## Replace staging combo list (removed as primary UX)
+
+These four **fixed combo** options must no longer be the primary Share control:
+
+1. **Email full article** — Full article in email  
+2. **Website and Social** — Publish to site, then share link  
+3. **Website and Email** — Publish to site and email a teaser  
+4. **Website, Social and Email** — Publish to site, share link, email teaser  
+
+**After:** Three independent rows only. Combinations are produced by multi-select, not by named combo rows.
+
+---
+
+## States
+
+| State | Behavior |
+|-------|----------|
+| Default | None selected; Continue disabled; count “0 of 3 selected” |
+| Partial | 1 or 2 selected; Continue enabled; Clear visible (optional) |
+| All | Via Select all or manual; count “3 of 3”; Select all → Clear all |
+| Clear | Clears selection; returns to default |
+| Closed | Picker dismissed; library unchanged |
+| Summary | Chips for chosen channels; per-channel draft/preview stubs |
+| Empty guard | No channels → message + back link |
+
+---
+
+## Mobile vs desktop
+
+| Viewport | Presentation |
+|----------|----------------|
+| Desktop / wide | Popover (~320–360px) anchored near the Share button (staging-like) |
+| Narrow (≤640px) / mobile demo | Bottom sheet with handle; full-width checklist rows |
+
+Scannability: large tappable rows (icon + label + helper + checkbox), not a dense combo matrix.
+
+---
+
+## In scope
+
+- Destination picker IA/layout (Direction A checklist rows)
+- Select-all / multi-select / Continue gate
+- Handoff into existing Email / Social / Website draft or preview entry points (product)
+- FC staging visual tokens (colors, radii, Inter/system-ui)
+- Mobile + desktop presentations above
+
+## Out of scope / non-goals
+
+- **NG-1:** Changing publish/send pipelines beyond which destinations are chosen  
+- **NG-2:** New channels beyond Email / Social / Website  
+- **NG-3:** Live social / email / WP sends during staging verification — draft, preview, save only  
+- Meteor/app wiring in this static mock (fake names only)  
+- Direction B/C chrome (chips/cards) — archived under Pages `./directions/` for reference only  
+
+---
+
+## Acceptance mapping (issue AC)
+
+- **AC-1:** Three independent options — Email, Social, Website (no combo list as primary)  
+- **AC-2:** Any non-empty subset selectable  
+- **AC-3:** Select all makes “all three” as easy as one  
+- **AC-4:** Existing share flows still work per selected channel (mock shows stub cards with “Open draft” / “Preview”, not Send/Publish live)  
+- **AC-5:** Scannable on mobile and desktop  
+
+---
+
+## Staging verify constraints
+
+Environment: FC staging (Galaxy `staging` branch).  
+**Hard constraint:** no outbound sends — draft/preview/save only unless explicitly required later.
+
+---
+
+## Mock files (this folder)
+
+```
+mock-a/
+  index.html      # library + picker
+  flow.html       # channel summary
+  mobile.html     # phone frame
+  styles.css
+  app.js
+  BUILD-CONTRACT.md
+  README.md
+```
+</pre></body></html>
