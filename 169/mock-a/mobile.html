@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Direction A — Mobile stacked · FC Scan #169</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body class="phone-page">
+  <a class="back" href="index.html">← Desktop dense table</a>
+
+  <div class="phone-frame" aria-label="Phone preview">
+    <div class="phone-notch"><span></span></div>
+    <div class="phone-screen">
+      <main class="main" style="padding:12px">
+        <div class="crumbs">Pick for me · <span>Scan results</span></div>
+
+        <section class="panel">
+          <div class="panel-head">
+            <div>
+              <h1 style="font-size:16px">Scan results</h1>
+              <p class="sub" id="panel-sub">Services · allowlist tags</p>
+            </div>
+            <button type="button" class="btn btn-ghost btn-sm" id="btn-rescan">Re-scan</button>
+          </div>
+
+          <div class="before" id="before-strip">
+            <div class="before-label">
+              <span>BEFORE — free-text + Confirmed</span>
+              <button type="button" class="before-dismiss" id="before-dismiss" aria-label="Dismiss">×</button>
+            </div>
+            <div class="before-row">
+              <input class="before-input" readonly value="life insurance, family…" />
+              <label class="before-check"><input type="checkbox" disabled checked /> Confirmed</label>
+            </div>
+          </div>
+
+          <p class="hint" style="margin-top:10px">Allowlist chips only. Tap <em>Pick tags…</em> or suggested pills.</p>
+
+          <div class="toolbar">
+            <button type="button" class="btn btn-sm" id="btn-select-all-use">All Use</button>
+            <button type="button" class="btn btn-sm" id="btn-clear-use">Clear Use</button>
+          </div>
+
+          <div id="empty-state" class="empty-state">
+            <h2>No services</h2>
+            <p>Restore demo data to continue.</p>
+            <button type="button" class="btn btn-primary" id="btn-restore-demo">Restore demo</button>
+          </div>
+
+          <div id="results-block" class="results-block">
+            <!-- Force stacked layout in phone frame -->
+            <div class="table-wrap" style="display:none" aria-hidden="true">
+              <table class="scan"><tbody id="tbody"></tbody></table>
+            </div>
+            <div class="card-stack" id="card-stack" style="display:flex"></div>
+          </div>
+
+          <div class="panel-foot">
+            <span class="stat" id="stat"></span>
+            <button type="button" class="btn btn-primary" id="btn-save">Save services</button>
+          </div>
+        </section>
+      </main>
+    </div>
+  </div>
+
+  <p class="phone-caption">
+    ≤640px fallback: stacked cards keep Name edit, allowlist chip picker, Use for suggestions toggle, and Save toast.
+  </p>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  <script src="app.js"></script>
+</body>
+</html>

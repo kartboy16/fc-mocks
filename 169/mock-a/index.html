@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Direction A — Dense table · FC Scan #169</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="demo-bar">
+    <div>
+      <strong>A — Dense table · GitHub #169</strong>
+      <p>Scan results → durable services with allowlist tags + “Use for suggestions”. Smoke: edit Name, add/remove tags on Annuities, toggle Use, Save toast.</p>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:8px;align-items:flex-end">
+      <nav class="nav">
+        <a href="../pages-root/index.html">Hub</a>
+        <a href="mobile.html">Mobile frame</a>
+        <a href="BUILD-CONTRACT.md">Build contract</a>
+        <a href="README.md">README</a>
+      </nav>
+      <div class="demo-toggles">
+        <label><input type="checkbox" id="demo-empty" /> Empty state</label>
+        <button type="button" class="btn btn-sm" id="demo-reset" style="background:rgba(255,255,255,0.12);color:#fff;border-color:rgba(255,255,255,0.25)">Reset demo</button>
+      </div>
+    </div>
+  </header>
+
+  <div class="app">
+    <aside class="sidebar" aria-label="FC admin nav">
+      <div class="logo">FC</div>
+      <div class="nav-ico active" title="Content">📄</div>
+      <div class="nav-ico" title="Website">🌐</div>
+      <div class="nav-ico" title="Social">📣</div>
+      <div class="nav-ico" title="Profile">👤</div>
+    </aside>
+
+    <main class="main">
+      <div class="crumbs">Manage Advisor · Pick for me · <span>Scan website for services</span></div>
+
+      <section class="panel" aria-labelledby="panel-title">
+        <div class="panel-head">
+          <div>
+            <h1 id="panel-title">Scan results</h1>
+            <p class="sub" id="panel-sub">5 services found · match HTML Posts via allowlist tags</p>
+            <p class="meta">
+              Site <a href="https://financialtechtools.ca" onclick="return false;">https://financialtechtools.ca</a>
+              · Last scanned 9/15/2026
+            </p>
+          </div>
+          <div class="head-actions">
+            <button type="button" class="btn btn-ghost" id="btn-rescan">Re-scan site</button>
+          </div>
+        </div>
+
+        <!-- Demo contrast only — not product chrome -->
+        <div class="before" id="before-strip">
+          <div class="before-label">
+            <span>BEFORE (contrast only — free-text commas + Confirmed)</span>
+            <button type="button" class="before-dismiss" id="before-dismiss" aria-label="Dismiss before strip">×</button>
+          </div>
+          <div class="before-row">
+            <input class="before-input" readonly value="life insurance, family, …" aria-label="Old free-text tags" />
+            <label class="before-check"><input type="checkbox" disabled checked /> Confirmed</label>
+          </div>
+        </div>
+
+        <p class="hint">
+          Tags are <strong>allowlist-only</strong> (HTML Post / Master Category taxonomy).
+          Empty cells show dashed <em>Pick tags…</em>; suggested tags appear subtly — click to add.
+          You cannot invent tags.
+        </p>
+
+        <div class="toolbar" id="toolbar">
+          <button type="button" class="btn btn-sm" id="btn-select-all-use">Select all Use</button>
+          <button type="button" class="btn btn-sm" id="btn-clear-use">Clear Use</button>
+          <span class="spacer"></span>
+        </div>
+
+        <div id="empty-state" class="empty-state" role="status">
+          <h2>No scanned services yet</h2>
+          <p>Run <strong>Scan website for services</strong> to extract durable services, or restore the demo dataset.</p>
+          <button type="button" class="btn btn-primary" id="btn-restore-demo">Restore demo services</button>
+        </div>
+
+        <div id="results-block" class="results-block">
+          <!-- Desktop / tablet: dense table (horizontal scroll on narrow) -->
+          <div class="table-wrap">
+            <table class="scan">
+              <thead>
+                <tr>
+                  <th class="col-use">Use for suggestions</th>
+                  <th class="col-name">Name</th>
+                  <th class="col-tags">Tags</th>
+                  <th class="col-actions">Actions</th>
+                </tr>
+              </thead>
+              <tbody id="tbody"></tbody>
+            </table>
+          </div>
+
+          <!-- ≤640px: stacked cards with same controls -->
+          <div class="card-stack" id="card-stack" aria-label="Services (mobile layout)"></div>
+        </div>
+
+        <div class="panel-foot">
+          <span class="stat" id="stat"></span>
+          <button type="button" class="btn" onclick="history.back()">Cancel</button>
+          <button type="button" class="btn btn-primary" id="btn-save">Save services</button>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  <script src="app.js"></script>
+</body>
+</html>

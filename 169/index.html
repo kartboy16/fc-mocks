@@ -3,7 +3,10 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>FC Website services scan results · Directions #169</title>
+  <title>FC Website services scan · #169 · Pages hub</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <style>
     :root {
       --bg: #f4f8fc;
@@ -13,7 +16,7 @@
       --ink-soft: #2c3e50;
       --muted: #5b6572;
       --blue: #2b7de9;
-      --blue-mid: #4a96e0;
+      --blue-bright: #2196f3;
       --border: #d4e4f2;
       --mint: #e6f1fb;
       --radius-card: 12px;
@@ -41,8 +44,7 @@
     .hero h1 { font-size: 26px; font-weight: 700; margin-bottom: 10px; }
     .hero p { font-size: 15px; max-width: 680px; opacity: 0.92; }
     .hero .meta {
-      margin-top: 14px; display: flex; flex-wrap: wrap; gap: 10px;
-      font-size: 13px;
+      margin-top: 14px; display: flex; flex-wrap: wrap; gap: 10px; font-size: 13px;
     }
     .hero .meta a {
       color: #a8d0ff; text-decoration: none;
@@ -50,200 +52,156 @@
       padding: 6px 12px; border-radius: 999px;
     }
     .hero .meta a:hover { background: rgba(255,255,255,0.16); }
-
-    .wrap { max-width: 960px; margin: 0 auto; padding: 28px 20px 48px; }
-
+    .wrap { max-width: 920px; margin: 0 auto; padding: 28px 20px 48px; }
     .issue {
       background: var(--card);
       border: 1px solid var(--border);
       border-radius: var(--radius-card);
       padding: 16px 18px;
-      margin-bottom: 28px;
+      margin-bottom: 24px;
     }
-    .issue h2 { font-size: 13px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); margin-bottom: 6px; }
+    .issue h2 {
+      font-size: 12px; text-transform: uppercase; letter-spacing: 0.06em;
+      color: var(--muted); margin-bottom: 6px;
+    }
     .issue p { font-size: 15px; color: var(--ink-soft); }
 
-    .grid {
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 16px;
-      margin-bottom: 32px;
-    }
-    @media (min-width: 720px) {
-      .grid { grid-template-columns: repeat(3, 1fr); }
-    }
-
-    .dir {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-card);
-      padding: 18px;
-      display: flex; flex-direction: column; gap: 10px;
+    .primary-cta {
+      display: block;
       text-decoration: none; color: inherit;
-      transition: border-color 0.15s, box-shadow 0.15s;
+      background: var(--card);
+      border: 2px solid var(--blue);
+      border-radius: var(--radius-card);
+      padding: 22px 24px;
+      margin-bottom: 28px;
+      box-shadow: 0 4px 20px rgba(43,125,233,0.12);
+      transition: box-shadow 0.15s, transform 0.15s;
     }
-    .dir:hover {
-      border-color: var(--blue);
-      box-shadow: 0 4px 16px rgba(43, 125, 233, 0.12);
+    .primary-cta:hover {
+      box-shadow: 0 8px 28px rgba(43,125,233,0.18);
+      transform: translateY(-1px);
     }
-    .dir .badge {
+    .primary-cta .badge {
       display: inline-block;
       font-size: 11px; font-weight: 700; letter-spacing: 0.06em;
       text-transform: uppercase;
-      color: var(--blue);
-      background: var(--mint);
-      padding: 4px 10px; border-radius: 999px;
-      align-self: flex-start;
+      color: #fff; background: var(--blue);
+      padding: 4px 10px; border-radius: 999px; margin-bottom: 10px;
     }
-    .dir h3 { font-size: 18px; color: var(--ink); }
-    .dir .thesis { font-size: 13px; color: var(--muted); flex: 1; }
-    .dir .cta {
-      font-size: 13px; font-weight: 600; color: var(--blue);
-      margin-top: 4px;
+    .primary-cta h3 { font-size: 20px; margin-bottom: 6px; color: var(--ink); }
+    .primary-cta p { font-size: 14px; color: var(--muted); margin-bottom: 12px; }
+    .primary-cta .go {
+      font-size: 14px; font-weight: 700; color: var(--blue);
     }
 
-    .compare-cta {
-      display: block;
-      background: var(--mint);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-card);
-      padding: 18px 20px;
-      text-decoration: none; color: inherit;
-      margin-bottom: 32px;
+    .section-title {
+      font-size: 14px; font-weight: 650; margin-bottom: 12px; color: var(--ink);
     }
-    .compare-cta:hover { border-color: var(--blue); }
-    .compare-cta strong { color: var(--blue); font-size: 15px; }
-    .compare-cta p { font-size: 13px; color: var(--muted); margin-top: 4px; }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
+    .links {
+      display: grid; gap: 10px;
+      grid-template-columns: 1fr;
+      margin-bottom: 28px;
+    }
+    @media (min-width: 640px) {
+      .links { grid-template-columns: 1fr 1fr; }
+    }
+    .link-card {
       background: var(--card);
       border: 1px solid var(--border);
       border-radius: var(--radius-card);
-      overflow: hidden;
+      padding: 14px 16px;
+      text-decoration: none; color: inherit;
       font-size: 13px;
     }
-    th, td {
-      padding: 12px 14px;
-      text-align: left;
-      border-bottom: 1px solid var(--border);
-      vertical-align: top;
-    }
-    th {
-      background: var(--bg-alt);
-      font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em;
-      color: var(--muted); font-weight: 700;
-    }
-    tr:last-child td { border-bottom: none; }
-    td:first-child { font-weight: 600; color: var(--ink); white-space: nowrap; }
+    .link-card:hover { border-color: var(--blue); }
+    .link-card strong { display: block; font-size: 14px; color: var(--ink); margin-bottom: 4px; }
+    .link-card span { color: var(--muted); }
 
-    .section-title {
-      font-size: 15px; font-weight: 650; margin-bottom: 12px; color: var(--ink);
-    }
-    .before-note {
-      font-size: 12px; color: var(--muted);
-      margin-top: 20px; padding: 12px;
+    .archive {
       background: var(--bg-alt);
-      border-radius: 8px;
       border: 1px dashed #c5cdd6;
+      border-radius: var(--radius-card);
+      padding: 16px 18px;
+    }
+    .archive h3 {
+      font-size: 12px; text-transform: uppercase; letter-spacing: 0.06em;
+      color: var(--muted); margin-bottom: 10px;
+    }
+    .archive ul { list-style: none; display: flex; flex-wrap: wrap; gap: 8px 16px; }
+    .archive a { font-size: 13px; font-weight: 600; text-decoration: none; }
+    .archive a:hover { text-decoration: underline; }
+    .foot {
+      margin-top: 28px; font-size: 12px; color: var(--muted);
     }
   </style>
 </head>
 <body>
   <header class="hero">
     <div class="kicker">FinancialContent · GitHub #169</div>
-    <h1>Website services scan results — visual directions</h1>
-    <p>Replace free-text comma tags and a vague “Confirmed” checkbox with allowlist-only chips (HTML Post / Master Category) and a clear <strong>Use for suggestions</strong> toggle — so scan → match HTML Posts.</p>
+    <h1>Website services scan results</h1>
+    <p>
+      Free-text tags + “Confirmed” → editable Name, <strong>allowlist-only</strong> chip picker,
+      and <strong>Use for suggestions</strong> so scan → durable services → HTML Post matching.
+    </p>
     <div class="meta">
-      <a href="directions/a/index.html">Direction A</a>
-      <a href="directions/b/index.html">Direction B</a>
-      <a href="directions/c/index.html">Direction C</a>
-      <a href="compare.html">Side-by-side compare</a>
-      <a href="README.md">README</a>
+      <a href="https://github.com/kartboy16/content-library/issues/169" target="_blank" rel="noopener">Issue #169</a>
+      <a href="mock-a/BUILD-CONTRACT.md">Build contract</a>
+      <a href="compare.html">Compare directions</a>
     </div>
   </header>
 
-  <main class="wrap">
+  <div class="wrap">
     <div class="issue">
-      <h2>Issue one-liner</h2>
-      <p>Today’s scan results panel uses free-text tags and Confirmed. Redesign for durable services: editable name, allowlist chip picker only, and “Use for suggestions” so tags drive HTML Post matching.</p>
+      <h2>Product goal</h2>
+      <p>
+        Scan advisor sites for services, then store durable rows with taxonomy tags from the
+        HTML Post / Master Category allowlist — not free typing — so Pick for me can match content.
+      </p>
     </div>
 
-    <div class="grid">
-      <a class="dir" href="directions/a/index.html">
-        <span class="badge">A</span>
-        <h3>Dense table</h3>
-        <p class="thesis">Admin table: Name | Tags (chip cell → dropdown) | Use for suggestions. Inline edit. Compact for power users reviewing many scanned services.</p>
-        <span class="cta">Open interactive board →</span>
-      </a>
-      <a class="dir" href="directions/b/index.html">
-        <span class="badge">B</span>
-        <h3>Card stack</h3>
-        <p class="thesis">Each service is a card with name, chip area + Add tag popover, and toggle in the header. Empties show a dashed “Pick tags…” CTA.</p>
-        <span class="cta">Open interactive board →</span>
-      </a>
-      <a class="dir" href="directions/c/index.html">
-        <span class="badge">C</span>
-        <h3>Split inspector</h3>
-        <p class="thesis">Left list (name + tag count + pill). Right detail: searchable chip picker, suggested vs selected, Use for suggestions. Best for long allowlists.</p>
-        <span class="cta">Open interactive board →</span>
-      </a>
-    </div>
-
-    <a class="compare-cta" href="compare.html">
-      <strong>Compare A / B / C side-by-side →</strong>
-      <p>Matrix of density, empty-state coaching, allowlist scale, and power-user vs guided feel.</p>
+    <a class="primary-cta" href="mock-a/index.html">
+      <span class="badge">Primary · Direction A</span>
+      <h3>Dense table mock</h3>
+      <p>
+        Use for suggestions · editable Name · chip cell with searchable allowlist ·
+        Save toast · mobile stacked fallback. Smoke Annuities empty → Pick tags…
+      </p>
+      <span class="go">Open mock-a →</span>
     </a>
 
-    <h2 class="section-title">Quick compare</h2>
-    <table>
-      <thead>
-        <tr>
-          <th>Lens</th>
-          <th>A · Dense table</th>
-          <th>B · Card stack</th>
-          <th>C · Split inspector</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td>Density</td>
-          <td>Highest — many rows visible</td>
-          <td>Medium — one card per service</td>
-          <td>List dense; detail spacious</td>
-        </tr>
-        <tr>
-          <td>Empty tags</td>
-          <td>Inline prompt in chip cell</td>
-          <td>Dashed CTA card area</td>
-          <td>Detail pane + suggested section</td>
-        </tr>
-        <tr>
-          <td>Allowlist scale</td>
-          <td>Dropdown in cell</td>
-          <td>Searchable popover</td>
-          <td>Full searchable picker (best for long lists)</td>
-        </tr>
-        <tr>
-          <td>Tone</td>
-          <td>Power-admin / table</td>
-          <td>Guided / card UI</td>
-          <td>Inspector / master-detail</td>
-        </tr>
-        <tr>
-          <td>Best if…</td>
-          <td>Many services, table parity</td>
-          <td>Want empty-state coaching</td>
-          <td>Allowlist is long; deep edit one at a time</td>
-        </tr>
-      </tbody>
-    </table>
+    <p class="section-title">Docs &amp; mobile</p>
+    <div class="links">
+      <a class="link-card" href="mock-a/BUILD-CONTRACT.md">
+        <strong>BUILD-CONTRACT.md</strong>
+        <span>One-liner, interaction rules, mapping notes, in/out of scope for Software developer</span>
+      </a>
+      <a class="link-card" href="mock-a/mobile.html">
+        <strong>Mobile phone frame</strong>
+        <span>Stacked cards ≤640px with same controls</span>
+      </a>
+      <a class="link-card" href="mock-a/README.md">
+        <strong>mock-a README</strong>
+        <span>Paths, smoke checklist, tokens, localStorage key</span>
+      </a>
+      <a class="link-card" href="compare.html">
+        <strong>Compare A / B / C</strong>
+        <span>Side-by-side matrix of early direction boards</span>
+      </a>
+    </div>
 
-    <p class="before-note">
-      <strong>BEFORE:</strong> free-text “life insurance, family, …” + Confirmed checkbox —
-      contrast strip included on every direction board.
+    <div class="archive">
+      <h3>Archive — early direction boards</h3>
+      <ul>
+        <li><a href="directions/a/index.html">A — Dense table (sketch)</a></li>
+        <li><a href="directions/b/index.html">B — Card stack</a></li>
+        <li><a href="directions/c/index.html">C — Split inspector</a></li>
+        <li><a href="compare.html">Compare</a></li>
+      </ul>
+    </div>
+
+    <p class="foot">
+      Fake data only · Absolute paths under <code>/workspace/fc-scan-169/pages-root/</code> · Do not git push.
     </p>
-  </main>
+  </div>
 </body>
 </html>
