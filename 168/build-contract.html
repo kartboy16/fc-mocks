@@ -1,8 +1,11 @@
 <!DOCTYPE html><html lang="en-CA"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
 <title>Build contract — Share picker #168 Direction A</title>
+<meta http-equiv="Cache-Control" content="no-cache"/>
 <style>body{font-family:Inter,system-ui,sans-serif;max-width:860px;margin:40px auto;padding:0 20px;color:#1e2a4a;line-height:1.5}
-a{color:#2b7de9} pre{white-space:pre-wrap;background:#fff;border:1px solid #d4e4f2;border-radius:12px;padding:24px}</style></head><body>
+a{color:#2b7de9} pre{white-space:pre-wrap;background:#fff;border:1px solid #d4e4f2;border-radius:12px;padding:24px}
+table{border-collapse:collapse;width:100%;margin:12px 0} th,td{border:1px solid #d4e4f2;padding:8px;text-align:left}</style></head><body>
 <p><a href="index.html">← Hub</a> · <a href="mock-a/">Mock</a></p>
+<p><strong>Updated:</strong> AC-6 Email-only → full article.</p>
 <pre># Build contract — Share destination picker (Direction A)
 
 **Issue:** [kartboy16/content-library#168](https://github.com/kartboy16/content-library/issues/168)  
@@ -104,6 +107,15 @@ Scannability: large tappable rows (icon + label + helper + checkbox), not a dens
 - **AC-3:** Select all makes “all three” as easy as one  
 - **AC-4:** Existing share flows still work per selected channel (mock shows stub cards with “Open draft” / “Preview”, not Send/Publish live)  
 - **AC-5:** Scannable on mobile and desktop  
+- **AC-6:** **Email-only → full article.** If the advisor selects **Email** and does **not** select **Website**, the email campaign must use the **full article** body (there is no website post to link to). Map the old staging combo **“Email full article”** → Email-only selection. When **Website is also selected**, keep today’s teaser + link-to-site email behavior.
+
+### Email body mode (product rule)
+
+| Selection | Email content |
+|-----------|----------------|
+| Email only | **Full article** in the email body (no site link required) |
+| Email + Website (± Social) | **Teaser + link** to the site post (current Website+Email behavior) |
+| Email + Social (no Website) | **Full article** (same as Email-only — no site link) |
 
 ---
 

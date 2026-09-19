@@ -99,6 +99,15 @@ Scannability: large tappable rows (icon + label + helper + checkbox), not a dens
 - **AC-3:** Select all makes “all three” as easy as one  
 - **AC-4:** Existing share flows still work per selected channel (mock shows stub cards with “Open draft” / “Preview”, not Send/Publish live)  
 - **AC-5:** Scannable on mobile and desktop  
+- **AC-6:** **Email-only → full article.** If the advisor selects **Email** and does **not** select **Website**, the email campaign must use the **full article** body (there is no website post to link to). Map the old staging combo **“Email full article”** → Email-only selection. When **Website is also selected**, keep today’s teaser + link-to-site email behavior.
+
+### Email body mode (product rule)
+
+| Selection | Email content |
+|-----------|----------------|
+| Email only | **Full article** in the email body (no site link required) |
+| Email + Website (± Social) | **Teaser + link** to the site post (current Website+Email behavior) |
+| Email + Social (no Website) | **Full article** (same as Email-only — no site link) |
 
 ---
 
