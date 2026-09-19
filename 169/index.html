@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>FC Website services scan results · Directions #169</title>
+  <style>
+    :root {
+      --bg: #f4f8fc;
+      --bg-alt: #fafafa;
+      --card: #ffffff;
+      --ink: #1e2a4a;
+      --ink-soft: #2c3e50;
+      --muted: #5b6572;
+      --blue: #2b7de9;
+      --blue-mid: #4a96e0;
+      --border: #d4e4f2;
+      --mint: #e6f1fb;
+      --radius-card: 12px;
+      --radius-btn: 8px;
+      --font: Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: var(--font);
+      background: var(--bg);
+      color: var(--ink);
+      min-height: 100vh;
+      line-height: 1.5;
+    }
+    a { color: var(--blue); }
+    .hero {
+      background: linear-gradient(135deg, #1e2a4a 0%, #2c3e50 100%);
+      color: #fff;
+      padding: 28px 24px 32px;
+    }
+    .hero .kicker {
+      font-size: 12px; font-weight: 700; letter-spacing: 0.08em;
+      text-transform: uppercase; opacity: 0.75; margin-bottom: 8px;
+    }
+    .hero h1 { font-size: 26px; font-weight: 700; margin-bottom: 10px; }
+    .hero p { font-size: 15px; max-width: 680px; opacity: 0.92; }
+    .hero .meta {
+      margin-top: 14px; display: flex; flex-wrap: wrap; gap: 10px;
+      font-size: 13px;
+    }
+    .hero .meta a {
+      color: #a8d0ff; text-decoration: none;
+      background: rgba(255,255,255,0.08);
+      padding: 6px 12px; border-radius: 999px;
+    }
+    .hero .meta a:hover { background: rgba(255,255,255,0.16); }
+
+    .wrap { max-width: 960px; margin: 0 auto; padding: 28px 20px 48px; }
+
+    .issue {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-card);
+      padding: 16px 18px;
+      margin-bottom: 28px;
+    }
+    .issue h2 { font-size: 13px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); margin-bottom: 6px; }
+    .issue p { font-size: 15px; color: var(--ink-soft); }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 16px;
+      margin-bottom: 32px;
+    }
+    @media (min-width: 720px) {
+      .grid { grid-template-columns: repeat(3, 1fr); }
+    }
+
+    .dir {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-card);
+      padding: 18px;
+      display: flex; flex-direction: column; gap: 10px;
+      text-decoration: none; color: inherit;
+      transition: border-color 0.15s, box-shadow 0.15s;
+    }
+    .dir:hover {
+      border-color: var(--blue);
+      box-shadow: 0 4px 16px rgba(43, 125, 233, 0.12);
+    }
+    .dir .badge {
+      display: inline-block;
+      font-size: 11px; font-weight: 700; letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--blue);
+      background: var(--mint);
+      padding: 4px 10px; border-radius: 999px;
+      align-self: flex-start;
+    }
+    .dir h3 { font-size: 18px; color: var(--ink); }
+    .dir .thesis { font-size: 13px; color: var(--muted); flex: 1; }
+    .dir .cta {
+      font-size: 13px; font-weight: 600; color: var(--blue);
+      margin-top: 4px;
+    }
+
+    .compare-cta {
+      display: block;
+      background: var(--mint);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-card);
+      padding: 18px 20px;
+      text-decoration: none; color: inherit;
+      margin-bottom: 32px;
+    }
+    .compare-cta:hover { border-color: var(--blue); }
+    .compare-cta strong { color: var(--blue); font-size: 15px; }
+    .compare-cta p { font-size: 13px; color: var(--muted); margin-top: 4px; }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-card);
+      overflow: hidden;
+      font-size: 13px;
+    }
+    th, td {
+      padding: 12px 14px;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+      vertical-align: top;
+    }
+    th {
+      background: var(--bg-alt);
+      font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em;
+      color: var(--muted); font-weight: 700;
+    }
+    tr:last-child td { border-bottom: none; }
+    td:first-child { font-weight: 600; color: var(--ink); white-space: nowrap; }
+
+    .section-title {
+      font-size: 15px; font-weight: 650; margin-bottom: 12px; color: var(--ink);
+    }
+    .before-note {
+      font-size: 12px; color: var(--muted);
+      margin-top: 20px; padding: 12px;
+      background: var(--bg-alt);
+      border-radius: 8px;
+      border: 1px dashed #c5cdd6;
+    }
+  </style>
+</head>
+<body>
+  <header class="hero">
+    <div class="kicker">FinancialContent · GitHub #169</div>
+    <h1>Website services scan results — visual directions</h1>
+    <p>Replace free-text comma tags and a vague “Confirmed” checkbox with allowlist-only chips (HTML Post / Master Category) and a clear <strong>Use for suggestions</strong> toggle — so scan → match HTML Posts.</p>
+    <div class="meta">
+      <a href="directions/a/index.html">Direction A</a>
+      <a href="directions/b/index.html">Direction B</a>
+      <a href="directions/c/index.html">Direction C</a>
+      <a href="compare.html">Side-by-side compare</a>
+      <a href="README.md">README</a>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <div class="issue">
+      <h2>Issue one-liner</h2>
+      <p>Today’s scan results panel uses free-text tags and Confirmed. Redesign for durable services: editable name, allowlist chip picker only, and “Use for suggestions” so tags drive HTML Post matching.</p>
+    </div>
+
+    <div class="grid">
+      <a class="dir" href="directions/a/index.html">
+        <span class="badge">A</span>
+        <h3>Dense table</h3>
+        <p class="thesis">Admin table: Name | Tags (chip cell → dropdown) | Use for suggestions. Inline edit. Compact for power users reviewing many scanned services.</p>
+        <span class="cta">Open interactive board →</span>
+      </a>
+      <a class="dir" href="directions/b/index.html">
+        <span class="badge">B</span>
+        <h3>Card stack</h3>
+        <p class="thesis">Each service is a card with name, chip area + Add tag popover, and toggle in the header. Empties show a dashed “Pick tags…” CTA.</p>
+        <span class="cta">Open interactive board →</span>
+      </a>
+      <a class="dir" href="directions/c/index.html">
+        <span class="badge">C</span>
+        <h3>Split inspector</h3>
+        <p class="thesis">Left list (name + tag count + pill). Right detail: searchable chip picker, suggested vs selected, Use for suggestions. Best for long allowlists.</p>
+        <span class="cta">Open interactive board →</span>
+      </a>
+    </div>
+
+    <a class="compare-cta" href="compare.html">
+      <strong>Compare A / B / C side-by-side →</strong>
+      <p>Matrix of density, empty-state coaching, allowlist scale, and power-user vs guided feel.</p>
+    </a>
+
+    <h2 class="section-title">Quick compare</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Lens</th>
+          <th>A · Dense table</th>
+          <th>B · Card stack</th>
+          <th>C · Split inspector</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Density</td>
+          <td>Highest — many rows visible</td>
+          <td>Medium — one card per service</td>
+          <td>List dense; detail spacious</td>
+        </tr>
+        <tr>
+          <td>Empty tags</td>
+          <td>Inline prompt in chip cell</td>
+          <td>Dashed CTA card area</td>
+          <td>Detail pane + suggested section</td>
+        </tr>
+        <tr>
+          <td>Allowlist scale</td>
+          <td>Dropdown in cell</td>
+          <td>Searchable popover</td>
+          <td>Full searchable picker (best for long lists)</td>
+        </tr>
+        <tr>
+          <td>Tone</td>
+          <td>Power-admin / table</td>
+          <td>Guided / card UI</td>
+          <td>Inspector / master-detail</td>
+        </tr>
+        <tr>
+          <td>Best if…</td>
+          <td>Many services, table parity</td>
+          <td>Want empty-state coaching</td>
+          <td>Allowlist is long; deep edit one at a time</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <p class="before-note">
+      <strong>BEFORE:</strong> free-text “life insurance, family, …” + Confirmed checkbox —
+      contrast strip included on every direction board.
+    </p>
+  </main>
+</body>
+</html>

@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Compare A / B / C · FC Scan services #169</title>
+  <style>
+    :root {
+      --bg: #f4f8fc;
+      --bg-alt: #fafafa;
+      --card: #ffffff;
+      --ink: #1e2a4a;
+      --ink-soft: #2c3e50;
+      --muted: #5b6572;
+      --blue: #2b7de9;
+      --blue-mid: #4a96e0;
+      --border: #d4e4f2;
+      --mint: #e6f1fb;
+      --radius-card: 12px;
+      --font: Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: var(--font);
+      background: var(--bg);
+      color: var(--ink);
+      min-height: 100vh;
+      line-height: 1.45;
+    }
+    a { color: var(--blue); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    .top {
+      background: linear-gradient(135deg, #1e2a4a 0%, #2c3e50 100%);
+      color: #fff;
+      padding: 16px 20px;
+      display: flex; flex-wrap: wrap; gap: 12px;
+      align-items: center; justify-content: space-between;
+    }
+    .top h1 { font-size: 18px; font-weight: 650; }
+    .top nav { display: flex; gap: 14px; font-size: 13px; }
+    .top nav a { color: #a8d0ff; }
+
+    .wrap { max-width: 1200px; margin: 0 auto; padding: 24px 16px 48px; }
+
+    .intro {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-card);
+      padding: 14px 16px;
+      margin-bottom: 20px;
+      font-size: 14px;
+      color: var(--ink-soft);
+    }
+    .intro strong { color: var(--ink); }
+
+    .before-bar {
+      background: var(--bg-alt);
+      border: 1px dashed #c5cdd6;
+      border-radius: 8px;
+      padding: 10px 12px;
+      margin-bottom: 24px;
+      font-size: 13px;
+      color: var(--muted);
+    }
+    .before-bar .label {
+      font-size: 10px; font-weight: 700; letter-spacing: 0.08em;
+      display: block; margin-bottom: 4px;
+    }
+
+    .matrix {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 16px;
+      margin-bottom: 28px;
+    }
+    @media (min-width: 1000px) {
+      .matrix { grid-template-columns: repeat(3, 1fr); }
+    }
+
+    .col {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-card);
+      overflow: hidden;
+      display: flex; flex-direction: column;
+    }
+    .col-head {
+      padding: 14px 14px 12px;
+      border-bottom: 1px solid var(--border);
+      background: var(--mint);
+    }
+    .col-head .letter {
+      font-size: 11px; font-weight: 700; letter-spacing: 0.06em;
+      text-transform: uppercase; color: var(--blue);
+    }
+    .col-head h2 { font-size: 16px; margin-top: 2px; }
+    .col-head p { font-size: 12px; color: var(--muted); margin-top: 4px; }
+    .col-body { padding: 0; flex: 1; min-height: 520px; }
+    .col-body iframe {
+      width: 100%;
+      height: 560px;
+      border: 0;
+      display: block;
+      background: var(--bg);
+    }
+    .col-foot {
+      padding: 10px 14px;
+      border-top: 1px solid var(--border);
+      font-size: 12px;
+      background: var(--bg-alt);
+    }
+    .col-foot a { font-weight: 600; }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-card);
+      overflow: hidden;
+      font-size: 13px;
+      margin-top: 8px;
+    }
+    th, td {
+      padding: 10px 12px;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+      vertical-align: top;
+    }
+    th {
+      background: var(--bg-alt);
+      font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em;
+      color: var(--muted); font-weight: 700;
+    }
+    tr:last-child td { border-bottom: none; }
+    td:first-child { font-weight: 600; white-space: nowrap; }
+    .section-title { font-size: 15px; font-weight: 650; margin-bottom: 10px; }
+  </style>
+</head>
+<body>
+  <header class="top">
+    <h1>Compare · Scan services results #169</h1>
+    <nav>
+      <a href="index.html">Hub</a>
+      <a href="directions/a/index.html">A</a>
+      <a href="directions/b/index.html">B</a>
+      <a href="directions/c/index.html">C</a>
+      <a href="README.md">README</a>
+    </nav>
+  </header>
+
+  <main class="wrap">
+    <div class="intro">
+      <strong>Shared after-state:</strong> editable Name · allowlist-only tag chips ·
+      <strong>Use for suggestions</strong> toggle · empty Annuities prompt · suggested Personal / Corporate Life Insurance · confirmed CI/Disability row.
+      Try adding/removing chips and flipping toggles in each iframe.
+    </div>
+
+    <div class="before-bar">
+      <span class="label">BEFORE (contrast)</span>
+      Free-text: <code>life insurance, family, …</code> &nbsp;+&nbsp; ☐ Confirmed
+    </div>
+
+    <div class="matrix">
+      <div class="col">
+        <div class="col-head">
+          <div class="letter">Direction A</div>
+          <h2>Dense table</h2>
+          <p>Inline chip cells + switches. Highest density for many scanned services.</p>
+        </div>
+        <div class="col-body">
+          <iframe src="directions/a/index.html" title="Direction A"></iframe>
+        </div>
+        <div class="col-foot"><a href="directions/a/index.html">Open full board →</a></div>
+      </div>
+      <div class="col">
+        <div class="col-head">
+          <div class="letter">Direction B</div>
+          <h2>Card stack</h2>
+          <p>Cards with Add-tag popover and dashed empty CTA. Strongest coaching.</p>
+        </div>
+        <div class="col-body">
+          <iframe src="directions/b/index.html" title="Direction B"></iframe>
+        </div>
+        <div class="col-foot"><a href="directions/b/index.html">Open full board →</a></div>
+      </div>
+      <div class="col">
+        <div class="col-head">
+          <div class="letter">Direction C</div>
+          <h2>Split inspector</h2>
+          <p>List + detail with search and suggested vs selected. Scales with long allowlists.</p>
+        </div>
+        <div class="col-body">
+          <iframe src="directions/c/index.html" title="Direction C"></iframe>
+        </div>
+        <div class="col-foot"><a href="directions/c/index.html">Open full board →</a></div>
+      </div>
+    </div>
+
+    <h2 class="section-title">Decision matrix</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Lens</th>
+          <th>A · Dense table</th>
+          <th>B · Card stack</th>
+          <th>C · Split inspector</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Density</td>
+          <td>Highest</td>
+          <td>Medium</td>
+          <td>List high / detail medium</td>
+        </tr>
+        <tr>
+          <td>Empty-state coaching</td>
+          <td>Inline cell prompt</td>
+          <td>Dashed CTA (strongest)</td>
+          <td>Detail + suggested section</td>
+        </tr>
+        <tr>
+          <td>Long allowlist</td>
+          <td>OK (dropdown)</td>
+          <td>Good (search popover)</td>
+          <td>Best (full searchable pane)</td>
+        </tr>
+        <tr>
+          <td>Bulk review</td>
+          <td>Best</td>
+          <td>OK</td>
+          <td>Good (list scan + deep edit)</td>
+        </tr>
+        <tr>
+          <td>Best if…</td>
+          <td>Power users, many rows</td>
+          <td>Guided review, empty CTAs</td>
+          <td>Taxonomy is long / deep edits</td>
+        </tr>
+      </tbody>
+    </table>
+  </main>
+</body>
+</html>
