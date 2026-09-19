@@ -94,7 +94,7 @@
           </span>
           <span class="row-text">
             <span class="row-label">Email</span>
-            <span class="row-help">Send to your client list</span>
+            <span class="row-help" data-email-help>Full article if Email only; teaser + link when Website is on</span>
           </span>
           <span class="check" aria-hidden="true">
             <svg viewBox="0 0 14 14" fill="none"><path d="M2.5 7.5L5.5 10.5L11.5 3.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
@@ -127,7 +127,8 @@
       </div>
 
       <div class="actions">
-        <button type="button" class="btn-primary" id="continue" disabled>Continue</button>
+        <p class="email-mode-hint" id="emailModeHint" hidden>Email only → full article (no site link).</p>
+      <button type="button" class="btn-primary" id="continue" disabled>Continue</button>
         <button type="button" class="btn-ghost" id="cancelBtn">Cancel</button>
       </div>
     </div>

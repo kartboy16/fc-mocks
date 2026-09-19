@@ -6,7 +6,7 @@
   'use strict';
 
   var CHANNELS = {
-    email: { label: 'Email', help: 'Send to your client list' },
+    email: { label: 'Email', help: 'Full article if Email only; teaser + link when Website is on' },
     social: { label: 'Social', help: 'Post to linked networks' },
     website: { label: 'Website', help: 'Publish on your site' }
   };
@@ -50,6 +50,21 @@
     if (clearLink) {
       if (n > 0) clearLink.classList.add('is-visible');
       else clearLink.classList.remove('is-visible');
+    }
+
+    var hint = $('#emailModeHint');
+    if (hint) {
+      var ids = getSelected();
+      var emailOnly = ids.indexOf('email') !== -1 && ids.indexOf('website') === -1;
+      if (emailOnly) {
+        hint.hidden = false;
+        hint.textContent = 'Email only → full article in the campaign (no site link). Maps old “Email full article”.';
+      } else if (ids.indexOf('email') !== -1 && ids.indexOf('website') !== -1) {
+        hint.hidden = false;
+        hint.textContent = 'Email + Website → teaser email with link to the site post.';
+      } else {
+        hint.hidden = true;
+      }
     }
   }
 
@@ -272,13 +287,30 @@
       website: '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 010 18M12 3a14 14 0 000 18"/></svg>'
     };
 
-    var stubs = {
-      email:
+    var hasWebsite = channels.indexOf('website') !== -1;
+    var emailStub = hasWebsite
+      ? (
+        'Mode: Teaser + link (Website also selected)\n' +
         'To: Client list (248 contacts)\n' +
         'Subject: RRSP tips for clients\n' +
         '—\n' +
         'Hi {{first_name}},\n' +
-        'Three practical talking points before contribution season…',
+        'Quick tip before contribution season…\n' +
+        'Read more: https://advisor-demo.example/insights/rrsp-tips-for-clients'
+      )
+      : (
+        'Mode: Full article (Email only — AC-6)\n' +
+        'To: Client list (248 contacts)\n' +
+        'Subject: RRSP tips for clients\n' +
+        '—\n' +
+        'Hi {{first_name}},\n' +
+        'Three practical talking points before contribution season —\n' +
+        'contribution room, spousal RRSPs, and timing withdrawals.\n' +
+        '[Full article body continues…]'
+      );
+
+    var stubs = {
+      email: emailStub,
       social:
         'Network: LinkedIn (demo)\n' +
         'Post preview:\n' +
@@ -288,6 +320,10 @@
         'Status: Draft unpublished\n' +
         'Slug: /insights/rrsp-tips-for-clients'
     };
+
+    var emailHelp = hasWebsite
+      ? 'Teaser + link to the site post'
+      : 'Full article in the email (no site link)';
 
     var ctas = {
       email: 'Open draft',
@@ -310,7 +346,7 @@
         '<div class="step-icon" aria-hidden="true">' + (chipIcons[id] || '') + '</div>' +
         '<div class="step-body">' +
         '<h3>' + CHANNELS[id].label + '</h3>' +
-        '<p>' + CHANNELS[id].help + ' — draft / preview only (no live send).</p>' +
+        '<p>' + (id === 'email' ? emailHelp : CHANNELS[id].help) + ' — draft / preview only (no live send).</p>' +
         '<div class="step-stub">' + stubs[id] + '</div>' +
         '<button type="button" class="btn-sm" data-stub-action="' + id + '">' + ctas[id] + '</button>' +
         '</div></article>'

@@ -89,7 +89,7 @@ Scannability: large tappable rows (icon + label + helper + checkbox), not a dens
 
 ## Out of scope / non-goals
 
-- **NG-1:** Changing publish/send pipelines beyond which destinations are chosen  
+- **NG-1:** Broad pipeline rewrites — **except** Email body mode must follow AC-6 (full article when Email-only; teaser+link when Website is also selected)  
 - **NG-2:** New channels beyond Email / Social / Website  
 - **NG-3:** Live social / email / WP sends during staging verification — draft, preview, save only  
 - Meteor/app wiring in this static mock (fake names only)  
@@ -111,6 +111,11 @@ Scannability: large tappable rows (icon + label + helper + checkbox), not a dens
 
 Environment: FC staging (Galaxy `staging` branch).  
 **Hard constraint:** no outbound sends — draft/preview/save only unless explicitly required later.
+
+**AC-6 verify (draft/preview only):**
+1. Select Email only → Continue → email draft shows full article (not teaser+link).
+2. Select Email + Website → email draft shows teaser + site link.
+3. Confirm old “Email full article” combo is gone; Email-only covers that case.
 
 ---
 
