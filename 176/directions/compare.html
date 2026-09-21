@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Compare directions — FC #176 Manual advisor services</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #f4f8fc; --bg2: #fafafa; --card: #fff; --ink: #1e2a4a;
+      --muted: #5b6572; --blue: #2b7de9; --blue2: #2196f3;
+      --border: #d4e4f2; --mint: #e6f1fb;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: Inter, system-ui, sans-serif; background: var(--bg); color: var(--ink); line-height: 1.5; }
+    .wrap { max-width: 960px; margin: 0 auto; padding: 32px 20px 64px; }
+    h1 { font-size: 1.5rem; margin-bottom: 8px; }
+    .sub { color: var(--muted); margin-bottom: 24px; font-size: 0.95rem; }
+    .rec {
+      background: var(--mint); border: 1px solid var(--border); border-radius: 12px;
+      padding: 16px 20px; margin-bottom: 28px;
+    }
+    .rec strong { color: var(--blue); }
+    table {
+      width: 100%; border-collapse: collapse; background: var(--card);
+      border-radius: 12px; overflow: hidden; border: 1px solid var(--border);
+      font-size: 0.9rem;
+    }
+    th, td { padding: 14px 16px; text-align: left; border-bottom: 1px solid var(--border); vertical-align: top; }
+    th { background: var(--mint); font-weight: 600; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.03em; }
+    tr:last-child td { border-bottom: none; }
+    .tag {
+      display: inline-block; background: var(--blue); color: #fff; font-size: 0.7rem;
+      font-weight: 600; padding: 2px 8px; border-radius: 999px; margin-left: 6px; vertical-align: middle;
+    }
+    a { color: var(--blue); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    .nav { margin-bottom: 20px; font-size: 0.875rem; }
+    .nav a { margin-right: 12px; }
+    .ba {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 28px 0;
+    }
+    .ba > div {
+      background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 16px;
+    }
+    .ba .lbl { font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; color: var(--muted); margin-bottom: 6px; }
+    .ba .before .lbl { color: #b45309; }
+    .ba .after .lbl { color: #047857; }
+    @media (max-width: 640px) { .ba { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="nav">
+      <a href="../index.html">← Pages hub</a>
+      <a href="a/index.html">A</a>
+      <a href="b/index.html">B</a>
+      <a href="c/index.html">C</a>
+      <a href="README.md">README</a>
+    </div>
+    <h1>Compare directions — Manual advisor services</h1>
+    <p class="sub">FC #176 · Master Categories allowlist · no primary website scan</p>
+
+    <div class="rec">
+      <strong>Recommend Direction A</strong> — Searchable grouped checklist.
+      Best fit for FC admin under Manage Advisor / Pick for me. Deepest mock; lowest friction for multi-select from the Master Category tree.
+    </div>
+
+    <div class="ba">
+      <div class="before">
+        <div class="lbl">Before</div>
+        <strong>Scan website for services</strong>
+        <p style="color:var(--muted);font-size:0.875rem;margin-top:4px;">Unreliable results · free-text names · hard to map to Pick for me</p>
+      </div>
+      <div class="after">
+        <div class="lbl">After</div>
+        <strong>Manual pick from Master Categories</strong>
+        <p style="color:var(--muted);font-size:0.875rem;margin-top:4px;">Allowlisted · durable store · same path as good scan for suggestions</p>
+      </div>
+    </div>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Aspect</th>
+          <th>A — Grouped checklist <span class="tag">REC</span></th>
+          <th>B — Dual-list</th>
+          <th>C — Chip sheet</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Interaction</td>
+          <td>Search + checkboxes + select-all per group</td>
+          <td>Available ↔ Selected with Add/Remove</td>
+          <td>Chips + modal allowlist picker</td>
+        </tr>
+        <tr>
+          <td>Cognitive load</td>
+          <td>Low — single panel</td>
+          <td>Medium — two panes</td>
+          <td>Low surface, modal for adds</td>
+        </tr>
+        <tr>
+          <td>Multi-select speed</td>
+          <td>Fast (select-all + filter)</td>
+          <td>Slower (transfer clicks)</td>
+          <td>Good for small sets</td>
+        </tr>
+        <tr>
+          <td>Admin shell fit</td>
+          <td>Strong</td>
+          <td>OK</td>
+          <td>OK for compact drawers</td>
+        </tr>
+        <tr>
+          <td>Mock depth</td>
+          <td>Full mock-a</td>
+          <td>Board only</td>
+          <td>Board only</td>
+        </tr>
+        <tr>
+          <td>Open</td>
+          <td><a href="a/index.html">Board A</a> · <a href="../mock-a/index.html">Full mock</a></td>
+          <td><a href="b/index.html">Board B</a></td>
+          <td><a href="c/index.html">Board C</a></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</body>
+</html>

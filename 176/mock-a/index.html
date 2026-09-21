@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Choose services — Jordan Lee · FC #176 Mock A</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="demo-banner">
+    <span>FC #176 Mock A · Searchable grouped checklist (recommended) · Master Categories only</span>
+    <span>
+      <a href="mobile.html">Mobile</a> ·
+      <a href="../pages-root/index.html">Pages hub</a> ·
+      <a href="../directions/compare.html">Compare</a>
+    </span>
+  </div>
+
+  <div class="app-shell">
+    <aside class="sidebar">
+      <div class="brand">FinancialContent</div>
+      <div class="brand-sub">Admin</div>
+      <nav>
+        <a href="#">Dashboard</a>
+        <a href="#">Manage Advisor Posts</a>
+        <a href="#" class="active">Pick for me</a>
+        <a href="#">Master Categories</a>
+        <a href="#">Settings</a>
+      </nav>
+    </aside>
+
+    <div class="main">
+      <div class="topbar">
+        <div>
+          <h1>Pick for me</h1>
+          <p class="advisor">Advisor: <strong>Jordan Lee</strong> · Choose services from Master Categories</p>
+        </div>
+        <span class="badge">Manual pick · primary</span>
+      </div>
+
+      <div class="mode-toggle" aria-label="Demo states">
+        <button type="button" id="modeEmpty" onclick="location.search='?mode=empty'">Empty state</button>
+        <button type="button" id="modeEdit" onclick="location.search='?mode=edit'">Edit existing</button>
+      </div>
+
+      <div class="layout">
+        <main class="panel">
+          <h2>Choose services</h2>
+          <p class="hint">Select Master Categories. Selected categories <strong>are</strong> the advisor services (durable store for Pick for me / suggestions).</p>
+
+          <div class="toolbar">
+            <input class="search" type="search" id="search" placeholder="Search categories…" autocomplete="off" />
+            <span class="count-pill" id="count">0 selected</span>
+          </div>
+
+          <div id="groups"></div>
+
+          <div class="actions">
+            <button class="btn btn-primary" id="save" disabled>Save</button>
+            <button class="btn btn-outline" id="scanBtn" type="button">Scan website instead</button>
+          </div>
+          <div class="scan-note" id="scanNote">
+            <button type="button" class="dismiss" id="dismissScan" aria-label="Dismiss">×</button>
+            <strong>Scan remains optional</strong>
+            Opens existing scan flow (stub). Primary path is manual Master Categories pick — no crawl required.
+          </div>
+        </main>
+
+        <aside class="summary">
+          <h3>Selected services</h3>
+          <div class="chips" id="chips"></div>
+          <p class="note">Saved to durable advisor services · same store a good scan would write · allowlist only</p>
+        </aside>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast" role="status"></div>
+  <script src="app.js"></script>
+</body>
+</html>

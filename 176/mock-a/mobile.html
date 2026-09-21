@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Choose services (mobile) — Jordan Lee · FC #176</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body class="mobile-layout">
+  <div class="demo-banner">
+    <span>FC #176 · Mobile stacked layout</span>
+    <a href="index.html">Desktop →</a>
+  </div>
+
+  <div class="app-shell">
+    <div class="main">
+      <div class="topbar">
+        <div>
+          <h1>Choose services</h1>
+          <p class="advisor"><strong>Jordan Lee</strong> · Pick for me</p>
+        </div>
+        <span class="badge">Manual</span>
+      </div>
+
+      <div class="mode-toggle">
+        <button type="button" id="modeEmpty" onclick="location.search='?mode=empty'">Empty</button>
+        <button type="button" id="modeEdit" onclick="location.search='?mode=edit'">Edit</button>
+      </div>
+
+      <div class="layout">
+        <aside class="summary">
+          <h3>Selected</h3>
+          <div class="chips" id="chips"></div>
+        </aside>
+
+        <main class="panel">
+          <p class="hint" style="margin-top:0">Master Categories allowlist only.</p>
+          <div class="toolbar">
+            <input class="search" type="search" id="search" placeholder="Search…" autocomplete="off" />
+            <span class="count-pill" id="count">0 selected</span>
+          </div>
+          <div id="groups"></div>
+          <div class="actions">
+            <button class="btn btn-outline" id="scanBtn" type="button">Scan website instead</button>
+          </div>
+          <div class="scan-note" id="scanNote">
+            <button type="button" class="dismiss" id="dismissScan" aria-label="Dismiss">×</button>
+            <strong>Scan remains optional</strong>
+            Opens existing scan flow (stub).
+          </div>
+        </main>
+      </div>
+    </div>
+  </div>
+
+  <div class="sticky-bar">
+    <span class="count-pill" id="stickyCount">0 selected</span>
+    <button class="btn btn-primary" id="saveSticky" disabled style="flex:1">Save</button>
+    <button class="btn btn-primary" id="save" disabled style="display:none">Save</button>
+  </div>
+
+  <div class="toast" id="toast" role="status"></div>
+  <script src="app.js"></script>
+</body>
+</html>

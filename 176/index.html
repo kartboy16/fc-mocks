@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>FC #176 — Manual advisor services · Pages hub</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #f4f8fc; --card: #fff; --ink: #1e2a4a; --muted: #5b6572;
+      --blue: #2b7de9; --border: #d4e4f2; --mint: #e6f1fb;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: Inter, system-ui, sans-serif; background: var(--bg); color: var(--ink); line-height: 1.55; }
+    .hero {
+      background: linear-gradient(135deg, #1e2a4a 0%, #2b7de9 100%);
+      color: #fff; padding: 40px 24px 36px;
+    }
+    .hero-inner { max-width: 880px; margin: 0 auto; }
+    .hero .eyebrow { font-size: 0.75rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; opacity: 0.85; margin-bottom: 10px; }
+    .hero h1 { font-size: 1.75rem; margin-bottom: 10px; }
+    .hero p { opacity: 0.92; max-width: 640px; font-size: 0.95rem; }
+    .rec {
+      display: inline-block; margin-top: 18px; background: #fff; color: var(--blue);
+      font-weight: 700; font-size: 0.8rem; padding: 8px 14px; border-radius: 999px;
+    }
+    .wrap { max-width: 880px; margin: 0 auto; padding: 28px 24px 72px; }
+    .cta {
+      display: block; background: var(--blue); color: #fff !important; text-decoration: none;
+      text-align: center; padding: 16px 24px; border-radius: 12px; font-weight: 700;
+      font-size: 1rem; margin-bottom: 28px; box-shadow: 0 4px 16px rgba(43,125,233,0.35);
+    }
+    .cta:hover { filter: brightness(1.05); }
+    .cta small { display: block; font-weight: 500; opacity: 0.9; font-size: 0.8rem; margin-top: 4px; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 14px; }
+    .card {
+      background: var(--card); border: 1px solid var(--border); border-radius: 12px;
+      padding: 18px; text-decoration: none; color: inherit; display: block;
+      transition: border-color 0.15s, box-shadow 0.15s;
+    }
+    .card:hover { border-color: var(--blue); box-shadow: 0 4px 16px rgba(30,42,74,0.08); text-decoration: none; }
+    .card h3 { font-size: 0.95rem; margin-bottom: 6px; color: var(--blue); }
+    .card p { font-size: 0.8rem; color: var(--muted); }
+    .card .tag {
+      display: inline-block; font-size: 0.65rem; font-weight: 700; background: var(--mint);
+      color: var(--blue); padding: 2px 8px; border-radius: 999px; margin-bottom: 8px;
+    }
+    h2 { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--muted); margin: 28px 0 12px; }
+    .ba {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 8px;
+    }
+    .ba > div { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 14px; font-size: 0.85rem; }
+    .ba .lbl { font-size: 0.65rem; font-weight: 700; text-transform: uppercase; margin-bottom: 4px; }
+    .ba .before .lbl { color: #b45309; }
+    .ba .after .lbl { color: #047857; }
+    @media (max-width: 560px) { .ba { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+  <header class="hero">
+    <div class="hero-inner">
+      <div class="eyebrow">FinancialContent · Designer deliverables</div>
+      <h1>Manual advisor services — #176</h1>
+      <p>Primary path: multi-select <strong>Master Categories</strong> as advisor services. No website crawl/LLM. Same durable store as a good scan for Pick for me. Scan stays secondary/optional.</p>
+      <span class="rec">Recommend Direction A — Searchable grouped checklist</span>
+    </div>
+  </header>
+
+  <div class="wrap">
+    <a class="cta" href="mock-a/index.html">
+      Open full mock A
+      <small>Jordan Lee · Choose services · Save toast smoke path</small>
+    </a>
+
+    <div class="ba">
+      <div class="before">
+        <div class="lbl">Before</div>
+        <strong>Scan website for services</strong>
+        <p style="color:var(--muted);margin-top:4px;font-size:0.8rem">→ unreliable results</p>
+      </div>
+      <div class="after">
+        <div class="lbl">After</div>
+        <strong>Manual pick from Master Categories</strong>
+        <p style="color:var(--muted);margin-top:4px;font-size:0.8rem">→ durable allowlisted services</p>
+      </div>
+    </div>
+
+    <h2>Directions</h2>
+    <div class="grid">
+      <a class="card" href="directions/a/index.html">
+        <span class="tag">RECOMMENDED</span>
+        <h3>A — Grouped checklist</h3>
+        <p>Search, select-all-per-group, count + Save. Deepened into full mock.</p>
+      </a>
+      <a class="card" href="directions/b/index.html">
+        <h3>B — Dual-list transfer</h3>
+        <p>Available ↔ Selected with Add/Remove. Search on left.</p>
+      </a>
+      <a class="card" href="directions/c/index.html">
+        <h3>C — Chip picker sheet</h3>
+        <p>Chips on top; Add opens searchable allowlist modal.</p>
+      </a>
+      <a class="card" href="directions/compare.html">
+        <h3>Compare</h3>
+        <p>Side-by-side theses; recommendation = A.</p>
+      </a>
+    </div>
+
+    <h2>Mock &amp; contract</h2>
+    <div class="grid">
+      <a class="card" href="mock-a/index.html">
+        <span class="tag">FULL MOCK</span>
+        <h3>Mock A desktop</h3>
+        <p>Empty / edit modes, chips sidebar, scan stub, Save toast.</p>
+      </a>
+      <a class="card" href="mock-a/mobile.html">
+        <h3>Mock A mobile</h3>
+        <p>Stacked layout + sticky Save bar.</p>
+      </a>
+      <a class="card" href="build-contract.html">
+        <h3>Build contract</h3>
+        <p>UI location, durable store, scan relationship, in/out of scope.</p>
+      </a>
+      <a class="card" href="directions/README.md">
+        <h3>Directions README</h3>
+        <p>Theses for A / B / C and fake Master Category tree.</p>
+      </a>
+    </div>
+  </div>
+</body>
+</html>
