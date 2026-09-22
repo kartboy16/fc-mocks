@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>FC #209 — Manage Advisor Categories · Pages hub</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root{--bg:#f4f8fc;--card:#fff;--ink:#1e2a4a;--muted:#5b6572;--blue:#2b7de9;--border:#d4e4f2;--mint:#e6f1fb;--warn:#b45309;--warn-bg:#fff3e0}
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:Inter,system-ui,sans-serif;background:var(--bg);color:var(--ink);line-height:1.55}
+    .hero{background:linear-gradient(135deg,#1e2a4a,#2b7de9);color:#fff;padding:40px 24px 36px}
+    .hero-inner{max-width:880px;margin:0 auto}
+    .eyebrow{font-size:.75rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;opacity:.85;margin-bottom:10px}
+    .hero h1{font-size:1.75rem;margin-bottom:10px}
+    .hero p{opacity:.92;max-width:640px;font-size:.95rem}
+    .rec{display:inline-block;margin-top:18px;background:#fff;color:var(--blue);font-weight:700;font-size:.8rem;padding:8px 14px;border-radius:999px}
+    .wrap{max-width:880px;margin:0 auto;padding:28px 24px 72px}
+    .callout{background:var(--warn-bg);border:1px solid #f0d4a8;border-radius:12px;padding:14px 16px;margin-bottom:22px;font-size:.9rem;color:var(--warn)}
+    .callout strong{color:var(--ink)}
+    .cta{display:block;background:var(--blue);color:#fff!important;text-decoration:none;text-align:center;padding:16px 24px;border-radius:12px;font-weight:700;font-size:1rem;margin-bottom:28px;box-shadow:0 4px 16px rgba(43,125,233,.35)}
+    .cta small{display:block;font-weight:500;opacity:.9;font-size:.8rem;margin-top:4px}
+    .cta:hover{filter:brightness(1.05)}
+    h2{font-size:.75rem;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);margin:28px 0 12px}
+    .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:14px}
+    .card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:18px;text-decoration:none;color:inherit;display:block;transition:border-color .15s,box-shadow .15s}
+    .card:hover{border-color:var(--blue);box-shadow:0 4px 16px rgba(30,42,74,.08);text-decoration:none}
+    .card h3{font-size:.95rem;margin-bottom:6px;color:var(--blue)}
+    .card p{font-size:.8rem;color:var(--muted)}
+    .tag{display:inline-block;font-size:.65rem;font-weight:700;background:var(--mint);color:var(--blue);padding:2px 8px;border-radius:999px;margin-bottom:8px}
+    .ba{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:8px}
+    .ba>div{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px;font-size:.85rem}
+    .ba .lbl{font-size:.65rem;font-weight:700;text-transform:uppercase;margin-bottom:4px}
+    .ba .before .lbl{color:#b45309}
+    .ba .after .lbl{color:#047857}
+    @media(max-width:560px){.ba{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+  <header class="hero">
+    <div class="hero-inner">
+      <div class="eyebrow">FinancialContent · Designer deliverables · GitHub #209</div>
+      <h1>Manage Advisor Categories</h1>
+      <p>Admin CRUD for <strong>AdvisorSource</strong> (<code>name</code>, auto <code>slug</code>, optional <code>logoUrl</code>) — the catalog behind User Edit → Advisor Categories checkboxes. Entry: Profile → ADMIN menu, next to Manage Categories.</p>
+      <span class="rec">Recommend Direction A — Mirror Manage Categories</span>
+    </div>
+  </header>
+
+  <div class="wrap">
+    <div class="callout">
+      <strong>Not the same as Manage Categories.</strong>
+      Manage Categories = MasterCategories / topic tags (existing — sibling menu item only).
+      <strong>Manage Advisor Categories</strong> (this ticket) = AdvisorSource affiliation types.
+    </div>
+
+    <a class="cta" href="mock-a/index.html">
+      Open full mock A
+      <small>Profile ADMIN menu → Manage page (CRUD) → User Edit context · localStorage smoke</small>
+    </a>
+
+    <div class="ba">
+      <div class="before">
+        <div class="lbl">Today</div>
+        <strong>Checkboxes exist on User Edit</strong>
+        <p style="color:var(--muted);margin-top:4px;font-size:.8rem">No admin UI to add/edit/delete AdvisorSource records</p>
+      </div>
+      <div class="after">
+        <div class="lbl">After</div>
+        <strong>Manage Advisor Categories</strong>
+        <p style="color:var(--muted);margin-top:4px;font-size:.8rem">ADMIN menu → CRUD page wired to existing Meteor methods</p>
+      </div>
+    </div>
+
+    <h2>Directions</h2>
+    <div class="grid">
+      <a class="card" href="directions/a/index.html">
+        <span class="tag">RECOMMENDED</span>
+        <h3>A — Mirror Manage Categories</h3>
+        <p>Info alert, add row, table Name/Slug/Logo/actions, delete confirm. Deepened into full mock.</p>
+      </a>
+      <a class="card" href="directions/b/index.html">
+        <h3>B — Card grid</h3>
+        <p>Logo thumbnails on cards; add opens modal.</p>
+      </a>
+      <a class="card" href="directions/c/index.html">
+        <h3>C — Split list + inspector</h3>
+        <p>Left list, right edit form, delete confirm.</p>
+      </a>
+      <a class="card" href="directions/compare.html">
+        <h3>Compare</h3>
+        <p>Side-by-side theses; recommendation = A.</p>
+      </a>
+    </div>
+
+    <h2>Mock &amp; contract</h2>
+    <div class="grid">
+      <a class="card" href="mock-a/index.html">
+        <span class="tag">FULL MOCK</span>
+        <h3>Mock A · Menu entry</h3>
+        <p>Content Library shell + open Profile ADMIN menu with new item highlighted.</p>
+      </a>
+      <a class="card" href="mock-a/manage.html">
+        <h3>Mock A · Manage CRUD</h3>
+        <p>Add / edit / delete with confirm · localStorage · seed Independent, Bank-owned, Credit Union.</p>
+      </a>
+      <a class="card" href="mock-a/user-edit-context.html">
+        <h3>Mock A · User Edit context</h3>
+        <p>Advisor Categories checkboxes fed by the same catalog.</p>
+      </a>
+      <a class="card" href="build-contract.html">
+        <h3>Build contract</h3>
+        <p>UI location, fields, methods, in/out of scope, acceptance.</p>
+      </a>
+    </div>
+
+    <h2>References</h2>
+    <div class="grid">
+      <a class="card" href="../reference/admin-menu-manage-categories.png"><h3>ADMIN menu (staging)</h3><p>Manage Categories placement — put Manage Advisor Categories beside it.</p></a>
+      <a class="card" href="../reference/manage-categories-page-full.png"><h3>Manage Categories page</h3><p>Pattern to mirror (simplified columns for AdvisorSource).</p></a>
+      <a class="card" href="../reference/admin-user-edit-advisor-categories.png"><h3>User Edit checkboxes</h3><p>Consumer of AdvisorSource catalog.</p></a>
+    </div>
+  </div>
+</body>
+</html>
