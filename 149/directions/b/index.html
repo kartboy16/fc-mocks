@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Direction B — Modal sheet · Import from Mailchimp</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #f4f8fc; --card: #fff; --ink: #1e2a4a; --muted: #5b6572;
+      --blue: #2b7de9; --blue2: #2196f3; --border: #d4e4f2; --mint: #e6f1fb;
+      --ok: #1a7f4c; --warn: #b45309;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: Inter, system-ui, sans-serif; background: var(--bg); color: var(--ink); font-size: 14px; }
+    .shell { display: grid; grid-template-columns: 200px 1fr; min-height: 100vh; }
+    .sidebar { background: #1e2a4a; color: #fff; padding: 20px 16px; }
+    .logo { font-weight: 700; font-size: 13px; margin-bottom: 28px; }
+    .nav-item { display: block; padding: 8px 12px; border-radius: 8px; color: rgba(255,255,255,.7); text-decoration: none; font-size: 13px; margin-bottom: 4px; }
+    .nav-item.active { background: rgba(43,125,233,.35); color: #fff; }
+    .topbar { background: var(--card); border-bottom: 1px solid var(--border); padding: 12px 28px; display: flex; align-items: center; justify-content: space-between; }
+    .topbar h1 { font-size: 16px; }
+    .badge-conn { font-size: 11px; font-weight: 600; background: #e8f5e9; color: var(--ok); padding: 4px 10px; border-radius: 999px; }
+    .content { padding: 28px; }
+    .dir-label { background: var(--mint); border: 1px solid var(--border); border-radius: 8px; padding: 10px 14px; font-size: 12px; color: var(--muted); margin-bottom: 20px; max-width: 900px; }
+    .dir-label strong { color: var(--blue); }
+    .pill-def { display: inline-block; background: #fff3e0; color: var(--warn); font-size: 10px; font-weight: 600; padding: 2px 7px; border-radius: 999px; margin-left: 4px; }
+    .toolbar { display: flex; gap: 10px; margin-bottom: 16px; }
+    .btn { font-family: inherit; font-size: 13px; font-weight: 600; padding: 10px 16px; border-radius: 8px; border: none; cursor: pointer; }
+    .btn-primary { background: var(--blue); color: #fff; }
+    .btn-ghost { background: var(--card); border: 1px solid var(--border); color: var(--ink); }
+    table { width: 100%; max-width: 900px; border-collapse: collapse; background: var(--card); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
+    th, td { text-align: left; padding: 12px 16px; border-bottom: 1px solid var(--border); font-size: 13px; }
+    th { background: #fafafa; color: var(--muted); font-weight: 500; font-size: 11px; text-transform: uppercase; }
+    .backdrop { position: fixed; inset: 0; background: rgba(30,42,74,.45); display: flex; align-items: flex-end; justify-content: center; padding: 24px; z-index: 20; }
+    .backdrop.hidden { display: none; }
+    .modal {
+      background: var(--card); border-radius: 12px 12px 8px 8px; width: 100%; max-width: 520px;
+      max-height: 90vh; overflow: auto; box-shadow: 0 16px 48px rgba(30,42,74,.2);
+      display: flex; flex-direction: column;
+    }
+    .modal-hd { padding: 16px 20px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
+    .modal-hd h2 { font-size: 16px; }
+    .modal-bd { padding: 16px 20px; flex: 1; }
+    .modal-ft { padding: 12px 20px; border-top: 1px solid var(--border); display: flex; justify-content: space-between; gap: 8px; }
+    .dots { display: flex; gap: 6px; margin-bottom: 14px; }
+    .dot { width: 8px; height: 8px; border-radius: 50%; background: #d4e4f2; }
+    .dot.on { background: var(--blue); }
+    .row { display: flex; gap: 10px; padding: 10px; border: 1px solid var(--border); border-radius: 8px; margin-bottom: 6px; align-items: flex-start; cursor: pointer; font-size: 13px; }
+    .row.sel, .row:hover { border-color: var(--blue); background: var(--mint); }
+    .note { font-size: 11px; color: var(--muted); background: #fafafa; padding: 10px; border-radius: 8px; margin: 10px 0; border-left: 3px solid var(--blue); }
+    .progress-bar { height: 6px; background: #eef2f6; border-radius: 999px; overflow: hidden; margin: 12px 0; }
+    .progress-bar > i { display: block; height: 100%; width: 0; background: var(--blue); transition: width .25s; }
+    .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+    .stat { text-align: center; background: #fafafa; border-radius: 8px; padding: 10px; }
+    .stat b { display: block; font-size: 18px; color: var(--blue); }
+    .stat span { font-size: 10px; color: var(--muted); }
+    .hidden { display: none !important; }
+    select { width: 100%; margin-top: 4px; padding: 6px 8px; border-radius: 6px; border: 1px solid var(--border); font-family: inherit; }
+    .x { background: none; border: none; font-size: 18px; cursor: pointer; color: var(--muted); }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <aside class="sidebar">
+      <div class="logo">FC Admin</div>
+      <a class="nav-item active" href="#">Contacts</a>
+      <a class="nav-item" href="#">FTT Mail</a>
+    </aside>
+    <div>
+      <header class="topbar">
+        <h1>Contacts</h1>
+        <span class="badge-conn">● Mailchimp · Jordan Lee, CFP</span>
+      </header>
+      <div class="content">
+        <div class="dir-label">
+          <strong>Direction B — Modal sheet</strong> · Compact multi-step from Contacts list.
+          Same defaults as A (labeled). <a href="../compare.html" style="color:var(--blue)">Compare</a>
+        </div>
+        <div class="toolbar">
+          <button type="button" class="btn btn-primary" id="openImport">Import from Mailchimp</button>
+          <button type="button" class="btn btn-ghost">Add contact</button>
+        </div>
+        <table>
+          <thead><tr><th>Name</th><th>Email</th><th>List</th><th>Status</th></tr></thead>
+          <tbody>
+            <tr><td>Alex Rivera</td><td>alex@example.com</td><td>Active clients</td><td>Subscribed</td></tr>
+            <tr><td>Sam Chen</td><td>sam@example.com</td><td>Active clients</td><td>Unsubscribed</td></tr>
+            <tr><td>Pat Morgan</td><td>pat@example.com</td><td>Newsletter archive</td><td>Bounced</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="backdrop" id="modal">
+    <div class="modal" role="dialog" aria-modal="true">
+      <div class="modal-hd">
+        <h2>Import from Mailchimp</h2>
+        <button type="button" class="x" id="closeModal" aria-label="Close">×</button>
+      </div>
+      <div class="modal-bd">
+        <div class="dots" id="dots">
+          <span class="dot on"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span>
+        </div>
+
+        <div class="ms step" data-s="1">
+          <p style="font-size:13px;color:var(--muted);margin-bottom:10px">Connected as <strong>Jordan Lee, CFP</strong>
+            <span class="pill-def">DEFAULT · Who</span></p>
+          <div class="note">Stored API key → SES/Contacts. One-shot import; no two-way sync.</div>
+        </div>
+
+        <div class="ms step hidden" data-s="2">
+          <p style="font-weight:600;margin-bottom:8px;font-size:13px">Select audiences</p>
+          <label class="row sel"><input type="checkbox" checked /> Newsletter (1,248)</label>
+          <label class="row"><input type="checkbox" /> Clients 2024 (862)</label>
+          <label class="row"><input type="checkbox" /> Event RSVPs (214)</label>
+        </div>
+
+        <div class="ms step hidden" data-s="3">
+          <label class="row sel"><input type="radio" name="t" checked /> New list named after audience <span class="pill-def">DEFAULT</span></label>
+          <label class="row"><input type="radio" name="t" /> Add to existing
+            <select><option>Active clients</option></select>
+          </label>
+          <div class="note"><strong>FTT Mail wins</strong> <span class="pill-def">DEFAULT</span> — skip local unsub/bounce; show skipped count. Re-import later via Refresh (secondary).</div>
+        </div>
+
+        <div class="ms step hidden" data-s="4">
+          <p style="font-size:13px;margin-bottom:6px">Importing Newsletter…</p>
+          <div class="progress-bar"><i id="bar"></i></div>
+          <p style="font-size:11px;color:var(--muted)" id="pct">0%</p>
+        </div>
+
+        <div class="ms step hidden" data-s="5">
+          <div class="stats">
+            <div class="stat"><b>1,186</b><span>Imported</span></div>
+            <div class="stat"><b>52</b><span>Skipped</span></div>
+            <div class="stat"><b>10</b><span>Errors</span></div>
+          </div>
+          <div class="note" style="margin-top:12px">List “Newsletter” · 1,186 members</div>
+        </div>
+      </div>
+      <div class="modal-ft">
+        <button type="button" class="btn btn-ghost" id="backBtn">Back</button>
+        <button type="button" class="btn btn-primary" id="nextBtn">Continue</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let s = 1;
+    const modal = document.getElementById('modal');
+    const steps = [...document.querySelectorAll('.ms.step')];
+    const dots = [...document.querySelectorAll('.dot')];
+    function show(n) {
+      s = n;
+      steps.forEach(el => el.classList.toggle('hidden', +el.dataset.s !== n));
+      dots.forEach((d, i) => d.classList.toggle('on', i + 1 === n));
+      document.getElementById('backBtn').disabled = n === 1 || n === 4;
+      document.getElementById('nextBtn').textContent = n === 3 ? 'Start import' : n === 5 ? 'Done' : n === 4 ? 'Working…' : 'Continue';
+      document.getElementById('nextBtn').disabled = n === 4;
+      if (n === 4) {
+        let w = 0; const bar = document.getElementById('bar');
+        const t = setInterval(() => {
+          w = Math.min(100, w + 10 + Math.random() * 15);
+          bar.style.width = w + '%';
+          document.getElementById('pct').textContent = Math.round(w) + '%';
+          if (w >= 100) { clearInterval(t); setTimeout(() => show(5), 300); }
+        }, 250);
+      }
+    }
+    document.getElementById('openImport').onclick = () => { modal.classList.remove('hidden'); show(1); };
+    document.getElementById('closeModal').onclick = () => modal.classList.add('hidden');
+    document.getElementById('nextBtn').onclick = () => { if (s === 5) { modal.classList.add('hidden'); return; } show(Math.min(5, s + 1)); };
+    document.getElementById('backBtn').onclick = () => show(Math.max(1, s - 1));
+    // open by default for board demo
+    show(1);
+  </script>
+</body>
+</html>

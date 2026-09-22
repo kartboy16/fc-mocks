@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Import from Mailchimp — Wizard (mock A)</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="demo-bar">
+    <strong>Mock A · Wizard</strong>
+    <span class="sep">|</span>
+    <a href="index.html">Hub</a>
+    <a href="error.html">Error</a>
+    <a href="mobile.html">Mobile</a>
+    <span class="sep">|</span>
+    Smoke: Continue → pick audience → Start import → progress → summary
+  </div>
+  <div class="shell">
+    <aside class="sidebar">
+      <div class="logo">FC Admin<span>FinancialContent</span></div>
+      <a class="nav-item" href="index.html">Contacts</a>
+      <a class="nav-item active" href="index.html">FTT Mail</a>
+      <a class="nav-item" href="#">Campaigns</a>
+      <a class="nav-item" href="#">Settings</a>
+    </aside>
+    <div class="main">
+      <header class="topbar">
+        <h1>Import from Mailchimp</h1>
+        <div class="topbar-right">
+          <span class="badge ok">● Connected · Jordan Lee, CFP</span>
+        </div>
+      </header>
+      <div class="content narrow" id="wizard">
+        <div class="stepper" role="tablist" aria-label="Import steps">
+          <button type="button" class="step-pill on" data-go="1">1 Connect</button>
+          <button type="button" class="step-pill" data-go="2">2 Audiences</button>
+          <button type="button" class="step-pill" data-go="3">3 Target</button>
+          <button type="button" class="step-pill" data-go="4">4 Progress</button>
+          <button type="button" class="step-pill" data-go="5">5 Summary</button>
+        </div>
+
+        <div class="card wizard-step" data-step="1">
+          <h2>Connection status</h2>
+          <p class="lead">Import uses the stored Mailchimp API key. Contacts land in FTT Mail / SES Contacts.</p>
+          <div class="conn-card">
+            <div class="conn-avatar">JL</div>
+            <div>
+              <strong>Jordan Lee, CFP</strong>
+              <div style="font-size:12px;color:var(--muted)">API key on file · Mailchimp connected</div>
+              <span class="pill-def">DEFAULT · Who: advisor self-serve; admin on behalf OK</span>
+            </div>
+          </div>
+          <div class="note">
+            <strong>In scope:</strong> one-shot audience → list import.
+            <strong>Out of scope:</strong> two-way sync, push to Mailchimp, campaign history.
+          </div>
+        </div>
+
+        <div class="card wizard-step hidden" data-step="2">
+          <h2>Pick audiences</h2>
+          <p class="lead">Select one or more Mailchimp audiences to import.</p>
+          <label class="row-check sel">
+            <input type="checkbox" class="aud-cb" value="nl" checked />
+            <div class="meta">
+              <strong>Newsletter (1,248)</strong>
+              <span>Subscribed members · fake data</span>
+            </div>
+          </label>
+          <label class="row-check">
+            <input type="checkbox" class="aud-cb" value="c24" />
+            <div class="meta">
+              <strong>Clients 2024 (862)</strong>
+              <span>Subscribed members</span>
+            </div>
+          </label>
+          <label class="row-check">
+            <input type="checkbox" class="aud-cb" value="rsvp" />
+            <div class="meta">
+              <strong>Event RSVPs (214)</strong>
+              <span>Subscribed members</span>
+            </div>
+          </label>
+        </div>
+
+        <div class="card wizard-step hidden" data-step="3">
+          <h2>Target list &amp; conflicts</h2>
+          <p class="lead">Choose where contacts land. Conflict policy is fixed for this import.</p>
+          <div class="radio-block">
+            <label class="sel">
+              <input type="radio" name="target" value="new" checked />
+              <div>
+                <strong>Create new FTT Mail list</strong>
+                <span class="pill-def">DEFAULT</span>
+                <div class="empty-hint" id="newListHint">Named after the Mailchimp audience (e.g. “Newsletter”).</div>
+              </div>
+            </label>
+            <label>
+              <input type="radio" name="target" value="existing" />
+              <div>
+                <strong>Add to existing list</strong>
+                <select id="existingList" disabled></select>
+              </div>
+            </label>
+          </div>
+          <div class="note">
+            <strong>Conflicts: FTT Mail wins</strong>
+            <span class="pill-def">DEFAULT</span>
+            — never silently re-subscribe a local unsubscribe or bounce. Skipped contacts appear in the summary count.
+          </div>
+          <div class="note warn">
+            <strong>Re-import:</strong> one-shot primary
+            <span class="pill-def">DEFAULT</span>
+            . Use “Refresh from Mailchimp” on the list later (secondary).
+          </div>
+        </div>
+
+        <div class="card wizard-step hidden" data-step="4">
+          <h2>Importing…</h2>
+          <p class="lead" id="progLead">Pulling contacts from Mailchimp into FTT Mail / SES Contacts…</p>
+          <div class="progress-bar"><i id="progBar"></i></div>
+          <p style="font-size:12px;color:var(--muted)" id="progPct">0%</p>
+        </div>
+
+        <div class="card wizard-step hidden" data-step="5">
+          <h2>Import complete</h2>
+          <p class="lead">Contacts are in FTT Mail. Local unsubscribe/bounce status preserved.</p>
+          <div class="stats">
+            <div class="stat"><b id="sImp">—</b><span>Imported</span></div>
+            <div class="stat skip"><b id="sSkip">—</b><span>Skipped (FTT wins)</span></div>
+            <div class="stat err"><b id="sErr">—</b><span>Errors</span></div>
+          </div>
+          <div class="note" id="summaryDetail" style="margin-top:16px"></div>
+        </div>
+
+        <div class="card" style="position:sticky;bottom:12px;padding:12px 16px;display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap">
+          <a class="btn btn-ghost" href="index.html" id="btnCancel">Cancel</a>
+          <div style="display:flex;gap:10px">
+            <button type="button" class="btn btn-ghost" id="btnBack" disabled>Back</button>
+            <button type="button" class="btn btn-primary" id="btnNext">Continue</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Directions compare — Import from Mailchimp #149</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #f4f8fc; --bg2: #fafafa; --card: #fff; --ink: #1e2a4a;
+      --muted: #5b6572; --blue: #2b7de9; --blue2: #2196f3;
+      --border: #d4e4f2; --mint: #e6f1fb;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: Inter, system-ui, sans-serif; background: var(--bg); color: var(--ink); line-height: 1.5; }
+    .wrap { max-width: 1100px; margin: 0 auto; padding: 32px 24px 64px; }
+    h1 { font-size: 22px; font-weight: 700; margin-bottom: 8px; }
+    .sub { color: var(--muted); font-size: 14px; margin-bottom: 28px; }
+    .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+    @media (max-width: 900px) { .grid { grid-template-columns: 1fr; } }
+    .card {
+      background: var(--card); border: 1px solid var(--border); border-radius: 12px;
+      padding: 20px; display: flex; flex-direction: column; gap: 12px;
+    }
+    .card.rec { border-color: var(--blue); box-shadow: 0 0 0 2px rgba(43,125,233,.15); }
+    .badge {
+      display: inline-flex; align-items: center; gap: 6px;
+      font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: .04em;
+      padding: 4px 10px; border-radius: 999px; width: fit-content;
+    }
+    .badge.rec { background: var(--mint); color: var(--blue); }
+    .badge.alt { background: #f0f2f5; color: var(--muted); }
+    h2 { font-size: 16px; }
+    ul { font-size: 13px; color: var(--muted); padding-left: 18px; }
+    ul li { margin-bottom: 4px; }
+    a.btn {
+      margin-top: auto; display: inline-flex; justify-content: center;
+      background: var(--blue); color: #fff; text-decoration: none;
+      font-size: 13px; font-weight: 600; padding: 10px 14px; border-radius: 8px;
+    }
+    a.btn.ghost { background: var(--card); color: var(--blue); border: 1px solid var(--border); }
+    .defaults {
+      margin-top: 28px; background: var(--card); border: 1px solid var(--border);
+      border-radius: 12px; padding: 20px;
+    }
+    .defaults h3 { font-size: 14px; margin-bottom: 12px; }
+    table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    th, td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--border); vertical-align: top; }
+    th { color: var(--muted); font-weight: 500; width: 140px; }
+    .pill { display: inline-block; background: var(--mint); color: var(--blue); font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 999px; }
+    .nav { margin-bottom: 24px; font-size: 13px; }
+    .nav a { color: var(--blue); text-decoration: none; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="nav"><a href="../index.html">← Hub</a> · <a href="README.md">README</a></div>
+    <h1>Direction compare — Import from Mailchimp</h1>
+    <p class="sub">FinancialContent #149 · FTT Mail · Stored API key → SES/Contacts. Recommend <strong>A</strong> for the full mock.</p>
+    <div class="grid">
+      <div class="card rec">
+        <span class="badge rec">Recommend · A</span>
+        <h2>Guided wizard</h2>
+        <ul>
+          <li>Full-page stepper (5 steps)</li>
+          <li>Clear primary CTA chain</li>
+          <li>Room for conflict policy + target list radios</li>
+          <li>Natural progress → summary</li>
+        </ul>
+        <a class="btn" href="a/index.html">Open board A</a>
+      </div>
+      <div class="card">
+        <span class="badge alt">Alt · B</span>
+        <h2>Modal sheet</h2>
+        <ul>
+          <li>From Contacts list, compact modal</li>
+          <li>Same steps, denser layout</li>
+          <li>Good for power users; less space for policy copy</li>
+        </ul>
+        <a class="btn ghost" href="b/index.html">Open board B</a>
+      </div>
+      <div class="card">
+        <span class="badge alt">Alt · C</span>
+        <h2>Split pane</h2>
+        <ul>
+          <li>Left: audience checklist</li>
+          <li>Right: live preview + estimate</li>
+          <li>Sticky Import footer; weaker stepper clarity</li>
+        </ul>
+        <a class="btn ghost" href="c/index.html">Open board C</a>
+      </div>
+    </div>
+    <div class="defaults">
+      <h3>Default answers <span class="pill">baked into recommended mock</span></h3>
+      <table>
+        <tr><th>Re-import</th><td>One-shot primary; optional “Refresh from Mailchimp” on list later (secondary)</td></tr>
+        <tr><th>Conflicts</th><td><strong>FTT Mail wins</strong> — never silently re-subscribe a local unsubscribe/bounce; show skipped count</td></tr>
+        <tr><th>Who</th><td>Advisor self-serve where Mailchimp is connected; admin can act on behalf</td></tr>
+        <tr><th>Target list</th><td>Default <strong>new FTT Mail list named after the Mailchimp audience</strong>; alternate: add to existing list (radio)</td></tr>
+      </table>
+    </div>
+  </div>
+</body>
+</html>

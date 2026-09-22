@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Direction A — Guided wizard · Import from Mailchimp</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #f4f8fc; --bg2: #fafafa; --card: #fff; --ink: #1e2a4a;
+      --muted: #5b6572; --blue: #2b7de9; --blue2: #2196f3;
+      --border: #d4e4f2; --mint: #e6f1fb; --ok: #1a7f4c; --warn: #b45309; --err: #c62828;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: Inter, system-ui, sans-serif; background: var(--bg); color: var(--ink); font-size: 14px; }
+    .shell { display: grid; grid-template-columns: 200px 1fr; min-height: 100vh; }
+    .sidebar { background: #1e2a4a; color: #fff; padding: 20px 16px; }
+    .logo { font-weight: 700; font-size: 13px; letter-spacing: .02em; margin-bottom: 28px; opacity: .9; }
+    .nav-item { display: block; padding: 8px 12px; border-radius: 8px; color: rgba(255,255,255,.7); text-decoration: none; font-size: 13px; margin-bottom: 4px; }
+    .nav-item.active { background: rgba(43,125,233,.35); color: #fff; }
+    .main { display: flex; flex-direction: column; }
+    .topbar { background: var(--card); border-bottom: 1px solid var(--border); padding: 12px 28px; display: flex; align-items: center; justify-content: space-between; }
+    .topbar h1 { font-size: 16px; font-weight: 600; }
+    .badge-conn { font-size: 11px; font-weight: 600; background: #e8f5e9; color: var(--ok); padding: 4px 10px; border-radius: 999px; }
+    .content { padding: 28px; max-width: 720px; }
+    .dir-label {
+      background: var(--mint); border: 1px solid var(--border); border-radius: 8px;
+      padding: 10px 14px; font-size: 12px; color: var(--muted); margin-bottom: 20px;
+    }
+    .dir-label strong { color: var(--blue); }
+    .pill-def { display: inline-block; background: #fff3e0; color: var(--warn); font-size: 10px; font-weight: 600; padding: 2px 7px; border-radius: 999px; margin-left: 6px; vertical-align: middle; }
+    .stepper { display: flex; gap: 4px; margin-bottom: 24px; flex-wrap: wrap; }
+    .step-pill {
+      font-size: 11px; font-weight: 600; padding: 6px 12px; border-radius: 999px;
+      background: #eef2f6; color: var(--muted); border: none; cursor: pointer;
+    }
+    .step-pill.on { background: var(--blue); color: #fff; }
+    .step-pill.done { background: var(--mint); color: var(--blue); }
+    .panel {
+      background: var(--card); border: 1px solid var(--border); border-radius: 12px;
+      padding: 24px; margin-bottom: 16px;
+    }
+    .panel h2 { font-size: 18px; margin-bottom: 6px; }
+    .panel .lead { color: var(--muted); font-size: 13px; margin-bottom: 20px; }
+    .row { display: flex; align-items: flex-start; gap: 12px; padding: 12px; border: 1px solid var(--border); border-radius: 8px; margin-bottom: 8px; cursor: pointer; }
+    .row:hover, .row.sel { border-color: var(--blue); background: var(--mint); }
+    .row input { margin-top: 3px; }
+    .row .meta { flex: 1; }
+    .row .meta strong { display: block; font-size: 14px; }
+    .row .meta span { font-size: 12px; color: var(--muted); }
+    .note {
+      background: var(--bg2); border-left: 3px solid var(--blue); padding: 12px 14px;
+      font-size: 12px; color: var(--muted); border-radius: 0 8px 8px 0; margin: 16px 0;
+    }
+    .radio-block { margin: 8px 0; }
+    .radio-block label { display: flex; gap: 10px; align-items: flex-start; padding: 10px 12px; border: 1px solid var(--border); border-radius: 8px; margin-bottom: 8px; cursor: pointer; }
+    .radio-block label.sel { border-color: var(--blue); background: var(--mint); }
+    .actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 8px; }
+    .btn { font-family: inherit; font-size: 13px; font-weight: 600; padding: 10px 18px; border-radius: 8px; border: none; cursor: pointer; }
+    .btn-primary { background: var(--blue); color: #fff; }
+    .btn-primary:hover { background: var(--blue2); }
+    .btn-ghost { background: var(--card); color: var(--ink); border: 1px solid var(--border); }
+    .btn:disabled { opacity: .45; cursor: not-allowed; }
+    .progress-bar { height: 8px; background: #eef2f6; border-radius: 999px; overflow: hidden; margin: 16px 0; }
+    .progress-bar > i { display: block; height: 100%; background: var(--blue); width: 0; border-radius: 999px; transition: width .3s; }
+    .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 16px; }
+    .stat { background: var(--bg2); border-radius: 8px; padding: 14px; text-align: center; }
+    .stat b { display: block; font-size: 22px; color: var(--blue); }
+    .stat span { font-size: 11px; color: var(--muted); }
+    .hidden { display: none !important; }
+    select { width: 100%; padding: 8px 10px; border: 1px solid var(--border); border-radius: 8px; font-family: inherit; margin-top: 6px; }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <aside class="sidebar">
+      <div class="logo">FC Admin</div>
+      <a class="nav-item" href="#">Contacts</a>
+      <a class="nav-item active" href="#">FTT Mail</a>
+      <a class="nav-item" href="#">Campaigns</a>
+      <a class="nav-item" href="#">Settings</a>
+    </aside>
+    <div class="main">
+      <header class="topbar">
+        <h1>Import from Mailchimp</h1>
+        <span class="badge-conn">● Mailchimp connected · Jordan Lee, CFP</span>
+      </header>
+      <div class="content">
+        <div class="dir-label">
+          <strong>Direction A — Guided wizard (RECOMMEND)</strong> · Interactive board.
+          Defaults labeled with <span class="pill-def">DEFAULT</span> pills.
+          <a href="../compare.html" style="color:var(--blue)">Compare</a> ·
+          <a href="../../mock-a/" style="color:var(--blue)">Full mock →</a>
+        </div>
+
+        <div class="stepper" id="stepper">
+          <button type="button" class="step-pill on" data-go="1">1 Connect</button>
+          <button type="button" class="step-pill" data-go="2">2 Audiences</button>
+          <button type="button" class="step-pill" data-go="3">3 Target + conflicts</button>
+          <button type="button" class="step-pill" data-go="4">4 Progress</button>
+          <button type="button" class="step-pill" data-go="5">5 Summary</button>
+        </div>
+
+        <!-- Step 1 -->
+        <div class="panel step" data-step="1">
+          <h2>Mailchimp connection</h2>
+          <p class="lead">Import uses the stored API key for this advisor. No CSV export needed.</p>
+          <div class="row sel" style="cursor:default">
+            <div class="meta">
+              <strong>Jordan Lee, CFP</strong>
+              <span>API key on file · Connected · Self-serve import enabled</span>
+              <span class="pill-def">DEFAULT · Who: advisor self-serve; admin can act on behalf</span>
+            </div>
+          </div>
+          <div class="note">Non-goal: two-way sync or push to Mailchimp. One-shot import only.</div>
+          <div class="actions">
+            <button type="button" class="btn btn-ghost" disabled>Back</button>
+            <button type="button" class="btn btn-primary" data-next>Continue</button>
+          </div>
+        </div>
+
+        <!-- Step 2 -->
+        <div class="panel step hidden" data-step="2">
+          <h2>Pick audiences</h2>
+          <p class="lead">Select one or more Mailchimp audiences to import into FTT Mail.</p>
+          <label class="row"><input type="checkbox" class="aud" value="Newsletter" data-n="1248" checked /><div class="meta"><strong>Newsletter (1,248)</strong><span>Subscribed · last synced never</span></div></label>
+          <label class="row"><input type="checkbox" class="aud" value="Clients 2024" data-n="862" /><div class="meta"><strong>Clients 2024 (862)</strong><span>Subscribed</span></div></label>
+          <label class="row"><input type="checkbox" class="aud" value="Event RSVPs" data-n="214" /><div class="meta"><strong>Event RSVPs (214)</strong><span>Subscribed</span></div></label>
+          <div class="actions">
+            <button type="button" class="btn btn-ghost" data-back>Back</button>
+            <button type="button" class="btn btn-primary" data-next>Continue</button>
+          </div>
+        </div>
+
+        <!-- Step 3 -->
+        <div class="panel step hidden" data-step="3">
+          <h2>Target list &amp; conflicts</h2>
+          <p class="lead">Choose where contacts land and how conflicts are handled.</p>
+          <div class="radio-block" id="targetRadios">
+            <label class="sel"><input type="radio" name="target" value="new" checked />
+              <div><strong>Create new FTT Mail list</strong>
+                <span class="pill-def">DEFAULT</span>
+                <div style="font-size:12px;color:var(--muted);margin-top:4px">Named after the Mailchimp audience (e.g. “Newsletter”).</div>
+              </div>
+            </label>
+            <label><input type="radio" name="target" value="existing" />
+              <div><strong>Add to existing list</strong>
+                <select id="existingList" disabled>
+                  <option>Active clients</option>
+                  <option>Newsletter archive</option>
+                </select>
+              </div>
+            </label>
+          </div>
+          <div class="note">
+            <strong>Conflicts:</strong> FTT Mail wins
+            <span class="pill-def">DEFAULT</span>
+            — never silently re-subscribe a local unsubscribe or bounce. Skipped contacts appear in the summary count.
+          </div>
+          <div class="note" style="border-color:var(--warn)">
+            <strong>Re-import:</strong> This is a one-shot import
+            <span class="pill-def">DEFAULT</span>
+            . Later you can use “Refresh from Mailchimp” on the list (secondary action).
+          </div>
+          <div class="actions">
+            <button type="button" class="btn btn-ghost" data-back>Back</button>
+            <button type="button" class="btn btn-primary" data-next>Start import</button>
+          </div>
+        </div>
+
+        <!-- Step 4 -->
+        <div class="panel step hidden" data-step="4">
+          <h2>Importing…</h2>
+          <p class="lead" id="progLead">Pulling contacts from Mailchimp into FTT Mail / SES Contacts.</p>
+          <div class="progress-bar"><i id="progBar"></i></div>
+          <p style="font-size:12px;color:var(--muted)" id="progPct">0%</p>
+          <div class="actions">
+            <button type="button" class="btn btn-ghost" disabled>Back</button>
+            <button type="button" class="btn btn-primary" disabled>Working…</button>
+          </div>
+        </div>
+
+        <!-- Step 5 -->
+        <div class="panel step hidden" data-step="5">
+          <h2>Import complete</h2>
+          <p class="lead">Contacts are in FTT Mail. List counts updated.</p>
+          <div class="stats">
+            <div class="stat"><b id="sImp">1,186</b><span>Imported</span></div>
+            <div class="stat"><b id="sSkip">52</b><span>Skipped (FTT wins)</span></div>
+            <div class="stat"><b id="sErr">10</b><span>Errors</span></div>
+          </div>
+          <div class="note" style="margin-top:16px">New list <strong>“Newsletter”</strong> · ~1,186 members
+            <span class="pill-def">list count bump</span>
+          </div>
+          <div class="actions">
+            <button type="button" class="btn btn-ghost" data-go="1">Import another</button>
+            <button type="button" class="btn btn-primary" onclick="location.href='../../mock-a/'">Open full mock →</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script>
+    let step = 1;
+    const panels = [...document.querySelectorAll('.step')];
+    const pills = [...document.querySelectorAll('.step-pill')];
+    function show(n) {
+      step = n;
+      panels.forEach(p => p.classList.toggle('hidden', +p.dataset.step !== n));
+      pills.forEach(p => {
+        const g = +p.dataset.go;
+        p.classList.toggle('on', g === n);
+        p.classList.toggle('done', g < n);
+      });
+      if (n === 4) runProgress();
+    }
+    document.querySelectorAll('[data-next]').forEach(b => b.addEventListener('click', () => show(Math.min(5, step + 1))));
+    document.querySelectorAll('[data-back]').forEach(b => b.addEventListener('click', () => show(Math.max(1, step - 1))));
+    pills.forEach(p => p.addEventListener('click', () => show(+p.dataset.go)));
+    document.querySelectorAll('[data-go]').forEach(b => {
+      if (!b.classList.contains('step-pill')) b.addEventListener('click', () => show(+b.dataset.go));
+    });
+    document.querySelectorAll('#targetRadios input').forEach(r => {
+      r.addEventListener('change', () => {
+        document.querySelectorAll('#targetRadios label').forEach(l => l.classList.toggle('sel', l.querySelector('input').checked));
+        document.getElementById('existingList').disabled = r.value !== 'existing' || !r.checked;
+        if (r.value === 'existing' && r.checked) document.getElementById('existingList').disabled = false;
+      });
+    });
+    function runProgress() {
+      const bar = document.getElementById('progBar');
+      const pct = document.getElementById('progPct');
+      let w = 0;
+      bar.style.width = '0%';
+      const t = setInterval(() => {
+        w += 8 + Math.random() * 12;
+        if (w >= 100) { w = 100; clearInterval(t); setTimeout(() => show(5), 400); }
+        bar.style.width = w + '%';
+        pct.textContent = Math.round(w) + '% · Newsletter';
+      }, 280);
+    }
+  </script>
+</body>
+</html>
