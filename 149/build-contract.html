@@ -1,42 +1,97 @@
 <!DOCTYPE html><html lang="en-CA"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>Build contract — #149 Mailchimp import</title>
+<title>Build contract — #149 Mailchimp import (Direction B)</title>
 <style>body{font-family:Inter,system-ui,sans-serif;max-width:860px;margin:40px auto;padding:0 20px;color:#1e2a4a;line-height:1.5}
 a{color:#2b7de9} pre{white-space:pre-wrap;background:#fff;border:1px solid #d4e4f2;border-radius:12px;padding:24px}</style></head><body>
-<p><a href="index.html">← Hub</a> · <a href="mock-a/">Mock A</a></p>
+<p><a href="index.html">← Hub</a> · <a href="mock-b/">Mock B</a></p>
+<p><strong>Direction B (modal)</strong> on Email Campaigns chrome — provisional lock.</p>
 <pre># Build contract — FTT Mail: Import from Mailchimp (#149)
 
-Canonical copy for engineering handoff. Interactive HTML: [`build-contract.html`](build-contract.html). Full mock detail: [`mock-a/BUILD-CONTRACT.md`](mock-a/BUILD-CONTRACT.md).
+**Direction:** B — Modal on Email Campaigns (**recommended product mock**)  
+**Entry:** Email Campaigns · `/content-library/email-campaigns`  
+**Product:** Replace Mailchimp export → CSV → FTT Mail with in-app **Import from Mailchimp** (stored API key → SES/Contacts).
 
-## Product
+## Chrome (match staging)
 
-Replace Mailchimp export → CSV → FTT Mail with in-app **Import from Mailchimp** (stored API key → SES/Contacts).
+Reference: `../reference/email-campaigns-desktop-full.png`
 
-**Flow:** Entry → Audience picker → Confirm/options → Progress/summary → Error (bad key).
+| Area | Spec |
+|------|------|
+| Left nav | Icon rail: Content, Website, Social Media, **Email Campaigns** (active), Calendar, Settings & Branding, Profile (AH) |
+| Page | Title **Email Marketing**; subtitle mentions FTT Mail |
+| Tabs | Campaigns (default), Lists, Default Lists, Subscribers, Forms, Reports, Settings |
+| Campaigns toolbar | **+ Create Campaign** (primary); **Import from Mailchimp** (outline secondary); overflow “Import from Mailchimp…” |
+| Lists toolbar | **Import from Mailchimp** (primary entry — audiences → lists) + Create List |
+| Table columns | Name, Subject, Status, Links, Compliance, Approval, Sent, Opens, Clicks, Created, Actions |
+| Status chips | draft · OK · Pending confirmation · Failed |
 
-## Recommended direction
+Default landing: **Campaigns** tab (staging URL). Import is findable next to Create Campaign.
 
-**A — Guided wizard** (`directions/a/`, deepened in `mock-a/`).
+## Screens / flow (Direction B modal)
 
-## Defaults (open questions)
+| Step | UI | Purpose |
+|------|-----|---------|
+| Backdrop | Dimmed Email Campaigns page | Context preserved |
+| 1 · Audiences | Multi-select fake audiences with counts | Pick what to pull |
+| 2 · Confirm | Target list radio (new named after audience **default** / existing); conflict note | **FTT Mail wins** — won’t re-subscribe local unsubs |
+| 3 · Progress | Progress bar | Fake import |
+| 4 · Summary | Imported / skipped / errors; dismiss → Lists chip refresh | Completion |
+| Error | Invalid Mailchimp key | Reconnect CTA in modal **or** full-page banner |
 
-| # | Topic | Default |
-|---|-------|---------|
-| 1 | Re-import | One-shot primary; optional “Refresh from Mailchimp” on list later (secondary) |
-| 2 | Conflicts | **FTT Mail wins** — never silently re-subscribe local unsubscribe/bounce; show skipped count |
-| 3 | Who | Advisor self-serve where Mailchimp is connected; admin can act on behalf |
-| 4 | Target list | Default **new FTT Mail list named after the Mailchimp audience**; alternate: add to existing (radio) |
+Smoke path: **Import → pick audience → confirm → progress → summary** (Lists count chip bumps).
 
-## In / out of scope
+## Defaults for open questions (unchanged)
 
-**In:** Entry, audience multi-select, target radios, conflict policy + skipped, progress, summary, bad-key reconnect, mobile wizard, FC admin shell.
+1. **Re-import:** One-shot primary; optional “Refresh from Mailchimp” on list later (secondary).
+2. **Conflicts:** **FTT Mail wins** — never silently re-subscribe a local unsubscribe/bounce; show skipped count.
+3. **Who:** Advisor self-serve where Mailchimp is connected; admin can act on behalf.
+4. **Target list:** Default **new FTT Mail list named after the Mailchimp audience**; alternate: add to existing list (radio).
 
-**Out:** Two-way sync, push to Mailchimp, campaign history, live API (mock only), full Refresh implementation.
+## States
+
+- Connected (happy path) — chip green; modal enabled
+- Disconnected / invalid key — banner + modal reconnect; demo via “Simulate bad key” or `?error=1`
+- Empty audience selection — block Continue on step 1
+- Importing — progress; Back/Next disabled
+- Complete — summary; sessionStorage list bump; switch to Lists
+
+## In scope
+
+- Faithful Email Campaigns chrome as entry
+- Import on Campaigns toolbar (outline) **and** Lists toolbar
+- Compact multi-step modal (audiences → confirm → progress → summary)
+- Conflict policy messaging + skipped count
+- Bad-key reconnect (modal + banner)
+- Advisor self-serve framing (Jordan Lee, CFP)
+
+## Out of scope (non-goals)
+
+- Two-way sync
+- Push contacts or campaigns to Mailchimp
+- Campaign history import
+- Real Mailchimp / SES API calls (mock only)
+- Full Refresh-from-Mailchimp implementation (CTA only)
+- Guided full-page wizard (Direction A — archived)
+- Split pane (Direction C — archived)
+
+## Fake data
+
+- Audiences: Newsletter (1,248), Clients 2024 (862), Event RSVPs (214)
+- Advisor: Jordan Lee, CFP
+- Existing lists: Active clients (412), Newsletter archive (890)
+- Campaign rows: draft / OK / Pending confirmation / Failed (labels match staging)
 
 ## Related
 
-#130, #129 — Mailchimp connection / FTT Mail list model.
+- **#130** / **#129** — FTT Mail / Contacts / Mailchimp connection (API key storage, list model)
+- Directions: `../directions/` — A/C archived boards; **B is now the product mock** (`mock-b/`)
 
 ## Tokens
 
-bg `#f4f8fc`/`#fafafa`, cards `#fff`, ink `#1e2a4a`, muted `#5b6572`, blue `#2b7de9`/`#2196f3`, borders `#d4e4f2`, mint `#e6f1fb`, Inter, 12px/8px/pills.
+bg `#f4f8fc` / `#fafafa`, cards `#fff`, ink `#1e2a4a`, muted `#5b6572`, blue `#2b7de9` / `#2196f3` / `#1976d2`, borders `#d4e4f2`, mint `#e6f1fb`, sidebar `#eef1f7`, Inter, MUI-ish density, 8–12px radii, pills.
+
+## Files
+
+- `index.html` — Email Campaigns page + modal shell
+- `styles.css` — chrome + modal
+- `app.js` — tabs, modal steps, bad-key demo, list chip bump
 </pre></body></html>

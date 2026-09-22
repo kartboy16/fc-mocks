@@ -2,9 +2,9 @@
 
 Three interactive UI directions for replacing Mailchimp export → CSV → FTT Mail with an in-app **Import from Mailchimp** flow.
 
-## Recommendation: **Direction A — Guided wizard**
+## Recommendation: **Direction B — Modal on Email Campaigns**
 
-Deepen A into the full clickable mock (`../mock-a/`). It gives the clearest primary CTA chain, room for conflict policy copy, and a natural progress → summary arc. Modal (B) is denser for power users; split pane (C) is great for multi-audience compare but weaker on stepper clarity.
+Product mock: [`../mock-b/`](../mock-b/). Entry = Email Campaigns (`/content-library/email-campaigns`) with faithful staging chrome; Import opens a compact multi-step modal. Directions **A** (guided wizard) and **C** (split pane) are archived explorations (`../mock-a/` kept for A).
 
 ## Defaults baked into recommended mock (open questions)
 
@@ -25,9 +25,9 @@ Deepen A into the full clickable mock (`../mock-a/`). It gives the clearest prim
 
 | Dir | Pattern | Entry |
 |-----|---------|-------|
-| [A](a/index.html) | Full-page guided stepper | Recommend — deepen to mock |
-| [B](b/index.html) | Modal multi-step from Contacts | Compact |
-| [C](c/index.html) | Split pane audiences + preview | Sticky Import footer |
+| [A](a/index.html) | Full-page guided stepper | Archived — see mock-a |
+| [B](b/index.html) | Modal multi-step on Email Campaigns | **Recommend** — product mock in mock-b |
+| [C](c/index.html) | Split pane audiences + preview | Archived |
 
 ## Compare
 
