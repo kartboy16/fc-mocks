@@ -509,7 +509,8 @@
 
   function syncConnUI() {
     const ok = connOk();
-    const chip = document.getElementById('connChip');
+    /* connChip removed */
+    
     const banner = document.getElementById('keyBanner');
     if (chip) {
       chip.textContent = ok
