@@ -1,43 +1,47 @@
 <!DOCTYPE html><html lang="en-CA"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>Build contract — #149 Mailchimp import (Direction B)</title>
+<title>Build contract — #149 Mailchimp import (B · Subscribers)</title>
 <style>body{font-family:Inter,system-ui,sans-serif;max-width:860px;margin:40px auto;padding:0 20px;color:#1e2a4a;line-height:1.5}
 a{color:#2b7de9} pre{white-space:pre-wrap;background:#fff;border:1px solid #d4e4f2;border-radius:12px;padding:24px}</style></head><body>
 <p><a href="index.html">← Hub</a> · <a href="mock-b/">Mock B</a></p>
-<p><strong>Direction B (modal)</strong> on Email Campaigns chrome — provisional lock.</p>
+<p><strong>Direction B</strong> — Import CTA on <strong>Subscribers</strong> tab.</p>
 <pre># Build contract — FTT Mail: Import from Mailchimp (#149)
 
 **Direction:** B — Modal on Email Campaigns (**recommended product mock**)  
-**Entry:** Email Campaigns · `/content-library/email-campaigns`  
+**Entry:** Email Campaigns · `/content-library/email-campaigns` → **Subscribers** tab  
 **Product:** Replace Mailchimp export → CSV → FTT Mail with in-app **Import from Mailchimp** (stored API key → SES/Contacts).
 
 ## Chrome (match staging)
 
-Reference: `../reference/email-campaigns-desktop-full.png`
+References:
+- Campaigns: `../reference/email-campaigns-desktop-full.png`
+- Subscribers: `../reference/email-campaigns-subscribers-full.png`
 
 | Area | Spec |
 |------|------|
 | Left nav | Icon rail: Content, Website, Social Media, **Email Campaigns** (active), Calendar, Settings & Branding, Profile (AH) |
 | Page | Title **Email Marketing**; subtitle mentions FTT Mail |
-| Tabs | Campaigns (default), Lists, Default Lists, Subscribers, Forms, Reports, Settings |
-| Campaigns toolbar | **+ Create Campaign** (primary); **Import from Mailchimp** (outline secondary); overflow “Import from Mailchimp…” |
-| Lists toolbar | **Import from Mailchimp** (primary entry — audiences → lists) + Create List |
-| Table columns | Name, Subject, Status, Links, Compliance, Approval, Sent, Opens, Clicks, Created, Actions |
-| Status chips | draft · OK · Pending confirmation · Failed |
+| Tabs | Campaigns, Lists, Default Lists, **Subscribers** (default selected), Forms, Reports, Settings |
+| Campaigns toolbar | **+ Create Campaign** (primary) only — **no Import** |
+| Subscribers toolbar | Filters · Search (email, name) · **Import CSV** · **Import from Mailchimp** (outline, next to Import CSV) · Export · **+ Add Contact** (primary) |
+| Subscribers columns | checkbox, Email, Name, Status, Engagement, Lists, Tags, Actions |
+| Subscribers density | ~192 contacts (count under title); staging-like pills / tags |
+| Lists toolbar | Create List (+ count chip); no Import CTA |
+| Campaigns table | Name, Subject, Status, Links, Compliance, Approval, Sent, Opens, Clicks, Created, Actions |
 
-Default landing: **Campaigns** tab (staging URL). Import is findable next to Create Campaign.
+Default landing: **Subscribers** tab. Import CTA lives in the Subscribers actions row (between Import CSV and Export).
 
 ## Screens / flow (Direction B modal)
 
 | Step | UI | Purpose |
 |------|-----|---------|
-| Backdrop | Dimmed Email Campaigns page | Context preserved |
+| Backdrop | Dimmed Email Campaigns → Subscribers | Context preserved |
 | 1 · Audiences | Multi-select fake audiences with counts | Pick what to pull |
 | 2 · Confirm | Target list radio (new named after audience **default** / existing); conflict note | **FTT Mail wins** — won’t re-subscribe local unsubs |
 | 3 · Progress | Progress bar | Fake import |
 | 4 · Summary | Imported / skipped / errors; dismiss → Lists chip refresh | Completion |
 | Error | Invalid Mailchimp key | Reconnect CTA in modal **or** full-page banner |
 
-Smoke path: **Import → pick audience → confirm → progress → summary** (Lists count chip bumps).
+Smoke path: **Subscribers selected → Import from Mailchimp → pick audience → confirm → progress → summary**. Campaigns tab has no Import.
 
 ## Defaults for open questions (unchanged)
 
@@ -53,11 +57,12 @@ Smoke path: **Import → pick audience → confirm → progress → summary** (L
 - Empty audience selection — block Continue on step 1
 - Importing — progress; Back/Next disabled
 - Complete — summary; sessionStorage list bump; switch to Lists
+- `?open=1` — opens modal on load (still on Subscribers backdrop)
 
 ## In scope
 
-- Faithful Email Campaigns chrome as entry
-- Import on Campaigns toolbar (outline) **and** Lists toolbar
+- Faithful Email Campaigns chrome; default **Subscribers** tab
+- **Import from Mailchimp** on Subscribers toolbar (outline, beside Import CSV)
 - Compact multi-step modal (audiences → confirm → progress → summary)
 - Conflict policy messaging + skipped count
 - Bad-key reconnect (modal + banner)
@@ -69,7 +74,7 @@ Smoke path: **Import → pick audience → confirm → progress → summary** (L
 - Push contacts or campaigns to Mailchimp
 - Campaign history import
 - Real Mailchimp / SES API calls (mock only)
-- Full Refresh-from-Mailchimp implementation (CTA only)
+- Full Refresh-from-Mailchimp / Import CSV / Export / Filters implementation (staging chrome CTAs only)
 - Guided full-page wizard (Direction A — archived)
 - Split pane (Direction C — archived)
 
@@ -79,6 +84,7 @@ Smoke path: **Import → pick audience → confirm → progress → summary** (L
 - Advisor: Jordan Lee, CFP
 - Existing lists: Active clients (412), Newsletter archive (890)
 - Campaign rows: draft / OK / Pending confirmation / Failed (labels match staging)
+- Subscribers: 192 contacts; status pills subscribed / unsubscribed / bounced / pending; engagement “No activity”; tags & Fake List badges as staging
 
 ## Related
 
@@ -91,7 +97,7 @@ bg `#f4f8fc` / `#fafafa`, cards `#fff`, ink `#1e2a4a`, muted `#5b6572`, blue `#2
 
 ## Files
 
-- `index.html` — Email Campaigns page + modal shell
-- `styles.css` — chrome + modal
-- `app.js` — tabs, modal steps, bad-key demo, list chip bump
+- `index.html` — Email Campaigns page (Subscribers default) + modal shell
+- `styles.css` — chrome + subscribers table + modal
+- `app.js` — tabs, subscribers render, modal steps, bad-key demo, list chip bump
 </pre></body></html>

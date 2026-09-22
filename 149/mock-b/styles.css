@@ -415,6 +415,77 @@ table.campaigns tbody tr:hover { background: #f3f8fe; }
 
 .hidden { display: none !important; }
 
+
+/* Subscribers panel (staging match) */
+.sub-count {
+  font-size: 13px;
+  color: var(--muted);
+  margin-top: 2px;
+}
+.btn-ico {
+  width: 14px; height: 14px;
+  flex-shrink: 0;
+}
+.subs-filters {
+  display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+  margin-bottom: 12px;
+}
+.search-input {
+  flex: 1; min-width: 200px; max-width: 360px;
+  padding: 8px 12px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  font-size: 13px;
+  background: #fff;
+  color: var(--ink);
+}
+.search-input:focus {
+  outline: none;
+  border-color: var(--blue);
+  box-shadow: 0 0 0 3px rgba(43,125,233,.15);
+}
+table.subscribers {
+  width: 100%; border-collapse: collapse;
+  font-size: 13px; min-width: 980px;
+}
+table.subscribers th {
+  text-align: left; padding: 10px 12px;
+  font-size: 11px; font-weight: 600; color: var(--muted);
+  background: #fafafa; border-bottom: 1px solid #e8edf3;
+  white-space: nowrap;
+}
+table.subscribers td {
+  padding: 10px 12px; border-bottom: 1px solid #eef2f6;
+  vertical-align: middle;
+}
+table.subscribers tbody tr:nth-child(even) { background: #fafbfc; }
+table.subscribers tbody tr:hover { background: #f3f8fe; }
+.col-check { width: 36px; text-align: center; }
+.email-cell { color: var(--ink); font-weight: 500; }
+.tags { display: flex; flex-wrap: wrap; gap: 4px; align-items: center; max-width: 280px; }
+.tag-pill {
+  display: inline-flex; align-items: center;
+  font-size: 11px; font-weight: 500;
+  padding: 2px 8px; border-radius: 999px;
+  border: 1px solid var(--border);
+  color: var(--blue-dark);
+  background: #fff;
+  white-space: nowrap;
+  max-width: 160px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.tag-more {
+  font-size: 11px; font-weight: 600; color: var(--muted);
+}
+.sub-actions {
+  display: flex; flex-direction: column; gap: 2px; align-items: center;
+}
+.more-row td {
+  text-align: center; font-size: 12px; padding: 14px !important;
+  background: #fafafa !important;
+}
+
 @media (max-width: 720px) {
   .shell { grid-template-columns: 1fr; }
   .sidebar { flex-direction: row; flex-wrap: wrap; width: 100%; justify-content: center; padding: 8px; }

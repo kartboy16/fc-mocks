@@ -51,9 +51,9 @@
       <p class="page-sub">Manage your email lists, subscribers, campaigns, and forms (FTT Mail)</p>
 
       <div class="demo-strip" id="demoStrip">
-        <span><strong>Direction B mock</strong> · Entry = Email Campaigns (<code>/content-library/email-campaigns</code>). Import opens a modal. Demo: bad key → reconnect.</span>
+        <span><strong>Direction B mock</strong> · Entry = Email Campaigns → <strong>Subscribers</strong> tab. Import opens a modal. Demo: bad key → reconnect.</span>
         <span style="display:flex;gap:6px;flex-wrap:wrap">
-          <button type="button" class="btn btn-sm btn-outline" id="demoListsImport">Go to Lists · Import</button>
+          <button type="button" class="btn btn-sm btn-outline" id="demoSubsImport">Go to Subscribers · Import</button>
           <button type="button" class="btn btn-sm btn-ghost" id="demoBadKey">Simulate bad key</button>
           <button type="button" class="btn btn-sm btn-ghost" id="demoResetKey">Reset connected</button>
         </span>
@@ -65,28 +65,20 @@
       </div>
 
       <nav class="tabs" role="tablist" aria-label="Email Marketing sections">
-        <button type="button" class="tab active" role="tab" aria-selected="true" data-tab="campaigns">Campaigns</button>
+        <button type="button" class="tab" role="tab" aria-selected="false" data-tab="campaigns">Campaigns</button>
         <button type="button" class="tab" role="tab" aria-selected="false" data-tab="lists">Lists</button>
         <button type="button" class="tab" role="tab" aria-selected="false" data-tab="default-lists">Default Lists</button>
-        <button type="button" class="tab" role="tab" aria-selected="false" data-tab="subscribers">Subscribers</button>
+        <button type="button" class="tab active" role="tab" aria-selected="true" data-tab="subscribers">Subscribers</button>
         <button type="button" class="tab" role="tab" aria-selected="false" data-tab="forms">Forms</button>
         <button type="button" class="tab" role="tab" aria-selected="false" data-tab="reports">Reports</button>
         <button type="button" class="tab" role="tab" aria-selected="false" data-tab="settings">Settings</button>
       </nav>
 
-      <!-- CAMPAIGNS (default — matches staging URL) -->
-      <section class="panel active" id="panel-campaigns" role="tabpanel">
+      <!-- CAMPAIGNS (Create Campaign only — no Import) -->
+      <section class="panel" id="panel-campaigns" role="tabpanel" hidden>
         <div class="section-hd">
           <h2>Campaigns</h2>
           <div class="section-actions">
-            <span class="chip" id="connChip" title="Mailchimp connection">● Mailchimp · Jordan Lee, CFP</span>
-            <button type="button" class="btn btn-outline" id="importCampaignsBtn">Import from Mailchimp</button>
-            <div class="overflow-wrap">
-              <button type="button" class="btn btn-ghost btn-sm" id="overflowBtn" aria-haspopup="true" aria-expanded="false" title="More">⋯</button>
-              <div class="overflow-menu" id="overflowMenu" role="menu">
-                <button type="button" role="menuitem" id="overflowImport">Import from Mailchimp…</button>
-              </div>
-            </div>
             <button type="button" class="btn btn-primary" id="createCampaign">+ Create Campaign</button>
           </div>
         </div>
@@ -115,16 +107,15 @@
         </div>
       </section>
 
-      <!-- LISTS (primary Import entry for audiences → lists) -->
+      <!-- LISTS -->
       <section class="panel" id="panel-lists" role="tabpanel" hidden>
         <div class="lists-toolbar">
           <div>
             <h2 style="font-size:18px;font-weight:600">Lists</h2>
-            <p class="muted" style="margin-top:2px">Audiences in FTT Mail · Import from Mailchimp lands here</p>
+            <p class="muted" style="margin-top:2px">Audiences in FTT Mail · Import from Mailchimp lands contacts here</p>
           </div>
           <div class="section-actions">
             <span class="chip" id="listCountChip">2 lists</span>
-            <button type="button" class="btn btn-outline" id="importListsBtn">Import from Mailchimp</button>
             <button type="button" class="btn btn-primary">+ Create List</button>
           </div>
         </div>
@@ -135,10 +126,58 @@
         <h2 style="font-size:18px;margin-bottom:8px">Default Lists</h2>
         <p class="muted">Staging placeholder — default list mapping not in scope for #149.</p>
       </section>
-      <section class="panel" id="panel-subscribers" role="tabpanel" hidden>
-        <h2 style="font-size:18px;margin-bottom:8px">Subscribers</h2>
-        <p class="muted">Staging placeholder.</p>
+
+      <!-- SUBSCRIBERS (default entry — Import from Mailchimp CTA) -->
+      <section class="panel active" id="panel-subscribers" role="tabpanel">
+        <div class="section-hd">
+          <div>
+            <h2>Subscribers</h2>
+            <p class="sub-count" id="subCountLabel">192 contacts</p>
+          </div>
+          <div class="section-actions">
+            <span class="chip" id="connChip" title="Mailchimp connection">● Mailchimp · Jordan Lee, CFP</span>
+            <button type="button" class="btn btn-outline" id="importCsvBtn" title="Import CSV">
+              <svg class="btn-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M5 21h14"/></svg>
+              Import CSV
+            </button>
+            <button type="button" class="btn btn-outline" id="importSubscribersBtn">Import from Mailchimp</button>
+            <button type="button" class="btn btn-outline" id="exportBtn" title="Export">
+              <svg class="btn-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21V9"/><path d="M7 14l5-5 5 5"/><path d="M5 3h14"/></svg>
+              Export
+            </button>
+            <button type="button" class="btn btn-primary" id="addContact">+ Add Contact</button>
+          </div>
+        </div>
+
+        <div class="subs-filters">
+          <button type="button" class="btn btn-outline btn-sm" id="filtersBtn" disabled>
+            <svg class="btn-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>
+            Filters
+          </button>
+          <input type="search" class="search-input" placeholder="Search (email, name)" aria-label="Search subscribers" />
+        </div>
+
+        <div class="table-wrap">
+          <table class="subscribers">
+            <thead>
+              <tr>
+                <th class="col-check"><input type="checkbox" id="selectAllSubs" aria-label="Select all" /></th>
+                <th>Email</th>
+                <th>Name</th>
+                <th>Status</th>
+                <th>Engagement</th>
+                <th>Lists</th>
+                <th>Tags</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="subscriberRows">
+              <!-- filled by app.js -->
+            </tbody>
+          </table>
+        </div>
       </section>
+
       <section class="panel" id="panel-forms" role="tabpanel" hidden>
         <h2 style="font-size:18px;margin-bottom:8px">Forms</h2>
         <p class="muted">Staging placeholder.</p>
