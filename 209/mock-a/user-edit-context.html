@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>User Edit · Advisor Categories context · FC #209 Mock A</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="demo-banner">
+    <span><strong>FC #209 Mock A</strong> · Context frame — User Edit Advisor Categories checkboxes (fed by Manage page)</span>
+    <span>
+      <a href="manage.html">Manage Advisor Categories</a> ·
+      <a href="index.html">Menu</a> ·
+      <a href="../pages-root/index.html">Hub</a>
+    </span>
+  </div>
+
+  <div class="shell">
+    <aside class="sidebar">
+      <div class="side-logo">FC</div>
+      <nav class="side-nav" aria-label="Primary">
+        <a class="side-item" href="index.html"><span class="ico">📄</span>Content</a>
+        <a class="side-item" href="#"><span class="ico">💻</span>Website</a>
+        <a class="side-item" href="#"><span class="ico">↗</span>Social</a>
+        <a class="side-item" href="#"><span class="ico">✉</span>Email</a>
+        <a class="side-item" href="#"><span class="ico">📅</span>Calendar</a>
+        <a class="side-item" href="#"><span class="ico">⚙</span>Settings</a>
+      </nav>
+      <button type="button" class="profile-btn" id="profileBtn" aria-expanded="false" aria-controls="profileMenu">
+        <span class="avatar">AH</span>
+        Profile
+      </button>
+    </aside>
+
+    <div class="main">
+      <div class="page">
+        <a class="back-link" href="manage.html">← Back to Manage Advisor Categories</a>
+
+        <div class="ue-header">
+          <div>
+            <h1>Edit advisor</h1>
+            <div class="ue-meta">Alex Hung · context frame showing Advisor Categories checkboxes</div>
+          </div>
+          <div class="ue-ok">Branding configured (demo)</div>
+        </div>
+
+        <div class="callout-diff">
+          Checkboxes below are hydrated from the same <strong>AdvisorSource</strong> records you manage on
+          <a href="manage.html">Manage Advisor Categories</a>. Add/edit/delete there, then refresh this list
+          (same browser tab updates live; other tabs via storage event).
+        </div>
+
+        <div class="ue-grid">
+          <section class="card">
+            <h2>Advisor Details</h2>
+            <div class="form-grid">
+              <div class="field"><label>Company Name</label><input value="Financial Tech Tools" readonly /></div>
+              <div class="field"><label>Advisor Title</label><input value="Founder" readonly /></div>
+              <div class="field"><label>First Name</label><input value="Alex" readonly /></div>
+              <div class="field"><label>Last Name</label><input value="Hung" readonly /></div>
+              <div class="field full"><label>Website</label><input value="https://financialtechtools.ca" readonly /></div>
+            </div>
+          </section>
+
+          <section class="card">
+            <h2>Advisor Categories</h2>
+            <div class="cat-panel">
+              <div class="cat-panel-h">Name / Slug</div>
+              <div id="advisorCatList" class="cat-list" aria-label="Advisor category checkboxes"></div>
+            </div>
+            <p style="margin-top:12px;font-size:12px;color:var(--muted)">
+              These are <strong>AdvisorSource</strong> values — not MasterCategories topic tags.
+            </p>
+          </section>
+        </div>
+
+        <div class="ue-footer">
+          <a class="back-link" href="manage.html" style="margin:0">← Manage catalog</a>
+          <button type="button" class="btn btn-primary" id="saveUser">Save</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="menu-backdrop" id="menuBackdrop"></div>
+  <div class="profile-menu" id="profileMenu" role="menu"></div>
+  <div class="toast" id="toast" role="status"></div>
+  <script src="app.js"></script>
+</body>
+</html>

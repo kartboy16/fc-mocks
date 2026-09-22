@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Compare directions A / B / C · FC #209</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root{--bg:#f4f8fc;--card:#fff;--ink:#1e2a4a;--muted:#5b6572;--blue:#2b7de9;--border:#d4e4f2;--mint:#e6f1fb;--ok:#1a7f4c}
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:Inter,system-ui,sans-serif;background:var(--bg);color:var(--ink);font-size:14px;line-height:1.5}
+    .bar{background:var(--ink);color:#fff;padding:10px 20px;font-size:12px;display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap}
+    .bar a{color:#9ec5ff}
+    .wrap{max-width:960px;margin:0 auto;padding:28px 20px 72px}
+    h1{font-size:22px;margin-bottom:8px}
+    .lead{color:var(--muted);margin-bottom:20px}
+    .rec{background:linear-gradient(135deg,#1e2a4a,#2b7de9);color:#fff;border-radius:12px;padding:18px 20px;margin-bottom:22px}
+    .rec strong{display:block;font-size:16px;margin-bottom:6px}
+    table{width:100%;border-collapse:collapse;background:var(--card);border:1px solid var(--border);border-radius:12px;overflow:hidden}
+    th,td{padding:12px 14px;text-align:left;border-bottom:1px solid var(--border);vertical-align:top;font-size:13px}
+    th{background:var(--mint);font-size:11px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted)}
+    tr:last-child td{border-bottom:none}
+    .best{color:var(--ok);font-weight:700}
+    .links{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;margin-top:22px}
+    .links a{display:block;background:var(--card);border:1px solid var(--border);border-radius:10px;padding:14px;text-decoration:none;color:var(--ink)}
+    .links a:hover{border-color:var(--blue)}
+    .links .t{font-weight:700;color:var(--blue);margin-bottom:4px}
+    .diff{margin-top:20px;background:#fff3e0;border:1px solid #f0d4a8;border-radius:10px;padding:14px;font-size:13px;color:#b45309}
+    .diff strong{color:var(--ink)}
+  </style>
+</head>
+<body>
+  <div class="bar">
+    <span>FC #209 · Direction compare</span>
+    <span><a href="../pages-root/index.html">Hub</a> · <a href="../mock-a/index.html">Mock A</a></span>
+  </div>
+  <div class="wrap">
+    <h1>Compare A / B / C</h1>
+    <p class="lead">Admin CRUD for <strong>AdvisorSource</strong> (Manage Advisor Categories). Pick one direction to deepen — recommendation is A.</p>
+    <div class="rec">
+      <strong>Recommend Direction A — Mirror Manage Categories</strong>
+      Same mental model as topic Manage Categories (info alert, add row, table, edit/delete confirm). Simplified columns: Name / Slug / Logo / actions. Deepened in mock-a.
+    </div>
+    <table>
+      <thead>
+        <tr><th></th><th>A · Mirror table</th><th>B · Card grid</th><th>C · Split inspector</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><strong>Layout</strong></td><td>Add form + table</td><td>Cards + add modal</td><td>List left / form right</td></tr>
+        <tr><td><strong>Parity with Manage Categories</strong></td><td class="best">Highest</td><td>Low</td><td>Medium</td></tr>
+        <tr><td><strong>Logo handling</strong></td><td>URL field + thumb in row</td><td class="best">Thumbnail-first cards</td><td>URL in inspector</td></tr>
+        <tr><td><strong>CRUD speed</strong></td><td class="best">Fast inline / row actions</td><td>Modal round-trips</td><td>Select then edit</td></tr>
+        <tr><td><strong>Risk</strong></td><td>Low — known pattern</td><td>New pattern for admins</td><td>Heavier chrome</td></tr>
+        <tr><td><strong>Mock</strong></td><td class="best">Full mock-a</td><td>Board only</td><td>Board only</td></tr>
+      </tbody>
+    </table>
+    <div class="diff">
+      <strong>Critical distinction:</strong> Manage Advisor Categories ≠ Manage Categories.
+      AdvisorSource powers User Edit → Advisor Categories checkboxes.
+      Manage Categories = MasterCategories / topic tags — sibling menu item for contrast only; do not redesign.
+    </div>
+    <div class="links">
+      <a href="a/index.html"><div class="t">Board A</div>Recommended mirror sketch</a>
+      <a href="b/index.html"><div class="t">Board B</div>Card grid + modal</a>
+      <a href="c/index.html"><div class="t">Board C</div>Split list + inspector</a>
+      <a href="../mock-a/index.html"><div class="t">Full mock A</div>Menu → CRUD → User Edit</a>
+    </div>
+  </div>
+</body>
+</html>

@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Direction B — Card grid · FC #209</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root{--bg:#f4f8fc;--card:#fff;--ink:#1e2a4a;--muted:#5b6572;--blue:#2b7de9;--border:#d4e4f2;--mint:#e6f1fb}
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:Inter,system-ui,sans-serif;background:var(--bg);color:var(--ink);font-size:14px}
+    .bar{background:var(--ink);color:#fff;padding:10px 20px;display:flex;justify-content:space-between;font-size:12px;flex-wrap:wrap;gap:8px}
+    .bar a{color:#9ec5ff}
+    .wrap{max-width:920px;margin:0 auto;padding:28px 20px 64px}
+    .tag{display:inline-block;background:#eef2f6;color:var(--muted);font-size:11px;font-weight:700;padding:4px 10px;border-radius:999px;margin-bottom:10px}
+    h1{font-size:22px;margin-bottom:8px}
+    .lead{color:var(--muted);margin-bottom:18px}
+    .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px}
+    .card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px;position:relative}
+    .card .logo{width:48px;height:48px;border-radius:8px;background:var(--mint);display:grid;place-items:center;font-weight:700;color:var(--blue);margin-bottom:10px}
+    .card h3{font-size:15px}
+    .card .slug{font-size:11px;color:var(--muted);font-family:ui-monospace,Menlo,monospace;margin:4px 0 12px}
+    .card .row{display:flex;gap:6px}
+    .card button{flex:1;padding:7px;border-radius:8px;border:1px solid var(--border);background:#fff;cursor:pointer;font-size:12px;font-weight:600}
+    .add{border-style:dashed;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:160px;color:var(--blue);cursor:pointer;font-weight:700}
+    . Pros{margin-top:18px;font-size:13px;color:var(--muted)}
+    .modal{display:none;position:fixed;inset:0;background:rgba(30,42,74,.4);align-items:center;justify-content:center;padding:20px}
+    .modal.show{display:flex}
+    .modal .box{background:#fff;border-radius:12px;padding:20px;width:100%;max-width:400px}
+    .modal input{width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;margin:8px 0 12px;font:inherit}
+    .modal .f{display:flex;justify-content:flex-end;gap:8px}
+    .modal button{padding:8px 14px;border-radius:8px;border:none;font-weight:600;cursor:pointer}
+    .modal .p{background:var(--blue);color:#fff}
+  </style>
+</head>
+<body>
+  <div class="bar"><span>Direction B · Card grid + modal</span><span><a href="../a/index.html">A</a> · <a href="../c/index.html">C</a> · <a href="../compare.html">Compare</a></span></div>
+  <div class="wrap">
+    <span class="tag">ALTERNATE</span>
+    <h1>B — Card grid</h1>
+    <p class="lead">Cards with logo thumbnail, name, slug. Add opens a modal. Stronger visual for logo-forward catalogs; farther from existing Manage Categories.</p>
+    <div class="grid" id="grid">
+      <div class="card"><div class="logo">IN</div><h3>Independent</h3><div class="slug">independent</div><div class="row"><button type="button">Edit</button><button type="button">Delete</button></div></div>
+      <div class="card"><div class="logo">BO</div><h3>Bank-owned</h3><div class="slug">bank-owned</div><div class="row"><button type="button">Edit</button><button type="button">Delete</button></div></div>
+      <div class="card"><div class="logo">CU</div><h3>Credit Union</h3><div class="slug">credit-union</div><div class="row"><button type="button">Edit</button><button type="button">Delete</button></div></div>
+      <button type="button" class="card add" id="open">+ Add category</button>
+    </div>
+    <p class="pros"><strong>Pros:</strong> Logo-first, scannable. <strong>Cons:</strong> New pattern vs Manage Categories; denser CRUD is slower than a table.</p>
+    <p style="margin-top:16px;font-size:13px">Recommendation remains <a href="../a/index.html">Direction A</a> — deepen in <a href="../../mock-a/index.html">mock-a</a>.</p>
+  </div>
+  <div class="modal" id="m"><div class="box">
+    <h3>Add advisor category</h3>
+    <label>Name</label><input id="name" placeholder="e.g. Wirehouse" />
+    <label>Logo URL</label><input id="logo" placeholder="https://…" />
+    <div class="f"><button type="button" id="cancel">Cancel</button><button type="button" class="p" id="save">Add</button></div>
+  </div></div>
+  <script>
+    const m=document.getElementById('m'), g=document.getElementById('grid');
+    document.getElementById('open').onclick=()=>m.classList.add('show');
+    document.getElementById('cancel').onclick=()=>m.classList.remove('show');
+    document.getElementById('save').onclick=()=>{
+      const name=document.getElementById('name').value.trim(); if(!name) return;
+      const slug=name.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/(^-|-$)/g,'');
+      const initials=name.split(/\s+/).map(w=>w[0]).join('').slice(0,2).toUpperCase();
+      document.getElementById('open').insertAdjacentHTML('beforebegin',`<div class="card"><div class="logo">${initials}</div><h3>${name}</h3><div class="slug">${slug}</div><div class="row"><button type="button">Edit</button><button type="button">Delete</button></div></div>`);
+      m.classList.remove('show'); document.getElementById('name').value=''; document.getElementById('logo').value='';
+    };
+  </script>
+</body>
+</html>

@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Content Library · Profile ADMIN menu · FC #209 Mock A</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body data-open-menu="1">
+  <div class="demo-banner">
+    <span><strong>FC #209 Mock A</strong> · Content Library shell · Profile ADMIN menu open</span>
+    <span>
+      <a href="manage.html">Manage page</a> ·
+      <a href="user-edit-context.html">User Edit context</a> ·
+      <a href="../pages-root/index.html">Hub</a>
+    </span>
+  </div>
+
+  <div class="shell">
+    <aside class="sidebar">
+      <div class="side-logo">FC</div>
+      <nav class="side-nav" aria-label="Primary">
+        <a class="side-item active" href="#"><span class="ico">📄</span>Content</a>
+        <a class="side-item" href="#"><span class="ico">💻</span>Website</a>
+        <a class="side-item" href="#"><span class="ico">↗</span>Social</a>
+        <a class="side-item" href="#"><span class="ico">✉</span>Email</a>
+        <a class="side-item" href="#"><span class="ico">📅</span>Calendar</a>
+        <a class="side-item" href="#"><span class="ico">⚙</span>Settings</a>
+      </nav>
+      <button type="button" class="profile-btn open" id="profileBtn" aria-expanded="true" aria-haspopup="true" aria-controls="profileMenu">
+        <span class="avatar">AH</span>
+        Profile
+      </button>
+    </aside>
+
+    <div class="main">
+      <div class="page">
+        <div class="callout-diff">
+          <strong>Not the same as Manage Categories.</strong>
+          Manage Categories = MasterCategories / topic tags.
+          <strong>Manage Advisor Categories</strong> (new) = AdvisorSource catalog used as Advisor Categories checkboxes on User Edit.
+        </div>
+
+        <div class="lib-hero">
+          <h1>What will you share today?</h1>
+          <div class="search-pill">🔍 <input type="search" placeholder="Search content…" readonly /></div>
+          <div class="filter-row">
+            <span class="chip on">All Content</span>
+            <span class="chip">Favorites</span>
+            <span class="chip">Topics</span>
+            <span class="chip">Hidden</span>
+          </div>
+        </div>
+
+        <div class="hint-open">
+          <strong>Profile menu is open</strong> (bottom-left AH).
+          In the <strong>Admin</strong> block, find <strong>Manage Advisor Categories</strong> highlighted next to
+          <em>Manage Categories</em> (topic tags). Click it to open the CRUD page.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="menu-backdrop show" id="menuBackdrop"></div>
+  <div class="profile-menu show" id="profileMenu" role="menu" aria-label="Profile and admin menu"></div>
+  <div class="toast" id="toast" role="status"></div>
+  <script src="app.js"></script>
+</body>
+</html>

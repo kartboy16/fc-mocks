@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Direction C — Split list + inspector · FC #209</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root{--bg:#f4f8fc;--card:#fff;--ink:#1e2a4a;--muted:#5b6572;--blue:#2b7de9;--border:#d4e4f2;--mint:#e6f1fb;--err:#c62828}
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:Inter,system-ui,sans-serif;background:var(--bg);color:var(--ink);font-size:14px}
+    .bar{background:var(--ink);color:#fff;padding:10px 20px;display:flex;justify-content:space-between;font-size:12px;flex-wrap:wrap;gap:8px}
+    .bar a{color:#9ec5ff}
+    .wrap{max-width:960px;margin:0 auto;padding:28px 20px 64px}
+    .tag{display:inline-block;background:#eef2f6;color:var(--muted);font-size:11px;font-weight:700;padding:4px 10px;border-radius:999px;margin-bottom:10px}
+    h1{font-size:22px;margin-bottom:8px}
+    .lead{color:var(--muted);margin-bottom:18px}
+    .split{display:grid;grid-template-columns:280px 1fr;gap:14px;min-height:360px}
+    @media(max-width:720px){.split{grid-template-columns:1fr}}
+    .pane{background:var(--card);border:1px solid var(--border);border-radius:12px;overflow:hidden;display:flex;flex-direction:column}
+    .pane-h{padding:12px 14px;border-bottom:1px solid var(--border);font-weight:700;font-size:13px;display:flex;justify-content:space-between;align-items:center}
+    .list{flex:1;overflow:auto}
+    .item{padding:12px 14px;border-bottom:1px solid var(--border);cursor:pointer}
+    .item:hover,.item.on{background:var(--mint)}
+    .item .s{font-size:11px;color:var(--muted);font-family:ui-monospace,Menlo,monospace}
+    .body{padding:16px}
+    .field{margin-bottom:12px}
+    .field label{display:block;font-size:11px;font-weight:600;color:var(--muted);margin-bottom:4px;text-transform:uppercase}
+    .field input{width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;font:inherit}
+    .actions{display:flex;gap:8px;margin-top:16px}
+    .actions button{padding:9px 14px;border-radius:8px;border:none;font-weight:600;cursor:pointer}
+    .save{background:var(--blue);color:#fff}
+    .del{background:#fff;color:var(--err);border:1px solid #f5c2c2!important}
+    .note{margin-top:16px;font-size:13px;color:var(--muted)}
+  </style>
+</head>
+<body>
+  <div class="bar"><span>Direction C · Split list + inspector</span><span><a href="../a/index.html">A</a> · <a href="../b/index.html">B</a> · <a href="../compare.html">Compare</a></span></div>
+  <div class="wrap">
+    <span class="tag">ALTERNATE</span>
+    <h1>C — Split list + inspector</h1>
+    <p class="lead">Left list of AdvisorSources; right pane edits the selection. Delete confirm in inspector. Good for power users; heavier than the Manage Categories mirror.</p>
+    <div class="split">
+      <div class="pane">
+        <div class="pane-h">Categories <button type="button" id="add" style="font-size:12px;padding:4px 8px;border-radius:6px;border:1px solid var(--border);background:#fff;cursor:pointer">+ Add</button></div>
+        <div class="list" id="list"></div>
+      </div>
+      <div class="pane">
+        <div class="pane-h">Inspector</div>
+        <div class="body">
+          <div class="field"><label>Name</label><input id="name" /></div>
+          <div class="field"><label>Slug (auto)</label><input id="slug" readonly style="background:#fafafa;color:var(--muted)" /></div>
+          <div class="field"><label>Logo URL</label><input id="logo" placeholder="https://…" /></div>
+          <div class="actions">
+            <button type="button" class="save" id="save">Save</button>
+            <button type="button" class="del" id="del">Delete…</button>
+          </div>
+          <p class="note" id="hint">Select a row or click + Add.</p>
+        </div>
+      </div>
+    </div>
+    <p class="note">Recommendation remains <a href="../a/index.html">Direction A</a> for parity with Manage Categories.</p>
+  </div>
+  <script>
+    let data=[{id:1,name:'Independent',slug:'independent',logo:''},{id:2,name:'Bank-owned',slug:'bank-owned',logo:''},{id:3,name:'Credit Union',slug:'credit-union',logo:''}];
+    let sel=1;
+    const slugify=t=>t.toLowerCase().trim().replace(/[^a-z0-9]+/g,'-').replace(/(^-|-$)/g,'');
+    function render(){
+      document.getElementById('list').innerHTML=data.map(d=>`<div class="item ${d.id===sel?'on':''}" data-id="${d.id}"><strong>${d.name}</strong><div class="s">${d.slug}</div></div>`).join('');
+      const cur=data.find(d=>d.id===sel);
+      if(!cur){document.getElementById('name').value='';document.getElementById('slug').value='';document.getElementById('logo').value='';return;}
+      document.getElementById('name').value=cur.name; document.getElementById('slug').value=cur.slug; document.getElementById('logo').value=cur.logo||'';
+    }
+    document.getElementById('list').onclick=e=>{const it=e.target.closest('.item'); if(!it) return; sel=+it.dataset.id; render();};
+    document.getElementById('name').oninput=e=>{document.getElementById('slug').value=slugify(e.target.value);};
+    document.getElementById('save').onclick=()=>{
+      const cur=data.find(d=>d.id===sel); if(!cur) return;
+      cur.name=document.getElementById('name').value.trim()||cur.name;
+      cur.slug=slugify(cur.name); cur.logo=document.getElementById('logo').value.trim();
+      document.getElementById('hint').textContent='Saved (sketch).'; render();
+    };
+    document.getElementById('del').onclick=()=>{
+      const cur=data.find(d=>d.id===sel); if(!cur) return;
+      if(!confirm('Delete '+cur.name+'?')) return;
+      data=data.filter(d=>d.id!==sel); sel=data[0]?data[0].id:null; render();
+    };
+    document.getElementById('add').onclick=()=>{
+      const id=Date.now(); data.push({id,name:'New category',slug:'new-category',logo:''}); sel=id; render();
+    };
+    render();
+  </script>
+</body>
+</html>

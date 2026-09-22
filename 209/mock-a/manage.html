@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Manage Advisor Categories · FC #209 Mock A</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="demo-banner">
+    <span><strong>FC #209 Mock A</strong> · Manage Advisor Categories (AdvisorSource CRUD) · localStorage demo</span>
+    <span>
+      <a href="index.html">Menu entry</a> ·
+      <a href="user-edit-context.html">User Edit context</a> ·
+      <a href="../pages-root/index.html">Hub</a>
+    </span>
+  </div>
+
+  <div class="shell">
+    <aside class="sidebar">
+      <div class="side-logo">FC</div>
+      <nav class="side-nav" aria-label="Primary">
+        <a class="side-item" href="index.html"><span class="ico">📄</span>Content</a>
+        <a class="side-item" href="#"><span class="ico">💻</span>Website</a>
+        <a class="side-item" href="#"><span class="ico">↗</span>Social</a>
+        <a class="side-item" href="#"><span class="ico">✉</span>Email</a>
+        <a class="side-item" href="#"><span class="ico">📅</span>Calendar</a>
+        <a class="side-item" href="#"><span class="ico">⚙</span>Settings</a>
+      </nav>
+      <button type="button" class="profile-btn" id="profileBtn" aria-expanded="false" aria-haspopup="true" aria-controls="profileMenu">
+        <span class="avatar">AH</span>
+        Profile
+      </button>
+    </aside>
+
+    <div class="main">
+      <div class="page">
+        <a class="back-link" href="index.html">← Back</a>
+        <h1 class="page-title">Manage Advisor Categories</h1>
+
+        <div class="callout-diff">
+          <strong>AdvisorSource</strong> catalog (<code>name</code>, auto <code>slug</code>, optional <code>logoUrl</code>).
+          This is <em>not</em> Manage Categories (MasterCategories / topic tags).
+          These records feed the <strong>Advisor Categories</strong> checkboxes on Admin → User Edit.
+        </div>
+
+        <div class="info-alert">
+          <span class="i">i</span>
+          <div>
+            <strong>Mirrors Manage Categories</strong> pattern: add row at top, table with edit/delete.
+            Simplified columns — Name / Slug / Logo / actions (no Featured / Visible / Status — those belong to topic categories).
+            Slug auto-updates from name (server behavior).
+          </div>
+        </div>
+
+        <section class="add-card" aria-label="Add advisor category">
+          <h2>Add advisor category</h2>
+          <div class="add-grid">
+            <div class="field">
+              <label for="newName">Name</label>
+              <input id="newName" type="text" placeholder="New category name" autocomplete="off" />
+            </div>
+            <div class="field">
+              <label for="newLogo">Logo URL <span class="opt">(optional)</span></label>
+              <input id="newLogo" type="url" placeholder="https://…" autocomplete="off" />
+            </div>
+            <button type="button" class="btn btn-primary" id="addBtn" disabled>+ Add Category</button>
+          </div>
+          <div id="slugPreview" class="slug-preview">Slug preview: <code>—</code> (auto from name)</div>
+        </section>
+
+        <section class="table-card" aria-label="Advisor categories list">
+          <div class="table-toolbar">
+            <h2>Advisor categories</h2>
+            <button type="button" class="btn btn-ghost btn-sm" id="resetSeed">Reset seed</button>
+          </div>
+          <table class="cats">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Slug</th>
+                <th>Logo</th>
+                <th style="text-align:right">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="catBody"></tbody>
+          </table>
+        </section>
+      </div>
+    </div>
+  </div>
+
+  <div class="menu-backdrop" id="menuBackdrop"></div>
+  <div class="profile-menu" id="profileMenu" role="menu"></div>
+
+  <div class="modal-backdrop" id="deleteBackdrop" role="dialog" aria-modal="true" aria-labelledby="deleteTitle">
+    <div class="modal">
+      <div class="modal-h" id="deleteTitle">Delete advisor category?</div>
+      <div class="modal-b">
+        Remove <strong id="deleteName">this category</strong> from the AdvisorSource catalog?
+        User assignments and post visibility refs are cleaned up on the server (mocked here).
+      </div>
+      <div class="modal-f">
+        <button type="button" class="btn btn-ghost" id="cancelDelete">Cancel</button>
+        <button type="button" class="btn btn-danger" id="confirmDelete">Delete</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast" role="status"></div>
+  <script src="app.js"></script>
+</body>
+</html>
