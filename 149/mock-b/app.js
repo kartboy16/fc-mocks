@@ -509,16 +509,8 @@
 
   function syncConnUI() {
     const ok = connOk();
-    /* connChip removed */
-    
+    /* No Mailchimp status chip in chrome — match live Subscribers UI */
     const banner = document.getElementById('keyBanner');
-    if (chip) {
-      chip.textContent = ok
-        ? '● Mailchimp · Jordan Lee, CFP'
-        : '● Mailchimp disconnected';
-      chip.style.background = ok ? '' : '#fdecea';
-      chip.style.color = ok ? '' : '#c62828';
-    }
     if (banner) banner.classList.toggle('show', !ok);
   }
 
