@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Build contract · Manage Advisor filters · Locked B</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    body { font-family: Inter, system-ui, sans-serif; max-width: 760px; margin: 40px auto; padding: 0 24px 80px; color: #1e2a4a; line-height: 1.55; }
+    h1 { font-size: 22px; } h2 { font-size: 16px; margin-top: 28px; } p, li { font-size: 14px; color: #3a4558; }
+    .ok { background: #e8f5e9; color: #1a7f4c; padding: 12px 14px; border-radius: 8px; font-size: 13px; margin-bottom: 16px; }
+    .rule { background: #eff6ff; color: #1e40af; padding: 12px 14px; border-radius: 8px; font-size: 13px; margin-bottom: 16px; }
+    .warn { background: #fff7ed; color: #9a3412; padding: 12px 14px; border-radius: 8px; font-size: 13px; margin-bottom: 16px; }
+    code { background: #eef2f6; padding: 1px 6px; border-radius: 4px; font-size: 12px; }
+    a { color: #2b7de9; } table { width: 100%; border-collapse: collapse; font-size: 13px; margin: 12px 0; }
+    th, td { border: 1px solid #d4e4f2; padding: 8px 10px; text-align: left; vertical-align: top; } th { background: #eef4fb; }
+    ul { padding-left: 1.2em; }
+  </style>
+</head>
+<body>
+  <p class="ok"><strong>Locked · Alex 2026-09-25</strong> — Direction B (one-row summary chips → group popover). CoS will file the content-library issue — do <strong>not</strong> mark agent-ready from this mock repo.</p>
+  <p class="rule"><strong>Default rule:</strong> Replace the full-wrap active-filter strip with one nowrap row of group summary chips. Each summary chip opens a popover with that group’s individual filters, search, and × remove controls.</p>
+  <p class="warn"><strong>Audience:</strong> Admin Manage Advisor Posts — active filter presentation only.</p>
+
+  <h1>Build contract · Manage Advisor Posts (Direction B)</h1>
+  <p>Full markdown: <a href="build-contract.md">build-contract.md</a> · Mock: <a href="directions/b/">Direction B</a> · <a href="index.html">Hub</a></p>
+
+  <h2>One-liner</h2>
+  <p>Show one row of summary chips, one per non-empty filter group / polarity. Clicking a summary chip opens a popover listing that group’s individual filters with remove (×) and search-within-group. Filters drawer stays as today.</p>
+
+  <h2>Problem</h2>
+  <p>50+ include/exclude chips (list source, suggest source, topics) wrap many rows and push the advisor table down. This changes active-filter presentation only, not the filter system.</p>
+
+  <h2>Default strip</h2>
+  <ul>
+    <li>~3–6 summary chips on one horizontal row; nowrap, with horizontal scroll if needed</li>
+    <li>Include list source(s) when present (solid blue)</li>
+    <li>Exclude list · N, Exclude suggest · N, Exclude topics · N (red outline)</li>
+    <li>Other live filter groups follow the same pattern when present</li>
+    <li><strong>Clear all</strong> on the right; Filters toolbar badge remains the total active count</li>
+  </ul>
+
+  <h2>Popover</h2>
+  <ul>
+    <li>Anchored under / near the clicked summary chip; title is the group name</li>
+    <li>Search filters within that group</li>
+    <li>Each row keeps its existing production label prefix and has a single-filter × remove control</li>
+    <li>When a group is empty, close the popover and remove its summary chip</li>
+    <li>Close via ×, Escape, or click-outside</li>
+  </ul>
+
+  <h2>Screens / states</h2>
+  <table>
+    <thead><tr><th>State</th><th>Behavior</th></tr></thead>
+    <tbody>
+      <tr><td>Crowded (many filters)</td><td>One summary-chip row; table starts immediately below</td></tr>
+      <tr><td>Summary chip click</td><td>Popover with group chips + search + ×</td></tr>
+      <tr><td>Remove one</td><td>Filter clears; summary count updates; empty group drops from strip</td></tr>
+      <tr><td>Clear all</td><td>All active filters clear; strip is empty / hidden as appropriate</td></tr>
+      <tr><td>Zero filters</td><td>No summary strip (or empty); Filters badge 0</td></tr>
+      <tr><td>Filters drawer</td><td>Unchanged stub/live drawer — Apply still drives the active set</td></tr>
+    </tbody>
+  </table>
+
+  <h2>In scope</h2>
+  <ul>
+    <li>Direction B summary chips + popover, Clear all, per-filter remove, and search within group</li>
+    <li>Keep Filters drawer / apply flow as today</li>
+    <li>Desktop admin Manage Advisor Posts</li>
+  </ul>
+
+  <h2>Out of scope</h2>
+  <ul>
+    <li>Redesigning Filters drawer contents / new filter types; Directions A or C</li>
+    <li>Filing content-library issue / agent-ready (CoS)</li>
+    <li>Choose Services / Services column work (#240)</li>
+    <li>Mobile redesign beyond not breaking the strip</li>
+  </ul>
+
+  <h2>Primary files</h2>
+  <p><code>imports/ui/admin/ManageAdvisorPosts.jsx</code> and any active-filter chip strip components it uses.</p>
+
+  <h2>Related</h2>
+  <p><a href="reference/crowded.png">Crowded reference</a> · Manage Advisor Choose Services (#240) — separate surface</p>
+
+  <h2>Handoff</h2>
+  <p>Visual reference: locked Direction B. CoS files issue + agent-ready; Software developer implements from issue + this contract.</p>
+  <p><a href="index.html">← Hub</a></p>
+</body>
+</html>

@@ -237,9 +237,10 @@
 </head>
 <body>
   <header class="thesis">
-    <span class="rec">ALT</span>
+    <span class="rec">LOCKED · ALEX 2026-09-25</span>
     <h1>Direction B — Grouped type chips → popover</h1>
     <p>Instead of 50 chips, show ~3–6 summary chips on <strong>one row</strong>: include list + Exclude list · N + Exclude suggest · N + Exclude topics · N. Click a summary chip → popover with that group’s chips, × remove, and search-within-group.</p>
+    <p style="margin-top:6px;font-size:0.75rem"><a href="../../build-contract.html">Build contract: locked Direction B</a></p>
   </header>
   <nav class="nav">
     <a href="../../index.html">← Hub</a>
@@ -918,6 +919,11 @@ document.addEventListener('click', (e) => {
   const pop = document.getElementById('popover');
   const root = document.querySelector('.popover-root');
   if (pop.classList.contains('open') && root && !root.contains(e.target)) closePop();
+});
+
+
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape' && document.getElementById('popover').classList.contains('open')) closePop();
 });
 
 

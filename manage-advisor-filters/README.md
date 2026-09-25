@@ -5,10 +5,16 @@ Temporary FC Designer mocks (no content-library issue yet). Presentation-only: h
 ## Live pages
 
 - Hub: https://kartboy16.github.io/fc-mocks/manage-advisor-filters/
-- **A (recommended)** — Collapsed summary + expand: https://kartboy16.github.io/fc-mocks/manage-advisor-filters/directions/a/
-- B — Grouped type chips → popover: https://kartboy16.github.io/fc-mocks/manage-advisor-filters/directions/b/
+- **B (locked · Alex 2026-09-25)** — Grouped type chips → popover: https://kartboy16.github.io/fc-mocks/manage-advisor-filters/directions/b/
+- A — Collapsed summary + expand (alternate): https://kartboy16.github.io/fc-mocks/manage-advisor-filters/directions/a/
 - C — Max 2 rows + Show all: https://kartboy16.github.io/fc-mocks/manage-advisor-filters/directions/c/
 - Reference: https://kartboy16.github.io/fc-mocks/manage-advisor-filters/reference/crowded.png
+
+## Build contract
+
+- HTML: https://kartboy16.github.io/fc-mocks/manage-advisor-filters/build-contract.html
+- Markdown: https://kartboy16.github.io/fc-mocks/manage-advisor-filters/build-contract.md
+- CoS files the content-library issue; do not mark agent-ready from this mock repo.
 
 ## Problem
 
@@ -18,13 +24,13 @@ With many exclude chips (list source, suggest source, topics), the pill strip wr
 
 | Dir | Idea | Default height |
 |-----|------|----------------|
-| **A ★** | Collapsed bar `Active filters · N` + group mini-counts + Expand / Clear all | ~1 row; expand → scrollable ~3 rows |
-| B | ~3–6 summary chips; click opens popover with group chips + search | Always 1 row |
+| **B 🔒** | ~3–6 summary chips; click opens popover with group chips + search | Always 1 row |
+| A | Collapsed bar `Active filters · N` + group mini-counts + Expand / Clear all | ~1 row; expand → scrollable ~3 rows |
 | C | Cap at 2 rows + fade + `Show all N` | ~2 rows |
 
 ## Scope
 
-- Mocks only — no build-contract yet (lock later)
+- Mocks plus locked Direction B build contract; CoS issue / agent-ready handoff remains pending
 - No GitHub issue / agent-ready / Software developer ping from this deliverable
 - Self-contained HTML (inline CSS/JS), Inter, FC colors `#2b7de9` / `#1e2a4a` / `#f4f8fc`
 

@@ -76,17 +76,17 @@
 <body>
   <header class="hero">
     <div class="hero-inner">
-      <div class="eyebrow">FinancialContent · Designer deliverables · temp (no issue # yet)</div>
+      <div class="eyebrow">FinancialContent · Designer deliverables · awaiting content-library issue</div>
       <h1>Manage Advisor Posts — Crowded active filters</h1>
       <p>When many exclude chips are on (list source, suggest source, topics — often <strong>50+</strong>), the filter pill strip eats a huge vertical chunk and pushes the advisor/post table down. Focus: <strong>presentation of active filters</strong>, not a new filter system. Drawer stays as today.</p>
-      <span class="rec">Recommend · Direction A — Collapsed summary + expand</span>
+      <span class="rec">Locked · Direction B — One-row summary chips → group popover</span>
     </div>
   </header>
 
   <div class="wrap">
-    <a class="cta" href="directions/a/index.html">
-      Open Direction A (recommended)
-      <small>Collapsed bar · Active filters · 56 · group mini-counts · Expand / Clear all</small>
+    <a class="cta" href="directions/b/index.html">
+      Open Direction B (locked)
+      <small>One-row summary chips · grouped popover · search within group · × remove</small>
     </a>
 
     <div class="problem">
@@ -113,13 +113,13 @@
 
     <h2>Directions</h2>
     <div class="grid">
-      <a class="card recd" href="directions/a/index.html">
-        <span class="tag lock">RECOMMENDED</span>
+      <a class="card" href="directions/a/index.html">
+        <span class="tag">ALT</span>
         <h3>A — Collapsed summary + expand</h3>
         <p>Default bar: <code>Active filters · 56</code> with group mini-counts + Expand + Clear all. Expand reveals today’s full chip wrap (scrollable ~3 rows).</p>
       </a>
-      <a class="card" href="directions/b/index.html">
-        <span class="tag">ALT</span>
+      <a class="card recd" href="directions/b/index.html">
+        <span class="tag lock">LOCKED · DIRECTION B</span>
         <h3>B — Grouped type chips → popover</h3>
         <p>~3–6 summary chips always one row. Click a summary chip → popover listing that group’s chips with × and search-within-group.</p>
       </a>
@@ -147,7 +147,7 @@
     </div>
 
     <p class="meta">
-      Mocks only · no build-contract yet ·
+      <strong>Build contract:</strong> <a href="build-contract.html">readable HTML</a> · <a href="build-contract.md">Markdown</a> ·
       Related: <a href="../manage-advisor-choose-services/">Choose Services</a> ·
       Repo: <a href="https://github.com/kartboy16/fc-mocks">kartboy16/fc-mocks</a>
     </p>
