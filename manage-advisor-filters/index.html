@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>FC — Manage Advisor Posts · Crowded active filters</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #f4f8fc; --card: #fff; --ink: #1e2a4a; --muted: #5b6572;
+      --blue: #2b7de9; --border: #d4e4f2; --mint: #e6f1fb;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: Inter, system-ui, sans-serif; background: var(--bg); color: var(--ink); line-height: 1.55; }
+    .hero {
+      background: linear-gradient(135deg, #1e2a4a 0%, #2b7de9 100%);
+      color: #fff; padding: 40px 24px 36px;
+    }
+    .hero-inner { max-width: 880px; margin: 0 auto; }
+    .hero .eyebrow { font-size: 0.75rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; opacity: 0.85; margin-bottom: 10px; }
+    .hero h1 { font-size: 1.75rem; margin-bottom: 10px; }
+    .hero p { opacity: 0.92; max-width: 680px; font-size: 0.95rem; }
+    .rec {
+      display: inline-block; margin-top: 18px; background: #fff; color: var(--blue);
+      font-weight: 700; font-size: 0.8rem; padding: 8px 14px; border-radius: 999px;
+    }
+    .wrap { max-width: 880px; margin: 0 auto; padding: 28px 24px 72px; }
+    .cta {
+      display: block; background: var(--blue); color: #fff !important; text-decoration: none;
+      text-align: center; padding: 16px 24px; border-radius: 12px; font-weight: 700;
+      font-size: 1rem; margin-bottom: 28px; box-shadow: 0 4px 16px rgba(43,125,233,0.35);
+    }
+    .cta:hover { filter: brightness(1.05); }
+    .cta small { display: block; font-weight: 500; opacity: 0.9; font-size: 0.8rem; margin-top: 4px; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 14px; }
+    .card {
+      background: var(--card); border: 1px solid var(--border); border-radius: 12px;
+      padding: 18px; text-decoration: none; color: inherit; display: block;
+      transition: border-color 0.15s, box-shadow 0.15s;
+    }
+    .card:hover { border-color: var(--blue); box-shadow: 0 4px 16px rgba(30,42,74,0.08); text-decoration: none; }
+    .card.recd { border-color: var(--blue); box-shadow: 0 4px 16px rgba(43,125,233,0.12); }
+    .card h3 { font-size: 0.95rem; margin-bottom: 6px; color: var(--blue); }
+    .card p { font-size: 0.8rem; color: var(--muted); }
+    .card .tag {
+      display: inline-block; font-size: 0.65rem; font-weight: 700; background: var(--mint);
+      color: var(--blue); padding: 2px 8px; border-radius: 999px; margin-bottom: 8px;
+    }
+    .card .tag.lock { background: #047857; color: #fff; }
+    h2 { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--muted); margin: 28px 0 12px; }
+    .ba {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 8px;
+    }
+    .ba > div { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 14px; font-size: 0.85rem; }
+    .ba .lbl { font-size: 0.65rem; font-weight: 700; text-transform: uppercase; margin-bottom: 4px; }
+    .ba .before .lbl { color: #b45309; }
+    .ba .after .lbl { color: #047857; }
+    .problem {
+      margin: 0 0 20px; padding: 14px 16px; background: #fff8eb; border: 1px solid #f0d4a8;
+      border-radius: 10px; font-size: 0.85rem; color: #8a5a10;
+    }
+    .problem strong { color: #6b4408; }
+    .ref {
+      margin-top: 8px; font-size: 0.78rem;
+    }
+    .ref a { color: var(--blue); }
+    .constraint {
+      margin: 16px 0 0; padding: 12px 14px; background: #e8f5e9; border: 1px solid #a7d7b5;
+      border-radius: 10px; font-size: 0.85rem; color: #065f46;
+    }
+    .meta { margin-top: 32px; font-size: 0.8rem; color: var(--muted); }
+    .meta a { color: var(--blue); }
+    @media (max-width: 560px) { .ba { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+  <header class="hero">
+    <div class="hero-inner">
+      <div class="eyebrow">FinancialContent · Designer deliverables · temp (no issue # yet)</div>
+      <h1>Manage Advisor Posts — Crowded active filters</h1>
+      <p>When many exclude chips are on (list source, suggest source, topics — often <strong>50+</strong>), the filter pill strip eats a huge vertical chunk and pushes the advisor/post table down. Focus: <strong>presentation of active filters</strong>, not a new filter system. Drawer stays as today.</p>
+      <span class="rec">Recommend · Direction A — Collapsed summary + expand</span>
+    </div>
+  </header>
+
+  <div class="wrap">
+    <a class="cta" href="directions/a/index.html">
+      Open Direction A (recommended)
+      <small>Collapsed bar · Active filters · 56 · group mini-counts · Expand / Clear all</small>
+    </a>
+
+    <div class="problem">
+      <strong>Problem:</strong> Full-width wrapping chips (include = solid blue, exclude = red outline) can span ~6 rows. Table content is pushed far below the fold.
+      <div class="ref">Reference: <a href="reference/crowded.png">crowded.png</a> (live Manage Advisor Posts screenshot)</div>
+    </div>
+
+    <div class="ba">
+      <div class="before">
+        <div class="lbl">Today</div>
+        <strong>All chips wrap immediately</strong>
+        <p style="color:var(--muted);margin-top:4px;font-size:0.8rem">~6 rows / ~180–220px of strip alone with 50+ excludes — advisor table starts mid-viewport</p>
+      </div>
+      <div class="after">
+        <div class="lbl">Goal</div>
+        <strong>Reclaim vertical space by default</strong>
+        <p style="color:var(--muted);margin-top:4px;font-size:0.8rem">Keep individual remove + Clear all; Filters drawer unchanged; show table sooner</p>
+      </div>
+    </div>
+
+    <div class="constraint">
+      <strong>Scope:</strong> Presentation of the <em>active filter strip</em> only. Do not invent a new filter model. Filters button / drawer can stay as live today.
+    </div>
+
+    <h2>Directions</h2>
+    <div class="grid">
+      <a class="card recd" href="directions/a/index.html">
+        <span class="tag lock">RECOMMENDED</span>
+        <h3>A — Collapsed summary + expand</h3>
+        <p>Default bar: <code>Active filters · 56</code> with group mini-counts + Expand + Clear all. Expand reveals today’s full chip wrap (scrollable ~3 rows).</p>
+      </a>
+      <a class="card" href="directions/b/index.html">
+        <span class="tag">ALT</span>
+        <h3>B — Grouped type chips → popover</h3>
+        <p>~3–6 summary chips always one row. Click a summary chip → popover listing that group’s chips with × and search-within-group.</p>
+      </a>
+      <a class="card" href="directions/c/index.html">
+        <span class="tag">ALT</span>
+        <h3>C — Max 2 rows + Show all</h3>
+        <p>Cap chip strip at ~2 rows with fade overflow; <code>Show all 56</code> / <code>Show less</code>. Smallest delta from today.</p>
+      </a>
+    </div>
+
+    <h2>Must show on each direction</h2>
+    <div class="grid">
+      <div class="card" style="cursor:default">
+        <h3>Live toolbar chrome</h3>
+        <p>Search · Filters (badge) · Post history · Default schedule date · Refresh</p>
+      </div>
+      <div class="card" style="cursor:default">
+        <h3>Crowded state (50+)</h3>
+        <p>Realistic FC-ish exclude names from the screenshot (Coronavirus, BMO Insurance, iA Financial, DO NOT SEND CONTENT, …)</p>
+      </div>
+      <div class="card" style="cursor:default">
+        <h3>Table peek + height saved</h3>
+        <p>Stub advisor table below so reclaim is obvious; before callout with estimated height saved</p>
+      </div>
+    </div>
+
+    <p class="meta">
+      Mocks only · no build-contract yet ·
+      Related: <a href="../manage-advisor-choose-services/">Choose Services</a> ·
+      Repo: <a href="https://github.com/kartboy16/fc-mocks">kartboy16/fc-mocks</a>
+    </p>
+  </div>
+</body>
+</html>

@@ -1,0 +1,908 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Direction A — Collapsed summary + expand · Manage Advisor active filters</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+
+    :root {
+      --bg: #f4f8fc; --card: #fff; --ink: #1e2a4a; --muted: #5b6572;
+      --blue: #2b7de9; --blue-dark: #1e5bb8; --border: #d4e4f2; --mint: #e6f1fb;
+      --exclude: #c62828; --exclude-bg: #fff5f5; --row-hover: #f8fbfe;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: Inter, system-ui, sans-serif; background: var(--bg); color: var(--ink); font-size: 13px; line-height: 1.45; }
+    a { color: var(--blue); }
+    .thesis {
+      background: linear-gradient(135deg, #1e2a4a, #2b7de9); color: #fff;
+      padding: 18px 24px;
+    }
+    .thesis .rec {
+      display: inline-block; background: #fff; color: var(--blue); font-size: 0.68rem;
+      font-weight: 700; padding: 3px 10px; border-radius: 999px; margin-bottom: 8px;
+    }
+    .thesis h1 { font-size: 1.1rem; margin-bottom: 4px; }
+    .thesis p { opacity: 0.9; font-size: 0.82rem; max-width: 820px; }
+    .nav {
+      padding: 10px 24px; font-size: 0.78rem; background: #fafafa;
+      border-bottom: 1px solid var(--border); display: flex; gap: 14px; flex-wrap: wrap; align-items: center;
+    }
+    .nav a { color: var(--blue); text-decoration: none; font-weight: 500; }
+    .nav .sep { color: #c0c8d4; }
+    .shell { max-width: 1280px; margin: 0 auto; padding: 16px 20px 64px; }
+    .callout {
+      display: flex; gap: 16px; flex-wrap: wrap; margin-bottom: 14px;
+    }
+    .callout > div {
+      flex: 1; min-width: 200px; background: #fff; border: 1px solid var(--border);
+      border-radius: 10px; padding: 10px 14px; font-size: 0.78rem;
+    }
+    .callout .lbl { font-size: 0.65rem; font-weight: 700; text-transform: uppercase; margin-bottom: 2px; }
+    .callout .before .lbl { color: #b45309; }
+    .callout .after .lbl { color: #047857; }
+    .callout strong { display: block; margin-bottom: 2px; }
+    .page-head { margin-bottom: 12px; }
+    .page-head h2 { font-size: 1.25rem; font-weight: 700; }
+    .page-head .sub { color: var(--muted); font-size: 0.8rem; margin-top: 2px; max-width: 720px; }
+    .toolbar {
+      display: flex; gap: 8px; align-items: center; margin-bottom: 10px; flex-wrap: wrap;
+    }
+    .search-box {
+      flex: 1; min-width: 180px; max-width: 280px; padding: 8px 12px;
+      border: 1px solid var(--border); border-radius: 8px; font-family: inherit; font-size: 0.85rem;
+      background: #fff;
+    }
+    .search-box:focus { outline: 2px solid var(--blue); border-color: var(--blue); }
+    .tb-btn {
+      display: inline-flex; align-items: center; gap: 6px; padding: 7px 12px;
+      border: 1px solid var(--border); border-radius: 8px; background: #fff;
+      font-family: inherit; font-size: 0.8rem; font-weight: 500; color: var(--ink);
+      cursor: pointer; white-space: nowrap; position: relative;
+    }
+    .tb-btn:hover { border-color: var(--blue); color: var(--blue); background: var(--mint); }
+    .tb-btn .badge {
+      background: var(--blue); color: #fff; font-size: 0.65rem; font-weight: 700;
+      min-width: 18px; height: 18px; border-radius: 999px; display: inline-flex;
+      align-items: center; justify-content: center; padding: 0 5px;
+    }
+    .tb-select, .tb-date {
+      padding: 7px 10px; border: 1px solid var(--border); border-radius: 8px;
+      font-family: inherit; font-size: 0.8rem; background: #fff; color: var(--ink);
+    }
+    .filters-zone { margin-bottom: 12px; }
+    .chip {
+      display: inline-flex; align-items: center; gap: 6px; padding: 4px 8px 4px 10px;
+      border-radius: 999px; font-size: 0.72rem; font-weight: 600; white-space: nowrap;
+      line-height: 1.2;
+    }
+    .chip.include { background: var(--blue); color: #fff; border: 1px solid var(--blue); }
+    .chip.exclude {
+      background: #fff; color: var(--exclude); border: 1px solid var(--exclude);
+    }
+    .chip .x {
+      border: none; background: transparent; cursor: pointer; font-size: 0.85rem;
+      line-height: 1; padding: 0 2px; color: inherit; opacity: 0.85; font-family: inherit;
+      border-radius: 4px;
+    }
+    .chip .x:hover { opacity: 1; background: rgba(0,0,0,0.08); }
+    .chip.include .x:hover { background: rgba(255,255,255,0.2); }
+    .chip-wrap { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+    .panel {
+      background: var(--card); border: 1px solid var(--border); border-radius: 10px;
+      overflow: hidden; box-shadow: 0 1px 3px rgba(30,42,74,0.04);
+    }
+    table.adv { width: 100%; border-collapse: collapse; font-size: 0.8rem; }
+    table.adv th {
+      text-align: left; padding: 10px 12px; background: #eef4fb; color: var(--muted);
+      font-weight: 600; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.04em;
+      border-bottom: 1px solid var(--border); white-space: nowrap;
+    }
+    table.adv td {
+      padding: 12px; border-bottom: 1px solid #eef2f6; vertical-align: top;
+    }
+    table.adv tr:hover td { background: var(--row-hover); }
+    .advisor { display: flex; align-items: center; gap: 10px; }
+    .avatar {
+      width: 32px; height: 32px; border-radius: 999px; background: var(--mint);
+      color: var(--blue); font-weight: 700; font-size: 0.7rem;
+      display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    }
+    .advisor .name { font-weight: 600; }
+    .advisor .firm { color: var(--muted); font-size: 0.72rem; }
+    .src-pill {
+      display: inline-block; background: #f0f4f8; color: var(--muted);
+      padding: 2px 8px; border-radius: 999px; font-size: 0.68rem; font-weight: 500;
+      margin: 1px 2px 1px 0;
+    }
+    .svc-chip {
+      display: inline-block; background: var(--mint); color: var(--blue-dark);
+      padding: 2px 8px; border-radius: 999px; font-size: 0.68rem; font-weight: 600; margin: 1px 2px;
+    }
+    .post-card {
+      display: flex; gap: 8px; align-items: flex-start; max-width: 220px;
+      background: #fafbfd; border: 1px solid var(--border); border-radius: 8px; padding: 8px;
+    }
+    .post-thumb {
+      width: 40px; height: 40px; border-radius: 6px; background: linear-gradient(135deg,#2b7de9,#1e2a4a);
+      flex-shrink: 0;
+    }
+    .post-card .pt { font-weight: 600; font-size: 0.72rem; line-height: 1.3; }
+    .post-card .pd { color: var(--muted); font-size: 0.65rem; margin-top: 2px; }
+    .posts-row { display: flex; gap: 8px; flex-wrap: wrap; }
+    .act-btn {
+      display: inline-flex; align-items: center; gap: 4px; padding: 4px 8px;
+      border: 1px solid var(--border); border-radius: 6px; background: #fff;
+      font-family: inherit; font-size: 0.7rem; font-weight: 500; color: var(--ink);
+      cursor: pointer; margin-bottom: 4px;
+    }
+    .act-btn:hover { border-color: var(--blue); color: var(--blue); }
+    .drawer-overlay {
+      position: fixed; inset: 0; background: rgba(30,42,74,0.35);
+      display: none; z-index: 80; justify-content: flex-end;
+    }
+    .drawer-overlay.open { display: flex; }
+    .drawer {
+      width: min(380px, 100%); background: #fff; height: 100%;
+      box-shadow: -8px 0 24px rgba(30,42,74,0.15); padding: 20px;
+      display: flex; flex-direction: column;
+    }
+    .drawer h3 { font-size: 1rem; margin-bottom: 4px; }
+    .drawer .sub { color: var(--muted); font-size: 0.78rem; margin-bottom: 16px; }
+    .drawer .stub {
+      flex: 1; border: 1px dashed var(--border); border-radius: 10px;
+      background: var(--bg); padding: 16px; color: var(--muted); font-size: 0.8rem;
+    }
+    .drawer-close {
+      align-self: flex-end; border: none; background: #f0f4f8; width: 32px; height: 32px;
+      border-radius: 8px; cursor: pointer; font-size: 1rem; color: var(--muted); margin-bottom: 8px;
+    }
+    .toast {
+      position: fixed; bottom: 24px; right: 24px; background: #1e2a4a; color: #fff;
+      padding: 10px 16px; border-radius: 8px; font-size: 0.8rem; display: none; z-index: 200;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+    }
+    .toast.show { display: block; animation: fadein 0.2s ease; }
+    @keyframes fadein { from { opacity: 0; transform: translateY(6px); } }
+    .note {
+      margin-top: 14px; padding: 10px 14px; background: #fff8eb; border: 1px solid #f0d4a8;
+      border-radius: 8px; font-size: 0.78rem; color: #8a5a10;
+    }
+    .linkish { color: var(--blue); background: none; border: none; cursor: pointer; font-family: inherit; font-size: inherit; font-weight: 600; padding: 0; }
+    .linkish:hover { text-decoration: underline; }
+
+
+    .summary-bar {
+      display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+      background: #fff; border: 1px solid var(--border); border-radius: 10px;
+      padding: 8px 12px; min-height: 42px;
+    }
+    .summary-bar .title {
+      font-weight: 700; font-size: 0.8rem; color: var(--ink);
+    }
+    .summary-bar .count {
+      background: var(--mint); color: var(--blue); font-weight: 700;
+      font-size: 0.72rem; padding: 2px 8px; border-radius: 999px;
+    }
+    .group-pills { display: flex; gap: 6px; flex-wrap: wrap; flex: 1; }
+    .group-pill {
+      border: 1px solid var(--border); background: #fafbfd; color: var(--ink);
+      font-family: inherit; font-size: 0.72rem; font-weight: 600;
+      padding: 4px 10px; border-radius: 999px; cursor: pointer;
+    }
+    .group-pill:hover, .group-pill.active {
+      border-color: var(--blue); color: var(--blue); background: var(--mint);
+    }
+    .group-pill .n { color: var(--muted); font-weight: 500; }
+    .summary-actions { display: flex; gap: 6px; align-items: center; margin-left: auto; }
+    .sum-btn {
+      border: 1px solid var(--border); background: #fff; font-family: inherit;
+      font-size: 0.75rem; font-weight: 600; padding: 5px 10px; border-radius: 8px;
+      cursor: pointer; color: var(--ink); display: inline-flex; align-items: center; gap: 4px;
+    }
+    .sum-btn:hover { border-color: var(--blue); color: var(--blue); }
+    .sum-btn.primary { background: var(--blue); color: #fff; border-color: var(--blue); }
+    .sum-btn.primary:hover { background: var(--blue-dark); color: #fff; }
+    .sum-btn.danger { color: var(--exclude); border-color: #f5c2c2; }
+    .sum-btn.danger:hover { background: var(--exclude-bg); }
+    .expanded-panel {
+      margin-top: 8px; background: #fff; border: 1px solid var(--border);
+      border-radius: 10px; padding: 10px 12px;
+    }
+    .expanded-panel.scroll {
+      max-height: calc(3 * 34px); overflow-y: auto;
+    }
+    .expanded-panel .group-head {
+      font-size: 0.68rem; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.04em; color: var(--muted); margin: 8px 0 6px;
+    }
+    .expanded-panel .group-head:first-child { margin-top: 0; }
+    .before-full {
+      margin-top: 16px; padding: 12px; background: #fff8eb; border: 1px dashed #f0d4a8;
+      border-radius: 10px;
+    }
+    .before-label {
+      font-size: 0.7rem; font-weight: 700; text-transform: uppercase; color: #b45309;
+      margin-bottom: 8px;
+    }
+
+  </style>
+</head>
+<body>
+  <header class="thesis">
+    <span class="rec">RECOMMENDED</span>
+    <h1>Direction A — Collapsed summary + expand</h1>
+    <p>Default collapsed bar under the toolbar: <strong>Active filters · N</strong> with group mini-counts (List · Suggest · Topics), Expand, and Clear all. Expanded = today’s full chip wrap in a ~3-row scroll. Clicking a group count expands that group only.</p>
+  </header>
+  <nav class="nav">
+    <a href="../../index.html">← Hub</a>
+    <span class="sep">·</span>
+    <a href="../a/index.html">A</a>
+    <a href="../b/index.html">B</a>
+    <a href="../c/index.html">C</a>
+    <span class="sep">·</span>
+    <a href="../../reference/crowded.png">Reference screenshot</a>
+  </nav>
+
+  <div class="shell">
+    <div class="callout">
+      <div class="before">
+        <div class="lbl">Before (full wrap)</div>
+        <strong>~6 rows · ~200px strip</strong>
+        Advisor table starts mid-viewport.
+      </div>
+      <div class="after">
+        <div class="lbl">After (this direction)</div>
+        <strong>~42px collapsed · ~120px expanded (3-row scroll) · saves ~80–160px</strong>
+        Table peeks immediately below — vertical reclaim is the point.
+      </div>
+    </div>
+
+    <div class="page-head">
+      <h2>Manage Advisor Posts</h2>
+      <p class="sub">Search advisors, refine with filters, and manage scheduled posts. Clickable mock — Filters drawer is a stub.</p>
+    </div>
+
+    <div class="toolbar">
+      <input class="search-box" type="search" placeholder="Search advisors…" aria-label="Search" />
+      <button class="tb-btn" type="button" id="openFilters">
+        Filters <span class="badge" id="filterBadge">56</span>
+      </button>
+      <select class="tb-select" aria-label="Post history">
+        <option>Past 36 months</option>
+        <option>Past 12 months</option>
+        <option>All time</option>
+      </select>
+      <input class="tb-date" type="text" value="2026-10-01, 09:00 AM" aria-label="Default schedule date" readonly />
+      <button class="tb-btn" type="button" id="refreshBtn">↻ Refresh</button>
+    </div>
+
+    <div class="filters-zone" id="filtersZone">
+
+      <div class="summary-bar" id="summaryBar">
+        <span class="title">Active filters</span>
+        <span class="count" id="totalCount">56</span>
+        <div class="group-pills" id="groupPills"></div>
+        <div class="summary-actions">
+          <button class="sum-btn danger" type="button" id="clearAll">Clear all</button>
+          <button class="sum-btn primary" type="button" id="expandBtn">
+            <span id="expandLabel">Expand</span> <span id="chevron">▾</span>
+          </button>
+        </div>
+      </div>
+      <div class="expanded-panel scroll" id="expandedPanel" hidden></div>
+
+    </div>
+
+
+    <div class="panel">
+      <table class="adv">
+        <thead>
+          <tr>
+            <th>Advisor</th>
+            <th>Sources</th>
+            <th>Services &amp; products</th>
+            <th>Posts (36 mo past · 12 mo future)</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>
+              <div class="advisor">
+                <div class="avatar">AH</div>
+                <div>
+                  <div class="name">Alex Hung</div>
+                  <div class="firm">FinancialContent Demo</div>
+                </div>
+              </div>
+            </td>
+            <td>
+              <span class="src-pill">Content</span>
+              <span class="src-pill">Suggest</span>
+            </td>
+            <td>
+              <span class="svc-chip">Investing</span>
+              <span class="svc-chip">Insurance</span>
+            </td>
+            <td>
+              <div class="posts-row">
+                <div class="post-card">
+                  <div class="post-thumb"></div>
+                  <div>
+                    <div class="pt">B.C. Budget 2026: What It Means for You</div>
+                    <div class="pd">Featured · Investing</div>
+                  </div>
+                </div>
+                <div class="post-card">
+                  <div class="post-thumb" style="background:linear-gradient(135deg,#047857,#2b7de9)"></div>
+                  <div>
+                    <div class="pt">2026 Canada Money Facts</div>
+                    <div class="pd">Tax Tips</div>
+                  </div>
+                </div>
+              </div>
+            </td>
+            <td>
+              <button class="act-btn" type="button">Choose services</button><br>
+              <button class="act-btn" type="button">Impersonate</button>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <div class="advisor">
+                <div class="avatar">JM</div>
+                <div>
+                  <div class="name">Jordan Mills</div>
+                  <div class="firm">Pacific Wealth</div>
+                </div>
+              </div>
+            </td>
+            <td><span class="src-pill">Content</span></td>
+            <td><span class="svc-chip">Retirement</span></td>
+            <td>
+              <div class="posts-row">
+                <div class="post-card">
+                  <div class="post-thumb" style="background:linear-gradient(135deg,#c62828,#1e2a4a)"></div>
+                  <div>
+                    <div class="pt">RRSP deadline checklist</div>
+                    <div class="pd">Retirement</div>
+                  </div>
+                </div>
+              </div>
+            </td>
+            <td>
+              <button class="act-btn" type="button">Choose services</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+
+    <p class="note">
+      Crowded demo starts with <strong>56 active filters</strong> (1 include list + 1 exclude list + 12 exclude suggest + 42 exclude topics).
+      Remove chips, Clear all, Expand/collapse (A), summary popovers (B), or Show all (C) to feel the reclaim.
+      Toggle <button class="linkish" type="button" id="toggleBefore">show / hide before (full wrap)</button> for a side comparison.
+    </p>
+
+    <div id="beforeWrap" class="before-full" hidden>
+      <div class="before-label">Before — full wrap (no presentation change)</div>
+      <div class="chip-wrap" id="beforeChips"></div>
+    </div>
+  </div>
+
+
+  <div class="drawer-overlay" id="filtersDrawer" aria-hidden="true">
+    <div class="drawer" role="dialog" aria-label="Filters">
+      <button class="drawer-close" type="button" id="closeDrawer" aria-label="Close">×</button>
+      <h3>Filters</h3>
+      <p class="sub">Stub — live drawer unchanged. Active-filter presentation is the focus of these mocks.</p>
+      <div class="stub">
+        List source · Suggest source · Topics · Include / Exclude toggles<br><br>
+        Apply would update the strip above. Closing without apply leaves the crowded set.
+      </div>
+    </div>
+  </div>
+  <div class="toast" id="toast"></div>
+
+
+  <script>
+
+const FILTERS = [
+  {
+    "id": "inc-list-content",
+    "group": "list",
+    "kind": "include",
+    "label": "List source: Content"
+  },
+  {
+    "id": "ex-list-nlac",
+    "group": "list",
+    "kind": "exclude",
+    "label": "Exclude list source: No longer a client"
+  },
+  {
+    "id": "ex-sug-0",
+    "group": "suggest",
+    "kind": "exclude",
+    "label": "Exclude suggest source: DO NOT SEND CONTENT"
+  },
+  {
+    "id": "ex-sug-1",
+    "group": "suggest",
+    "kind": "exclude",
+    "label": "Exclude suggest source: FSB-Content"
+  },
+  {
+    "id": "ex-sug-2",
+    "group": "suggest",
+    "kind": "exclude",
+    "label": "Exclude suggest source: FTT Social Posts"
+  },
+  {
+    "id": "ex-sug-3",
+    "group": "suggest",
+    "kind": "exclude",
+    "label": "Exclude suggest source: Archive"
+  },
+  {
+    "id": "ex-sug-4",
+    "group": "suggest",
+    "kind": "exclude",
+    "label": "Exclude suggest source: DRAFT"
+  },
+  {
+    "id": "ex-sug-5",
+    "group": "suggest",
+    "kind": "exclude",
+    "label": "Exclude suggest source: National Health Claim"
+  },
+  {
+    "id": "ex-sug-6",
+    "group": "suggest",
+    "kind": "exclude",
+    "label": "Exclude suggest source: Government Budget"
+  },
+  {
+    "id": "ex-sug-7",
+    "group": "suggest",
+    "kind": "exclude",
+    "label": "Exclude suggest source: Internal Only"
+  },
+  {
+    "id": "ex-sug-8",
+    "group": "suggest",
+    "kind": "exclude",
+    "label": "Exclude suggest source: Partner Exclude"
+  },
+  {
+    "id": "ex-sug-9",
+    "group": "suggest",
+    "kind": "exclude",
+    "label": "Exclude suggest source: Seasonal Hold"
+  },
+  {
+    "id": "ex-sug-10",
+    "group": "suggest",
+    "kind": "exclude",
+    "label": "Exclude suggest source: Compliance Hold"
+  },
+  {
+    "id": "ex-sug-11",
+    "group": "suggest",
+    "kind": "exclude",
+    "label": "Exclude suggest source: Test Content"
+  },
+  {
+    "id": "ex-top-0",
+    "group": "topics",
+    "kind": "exclude",
+    "label": "Exclude topic: Coronavirus"
+  },
+  {
+    "id": "ex-top-1",
+    "group": "topics",
+    "kind": "exclude",
+    "label": "Exclude topic: BMO Insurance"
+  },
+  {
+    "id": "ex-top-2",
+    "group": "topics",
+    "kind": "exclude",
+    "label": "Exclude topic: iA Financial"
+  },
+  {
+    "id": "ex-top-3",
+    "group": "topics",
+    "kind": "exclude",
+    "label": "Exclude topic: 2019 Only"
+  },
+  {
+    "id": "ex-top-4",
+    "group": "topics",
+    "kind": "exclude",
+    "label": "Exclude topic: Desjardins"
+  },
+  {
+    "id": "ex-top-5",
+    "group": "topics",
+    "kind": "exclude",
+    "label": "Exclude topic: Empire"
+  },
+  {
+    "id": "ex-top-6",
+    "group": "topics",
+    "kind": "exclude",
+    "label": "Exclude topic: Co-Operators Life"
+  },
+  {
+    "id": "ex-top-7",
+    "group": "topics",
+    "kind": "exclude",
+    "label": "Exclude topic: Canada Life"
+  },
+  {
+    "id": "ex-top-8",
+    "group": "topics",
+    "kind": "exclude",
+    "label": "Exclude topic: Assumption Life"
+  },
+  {
+    "id": "ex-top-9",
+    "group": "topics",
+    "kind": "exclude",
+    "label": "Exclude topic: Foresters Financial"
+  },
+  {
+    "id": "ex-top-10",
+    "group": "topics",
+    "kind": "exclude",
+    "label": "Exclude topic: Industrial Alliance"
+  },
+  {
+    "id": "ex-top-11",
+    "group": "topics",
+    "kind": "exclude",
+    "label": "Exclude topic: Ivari"
+  },
+  {
+    "id": "ex-top-12",
+    "group": "topics",
+    "kind": "exclude",
+    "label": "Exclude topic: Manulife"
+  },
+  {
+    "id": "ex-top-13",
+    "group": "topics",
+    "kind": "exclude",
+    "label": "Exclude topic: RBC Insurance"
+  },
+  {
+    "id": "ex-top-14",
+    "group": "topics",
+    "kind": "exclude",
+    "label": "Exclude topic: Sun Life"
+  },
+  {
+    "id": "ex-top-15",
+    "group": "topics",
+    "kind": "exclude",
+    "label": "Exclude topic: Equitable"
+  },
+  {
+    "id": "ex-top-16",
+    "group": "topics",
+    "kind": "exclude",
+    "label": "Exclude topic: Equitable Life"
+  },
+  {
+    "id": "ex-top-17",
+    "group": "topics",
+    "kind": "exclude",
+    "label": "Exclude topic: Beneva"
+  },
+  {
+    "id": "ex-top-18",
+    "group": "topics",
+    "kind": "exclude",
+    "label": "Exclude topic: 2018 Only"
+  },
+  {
+    "id": "ex-top-19",
+    "group": "topics",
+    "kind": "exclude",
+    "label": "Exclude topic: 2020 Only"
+  },
+  {
+    "id": "ex-top-20",
+    "group": "topics",
+    "kind": "exclude",
+    "label": "Exclude topic: 2022 Only"
+  },
+  {
+    "id": "ex-top-21",
+    "group": "topics",
+    "kind": "exclude",
+    "label": "Exclude topic: 2020"
+  },
+  {
+    "id": "ex-top-22",
+    "group": "topics",
+    "kind": "exclude",
+    "label": "Exclude topic: 2021"
+  },
+  {
+    "id": "ex-top-23",
+    "group": "topics",
+    "kind": "exclude",
+    "label": "Exclude topic: 2022"
+  },
+  {
+    "id": "ex-top-24",
+    "group": "topics",
+    "kind": "exclude",
+    "label": "Exclude topic: 2023"
+  },
+  {
+    "id": "ex-top-25",
+    "group": "topics",
+    "kind": "exclude",
+    "label": "Exclude topic: 2024"
+  },
+  {
+    "id": "ex-top-26",
+    "group": "topics",
+    "kind": "exclude",
+    "label": "Exclude topic: 2025"
+  },
+  {
+    "id": "ex-top-27",
+    "group": "topics",
+    "kind": "exclude",
+    "label": "Exclude topic: FSB Announcements"
+  },
+  {
+    "id": "ex-top-28",
+    "group": "topics",
+    "kind": "exclude",
+    "label": "Exclude topic: Market Commentary"
+  },
+  {
+    "id": "ex-top-29",
+    "group": "topics",
+    "kind": "exclude",
+    "label": "Exclude topic: Tax Tips"
+  },
+  {
+    "id": "ex-top-30",
+    "group": "topics",
+    "kind": "exclude",
+    "label": "Exclude topic: RRSP Season"
+  },
+  {
+    "id": "ex-top-31",
+    "group": "topics",
+    "kind": "exclude",
+    "label": "Exclude topic: TFSA Focus"
+  },
+  {
+    "id": "ex-top-32",
+    "group": "topics",
+    "kind": "exclude",
+    "label": "Exclude topic: Estate Planning"
+  },
+  {
+    "id": "ex-top-33",
+    "group": "topics",
+    "kind": "exclude",
+    "label": "Exclude topic: Disability Claims"
+  },
+  {
+    "id": "ex-top-34",
+    "group": "topics",
+    "kind": "exclude",
+    "label": "Exclude topic: Group Benefits"
+  },
+  {
+    "id": "ex-top-35",
+    "group": "topics",
+    "kind": "exclude",
+    "label": "Exclude topic: Mortgage Rates"
+  },
+  {
+    "id": "ex-top-36",
+    "group": "topics",
+    "kind": "exclude",
+    "label": "Exclude topic: Budget 2024"
+  },
+  {
+    "id": "ex-top-37",
+    "group": "topics",
+    "kind": "exclude",
+    "label": "Exclude topic: Budget 2025"
+  },
+  {
+    "id": "ex-top-38",
+    "group": "topics",
+    "kind": "exclude",
+    "label": "Exclude topic: Climate Risk"
+  },
+  {
+    "id": "ex-top-39",
+    "group": "topics",
+    "kind": "exclude",
+    "label": "Exclude topic: Cyber Security"
+  },
+  {
+    "id": "ex-top-40",
+    "group": "topics",
+    "kind": "exclude",
+    "label": "Exclude topic: Retirement Income"
+  },
+  {
+    "id": "ex-top-41",
+    "group": "topics",
+    "kind": "exclude",
+    "label": "Exclude topic: Wealth Transfer"
+  }
+];
+
+let state = FILTERS.map(f => ({...f}));
+
+function groupCounts(list) {
+  const c = { listInc: 0, listEx: 0, suggest: 0, topics: 0 };
+  list.forEach(f => {
+    if (f.group === 'list' && f.kind === 'include') c.listInc++;
+    else if (f.group === 'list') c.listEx++;
+    else if (f.group === 'suggest') c.suggest++;
+    else if (f.group === 'topics') c.topics++;
+  });
+  return c;
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(showToast._tm);
+  showToast._tm = setTimeout(() => t.classList.remove('show'), 1800);
+}
+
+function openDrawer() {
+  document.getElementById('filtersDrawer').classList.add('open');
+  document.getElementById('filtersDrawer').setAttribute('aria-hidden', 'false');
+}
+function closeDrawer() {
+  document.getElementById('filtersDrawer').classList.remove('open');
+  document.getElementById('filtersDrawer').setAttribute('aria-hidden', 'true');
+}
+
+function chipHTML(f) {
+  const cls = f.kind === 'include' ? 'include' : 'exclude';
+  return `<span class="chip ${cls}" data-id="${f.id}">
+    ${escapeHtml(f.label)}
+    <button class="x" type="button" aria-label="Remove ${escapeHtml(f.label)}" data-remove="${f.id}">×</button>
+  </span>`;
+}
+
+function escapeHtml(s) {
+  return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+function updateBadge() {
+  const el = document.getElementById('filterBadge');
+  if (el) el.textContent = String(state.length);
+}
+
+document.getElementById('openFilters')?.addEventListener('click', openDrawer);
+document.getElementById('closeDrawer')?.addEventListener('click', closeDrawer);
+document.getElementById('filtersDrawer')?.addEventListener('click', (e) => {
+  if (e.target.id === 'filtersDrawer') closeDrawer();
+});
+
+
+let expanded = false;
+let focusGroup = null; // null = all when expanded
+
+function render() {
+  updateBadge();
+  const c = groupCounts(state);
+  const total = state.length;
+  document.getElementById('totalCount').textContent = total;
+
+  const pills = [];
+  if (c.listInc + c.listEx) {
+    pills.push(`<button class="group-pill ${focusGroup==='list'?'active':''}" type="button" data-group="list">List <span class="n">${c.listInc + c.listEx}</span></button>`);
+  }
+  if (c.suggest) {
+    pills.push(`<button class="group-pill ${focusGroup==='suggest'?'active':''}" type="button" data-group="suggest">Suggest <span class="n">${c.suggest}</span></button>`);
+  }
+  if (c.topics) {
+    pills.push(`<button class="group-pill ${focusGroup==='topics'?'active':''}" type="button" data-group="topics">Topics <span class="n">${c.topics}</span></button>`);
+  }
+  document.getElementById('groupPills').innerHTML = pills.join('') || '<span style="color:var(--muted);font-size:0.75rem">No active filters</span>';
+
+  document.getElementById('expandLabel').textContent = expanded ? 'Collapse' : 'Expand';
+  document.getElementById('chevron').textContent = expanded ? '▴' : '▾';
+
+  const panel = document.getElementById('expandedPanel');
+  if (!expanded) {
+    panel.hidden = true;
+    panel.innerHTML = '';
+  } else {
+    panel.hidden = false;
+    const groups = [
+      { key: 'list', title: 'List source', items: state.filter(f => f.group === 'list') },
+      { key: 'suggest', title: 'Suggest source (exclude)', items: state.filter(f => f.group === 'suggest') },
+      { key: 'topics', title: 'Topics (exclude)', items: state.filter(f => f.group === 'topics') },
+    ];
+    let html = '';
+    groups.forEach(g => {
+      if (!g.items.length) return;
+      if (focusGroup && focusGroup !== g.key) return;
+      html += `<div class="group-head">${g.title} · ${g.items.length}</div>`;
+      html += `<div class="chip-wrap">${g.items.map(chipHTML).join('')}</div>`;
+    });
+    panel.innerHTML = html || '<span style="color:var(--muted)">No filters in this group</span>';
+  }
+
+  // wire group pills
+  document.querySelectorAll('.group-pill').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const g = btn.getAttribute('data-group');
+      if (!expanded) {
+        expanded = true;
+        focusGroup = g;
+      } else if (focusGroup === g) {
+        focusGroup = null; // show all
+      } else {
+        focusGroup = g;
+      }
+      render();
+    });
+  });
+
+  panel.querySelectorAll('[data-remove]').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const id = btn.getAttribute('data-remove');
+      state = state.filter(f => f.id !== id);
+      showToast('Filter removed');
+      render();
+    });
+  });
+}
+
+document.getElementById('expandBtn').addEventListener('click', () => {
+  expanded = !expanded;
+  if (!expanded) focusGroup = null;
+  render();
+});
+
+document.getElementById('clearAll').addEventListener('click', () => {
+  if (!state.length) return;
+  state = [];
+  expanded = false;
+  focusGroup = null;
+  showToast('All filters cleared');
+  render();
+});
+
+
+document.getElementById('refreshBtn')?.addEventListener('click', () => showToast('Refreshed (stub)'));
+
+document.getElementById('toggleBefore')?.addEventListener('click', () => {
+  const el = document.getElementById('beforeWrap');
+  el.hidden = !el.hidden;
+  if (!el.hidden) {
+    document.getElementById('beforeChips').innerHTML = state.map(chipHTML).join('');
+  }
+});
+
+// initial render
+render();
+  </script>
+</body>
+</html>
