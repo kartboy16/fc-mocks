@@ -1,9 +1,10 @@
 # Build contract · content-library #237
 
-**Working direction: A — Checklist modal + amber callout**  
-(Alex has not formally locked; Designer recommendation / concept-mock alignment. Revisit if he picks B or C.)
+**Locked direction: A — Checklist modal + amber callout**  
+**Status: Alex-approved 2026-09-25** (formal lock via Chief of Staff)
 
-**Mocks:** https://kartboy16.github.io/fc-mocks/237/directions/a/  
+**Mock:** https://kartboy16.github.io/fc-mocks/237/directions/a/  
+**Hub:** https://kartboy16.github.io/fc-mocks/237/  
 **Issue:** https://github.com/kartboy16/content-library/issues/237
 
 ## Audience (hard)
@@ -20,6 +21,8 @@ Show reminders **only** when:
 
 **When:** Admin / admin-as-user clicks account-card **Reconnect** (or renewal path about to redirect to Meta) for a shared / admin-refresh Facebook token.
 
+**Not required on:** **Add Facebook Account** (same OAuth hop, but #237 AC is reconnect/refresh only). Regular-user connect: never.
+
 **Where:** Modal before `getFacebookAuthorizationURL` redirect. Do **not** open OAuth until primary CTA.
 
 **Chrome / copy (new):**
@@ -30,19 +33,19 @@ Show reminders **only** when:
   2. Accept **every permission** Meta asks for.
   3. Back here, choose **only** the Page(s) this account should post to.
 - Amber warning: `Selecting only one Page on Facebook often breaks posting for shared admin tokens.`
-- Primary: `Continue to Facebook` (new CTA — not in app today; issue-specified)
+- Primary: `Continue to Facebook` (new CTA — issue-specified)
 - Secondary: `Cancel`
 
-**Existing entry labels to hook (do not rename):** `Reconnect`, `Add Facebook Account`, renewal `Reconnect Facebook` / `Redirecting to Facebook…`  
+**Existing entry labels to hook (do not rename):** `Reconnect`, renewal `Reconnect Facebook` / `Redirecting to Facebook…`  
 Source: `imports/ui/SocialSettings.jsx`, `imports/ui/RenewSocialLanding.jsx`
 
 ### B — FC Page destination picker callout
 
-**When:** Admin / admin-as-user on Facebook destination picker after connect/refresh (and on **Edit Destinations** when editing after an admin refresh — same callout).
+**When:** Admin / admin-as-user on Facebook destination picker after connect/refresh (and on **Edit Destinations** / Configure Facebook Posting Preferences after an admin refresh).
 
 **Where:** Inside existing picker dialogs:
 - Post-OAuth / configure: title `Almost done — choose where to post` (`SocialSettings.jsx` / `RenewSocialDone.jsx`)
-- Edit Destinations: title `Configure Facebook Posting Preferences` (live staging)
+- Edit Destinations: title `Configure Facebook Posting Preferences`
 
 **Callout copy:**
 - Strong: `On Facebook you selected all Pages for this token.`
@@ -73,6 +76,7 @@ Source: `imports/ui/SocialSettings.jsx`, `imports/ui/social-settings/SocialAsset
 
 - Fail-connect if `/me/accounts` missing needed Pages / perms
 - Mapping Graph impersonation errors to this reconnect guidance (can reuse same copy later)
+- Gate on **Add Facebook Account** (unless product expands AC later)
 
 ## Acceptance (from issue)
 
@@ -80,9 +84,11 @@ Source: `imports/ui/SocialSettings.jsx`, `imports/ui/social-settings/SocialAsset
 - [ ] Reminder B only for admin or admin-as-user on FC Page destination picker after connect/refresh
 - [ ] Regular users never see A or B
 - [ ] Copy matches Meta-all / FC-narrow rule
-- [ ] Mocks published under fc-mocks/237 (done)
+- [x] Mocks published under fc-mocks/237
 
 ## Handoff notes for Software developer
 
 Primary files: `SocialSettings.jsx`, `RenewSocialLanding.jsx`, `RenewSocialDone.jsx`, `server/oauth-social.js` (redirect only — no scope change).  
 Admin detection: mirror existing `userRoles.isAdmin` / support-impersonation patterns used for `Send refresh email`.
+
+**Visual reference:** https://kartboy16.github.io/fc-mocks/237/directions/a/ (Reconnect opens gate; Continue to Facebook → picker with callout; or use screen tabs).
