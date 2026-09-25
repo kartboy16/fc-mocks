@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Direction C — Full-page gate + sticky banner · #237</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../../shared.css" />
+  <style>
+    .interstitial {
+      max-width: 640px; background: var(--card); border: 1px solid var(--border);
+      border-radius: 14px; padding: 28px 28px 24px;
+    }
+    .interstitial h2 { font-size: 22px; margin: 10px 0 8px; }
+    .sticky-banner {
+      position: sticky; top: 0; z-index: 5;
+      background: var(--warn-bg); border-bottom: 1px solid var(--warn-border);
+      padding: 12px 28px; font-size: 13px; color: #7a4a0a;
+      display: flex; align-items: flex-start; gap: 10px; justify-content: space-between; flex-wrap: wrap;
+    }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <aside class="rail"><span class="ico">📄</span><span class="ico on">↗</span></aside>
+    <div class="main">
+      <div class="top-utils"><span class="impersonate">Admin as user · Coulas Insurance</span></div>
+      <div class="page-head"><h1>Social Media</h1><p>Post now, plan your calendar, or start from a ready-made post.</p></div>
+      <div id="banner" class="sticky-banner hidden">
+        <div>
+          <strong>Admin reminder:</strong> Meta grant is broad — you selected all Pages on Facebook.
+          Here, pick only the Page(s) this advisor should post to.
+        </div>
+        <span class="admin-only">Admin only</span>
+      </div>
+      <div class="content">
+        <div class="dir-label">
+          <strong>Direction C — Full-page interstitial + sticky banner</strong>
+          · Louder pre-OAuth; banner stays while picking Pages.
+          <span class="admin-only" style="margin-left:8px">Admin only</span>
+        </div>
+        <div class="screen-tabs">
+          <button type="button" class="on" data-screen="pre">A · Pre-Meta gate</button>
+          <button type="button" data-screen="post">B · Page picker callout</button>
+        </div>
+        <section id="screen-pre">
+          <div class="interstitial">
+            <span class="admin-only">Admin only</span>
+            <h2>Before you continue to Facebook</h2>
+            <p class="sub">Shared admin tokens need a wide Meta grant. FC will narrow destinations after you return.</p>
+            <ol class="checklist">
+              <li><span class="num">1</span><span>On Facebook’s Pages screen, select <strong>ALL Pages</strong> this token needs.</span></li>
+              <li><span class="num">2</span><span>Accept <strong>every permission</strong> Meta asks for.</span></li>
+              <li><span class="num">3</span><span>Back here, choose <strong>only</strong> the Page(s) this account should post to.</span></li>
+            </ol>
+            <div class="warn" style="margin-bottom:18px">
+              <span class="ico">⚠</span>
+              <span>Selecting only one Page on Facebook often breaks posting for shared admin tokens (Coulas-style case).</span>
+            </div>
+            <div class="actions" style="margin:0">
+              <button type="button" class="btn btn-ghost" id="cancel-int">Cancel</button>
+              <button type="button" class="btn btn-fb" id="continue-fb">Continue to Facebook</button>
+            </div>
+            <p class="note-bar">Mock note: Replaces the immediate OAuth hop for admin reconnect only — not self-serve user connect.</p>
+          </div>
+        </section>
+        <section id="screen-post" class="hidden">
+          <div class="panel">
+            <h3>Edit Destinations · Coulas Insurance</h3>
+            <p class="sub">Sticky banner above stays visible while you scroll the list.</p>
+            <div class="page-list">
+              <label class="page-row sel"><input type="checkbox" checked /> <span class="nm">Coulas Insurance</span> <span class="tag">Company Page</span></label>
+              <label class="page-row"><input type="checkbox" /> <span class="nm">Coulas Life &amp; Benefits</span> <span class="tag">Sister Page</span></label>
+              <label class="page-row"><input type="checkbox" /> <span class="nm">FTT Demo Page</span> <span class="tag">Admin test</span></label>
+              <label class="page-row"><input type="checkbox" /> <span class="nm">Legacy Brand Page</span> <span class="tag">Archive</span></label>
+            </div>
+            <div class="actions">
+              <button type="button" class="btn btn-ghost" data-screen="pre">Back</button>
+              <button type="button" class="btn btn-primary">Save destinations</button>
+            </div>
+          </div>
+        </section>
+      </div>
+    </div>
+  </div>
+  <script src="../_flow.js"></script>
+</body>
+</html>

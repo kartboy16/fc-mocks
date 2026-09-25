@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Direction B — Meta broad / FC narrow diagram · #237</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../../shared.css" />
+</head>
+<body>
+  <div class="shell">
+    <aside class="rail"><span class="ico">📄</span><span class="ico">🌐</span><span class="ico">✉️</span><span class="ico on">↗</span></aside>
+    <div class="main">
+      <div class="top-utils"><span class="impersonate">Admin as user · Coulas Insurance</span></div>
+      <div class="page-head"><h1>Social Media</h1><p>Post now, plan your calendar, or start from a ready-made post.</p></div>
+      <div class="tabs"><span>Post now</span><span class="on">Settings</span></div>
+      <div class="content">
+        <div class="dir-label">
+          <strong>Direction B — Visual Meta vs FC contrast</strong>
+          · Same placements; diagram teaches broad vs narrow.
+          <span class="admin-only" style="margin-left:8px">Admin only</span>
+        </div>
+        <div class="screen-tabs">
+          <button type="button" class="on" data-screen="pre">A · Pre-Meta gate</button>
+          <button type="button" data-screen="post">B · Edit Destinations callout</button>
+        </div>
+        <section id="screen-pre">
+          <h2 class="settings-title">Social Media Settings</h2>
+          <div class="section-head">
+            <div class="left"><span class="fb-logo">f</span><h2>Facebook</h2><span class="pill-ok">2 connected</span><span class="admin-only">Admin only</span></div>
+            <button type="button" class="btn btn-primary">Add Facebook Account</button>
+          </div>
+          <div class="acct-grid">
+            <div class="acct warn-border">
+              <div class="row1"><span class="name">Coulas Insurance</span><span class="pill-ok" style="background:#fff8eb;color:var(--warn)">Refresh soon</span></div>
+              <div class="meta">Profile ID: 1029384756</div>
+              <span class="dest-pill">Coulas Insurance</span>
+              <div class="btns">
+                <button type="button" class="btn btn-outline" data-goto="post">Edit Destinations</button>
+                <button type="button" class="btn btn-outline" id="open-gate">↻ Reconnect</button>
+                <button type="button" class="btn btn-outline-danger">Disconnect</button>
+              </div>
+            </div>
+          </div>
+          <p class="note-bar">Mock note: Gate is admin / admin-as-user only.</p>
+        </section>
+        <section id="screen-post" class="hidden">
+          <div class="panel">
+            <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:6px">
+              <h3>Edit Destinations · Coulas Insurance</h3>
+              <span class="admin-only">Admin only UI</span>
+            </div>
+            <p class="sub">Destination Pages for this advisor account.</p>
+            <div class="callout" style="display:flex;gap:14px;align-items:flex-start;flex-wrap:wrap">
+              <div style="flex:1;min-width:200px">
+                <strong>Meta grant is broad · FC destinations are narrow</strong>
+                <p>You already selected all Pages on Facebook. Here, pick only the Page(s) this advisor should post to.</p>
+              </div>
+              <div class="split" style="flex:1;min-width:220px;margin:0">
+                <div class="box meta"><h4>On Facebook</h4>✓ All Pages needed</div>
+                <div class="box fc"><h4>In FC</h4>✓ Only destination(s)</div>
+              </div>
+            </div>
+            <div class="page-list">
+              <label class="page-row sel"><input type="checkbox" checked /> <span class="nm">Coulas Insurance</span> <span class="tag">Post here</span></label>
+              <label class="page-row"><input type="checkbox" /> <span class="nm">Coulas Life &amp; Benefits</span> <span class="tag">Optional</span></label>
+              <label class="page-row"><input type="checkbox" /> <span class="nm">FTT Demo Page</span> <span class="tag">Optional</span></label>
+            </div>
+            <div class="actions">
+              <button type="button" class="btn btn-ghost" data-screen="pre">Cancel</button>
+              <button type="button" class="btn btn-primary">Save destinations</button>
+            </div>
+          </div>
+        </section>
+      </div>
+    </div>
+  </div>
+  <div class="overlay" id="gate">
+    <div class="modal" style="width:min(560px,100%)">
+      <div class="modal-head">
+        <div><span class="admin-only">Admin only</span><h3 style="margin-top:8px">Two steps: Meta broad, FC narrow</h3></div>
+        <button type="button" class="btn btn-ghost" id="close-gate" style="padding:6px 10px">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="split">
+          <div class="box meta">
+            <h4>1 · On Facebook</h4>
+            <p style="margin:0 0 8px"><strong>Select ALL Pages</strong> this shared token needs.</p>
+            <p style="margin:0;color:var(--muted)">Then accept every permission Meta shows.</p>
+          </div>
+          <div class="box fc">
+            <h4>2 · Back in FC</h4>
+            <p style="margin:0 0 8px"><strong>Pick only</strong> the Page(s) this account posts to.</p>
+            <p style="margin:0;color:var(--muted)">Narrow destinations; keep the Meta grant wide.</p>
+          </div>
+        </div>
+        <div class="warn">
+          <span class="ico">⚠</span>
+          <span>Selecting one Page on Facebook + the same Page in FC often breaks multi-user / admin-refresh tokens.</span>
+        </div>
+      </div>
+      <div class="modal-foot">
+        <button type="button" class="btn btn-ghost" id="cancel-gate">Cancel</button>
+        <button type="button" class="btn btn-fb" id="continue-fb">Continue to Facebook</button>
+      </div>
+    </div>
+  </div>
+  <script src="../_flow.js"></script>
+</body>
+</html>
