@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Direction C — Anchored popover · Manage Advisor Choose Services</title>
+  <title>Direction C (Alex-locked) — Anchored popover · Manage Advisor Choose Services</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <style>
     :root {
@@ -52,7 +52,7 @@
       font-weight: 600; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.04em;
       border-bottom: 1px solid var(--border); white-space: nowrap;
     }
-    table.adv td { padding: 10px 12px; border-bottom: 1px solid #eef2f6; vertical-align: middle; position: relative; }
+    table.adv td { padding: 10px 12px; border-bottom: 1px solid #eef2f6; vertical-align: top; position: relative; }
     table.adv tr:last-child td { border-bottom: none; }
     table.adv tr:hover td { background: var(--row-hover); }
     table.adv tr.active-row td { background: #f0f6ff; }
@@ -68,14 +68,13 @@
       display: inline-block; background: #f0f4f8; color: var(--muted);
       padding: 2px 8px; border-radius: 999px; font-size: 0.68rem; font-weight: 500; margin: 1px 2px 1px 0;
     }
-    .chips { display: flex; flex-wrap: wrap; gap: 4px; align-items: center; max-width: 280px; }
+    .chips { display: flex; flex-wrap: wrap; gap: 4px; align-items: center; max-width: 360px; }
     .chip {
       display: inline-flex; align-items: center; padding: 2px 8px; border-radius: 999px;
       font-size: 0.68rem; font-weight: 600; white-space: nowrap;
     }
     .chip.svc { background: var(--chip-svc); color: var(--chip-svc-fg); }
     .chip.prod { background: var(--chip-prod); color: var(--chip-prod-fg); border: 1px solid #d8cce8; }
-    .chip.more { background: #eef2f6; color: var(--muted); }
     .chip-cell { cursor: pointer; border-radius: 8px; padding: 4px 2px; min-height: 28px; }
     .chip-cell:hover { background: var(--mint); }
     .empty-state { color: #8a94a6; font-size: 0.75rem; display: flex; align-items: center; gap: 8px; }
@@ -187,12 +186,12 @@
     <a href="../a/index.html">A · Centered</a>
     <a href="../b/index.html">B · Two-pane</a>
     <span class="sep">·</span>
-    <span style="color:var(--muted)">Direction C</span>
+    <span style="color:var(--muted);font-weight:700">C · Locked</span>
   </div>
   <div class="thesis">
-    <span class="tag">CONTRAST</span>
-    <h1>Direction C — Compact popover / anchored panel</h1>
-    <p>Same chip column. Choose opens a dense popover near the row (not a full modal) — better for quick multi-advisor edits. Still has search, Services/Products groups, Save/Cancel.</p>
+    <span class="tag">ALEX-LOCKED · DIRECTION C</span>
+    <h1>Direction C — Row-anchored popover (locked)</h1>
+    <p><strong>Locked decision:</strong> Choose opens a compact popover near the row. <strong>Required tweak:</strong> Services &amp; products shows <strong>all</strong> selected chips — never truncate with +N. Chips wrap; the cell grows vertically. Empty still “None selected” + Choose.</p>
   </div>
 
   <div class="shell">
@@ -221,7 +220,7 @@
       </div>
     </div>
     <div class="note">
-      <strong>vs A:</strong> Popover stays light and contextual — less chrome, faster for editing several advisors in sequence. Tradeoff: less room when catalogs grow; A/B scale better for long lists.
+      <strong>Alex-locked:</strong> Direction C (row-anchored popover). Column rule: show <strong>every</strong> selected service and product chip — wrap / expand the cell; <strong>no +N overflow</strong>. Jordan Lee below has many chips so wrap is visible. Popover: search, Services vs Products, multi-select, Save/Cancel.
     </div>
   </div>
 
@@ -252,7 +251,7 @@
     const SERVICES = ['Retirement Planning', 'Estate Planning', 'Tax Planning', 'Insurance Review', 'Investment Strategy', 'Cash Flow Analysis'];
     const PRODUCTS = ['TFSA', 'RRSP', 'RESP', 'Whole Life', 'Group Benefits', 'Critical Illness', 'FHSA'];
     const advisors = [
-      { id: 'jordan', name: 'Jordan Lee', firm: 'Coulas Insurance', initials: 'JL', sources: ['Coulas blog', 'FC library'], services: ['Retirement Planning', 'Insurance Review'], products: ['TFSA', 'Whole Life', 'Group Benefits'], posts: 72 },
+      { id: 'jordan', name: 'Jordan Lee', firm: 'Coulas Insurance', initials: 'JL', sources: ['Coulas blog', 'FC library'], services: ['Retirement Planning', 'Estate Planning', 'Tax Planning', 'Insurance Review', 'Investment Strategy'], products: ['TFSA', 'RRSP', 'Whole Life', 'Group Benefits', 'Critical Illness'], posts: 72 },
       { id: 'priya', name: 'Priya Shah', firm: 'Shah Wealth Advisors', initials: 'PS', sources: ['Firm RSS'], services: ['Tax Planning', 'Estate Planning', 'Retirement Planning'], products: ['RRSP', 'TFSA'], posts: 41 },
       { id: 'marcus', name: 'Marcus Chen', firm: 'Chen Financial', initials: 'MC', sources: ['FC library'], services: ['Investment Strategy'], products: ['RESP'], posts: 18 },
       { id: 'aisha', name: 'Aisha Rahman', firm: 'Northshore Advice', initials: 'AR', sources: [], services: [], products: [], posts: 0 }
@@ -260,7 +259,6 @@
     let editingId = null;
     let draft = new Set();
     let anchorEl = null;
-    const MAX_CHIPS = 3;
 
     function allSelected(id) {
       const a = advisors.find(x => x.id === id);
@@ -272,10 +270,8 @@
       if (!items.length) {
         return `<div class="empty-state"><span>None selected</span><button type="button" class="choose" data-open="${a.id}">Choose</button></div>`;
       }
-      const shown = items.slice(0, MAX_CHIPS);
-      const overflow = items.length - shown.length;
-      let html = shown.map(i => `<span class="chip ${i.kind}">${i.label}</span>`).join('');
-      if (overflow > 0) html += `<span class="chip more">+${overflow}</span>`;
+      // Alex-locked: show ALL chips — never truncate with +N
+      let html = items.map(i => `<span class="chip ${i.kind}">${i.label}</span>`).join('');
       html += `<button type="button" class="edit-link" data-open="${a.id}">Edit</button>`;
       return `<div class="chips">${html}</div>`;
     }

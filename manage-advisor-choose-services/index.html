@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>FC — Manage Advisor · Choose Services (modal + column)</title>
+  <title>FC — Manage Advisor · Choose Services (Alex-locked C)</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <style>
     :root {
@@ -39,12 +39,15 @@
       transition: border-color 0.15s, box-shadow 0.15s;
     }
     .card:hover { border-color: var(--blue); box-shadow: 0 4px 16px rgba(30,42,74,0.08); text-decoration: none; }
+    .card.locked { border-color: var(--blue); box-shadow: 0 4px 16px rgba(43,125,233,0.12); }
     .card h3 { font-size: 0.95rem; margin-bottom: 6px; color: var(--blue); }
     .card p { font-size: 0.8rem; color: var(--muted); }
     .card .tag {
       display: inline-block; font-size: 0.65rem; font-weight: 700; background: var(--mint);
       color: var(--blue); padding: 2px 8px; border-radius: 999px; margin-bottom: 8px;
     }
+    .card .tag.lock { background: #047857; color: #fff; }
+    .card.dim { opacity: 0.72; }
     h2 { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--muted); margin: 28px 0 12px; }
     .ba {
       display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 8px;
@@ -53,6 +56,10 @@
     .ba .lbl { font-size: 0.65rem; font-weight: 700; text-transform: uppercase; margin-bottom: 4px; }
     .ba .before .lbl { color: #b45309; }
     .ba .after .lbl { color: #047857; }
+    .constraint {
+      margin: 16px 0 0; padding: 12px 14px; background: #e8f5e9; border: 1px solid #a7d7b5;
+      border-radius: 10px; font-size: 0.85rem; color: #065f46;
+    }
     .meta { margin-top: 32px; font-size: 0.8rem; color: var(--muted); }
     .meta a { color: var(--blue); }
     @media (max-width: 560px) { .ba { grid-template-columns: 1fr; } }
@@ -63,15 +70,15 @@
     <div class="hero-inner">
       <div class="eyebrow">FinancialContent · Designer deliverables · temp (no issue # yet)</div>
       <h1>Manage Advisor Posts — Choose Services</h1>
-      <p>Replace the inline expanding <strong>ChooseAdvisorServicesPanel</strong> row with a <strong>popup/modal</strong>, and add a <strong>Services &amp; products</strong> chip column on advisor rows so selections stay visible after Save.</p>
-      <span class="rec">Recommend Direction A — Centered modal + chip column</span>
+      <p>Replace the inline expanding <strong>ChooseAdvisorServicesPanel</strong> row with a <strong>row-anchored popover</strong>, and add a <strong>Services &amp; products</strong> chip column so selections stay visible after Save.</p>
+      <span class="rec">Alex-locked · Direction C — row-anchored popover · all chips (no +N)</span>
     </div>
   </header>
 
   <div class="wrap">
-    <a class="cta" href="directions/a/index.html">
-      Open Direction A (recommended)
-      <small>Manage Advisor Posts table · centered Choose modal · chips + toast</small>
+    <a class="cta" href="directions/c/index.html">
+      Open Direction C (Alex-locked)
+      <small>Manage Advisor Posts · row-anchored popover · all service &amp; product chips wrap</small>
     </a>
 
     <div class="ba">
@@ -81,34 +88,40 @@
         <p style="color:var(--muted);margin-top:4px;font-size:0.8rem">Inline panel under the advisor — easy to lose place; no persistent summary of picks</p>
       </div>
       <div class="after">
-        <div class="lbl">Wanted</div>
-        <strong>Modal + Services &amp; products column</strong>
-        <p style="color:var(--muted);margin-top:4px;font-size:0.8rem">Chips (with +N) on the row; Choose opens modal; Save updates chips</p>
+        <div class="lbl">Locked</div>
+        <strong>Direction C · popover + chip column</strong>
+        <p style="color:var(--muted);margin-top:4px;font-size:0.8rem">All selected chips visible (wrap/expand cell — never +N); Choose opens anchored popover; Save updates chips</p>
       </div>
+    </div>
+
+    <div class="constraint">
+      <strong>Column constraint (required):</strong> Services &amp; products must show <strong>every</strong> selected service and product chip. Do <strong>not</strong> truncate with +N / “+2”. Wrap chips; let the cell grow vertically. Empty: “None selected” + Choose.
     </div>
 
     <h2>Directions</h2>
     <div class="grid">
-      <a class="card" href="directions/a/index.html">
-        <span class="tag">RECOMMENDED</span>
+      <a class="card locked" href="directions/c/index.html">
+        <span class="tag lock">ALEX-LOCKED · RECOMMENDED</span>
+        <h3>C — Row-anchored popover</h3>
+        <p>Chip column (all chips, wrap); Choose opens a compact popover near the row — search, Services vs Products, multi-select, Save/Cancel.</p>
+      </a>
+      <a class="card dim" href="directions/a/index.html">
+        <span class="tag">NOT SELECTED</span>
         <h3>A — Centered modal + chip column</h3>
-        <p>New column after Sources. Centered ~600px modal: search, Services vs Products groups, select-all, Cancel/Save + toast.</p>
+        <p>Centered ~600px modal. Superseded by locked C (and C’s all-chips rule).</p>
       </a>
-      <a class="card" href="directions/b/index.html">
+      <a class="card dim" href="directions/b/index.html">
+        <span class="tag">NOT SELECTED</span>
         <h3>B — Two-pane modal</h3>
-        <p>Same chip column. Wider modal with Services | Products side-by-side for denser catalogs.</p>
-      </a>
-      <a class="card" href="directions/c/index.html">
-        <h3>C — Anchored popover</h3>
-        <p>Chip column; Choose opens a compact popover near the row — quick edits, less chrome.</p>
+        <p>Wider modal with Services | Products side-by-side. Not selected.</p>
       </a>
     </div>
 
     <h2>Must show</h2>
     <div class="grid">
       <div class="card" style="cursor:default">
-        <h3>Chip column</h3>
-        <p>Service (blue mint) vs product (lavender) chips, +N overflow, empty “None selected” + Choose link.</p>
+        <h3>Chip column (all chips)</h3>
+        <p>Service (blue mint) vs product (lavender) chips for <strong>all</strong> selections — wrap, no +N. Empty “None selected” + Choose link.</p>
       </div>
       <div class="card" style="cursor:default">
         <h3>Chooser UI</h3>
@@ -116,14 +129,15 @@
       </div>
       <div class="card" style="cursor:default">
         <h3>No expand row</h3>
-        <p>Choose services button (CategoryIcon outlined) kept or chips clickable — inline ChooseAdvisorServicesPanel gone.</p>
+        <p>Choose services button kept or chips clickable — inline ChooseAdvisorServicesPanel gone.</p>
       </div>
     </div>
 
     <p class="meta">
-      Related: <a href="../176/">#176 Manual services</a> (checklist patterns) ·
+      <a href="build-contract.html">Build contract</a> (<a href="build-contract.md">.md</a>) ·
+      Related: <a href="../176/">#176 Manual services</a> ·
       Repo: <a href="https://github.com/kartboy16/fc-mocks">kartboy16/fc-mocks</a> ·
-      Mocks only — no build contract / no issue filed yet.
+      CoS will file content-library issue — do not mark agent-ready here.
     </p>
   </div>
 </body>

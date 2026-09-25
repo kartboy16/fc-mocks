@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Build contract · Choose Services · Locked C</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    body { font-family: Inter, system-ui, sans-serif; max-width: 720px; margin: 40px auto; padding: 0 24px 80px; color: #1e2a4a; line-height: 1.55; }
+    h1 { font-size: 22px; } h2 { font-size: 16px; margin-top: 28px; } p, li { font-size: 14px; color: #3a4558; }
+    .ok { background: #e8f5e9; color: #1a7f4c; padding: 12px 14px; border-radius: 8px; font-size: 13px; margin-bottom: 16px; }
+    .rule { background: #eff6ff; color: #1e40af; padding: 12px 14px; border-radius: 8px; font-size: 13px; margin-bottom: 16px; }
+    .warn { background: #fff7ed; color: #9a3412; padding: 12px 14px; border-radius: 8px; font-size: 13px; margin-bottom: 16px; }
+    code { background: #eef2f6; padding: 1px 6px; border-radius: 4px; font-size: 12px; }
+    a { color: #2b7de9; }
+    table { width: 100%; border-collapse: collapse; font-size: 13px; margin: 12px 0; }
+    th, td { border: 1px solid #d4e4f2; padding: 8px 10px; text-align: left; vertical-align: top; }
+    th { background: #eef4fb; }
+    ul { padding-left: 1.2em; }
+  </style>
+</head>
+<body>
+  <p class="ok"><strong>Locked · Alex 2026-09-25</strong> — Direction C (row-anchored popover). CoS will file content-library issue — do <strong>not</strong> mark agent-ready from this mock.</p>
+  <p class="rule"><strong>Required column rule:</strong> Services &amp; products shows <strong>all</strong> selected service and product chips. Never truncate with +N. Chips wrap; cell may grow vertically.</p>
+  <p class="warn"><strong>Audience:</strong> Admin Manage Advisor Posts table only.</p>
+
+  <h1>Build contract · Choose Services (Direction C)</h1>
+  <p>Full markdown: <a href="build-contract.md">build-contract.md</a> · Mock: <a href="directions/c/">Direction C</a> · <a href="index.html">Hub</a></p>
+
+  <h2>Replace</h2>
+  <p>Expanding <code>ChooseAdvisorServicesPanel</code> row (<code>expandedServices</code>) → popover opened from the Services &amp; products column and/or Choose services action.</p>
+
+  <h2>New column — Services &amp; products</h2>
+  <ul>
+    <li>Chips for <strong>all</strong> selected services <strong>and</strong> products</li>
+    <li><strong>Never</strong> +N / “+2” truncation</li>
+    <li>Wrap / expand cell so every chip is visible</li>
+    <li>Empty: “None selected” + affordance to open picker</li>
+    <li>Distinguish services vs products in chip styling if mock/product does</li>
+  </ul>
+
+  <h2>Popover</h2>
+  <p>Title <strong>Choose services &amp; products</strong>; search; grouped Services vs Products; multi-select; Save/Cancel. On Save persist to durable advisor services store (same as #176 / websiteServices / manual Master Categories path). Cancel discards draft.</p>
+
+  <h2>Screens / states</h2>
+  <table>
+    <thead><tr><th>State</th><th>Behavior</th></tr></thead>
+    <tbody>
+      <tr><td>Empty column</td><td>“None selected” + Choose</td></tr>
+      <tr><td>Many chips</td><td>All visible; wrap — no +N</td></tr>
+      <tr><td>Popover open</td><td>Anchored near row; search + groups</td></tr>
+      <tr><td>Save</td><td>Persist + toast; chips refresh</td></tr>
+      <tr><td>Cancel</td><td>Discard draft; no change</td></tr>
+    </tbody>
+  </table>
+
+  <h2>In scope</h2>
+  <ul>
+    <li>Row-anchored chooser replacing expanding panel</li>
+    <li>Full chip column (wrap, no +N)</li>
+    <li>Search, grouped multi-select, Save/Cancel → durable store</li>
+  </ul>
+
+  <h2>Out of scope</h2>
+  <ul>
+    <li>Creating Master Categories; live scan as primary path</li>
+    <li>Filing content-library issue / marking agent-ready (CoS)</li>
+  </ul>
+
+  <h2>Primary files</h2>
+  <p><code>imports/ui/admin/ManageAdvisorPosts.jsx</code>, <code>ChooseAdvisorServicesPanel</code> (or successor popover component).</p>
+
+  <h2>Related</h2>
+  <p>#176 · #181</p>
+
+  <p><a href="index.html">← Hub</a></p>
+</body>
+</html>
