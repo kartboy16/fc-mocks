@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Direction B — Two-pane modal · Manage Advisor Choose Services</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #f4f8fc; --card: #fff; --ink: #1e2a4a; --muted: #5b6572;
+      --blue: #2b7de9; --blue-dark: #1e5bb8; --border: #d4e4f2; --mint: #e6f1fb;
+      --chip-svc: #e6f1fb; --chip-svc-fg: #1e5bb8;
+      --chip-prod: #f0eaf8; --chip-prod-fg: #5b3d8a;
+      --row-hover: #f8fbfe;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: Inter, system-ui, sans-serif; background: var(--bg); color: var(--ink); font-size: 13px; line-height: 1.45; }
+    a { color: var(--blue); }
+    .thesis {
+      background: linear-gradient(135deg, #1e2a4a, #2b7de9); color: #fff; padding: 18px 24px;
+    }
+    .thesis .tag {
+      display: inline-block; background: rgba(255,255,255,0.2); color: #fff; font-size: 0.68rem;
+      font-weight: 700; padding: 3px 10px; border-radius: 999px; margin-bottom: 8px;
+    }
+    .thesis h1 { font-size: 1.1rem; margin-bottom: 4px; }
+    .thesis p { opacity: 0.9; font-size: 0.82rem; max-width: 760px; }
+    .nav {
+      padding: 10px 24px; font-size: 0.78rem; background: #fafafa;
+      border-bottom: 1px solid var(--border); display: flex; gap: 14px; flex-wrap: wrap; align-items: center;
+    }
+    .nav a { color: var(--blue); text-decoration: none; font-weight: 500; }
+    .nav .sep { color: #c0c8d4; }
+    .shell { max-width: 1280px; margin: 0 auto; padding: 16px 20px 64px; }
+    .page-head { margin-bottom: 14px; }
+    .page-head h2 { font-size: 1.25rem; font-weight: 700; }
+    .page-head .sub { color: var(--muted); font-size: 0.8rem; margin-top: 2px; }
+    .toolbar { display: flex; gap: 10px; align-items: center; margin-bottom: 12px; }
+    .search-box {
+      flex: 1; min-width: 200px; max-width: 320px; padding: 8px 12px;
+      border: 1px solid var(--border); border-radius: 8px; font-family: inherit; font-size: 0.85rem; background: #fff;
+    }
+    .search-box:focus { outline: 2px solid var(--blue); border-color: var(--blue); }
+    .panel {
+      background: var(--card); border: 1px solid var(--border); border-radius: 10px; overflow: hidden;
+      box-shadow: 0 1px 3px rgba(30,42,74,0.04);
+    }
+    table.adv { width: 100%; border-collapse: collapse; font-size: 0.8rem; }
+    table.adv th {
+      text-align: left; padding: 10px 12px; background: #eef4fb; color: var(--muted);
+      font-weight: 600; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.04em;
+      border-bottom: 1px solid var(--border); white-space: nowrap;
+    }
+    table.adv td { padding: 10px 12px; border-bottom: 1px solid #eef2f6; vertical-align: middle; }
+    table.adv tr:last-child td { border-bottom: none; }
+    table.adv tr:hover td { background: var(--row-hover); }
+    .advisor { display: flex; align-items: center; gap: 10px; }
+    .avatar {
+      width: 32px; height: 32px; border-radius: 999px; background: var(--mint);
+      color: var(--blue); font-weight: 700; font-size: 0.7rem;
+      display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    }
+    .advisor .name { font-weight: 600; }
+    .advisor .firm { color: var(--muted); font-size: 0.72rem; }
+    .src-pill {
+      display: inline-block; background: #f0f4f8; color: var(--muted);
+      padding: 2px 8px; border-radius: 999px; font-size: 0.68rem; font-weight: 500; margin: 1px 2px 1px 0;
+    }
+    .chips { display: flex; flex-wrap: wrap; gap: 4px; align-items: center; max-width: 280px; }
+    .chip {
+      display: inline-flex; align-items: center; padding: 2px 8px; border-radius: 999px;
+      font-size: 0.68rem; font-weight: 600; white-space: nowrap;
+    }
+    .chip.svc { background: var(--chip-svc); color: var(--chip-svc-fg); }
+    .chip.prod { background: var(--chip-prod); color: var(--chip-prod-fg); border: 1px solid #d8cce8; }
+    .chip.more { background: #eef2f6; color: var(--muted); }
+    .chip-cell { cursor: pointer; border-radius: 8px; padding: 4px 2px; min-height: 28px; }
+    .chip-cell:hover { background: var(--mint); }
+    .empty-state { color: #8a94a6; font-size: 0.75rem; display: flex; align-items: center; gap: 8px; }
+    .empty-state .choose {
+      color: var(--blue); font-weight: 600; border: none; background: none; cursor: pointer;
+      font-family: inherit; font-size: 0.75rem; padding: 0;
+    }
+    .empty-state .choose:hover { text-decoration: underline; }
+    .edit-link {
+      color: var(--blue); font-size: 0.68rem; font-weight: 600; margin-left: 4px;
+      border: none; background: none; cursor: pointer; font-family: inherit; padding: 0; opacity: 0;
+    }
+    .chip-cell:hover .edit-link { opacity: 1; }
+    .posts-cell { color: var(--muted); font-size: 0.72rem; }
+    .posts-bar { height: 6px; background: #eef2f6; border-radius: 3px; width: 80px; margin-top: 4px; overflow: hidden; }
+    .posts-bar > i { display: block; height: 100%; background: var(--blue); border-radius: 3px; }
+    .actions { display: flex; flex-direction: column; gap: 4px; align-items: flex-start; }
+    .act-btn {
+      display: inline-flex; align-items: center; gap: 5px; padding: 4px 8px;
+      border: 1px solid var(--border); border-radius: 6px; background: #fff;
+      font-family: inherit; font-size: 0.7rem; font-weight: 500; color: var(--ink); cursor: pointer; white-space: nowrap;
+    }
+    .act-btn:hover { border-color: var(--blue); color: var(--blue); background: var(--mint); }
+    .act-btn.primary-outline { border-color: var(--blue); color: var(--blue); }
+    .impersonate {
+      color: var(--blue); font-size: 0.7rem; font-weight: 600; border: none; background: none;
+      cursor: pointer; font-family: inherit; padding: 4px;
+    }
+    .note {
+      margin-top: 14px; padding: 10px 14px; background: #eef6ff; border: 1px solid var(--border);
+      border-radius: 8px; font-size: 0.78rem; color: var(--muted);
+    }
+    .overlay {
+      position: fixed; inset: 0; background: rgba(30,42,74,0.45);
+      display: none; align-items: center; justify-content: center; z-index: 100; padding: 16px;
+    }
+    .overlay.open { display: flex; }
+    .modal {
+      background: #fff; border-radius: 12px; width: 100%; max-width: 860px;
+      max-height: min(88vh, 740px); display: flex; flex-direction: column;
+      box-shadow: 0 20px 48px rgba(30,42,74,0.25); animation: pop 0.18s ease;
+    }
+    @keyframes pop { from { opacity: 0; transform: translateY(10px) scale(0.98); } }
+    .modal-head {
+      padding: 16px 20px 12px; border-bottom: 1px solid var(--border);
+      display: flex; justify-content: space-between; align-items: flex-start; gap: 12px;
+    }
+    .modal-head h3 { font-size: 1.05rem; font-weight: 700; }
+    .modal-head .sub { color: var(--muted); font-size: 0.78rem; margin-top: 2px; }
+    .modal-close {
+      border: none; background: #f0f4f8; width: 32px; height: 32px; border-radius: 8px;
+      cursor: pointer; font-size: 1rem; color: var(--muted);
+    }
+    .modal-close:hover { background: #e2e8f0; }
+    .modal-body { padding: 14px 20px; overflow-y: auto; flex: 1; }
+    .modal-toolbar { display: flex; gap: 10px; align-items: center; margin-bottom: 14px; }
+    .modal-toolbar .search-box { max-width: none; flex: 1; }
+    .count-pill {
+      font-size: 0.72rem; font-weight: 700; color: var(--blue);
+      background: var(--mint); padding: 5px 10px; border-radius: 999px; white-space: nowrap;
+    }
+    .panes {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 14px;
+    }
+    .pane {
+      border: 1px solid var(--border); border-radius: 10px; overflow: hidden; display: flex; flex-direction: column;
+      min-height: 280px; max-height: 420px;
+    }
+    .pane-head {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 10px 12px; font-weight: 600; font-size: 0.82rem; flex-shrink: 0;
+    }
+    .pane-head.svc { background: var(--mint); }
+    .pane-head.prod { background: #f5f0fa; }
+    .pane-head label { display: flex; align-items: center; gap: 8px; cursor: pointer; }
+    .pane-head .meta { font-weight: 400; color: var(--muted); font-size: 0.7rem; }
+    .pane-body { padding: 4px 8px 10px; overflow-y: auto; flex: 1; }
+    .item {
+      display: flex; align-items: center; gap: 10px; padding: 8px 6px;
+      border-radius: 6px; cursor: pointer; font-size: 0.82rem;
+    }
+    .item:hover { background: var(--row-hover); }
+    .item.hidden { display: none; }
+    .item input { accent-color: var(--blue); width: 15px; height: 15px; }
+    .pane.hidden-all { opacity: 0.45; }
+    .modal-foot {
+      padding: 12px 20px; border-top: 1px solid var(--border);
+      display: flex; justify-content: flex-end; gap: 8px; background: #fafbfd;
+      border-radius: 0 0 12px 12px;
+    }
+    .btn {
+      padding: 9px 18px; border-radius: 8px; border: none; font-family: inherit;
+      font-weight: 600; font-size: 0.82rem; cursor: pointer;
+    }
+    .btn-ghost { background: transparent; color: var(--muted); border: 1px solid var(--border); }
+    .btn-primary { background: var(--blue); color: #fff; }
+    .btn-primary:hover { background: var(--blue-dark); }
+    .toast {
+      position: fixed; bottom: 24px; right: 24px; background: #047857; color: #fff;
+      padding: 12px 18px; border-radius: 10px; font-weight: 500; font-size: 0.85rem;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.18); display: none; z-index: 200;
+    }
+    .toast.show { display: block; animation: in 0.22s ease; }
+    @keyframes in { from { opacity: 0; transform: translateY(8px); } }
+    @media (max-width: 720px) {
+      .panes { grid-template-columns: 1fr; }
+      .hide-sm { display: none !important; }
+    }
+  </style>
+</head>
+<body>
+  <div class="nav">
+    <a href="../../index.html">← Hub</a>
+    <span class="sep">·</span>
+    <a href="../a/index.html">A · Centered</a>
+    <a href="../c/index.html">C · Popover</a>
+    <span class="sep">·</span>
+    <span style="color:var(--muted)">Direction B</span>
+  </div>
+  <div class="thesis">
+    <span class="tag">ALTERNATE</span>
+    <h1>Direction B — Two-pane modal (Services | Products)</h1>
+    <p>Same chip column on Manage Advisor Posts. Wider modal with Services and Products side-by-side for denser picking when the catalog is large. Shared search filters both panes.</p>
+  </div>
+
+  <div class="shell">
+    <div class="page-head">
+      <h2>Manage Advisor Posts</h2>
+      <p class="sub">Admin · Direction B — two-pane choose modal</p>
+    </div>
+    <div class="toolbar">
+      <input class="search-box" type="search" placeholder="Filter advisors…" id="tableFilter" />
+    </div>
+    <div class="panel">
+      <table class="adv">
+        <thead>
+          <tr>
+            <th>Advisor</th>
+            <th>Sources</th>
+            <th>Services &amp; products</th>
+            <th class="hide-sm">Posts</th>
+            <th>Actions</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody id="tbody"></tbody>
+      </table>
+    </div>
+    <div class="note">
+      <strong>vs A:</strong> Modal is wider (~860px) with Services left / Products right — faster scan when both catalogs are long. Same Save/Cancel and chip update.
+    </div>
+  </div>
+
+  <div class="overlay" id="overlay" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <div class="modal">
+      <div class="modal-head">
+        <div>
+          <h3 id="modalTitle">Choose services &amp; products</h3>
+          <p class="sub" id="modalSub">Advisor</p>
+        </div>
+        <button type="button" class="modal-close" id="closeModal" aria-label="Close">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="modal-toolbar">
+          <input class="search-box" type="search" id="modalSearch" placeholder="Search across services &amp; products…" />
+          <span class="count-pill" id="countPill">0 selected</span>
+        </div>
+        <div class="panes" id="panes"></div>
+      </div>
+      <div class="modal-foot">
+        <button type="button" class="btn btn-ghost" id="cancelBtn">Cancel</button>
+        <button type="button" class="btn btn-primary" id="saveBtn">Save</button>
+      </div>
+    </div>
+  </div>
+  <div class="toast" id="toast">Saved</div>
+
+  <script>
+    const SERVICES = ['Retirement Planning', 'Estate Planning', 'Tax Planning', 'Insurance Review', 'Investment Strategy', 'Cash Flow Analysis'];
+    const PRODUCTS = ['TFSA', 'RRSP', 'RESP', 'Whole Life', 'Group Benefits', 'Critical Illness', 'FHSA'];
+    const advisors = [
+      { id: 'jordan', name: 'Jordan Lee', firm: 'Coulas Insurance', initials: 'JL', sources: ['Coulas blog', 'FC library'], services: ['Retirement Planning', 'Insurance Review'], products: ['TFSA', 'Whole Life', 'Group Benefits'], posts: 72 },
+      { id: 'priya', name: 'Priya Shah', firm: 'Shah Wealth Advisors', initials: 'PS', sources: ['Firm RSS'], services: ['Tax Planning', 'Estate Planning', 'Retirement Planning'], products: ['RRSP', 'TFSA'], posts: 41 },
+      { id: 'marcus', name: 'Marcus Chen', firm: 'Chen Financial', initials: 'MC', sources: ['FC library'], services: ['Investment Strategy'], products: ['RESP'], posts: 18 },
+      { id: 'aisha', name: 'Aisha Rahman', firm: 'Northshore Advice', initials: 'AR', sources: [], services: [], products: [], posts: 0 }
+    ];
+    let editingId = null;
+    let draft = new Set();
+    const MAX_CHIPS = 3;
+
+    function allSelected(id) {
+      const a = advisors.find(x => x.id === id);
+      return [...a.services, ...a.products];
+    }
+
+    function renderChips(a) {
+      const items = [...a.services.map(s => ({ label: s, kind: 'svc' })), ...a.products.map(p => ({ label: p, kind: 'prod' }))];
+      if (!items.length) {
+        return `<div class="empty-state"><span>None selected</span><button type="button" class="choose" data-open="${a.id}">Choose</button></div>`;
+      }
+      const shown = items.slice(0, MAX_CHIPS);
+      const overflow = items.length - shown.length;
+      let html = shown.map(i => `<span class="chip ${i.kind}">${i.label}</span>`).join('');
+      if (overflow > 0) html += `<span class="chip more">+${overflow}</span>`;
+      html += `<button type="button" class="edit-link" data-open="${a.id}">Edit</button>`;
+      return `<div class="chips">${html}</div>`;
+    }
+
+    function renderTable(filter = '') {
+      const q = filter.trim().toLowerCase();
+      const tbody = document.getElementById('tbody');
+      tbody.innerHTML = '';
+      advisors.filter(a => !q || a.name.toLowerCase().includes(q) || a.firm.toLowerCase().includes(q)).forEach(a => {
+        const tr = document.createElement('tr');
+        const srcHtml = a.sources.length ? a.sources.map(s => `<span class="src-pill">${s}</span>`).join('') : '<span style="color:#8a94a6">—</span>';
+        tr.innerHTML = `
+          <td><div class="advisor"><div class="avatar">${a.initials}</div><div><div class="name">${a.name}</div><div class="firm">${a.firm}</div></div></div></td>
+          <td>${srcHtml}</td>
+          <td><div class="chip-cell" tabindex="0" data-open="${a.id}">${renderChips(a)}</div></td>
+          <td class="hide-sm"><div class="posts-cell">${a.posts} posts<div class="posts-bar"><i style="width:${Math.min(100,a.posts)}%"></i></div></div></td>
+          <td><div class="actions">
+            <button type="button" class="act-btn">✦ Suggest posts</button>
+            <button type="button" class="act-btn primary-outline" data-open="${a.id}">▣ Choose services</button>
+            <button type="button" class="act-btn">↓ Load from WP</button>
+          </div></td>
+          <td><button type="button" class="impersonate">Impersonate</button></td>`;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function openModal(id) {
+      editingId = id;
+      const a = advisors.find(x => x.id === id);
+      draft = new Set(allSelected(id));
+      document.getElementById('modalSub').textContent = a.name + ' · ' + a.firm;
+      document.getElementById('modalSearch').value = '';
+      renderPanes('');
+      document.getElementById('overlay').classList.add('open');
+      document.getElementById('modalSearch').focus();
+    }
+    function closeModal() {
+      document.getElementById('overlay').classList.remove('open');
+      editingId = null;
+    }
+
+    function renderPanes(filter) {
+      const q = filter.trim().toLowerCase();
+      const el = document.getElementById('panes');
+      el.innerHTML = '';
+
+      function pane(title, items, kind, headClass) {
+        const visible = items.filter(i => !q || i.toLowerCase().includes(q));
+        const wrap = document.createElement('div');
+        wrap.className = 'pane' + (visible.length ? '' : ' hidden-all');
+        const allOn = visible.length && visible.every(i => draft.has(i));
+        wrap.innerHTML = `
+          <div class="pane-head ${headClass}">
+            <label><input type="checkbox" class="select-all" data-kind="${kind}" ${allOn ? 'checked' : ''} /> ${title}</label>
+            <span class="meta">${visible.filter(i => draft.has(i)).length}/${visible.length}</span>
+          </div>
+          <div class="pane-body"></div>`;
+        const body = wrap.querySelector('.pane-body');
+        items.forEach(name => {
+          const show = !q || name.toLowerCase().includes(q);
+          const row = document.createElement('label');
+          row.className = 'item' + (show ? '' : ' hidden');
+          row.innerHTML = `<input type="checkbox" data-name="${name}" data-kind="${kind}" ${draft.has(name) ? 'checked' : ''} /> <span>${name}</span>`;
+          body.appendChild(row);
+        });
+        el.appendChild(wrap);
+      }
+      pane('Services', SERVICES, 'svc', 'svc');
+      pane('Products', PRODUCTS, 'prod', 'prod');
+      document.getElementById('countPill').textContent = draft.size + ' selected';
+    }
+
+    document.getElementById('panes').addEventListener('change', e => {
+      const t = e.target;
+      if (t.classList.contains('select-all')) {
+        const list = t.dataset.kind === 'svc' ? SERVICES : PRODUCTS;
+        const q = document.getElementById('modalSearch').value.trim().toLowerCase();
+        list.forEach(name => {
+          const show = !q || name.toLowerCase().includes(q);
+          if (show) t.checked ? draft.add(name) : draft.delete(name);
+        });
+        renderPanes(document.getElementById('modalSearch').value);
+        return;
+      }
+      if (t.dataset.name) {
+        t.checked ? draft.add(t.dataset.name) : draft.delete(t.dataset.name);
+        renderPanes(document.getElementById('modalSearch').value);
+      }
+    });
+
+    document.getElementById('modalSearch').addEventListener('input', e => renderPanes(e.target.value));
+    document.getElementById('tableFilter').addEventListener('input', e => renderTable(e.target.value));
+    document.getElementById('tbody').addEventListener('click', e => {
+      const open = e.target.closest('[data-open]');
+      if (open) { e.preventDefault(); openModal(open.dataset.open); }
+    });
+    document.getElementById('closeModal').onclick = closeModal;
+    document.getElementById('cancelBtn').onclick = closeModal;
+    document.getElementById('overlay').addEventListener('click', e => { if (e.target === e.currentTarget) closeModal(); });
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape' && document.getElementById('overlay').classList.contains('open')) closeModal();
+    });
+    document.getElementById('saveBtn').onclick = () => {
+      const a = advisors.find(x => x.id === editingId);
+      if (!a) return;
+      a.services = SERVICES.filter(s => draft.has(s));
+      a.products = PRODUCTS.filter(p => draft.has(p));
+      closeModal();
+      renderTable(document.getElementById('tableFilter').value);
+      const toast = document.getElementById('toast');
+      toast.textContent = 'Saved for ' + a.name;
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 2200);
+    };
+    renderTable();
+  </script>
+</body>
+</html>

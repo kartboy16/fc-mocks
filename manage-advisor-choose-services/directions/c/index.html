@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Direction C — Anchored popover · Manage Advisor Choose Services</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #f4f8fc; --card: #fff; --ink: #1e2a4a; --muted: #5b6572;
+      --blue: #2b7de9; --blue-dark: #1e5bb8; --border: #d4e4f2; --mint: #e6f1fb;
+      --chip-svc: #e6f1fb; --chip-svc-fg: #1e5bb8;
+      --chip-prod: #f0eaf8; --chip-prod-fg: #5b3d8a;
+      --row-hover: #f8fbfe;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: Inter, system-ui, sans-serif; background: var(--bg); color: var(--ink); font-size: 13px; line-height: 1.45; }
+    a { color: var(--blue); }
+    .thesis {
+      background: linear-gradient(135deg, #1e2a4a, #2b7de9); color: #fff; padding: 18px 24px;
+    }
+    .thesis .tag {
+      display: inline-block; background: rgba(255,255,255,0.2); color: #fff; font-size: 0.68rem;
+      font-weight: 700; padding: 3px 10px; border-radius: 999px; margin-bottom: 8px;
+    }
+    .thesis h1 { font-size: 1.1rem; margin-bottom: 4px; }
+    .thesis p { opacity: 0.9; font-size: 0.82rem; max-width: 760px; }
+    .nav {
+      padding: 10px 24px; font-size: 0.78rem; background: #fafafa;
+      border-bottom: 1px solid var(--border); display: flex; gap: 14px; flex-wrap: wrap; align-items: center;
+    }
+    .nav a { color: var(--blue); text-decoration: none; font-weight: 500; }
+    .nav .sep { color: #c0c8d4; }
+    .shell { max-width: 1280px; margin: 0 auto; padding: 16px 20px 80px; }
+    .page-head { margin-bottom: 14px; }
+    .page-head h2 { font-size: 1.25rem; font-weight: 700; }
+    .page-head .sub { color: var(--muted); font-size: 0.8rem; margin-top: 2px; }
+    .toolbar { display: flex; gap: 10px; align-items: center; margin-bottom: 12px; }
+    .search-box {
+      flex: 1; min-width: 200px; max-width: 320px; padding: 8px 12px;
+      border: 1px solid var(--border); border-radius: 8px; font-family: inherit; font-size: 0.85rem; background: #fff;
+    }
+    .search-box:focus { outline: 2px solid var(--blue); border-color: var(--blue); }
+    .panel {
+      background: var(--card); border: 1px solid var(--border); border-radius: 10px; overflow: visible;
+      box-shadow: 0 1px 3px rgba(30,42,74,0.04);
+    }
+    .panel-inner { overflow-x: auto; border-radius: 10px; }
+    table.adv { width: 100%; border-collapse: collapse; font-size: 0.8rem; }
+    table.adv th {
+      text-align: left; padding: 10px 12px; background: #eef4fb; color: var(--muted);
+      font-weight: 600; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.04em;
+      border-bottom: 1px solid var(--border); white-space: nowrap;
+    }
+    table.adv td { padding: 10px 12px; border-bottom: 1px solid #eef2f6; vertical-align: middle; position: relative; }
+    table.adv tr:last-child td { border-bottom: none; }
+    table.adv tr:hover td { background: var(--row-hover); }
+    table.adv tr.active-row td { background: #f0f6ff; }
+    .advisor { display: flex; align-items: center; gap: 10px; }
+    .avatar {
+      width: 32px; height: 32px; border-radius: 999px; background: var(--mint);
+      color: var(--blue); font-weight: 700; font-size: 0.7rem;
+      display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    }
+    .advisor .name { font-weight: 600; }
+    .advisor .firm { color: var(--muted); font-size: 0.72rem; }
+    .src-pill {
+      display: inline-block; background: #f0f4f8; color: var(--muted);
+      padding: 2px 8px; border-radius: 999px; font-size: 0.68rem; font-weight: 500; margin: 1px 2px 1px 0;
+    }
+    .chips { display: flex; flex-wrap: wrap; gap: 4px; align-items: center; max-width: 280px; }
+    .chip {
+      display: inline-flex; align-items: center; padding: 2px 8px; border-radius: 999px;
+      font-size: 0.68rem; font-weight: 600; white-space: nowrap;
+    }
+    .chip.svc { background: var(--chip-svc); color: var(--chip-svc-fg); }
+    .chip.prod { background: var(--chip-prod); color: var(--chip-prod-fg); border: 1px solid #d8cce8; }
+    .chip.more { background: #eef2f6; color: var(--muted); }
+    .chip-cell { cursor: pointer; border-radius: 8px; padding: 4px 2px; min-height: 28px; }
+    .chip-cell:hover { background: var(--mint); }
+    .empty-state { color: #8a94a6; font-size: 0.75rem; display: flex; align-items: center; gap: 8px; }
+    .empty-state .choose {
+      color: var(--blue); font-weight: 600; border: none; background: none; cursor: pointer;
+      font-family: inherit; font-size: 0.75rem; padding: 0;
+    }
+    .edit-link {
+      color: var(--blue); font-size: 0.68rem; font-weight: 600; margin-left: 4px;
+      border: none; background: none; cursor: pointer; font-family: inherit; padding: 0; opacity: 0;
+    }
+    .chip-cell:hover .edit-link { opacity: 1; }
+    .posts-cell { color: var(--muted); font-size: 0.72rem; }
+    .posts-bar { height: 6px; background: #eef2f6; border-radius: 3px; width: 80px; margin-top: 4px; overflow: hidden; }
+    .posts-bar > i { display: block; height: 100%; background: var(--blue); border-radius: 3px; }
+    .actions { display: flex; flex-direction: column; gap: 4px; align-items: flex-start; }
+    .act-btn {
+      display: inline-flex; align-items: center; gap: 5px; padding: 4px 8px;
+      border: 1px solid var(--border); border-radius: 6px; background: #fff;
+      font-family: inherit; font-size: 0.7rem; font-weight: 500; color: var(--ink); cursor: pointer; white-space: nowrap;
+    }
+    .act-btn:hover { border-color: var(--blue); color: var(--blue); background: var(--mint); }
+    .act-btn.primary-outline { border-color: var(--blue); color: var(--blue); }
+    .impersonate {
+      color: var(--blue); font-size: 0.7rem; font-weight: 600; border: none; background: none;
+      cursor: pointer; font-family: inherit; padding: 4px;
+    }
+    .note {
+      margin-top: 14px; padding: 10px 14px; background: #f5f0fa; border: 1px solid #d8cce8;
+      border-radius: 8px; font-size: 0.78rem; color: #5b3d8a;
+    }
+
+    /* Popover */
+    .backdrop {
+      position: fixed; inset: 0; z-index: 90; display: none; background: transparent;
+    }
+    .backdrop.open { display: block; }
+    .popover {
+      position: fixed; z-index: 100; width: 360px; max-width: calc(100vw - 24px);
+      background: #fff; border: 1px solid var(--border); border-radius: 12px;
+      box-shadow: 0 12px 40px rgba(30,42,74,0.22);
+      display: none; flex-direction: column; max-height: min(70vh, 520px);
+      animation: pop 0.15s ease;
+    }
+    .popover.open { display: flex; }
+    @keyframes pop { from { opacity: 0; transform: translateY(-4px); } }
+    .pop-head {
+      padding: 12px 14px 8px; border-bottom: 1px solid var(--border);
+      display: flex; justify-content: space-between; align-items: flex-start; gap: 8px;
+    }
+    .pop-head h3 { font-size: 0.9rem; font-weight: 700; }
+    .pop-head .sub { color: var(--muted); font-size: 0.72rem; margin-top: 2px; }
+    .pop-close {
+      border: none; background: #f0f4f8; width: 28px; height: 28px; border-radius: 6px;
+      cursor: pointer; font-size: 0.9rem; color: var(--muted); flex-shrink: 0;
+    }
+    .pop-body { padding: 10px 12px; overflow-y: auto; flex: 1; }
+    .pop-toolbar { display: flex; gap: 8px; align-items: center; margin-bottom: 10px; }
+    .pop-toolbar .search-box { max-width: none; flex: 1; padding: 7px 10px; font-size: 0.8rem; }
+    .count-pill {
+      font-size: 0.68rem; font-weight: 700; color: var(--blue);
+      background: var(--mint); padding: 4px 8px; border-radius: 999px; white-space: nowrap;
+    }
+    .group {
+      border: 1px solid var(--border); border-radius: 8px; overflow: hidden; margin-bottom: 8px;
+    }
+    .group-head {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 7px 10px; background: var(--mint); font-weight: 600; font-size: 0.75rem;
+    }
+    .group-head.prod-head { background: #f5f0fa; }
+    .group-head label { display: flex; align-items: center; gap: 6px; cursor: pointer; }
+    .group-head .meta { font-weight: 400; color: var(--muted); font-size: 0.65rem; }
+    .items { padding: 2px 6px 6px; }
+    .item {
+      display: flex; align-items: center; gap: 8px; padding: 6px 4px;
+      border-radius: 5px; cursor: pointer; font-size: 0.78rem;
+    }
+    .item:hover { background: var(--row-hover); }
+    .item.hidden { display: none; }
+    .item input { accent-color: var(--blue); width: 14px; height: 14px; }
+    .group.hidden { display: none; }
+    .pop-foot {
+      padding: 10px 12px; border-top: 1px solid var(--border);
+      display: flex; justify-content: flex-end; gap: 6px; background: #fafbfd;
+      border-radius: 0 0 12px 12px;
+    }
+    .btn {
+      padding: 7px 14px; border-radius: 7px; border: none; font-family: inherit;
+      font-weight: 600; font-size: 0.78rem; cursor: pointer;
+    }
+    .btn-ghost { background: transparent; color: var(--muted); border: 1px solid var(--border); }
+    .btn-primary { background: var(--blue); color: #fff; }
+    .btn-primary:hover { background: var(--blue-dark); }
+    .toast {
+      position: fixed; bottom: 24px; right: 24px; background: #047857; color: #fff;
+      padding: 12px 18px; border-radius: 10px; font-weight: 500; font-size: 0.85rem;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.18); display: none; z-index: 200;
+    }
+    .toast.show { display: block; animation: in 0.22s ease; }
+    @keyframes in { from { opacity: 0; transform: translateY(8px); } }
+    @media (max-width: 900px) { .hide-sm { display: none !important; } }
+  </style>
+</head>
+<body>
+  <div class="nav">
+    <a href="../../index.html">← Hub</a>
+    <span class="sep">·</span>
+    <a href="../a/index.html">A · Centered</a>
+    <a href="../b/index.html">B · Two-pane</a>
+    <span class="sep">·</span>
+    <span style="color:var(--muted)">Direction C</span>
+  </div>
+  <div class="thesis">
+    <span class="tag">CONTRAST</span>
+    <h1>Direction C — Compact popover / anchored panel</h1>
+    <p>Same chip column. Choose opens a dense popover near the row (not a full modal) — better for quick multi-advisor edits. Still has search, Services/Products groups, Save/Cancel.</p>
+  </div>
+
+  <div class="shell">
+    <div class="page-head">
+      <h2>Manage Advisor Posts</h2>
+      <p class="sub">Admin · Direction C — row-anchored popover</p>
+    </div>
+    <div class="toolbar">
+      <input class="search-box" type="search" placeholder="Filter advisors…" id="tableFilter" />
+    </div>
+    <div class="panel">
+      <div class="panel-inner">
+        <table class="adv">
+          <thead>
+            <tr>
+              <th>Advisor</th>
+              <th>Sources</th>
+              <th>Services &amp; products</th>
+              <th class="hide-sm">Posts</th>
+              <th>Actions</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="tbody"></tbody>
+        </table>
+      </div>
+    </div>
+    <div class="note">
+      <strong>vs A:</strong> Popover stays light and contextual — less chrome, faster for editing several advisors in sequence. Tradeoff: less room when catalogs grow; A/B scale better for long lists.
+    </div>
+  </div>
+
+  <div class="backdrop" id="backdrop"></div>
+  <div class="popover" id="popover" role="dialog" aria-modal="true" aria-labelledby="popTitle">
+    <div class="pop-head">
+      <div>
+        <h3 id="popTitle">Choose services &amp; products</h3>
+        <p class="sub" id="popSub">Advisor</p>
+      </div>
+      <button type="button" class="pop-close" id="closePop" aria-label="Close">✕</button>
+    </div>
+    <div class="pop-body">
+      <div class="pop-toolbar">
+        <input class="search-box" type="search" id="popSearch" placeholder="Search…" />
+        <span class="count-pill" id="countPill">0</span>
+      </div>
+      <div id="groups"></div>
+    </div>
+    <div class="pop-foot">
+      <button type="button" class="btn btn-ghost" id="cancelBtn">Cancel</button>
+      <button type="button" class="btn btn-primary" id="saveBtn">Save</button>
+    </div>
+  </div>
+  <div class="toast" id="toast">Saved</div>
+
+  <script>
+    const SERVICES = ['Retirement Planning', 'Estate Planning', 'Tax Planning', 'Insurance Review', 'Investment Strategy', 'Cash Flow Analysis'];
+    const PRODUCTS = ['TFSA', 'RRSP', 'RESP', 'Whole Life', 'Group Benefits', 'Critical Illness', 'FHSA'];
+    const advisors = [
+      { id: 'jordan', name: 'Jordan Lee', firm: 'Coulas Insurance', initials: 'JL', sources: ['Coulas blog', 'FC library'], services: ['Retirement Planning', 'Insurance Review'], products: ['TFSA', 'Whole Life', 'Group Benefits'], posts: 72 },
+      { id: 'priya', name: 'Priya Shah', firm: 'Shah Wealth Advisors', initials: 'PS', sources: ['Firm RSS'], services: ['Tax Planning', 'Estate Planning', 'Retirement Planning'], products: ['RRSP', 'TFSA'], posts: 41 },
+      { id: 'marcus', name: 'Marcus Chen', firm: 'Chen Financial', initials: 'MC', sources: ['FC library'], services: ['Investment Strategy'], products: ['RESP'], posts: 18 },
+      { id: 'aisha', name: 'Aisha Rahman', firm: 'Northshore Advice', initials: 'AR', sources: [], services: [], products: [], posts: 0 }
+    ];
+    let editingId = null;
+    let draft = new Set();
+    let anchorEl = null;
+    const MAX_CHIPS = 3;
+
+    function allSelected(id) {
+      const a = advisors.find(x => x.id === id);
+      return [...a.services, ...a.products];
+    }
+
+    function renderChips(a) {
+      const items = [...a.services.map(s => ({ label: s, kind: 'svc' })), ...a.products.map(p => ({ label: p, kind: 'prod' }))];
+      if (!items.length) {
+        return `<div class="empty-state"><span>None selected</span><button type="button" class="choose" data-open="${a.id}">Choose</button></div>`;
+      }
+      const shown = items.slice(0, MAX_CHIPS);
+      const overflow = items.length - shown.length;
+      let html = shown.map(i => `<span class="chip ${i.kind}">${i.label}</span>`).join('');
+      if (overflow > 0) html += `<span class="chip more">+${overflow}</span>`;
+      html += `<button type="button" class="edit-link" data-open="${a.id}">Edit</button>`;
+      return `<div class="chips">${html}</div>`;
+    }
+
+    function renderTable(filter = '') {
+      const q = filter.trim().toLowerCase();
+      const tbody = document.getElementById('tbody');
+      tbody.innerHTML = '';
+      advisors.filter(a => !q || a.name.toLowerCase().includes(q) || a.firm.toLowerCase().includes(q)).forEach(a => {
+        const tr = document.createElement('tr');
+        tr.dataset.id = a.id;
+        const srcHtml = a.sources.length ? a.sources.map(s => `<span class="src-pill">${s}</span>`).join('') : '<span style="color:#8a94a6">—</span>';
+        tr.innerHTML = `
+          <td><div class="advisor"><div class="avatar">${a.initials}</div><div><div class="name">${a.name}</div><div class="firm">${a.firm}</div></div></div></td>
+          <td>${srcHtml}</td>
+          <td><div class="chip-cell" tabindex="0" data-open="${a.id}">${renderChips(a)}</div></td>
+          <td class="hide-sm"><div class="posts-cell">${a.posts} posts<div class="posts-bar"><i style="width:${Math.min(100,a.posts)}%"></i></div></div></td>
+          <td><div class="actions">
+            <button type="button" class="act-btn">✦ Suggest posts</button>
+            <button type="button" class="act-btn primary-outline" data-open="${a.id}">▣ Choose services</button>
+            <button type="button" class="act-btn">↓ Load from WP</button>
+          </div></td>
+          <td><button type="button" class="impersonate">Impersonate</button></td>`;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function positionPopover(anchor) {
+      const pop = document.getElementById('popover');
+      const r = anchor.getBoundingClientRect();
+      const pw = pop.offsetWidth || 360;
+      const ph = pop.offsetHeight || 400;
+      let left = r.left;
+      let top = r.bottom + 6;
+      if (left + pw > window.innerWidth - 12) left = window.innerWidth - pw - 12;
+      if (left < 12) left = 12;
+      if (top + ph > window.innerHeight - 12) {
+        top = r.top - ph - 6;
+        if (top < 12) top = 12;
+      }
+      pop.style.left = left + 'px';
+      pop.style.top = top + 'px';
+    }
+
+    function openPop(id, anchor) {
+      editingId = id;
+      anchorEl = anchor;
+      const a = advisors.find(x => x.id === id);
+      draft = new Set(allSelected(id));
+      document.getElementById('popSub').textContent = a.name + ' · ' + a.firm;
+      document.getElementById('popSearch').value = '';
+      document.querySelectorAll('tr.active-row').forEach(tr => tr.classList.remove('active-row'));
+      const row = document.querySelector(`tr[data-id="${id}"]`);
+      if (row) row.classList.add('active-row');
+      renderGroups('');
+      document.getElementById('backdrop').classList.add('open');
+      const pop = document.getElementById('popover');
+      pop.classList.add('open');
+      positionPopover(anchor);
+      // Reposition after layout
+      requestAnimationFrame(() => positionPopover(anchor));
+      document.getElementById('popSearch').focus();
+    }
+
+    function closePop() {
+      document.getElementById('popover').classList.remove('open');
+      document.getElementById('backdrop').classList.remove('open');
+      document.querySelectorAll('tr.active-row').forEach(tr => tr.classList.remove('active-row'));
+      editingId = null;
+      anchorEl = null;
+    }
+
+    function renderGroups(filter) {
+      const q = filter.trim().toLowerCase();
+      const el = document.getElementById('groups');
+      el.innerHTML = '';
+      function makeGroup(title, items, kind, headClass) {
+        const visible = items.filter(i => !q || i.toLowerCase().includes(q));
+        const wrap = document.createElement('div');
+        wrap.className = 'group' + (visible.length ? '' : ' hidden');
+        const allOn = visible.length && visible.every(i => draft.has(i));
+        wrap.innerHTML = `
+          <div class="group-head ${headClass || ''}">
+            <label><input type="checkbox" class="select-all" data-kind="${kind}" ${allOn ? 'checked' : ''} /> ${title}</label>
+            <span class="meta">${visible.length}</span>
+          </div>
+          <div class="items"></div>`;
+        const itemsEl = wrap.querySelector('.items');
+        items.forEach(name => {
+          const show = !q || name.toLowerCase().includes(q);
+          const row = document.createElement('label');
+          row.className = 'item' + (show ? '' : ' hidden');
+          row.innerHTML = `<input type="checkbox" data-name="${name}" ${draft.has(name) ? 'checked' : ''} /> <span>${name}</span>`;
+          itemsEl.appendChild(row);
+        });
+        el.appendChild(wrap);
+      }
+      makeGroup('Services', SERVICES, 'svc', '');
+      makeGroup('Products', PRODUCTS, 'prod', 'prod-head');
+      document.getElementById('countPill').textContent = draft.size + ' selected';
+    }
+
+    document.getElementById('groups').addEventListener('change', e => {
+      const t = e.target;
+      if (t.classList.contains('select-all')) {
+        const list = t.dataset.kind === 'svc' ? SERVICES : PRODUCTS;
+        const q = document.getElementById('popSearch').value.trim().toLowerCase();
+        list.forEach(name => {
+          const show = !q || name.toLowerCase().includes(q);
+          if (show) t.checked ? draft.add(name) : draft.delete(name);
+        });
+        renderGroups(document.getElementById('popSearch').value);
+        if (anchorEl) requestAnimationFrame(() => positionPopover(anchorEl));
+        return;
+      }
+      if (t.dataset.name) {
+        t.checked ? draft.add(t.dataset.name) : draft.delete(t.dataset.name);
+        renderGroups(document.getElementById('popSearch').value);
+      }
+    });
+
+    document.getElementById('popSearch').addEventListener('input', e => {
+      renderGroups(e.target.value);
+      if (anchorEl) requestAnimationFrame(() => positionPopover(anchorEl));
+    });
+    document.getElementById('tableFilter').addEventListener('input', e => renderTable(e.target.value));
+
+    document.getElementById('tbody').addEventListener('click', e => {
+      const open = e.target.closest('[data-open]');
+      if (open) {
+        e.preventDefault();
+        e.stopPropagation();
+        openPop(open.dataset.open, open);
+      }
+    });
+
+    document.getElementById('closePop').onclick = closePop;
+    document.getElementById('cancelBtn').onclick = closePop;
+    document.getElementById('backdrop').onclick = closePop;
+    window.addEventListener('resize', () => { if (anchorEl) positionPopover(anchorEl); });
+    window.addEventListener('scroll', () => { if (anchorEl) positionPopover(anchorEl); }, true);
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape' && document.getElementById('popover').classList.contains('open')) closePop();
+    });
+
+    document.getElementById('saveBtn').onclick = () => {
+      const a = advisors.find(x => x.id === editingId);
+      if (!a) return;
+      a.services = SERVICES.filter(s => draft.has(s));
+      a.products = PRODUCTS.filter(p => draft.has(p));
+      closePop();
+      renderTable(document.getElementById('tableFilter').value);
+      const toast = document.getElementById('toast');
+      toast.textContent = 'Saved for ' + a.name;
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 2200);
+    };
+
+    renderTable();
+  </script>
+</body>
+</html>
