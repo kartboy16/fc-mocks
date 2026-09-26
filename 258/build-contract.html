@@ -47,7 +47,7 @@
     </p>
 
     <h2>One-liner</h2>
-    <p>Firm/admin starts a <strong>30-day free trial</strong> via <strong>Stripe Checkout</strong> (test mode) with <strong>card collected upfront</strong>, then sees trial status, ending-soon, and converted states in <strong>Billing &amp; plan</strong>, with <strong>Customer Portal</strong> for manage/cancel — until product locks otherwise.</p>
+    <p>Firm/admin starts a <strong>30-day free trial</strong> via <strong>Stripe Checkout</strong> (test mode) with <strong>card collected upfront</strong>, then sees trial start/end dates, days left, and converted/active status in <strong>Billing &amp; plan</strong>, with <strong>Customer Portal</strong> for manage/cancel — until product locks otherwise.</p>
 
     <h2>Acceptance criteria (from issue)</h2>
     <ul>
@@ -72,7 +72,7 @@
       <li><strong>Card:</strong> Required at Checkout start of trial</li>
       <li><strong>Prices:</strong> EXAMPLE only (e.g. Firm Starter ~$79 CAD/mo, Growth ~$199 CAD/mo) — not locked</li>
       <li><strong>Stripe:</strong> Checkout with <code>trial_period_days=30</code> + Customer Portal</li>
-      <li><strong>In-app:</strong> Trial · ends {date}, ending-soon ≤7 days, Active after convert</li>
+      <li><strong>In-app:</strong> Trial · ends {date}, days left, Active after convert</li>
     </ul>
 
     <h2>States</h2>
@@ -83,8 +83,7 @@
         <tr><td>Checkout (test)</td><td>Card capture / Stripe Checkout; $0 due today</td></tr>
         <tr><td>Success</td><td>Trial started; end date; path into Billing</td></tr>
         <tr><td>Trial active</td><td>Status, plan, end date, Manage billing</td></tr>
-        <tr><td>Ending soon</td><td>≤7 days banner; keep / cancel via portal</td></tr>
-        <tr><td>Converted</td><td>Active subscription; example next invoice</td></tr>
+        <tr><td>Converted / active</td><td>Active subscription; example next invoice</td></tr>
         <tr><td>B / C alts</td><td>Soft trial paywall; firm vs advisor branch</td></tr>
       </tbody>
     </table>
@@ -93,8 +92,7 @@
     <ul>
       <li>Signup / pricing / start-trial UX for playground</li>
       <li>Stripe test-mode Checkout + Customer Portal path</li>
-      <li>Billing surfaces for trial / ending / active</li>
-      <li>Ending-soon messaging (placeholder legal copy)</li>
+      <li>Billing surfaces for trial / active</li>
     </ul>
 
     <h2>Out of scope</h2>

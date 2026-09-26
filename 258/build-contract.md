@@ -7,7 +7,7 @@
 
 ## One-liner
 
-Firm/admin starts a **30-day free trial** via **Stripe Checkout** (test mode) with **card collected upfront**, then sees trial status, ending-soon, and converted states in **Billing & plan**, with **Customer Portal** for manage/cancel — until product locks otherwise.
+Firm/admin starts a **30-day free trial** via **Stripe Checkout** (test mode) with **card collected upfront**, then sees trial start/end dates, days left, and converted/active status in **Billing & plan**, with **Customer Portal** for manage/cancel — until product locks otherwise.
 
 ## Acceptance criteria (from issue)
 
@@ -33,7 +33,7 @@ Until lock:
 - **Card:** Required at Checkout start of trial  
 - **Prices:** EXAMPLE only — e.g. Firm Starter ~$79 CAD/mo, Firm Growth ~$199 CAD/mo — mark not locked  
 - **Stripe:** Checkout Session with `trial_period_days=30` + Customer Portal for manage/cancel  
-- **In-app:** Billing shows Trial · ends {date}, days left, ending-soon ≤7 days, Active after convert
+- **In-app:** Billing shows Trial · ends {date}, days left, and Active after convert
 
 Directions B (soft trial) and C (firm vs advisor branch) remain comparison mocks.
 
@@ -45,7 +45,6 @@ Directions B (soft trial) and C (firm vs advisor branch) remain comparison mocks
 | Checkout (test mode) | Card capture stub / Stripe Checkout; $0 due today |
 | Success | Trial started; end date shown; path into Billing |
 | Trial active | Admin sees status, plan, trial end, Manage billing |
-| Ending soon (≤7 days) | Persistent banner; keep / cancel via portal |
 | Converted / active | Subscription active; next invoice / amount (example) |
 | Soft-trial alt (B only) | No card at start; paywall if expired |
 | Payer branch (C only) | Explicit firm vs advisor paths |
@@ -54,8 +53,7 @@ Directions B (soft trial) and C (firm vs advisor branch) remain comparison mocks
 
 - Signup / pricing / start-trial UX for playground  
 - Stripe test-mode Checkout + Customer Portal integration path  
-- Billing & plan surfaces for trial / ending / active  
-- Ending-soon messaging (placeholder legal copy)
+- Billing & plan surfaces for trial / active
 
 ## Out of scope
 

@@ -35,9 +35,9 @@ Legal/billing copy in mocks is **placeholder** for Canada / FC compliance review
 
 ## Direction A — Firm checkout + card-upfront trial *(recommend)*
 
-**Thesis:** Firm/admin is the paying customer. Marketing/pricing → Stripe Checkout (stub) with 30-day trial + card collected now → success → in-app Billing “Trial · ends {date}” + Manage billing (Customer Portal stub). Ending-soon (≤7 days) banner + converted/active state.
+**Thesis:** Firm/admin is the paying customer. Marketing/pricing → Stripe Checkout (stub) with 30-day trial + card collected now → success → in-app Billing “Trial · ends {date}” with days left + Manage billing (Customer Portal stub) → converted/active state.
 
-**Screens:** Pricing · Checkout stub · Success · Billing (trial) · Ending soon · Converted
+**Screens:** Pricing · Checkout stub · Success · Billing (trial, with end date/days left) · Converted/active
 
 **Tradeoff:** Higher signup friction (card upfront) vs clearer conversion and fewer unpaid zombies. Assumes firm payer (still an open Q).
 

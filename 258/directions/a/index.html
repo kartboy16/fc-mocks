@@ -139,13 +139,11 @@
       display: inline-flex; align-items: center; gap: 6px; background: var(--mint); color: var(--blue-dark);
       font-weight: 700; font-size: 0.75rem; padding: 4px 10px; border-radius: 999px;
     }
-    .trial-chip.warn { background: var(--warn-bg); color: var(--warn); }
     .trial-chip.ok { background: var(--ok-bg); color: var(--ok); }
     .banner {
       display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap;
       padding: 10px 14px; border-radius: 10px; margin-bottom: 14px; font-size: 0.8rem;
     }
-    .banner.warn { background: var(--warn-bg); border: 1px solid var(--warn-border); color: #8a5a10; }
     .banner.info { background: var(--mint); border: 1px solid var(--border); color: var(--blue-dark); }
     .banner.ok { background: var(--ok-bg); border: 1px solid #a7d7b5; color: #065f46; }
     .ph { font-size: 0.7rem; color: var(--muted); font-style: italic; margin-top: 8px; }
@@ -167,7 +165,7 @@
   <header class="thesis">
     <span class="rec">RECOMMEND · WORKING DEFAULT</span>
     <h1>Direction A — Firm checkout + card-upfront trial</h1>
-    <p>Firm/admin is the paying customer. Marketing → <strong>Stripe Checkout</strong> (stubbed, test mode) collects card now with a 30-day trial → success → in-app Billing shows “Trial · ends Oct 26, 2026” + Manage billing (Customer Portal stub). Ending-soon banner and converted state included.</p>
+    <p>Firm/admin is the paying customer. Marketing → <strong>Stripe Checkout</strong> (stubbed, test mode) collects card now with a 30-day trial → success → in-app Billing shows “Trial · ends Oct 26, 2026” + days left + Manage billing (Customer Portal stub), followed by converted/active status.</p>
   </header>
   <nav class="nav">
     <a href="../../index.html">← Hub #258</a>
@@ -184,8 +182,7 @@
     <button type="button" class="step-btn" data-screen="checkout">2 · Checkout</button>
     <button type="button" class="step-btn" data-screen="success">3 · Success</button>
     <button type="button" class="step-btn" data-screen="billing">4 · Billing (trial)</button>
-    <button type="button" class="step-btn" data-screen="ending">5 · Ending soon</button>
-    <button type="button" class="step-btn" data-screen="active">6 · Converted</button>
+    <button type="button" class="step-btn" data-screen="active">5 · Converted</button>
   </div>
   <div class="oq-bar">
     <strong>Open (not locked):</strong> Who pays — firm vs advisor? · Card required upfront? · Plan tiers / prices? · Existing accounts get a trial?
@@ -314,37 +311,11 @@
             <p class="ph" style="margin-top:12px">Placeholder billing summary. Who pays = firm (this direction). Existing-account trial eligibility still open.</p>
             <div class="actions">
               <button type="button" class="btn btn-secondary" id="portalBtn2">Manage billing (Customer Portal stub)</button>
-              <button type="button" class="btn btn-ghost" data-goto="ending">Preview ending-soon →</button>
             </div>
           </div>
         </section>
 
-        <!-- 5 Ending soon -->
-        <section class="screen" id="screen-ending" data-chrome="app">
-          <div class="banner warn">
-            <span><span class="trial-chip warn">Trial ending soon</span> · Ends <strong>Oct 2, 2026</strong> · 6 days left · Card on file will be charged (example)</span>
-            <button type="button" class="btn btn-primary" id="keepBtn">Keep subscription</button>
-          </div>
-          <div class="page-head">
-            <h2>Billing &amp; plan</h2>
-            <p class="sub">≤7 days remaining — persistent banner for firm admin. Cancel remains via Customer Portal stub.</p>
-          </div>
-          <div class="card-panel">
-            <h3>Trial ending</h3>
-            <div class="stat-row">
-              <div class="stat"><div class="lbl">Status</div><div class="val" style="color:var(--warn)">Trial · 6 days left</div></div>
-              <div class="stat"><div class="lbl">Next charge</div><div class="val">$199 CAD <span class="badge-ex">Example</span></div></div>
-              <div class="stat"><div class="lbl">Payment method</div><div class="val">•••• 4242</div></div>
-            </div>
-            <div class="actions">
-              <button type="button" class="btn btn-primary" data-goto="active">Simulate convert →</button>
-              <button type="button" class="btn btn-secondary" id="cancelStub">Cancel trial (portal stub)</button>
-            </div>
-            <p class="ph">Banner copy is placeholder — compliance / legal review required before production.</p>
-          </div>
-        </section>
-
-        <!-- 6 Converted -->
+        <!-- 5 Converted -->
         <section class="screen" id="screen-active" data-chrome="app">
           <div class="banner ok">
             <span><span class="trial-chip ok">Active subscription</span> · Firm · Growth · Next invoice Nov 2, 2026 (example)</span>
@@ -413,16 +384,6 @@
           showToast('Customer Portal stub — playground only');
         });
       });
-      var cancel = document.getElementById('cancelStub');
-      if (cancel) cancel.addEventListener('click', function () {
-        showToast('Cancel via portal stub — no real Stripe call');
-      });
-      var keep = document.getElementById('keepBtn');
-      if (keep) keep.addEventListener('click', function () {
-        showToast('Subscription kept · will convert at trial end (demo)');
-        go('active');
-      });
-
       var saved = null;
       try { saved = localStorage.getItem('fc258-a-screen'); } catch (e) {}
       go(saved || 'pricing');
