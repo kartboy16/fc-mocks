@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Direction B — Source as Master Category group · #261</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #f4f8fc; --card: #fff; --ink: #1e2a4a; --muted: #5b6572;
+      --blue: #2b7de9; --blue-dark: #1e5bb8; --border: #d4e4f2; --mint: #e6f1fb;
+      --ok: #047857; --ok-bg: #e8f5e9; --warn: #b45309; --warn-bg: #fff8eb; --warn-border: #f0d4a8;
+      --err: #b91c1c; --err-bg: #fef2f2; --err-border: #fecaca;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: Inter, system-ui, sans-serif; background: var(--bg); color: var(--ink); font-size: 13px; line-height: 1.45; }
+    a { color: var(--blue); }
+    .thesis {
+      background: linear-gradient(135deg, #1e2a4a, #2b7de9); color: #fff; padding: 16px 24px;
+    }
+    .thesis .rec {
+      display: inline-block; background: #fff; color: var(--blue); font-size: 0.68rem;
+      font-weight: 700; padding: 3px 10px; border-radius: 999px; margin-bottom: 8px;
+    }
+    .thesis .alt {
+      display: inline-block; background: rgba(255,255,255,0.2); color: #fff; font-size: 0.68rem;
+      font-weight: 700; padding: 3px 10px; border-radius: 999px; margin-bottom: 8px;
+    }
+    .thesis h1 { font-size: 1.05rem; margin-bottom: 4px; }
+    .thesis p { opacity: 0.9; font-size: 0.8rem; max-width: 960px; }
+    .nav {
+      padding: 8px 24px; font-size: 0.75rem; background: #fafafa;
+      border-bottom: 1px solid var(--border); display: flex; gap: 12px; flex-wrap: wrap; align-items: center;
+    }
+    .nav a { color: var(--blue); text-decoration: none; font-weight: 500; }
+    .nav .sep { color: #c0c8d4; }
+    .nav .on { font-weight: 700; color: var(--ink); }
+    .steps {
+      display: flex; gap: 6px; flex-wrap: wrap; padding: 10px 24px; background: #fff;
+      border-bottom: 1px solid var(--border); align-items: center;
+    }
+    .step-btn {
+      border: 1px solid var(--border); background: #fff; color: var(--ink);
+      font-family: inherit; font-size: 0.7rem; font-weight: 600; padding: 6px 10px;
+      border-radius: 999px; cursor: pointer;
+    }
+    .step-btn:hover { border-color: var(--blue); color: var(--blue); background: var(--mint); }
+    .step-btn.on { background: var(--blue); color: #fff; border-color: var(--blue); }
+    .oq-bar {
+      margin: 12px 20px 0; padding: 10px 14px; background: var(--warn-bg); border: 1px solid var(--warn-border);
+      border-radius: 10px; font-size: 0.75rem; color: #8a5a10;
+    }
+    .oq-bar strong { color: #6b4408; }
+    .gap-note {
+      margin: 10px 20px 0; padding: 10px 14px; background: #fef2f2; border: 1px solid var(--err-border);
+      border-radius: 10px; font-size: 0.75rem; color: #991b1b;
+    }
+    .app { display: flex; min-height: calc(100vh - 220px); margin-top: 12px; }
+    .rail {
+      width: 52px; background: #1e2a4a; flex-shrink: 0;
+      display: flex; flex-direction: column; align-items: center; padding: 12px 0; gap: 8px;
+    }
+    .rail .ri {
+      width: 32px; height: 32px; border-radius: 8px; background: rgba(255,255,255,0.08);
+      color: rgba(255,255,255,0.7); font-size: 0.55rem; font-weight: 700;
+      display: flex; align-items: center; justify-content: center; cursor: default;
+    }
+    .rail .ri.on { background: var(--blue); color: #fff; }
+    .main { flex: 1; min-width: 0; display: flex; flex-direction: column; background: var(--bg); }
+    .topbar {
+      display: flex; align-items: center; justify-content: space-between; gap: 12px;
+      padding: 10px 18px; background: #fff; border-bottom: 1px solid var(--border);
+    }
+    .topbar .brand { font-weight: 700; font-size: 0.9rem; }
+    .topbar .who { font-size: 0.75rem; color: var(--muted); }
+    .aud {
+      display: inline-block; font-size: 0.65rem; font-weight: 700; padding: 2px 8px; border-radius: 999px;
+      background: var(--mint); color: var(--blue-dark); margin-left: 8px;
+    }
+    .aud.admin { background: #f3e8ff; color: #6b21a8; }
+    .content { padding: 18px 20px 64px; max-width: 1080px; position: relative; }
+    .screen { display: none; }
+    .screen.on { display: block; }
+    .page-head h2 { font-size: 1.2rem; font-weight: 700; }
+    .page-head .sub { color: var(--muted); font-size: 0.8rem; margin-top: 4px; max-width: 720px; }
+    .facet-row { margin-top: 14px; }
+    .facet-label {
+      font-size: 0.68rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em;
+      color: var(--muted); margin-bottom: 6px;
+    }
+    .chips { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+    .chip {
+      border: 1px solid var(--border); background: #fff; color: var(--ink);
+      font-family: inherit; font-size: 0.72rem; font-weight: 600; padding: 5px 10px;
+      border-radius: 999px; cursor: pointer;
+    }
+    .chip:hover { border-color: var(--blue); color: var(--blue); background: var(--mint); }
+    .chip.on { background: var(--blue); color: #fff; border-color: var(--blue); }
+    .chip.sec.on { background: #1e2a4a; border-color: #1e2a4a; }
+    .chip.clear { border-style: dashed; color: var(--muted); }
+    .active-bar {
+      display: flex; flex-wrap: wrap; gap: 6px; align-items: center; margin-top: 10px;
+      padding: 8px 10px; background: #fff; border: 1px solid var(--border); border-radius: 10px;
+      font-size: 0.72rem;
+    }
+    .active-bar .lab { color: var(--muted); font-weight: 600; margin-right: 4px; }
+    .pill {
+      display: inline-flex; align-items: center; gap: 4px;
+      background: var(--mint); color: var(--blue-dark); font-weight: 600;
+      padding: 3px 8px; border-radius: 999px; border: 1px solid var(--border);
+    }
+    .pill .x { cursor: pointer; font-weight: 700; opacity: 0.7; }
+    .grid-posts {
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px; margin-top: 14px;
+    }
+    .pcard {
+      background: #fff; border: 1px solid var(--border); border-radius: 12px; overflow: hidden;
+      display: flex; flex-direction: column;
+    }
+    .pcard .ph {
+      height: 100px; background: linear-gradient(135deg,#bfdbfe,#60a5fa);
+      display: flex; align-items: flex-end; padding: 8px; gap: 4px; flex-wrap: wrap;
+    }
+    .pcard .ph.alt { background: linear-gradient(135deg,#c4b5fd,#818cf8); }
+    .pcard .ph.ftt { background: linear-gradient(135deg,#6ee7b7,#34d399); }
+    .pcard .ph.fecbc { background: linear-gradient(135deg,#fcd34d,#f59e0b); }
+    .pcard .body { padding: 12px; flex: 1; }
+    .pcard h4 { font-size: 0.85rem; margin-bottom: 4px; }
+    .pcard .meta { font-size: 0.7rem; color: var(--muted); }
+    .badge {
+      display: inline-block; font-size: 0.62rem; font-weight: 700; padding: 2px 7px;
+      border-radius: 999px; background: rgba(255,255,255,0.92); color: var(--ink);
+    }
+    .badge.src { background: #1e2a4a; color: #fff; }
+    .badge.topic { background: var(--mint); color: var(--blue-dark); border: 1px solid var(--border); }
+    .badge.lock { background: #fef3c7; color: #92400e; }
+    .tag-row { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 8px; }
+    .empty {
+      margin-top: 24px; padding: 36px 20px; text-align: center; background: #fff;
+      border: 1px dashed var(--border); border-radius: 12px;
+    }
+    .empty h3 { font-size: 0.95rem; margin-bottom: 6px; }
+    .empty p { color: var(--muted); font-size: 0.8rem; margin-bottom: 14px; }
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+      padding: 9px 14px; border-radius: 8px; font-family: inherit; font-size: 0.8rem;
+      font-weight: 600; cursor: pointer; border: 1px solid transparent; text-decoration: none;
+    }
+    .btn-primary { background: var(--blue); color: #fff; }
+    .btn-primary:hover { filter: brightness(1.05); }
+    .btn-secondary { background: #fff; color: var(--ink); border-color: var(--border); }
+    .btn-secondary:hover { border-color: var(--blue); color: var(--blue); background: var(--mint); }
+    .btn-ghost { background: transparent; color: var(--blue); border: none; }
+    .btn-danger { background: var(--err-bg); color: var(--err); border-color: var(--err-border); }
+    .form-card {
+      margin-top: 14px; background: #fff; border: 1px solid var(--border); border-radius: 12px; padding: 16px 18px;
+      max-width: 640px;
+    }
+    .field { margin-bottom: 14px; }
+    .field label { display: block; font-size: 0.72rem; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.03em; margin-bottom: 6px; }
+    .field input, .field select, .field textarea {
+      width: 100%; border: 1px solid var(--border); border-radius: 8px; padding: 8px 10px;
+      font-family: inherit; font-size: 0.85rem; color: var(--ink); background: #fff;
+    }
+    .field textarea { min-height: 72px; resize: vertical; }
+    .msel { display: flex; flex-wrap: wrap; gap: 6px; }
+    .toggle {
+      display: flex; align-items: center; gap: 10px; padding: 10px 12px;
+      background: var(--bg); border: 1px solid var(--border); border-radius: 10px;
+    }
+    .toggle .sw {
+      width: 36px; height: 20px; border-radius: 999px; background: #c0c8d4; position: relative; flex-shrink: 0;
+    }
+    .toggle .sw.on { background: var(--blue); }
+    .toggle .sw::after {
+      content: ""; position: absolute; top: 2px; left: 2px; width: 16px; height: 16px;
+      border-radius: 50%; background: #fff; transition: left 0.15s;
+    }
+    .toggle .sw.on::after { left: 18px; }
+    .option-alt {
+      margin-top: 8px; padding: 8px 10px; background: var(--warn-bg); border: 1px solid var(--warn-border);
+      border-radius: 8px; font-size: 0.72rem; color: #8a5a10;
+    }
+    .table-wrap {
+      margin-top: 14px; background: #fff; border: 1px solid var(--border); border-radius: 12px; overflow: hidden;
+    }
+    table.admin { width: 100%; border-collapse: collapse; font-size: 0.8rem; }
+    table.admin th {
+      text-align: left; padding: 10px 12px; background: #eef4fb; color: var(--muted);
+      font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.04em; border-bottom: 1px solid var(--border);
+    }
+    table.admin td { padding: 10px 12px; border-bottom: 1px solid var(--border); vertical-align: middle; }
+    table.admin tr:last-child td { border-bottom: none; }
+    .toolbar { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-top: 14px; flex-wrap: wrap; }
+    .banner {
+      display: flex; gap: 10px; align-items: flex-start; margin-top: 14px; padding: 12px 14px;
+      border-radius: 10px; font-size: 0.78rem;
+    }
+    .banner.warn { background: var(--warn-bg); border: 1px solid var(--warn-border); color: #8a5a10; }
+    .banner.ok { background: var(--ok-bg); border: 1px solid #a7d7b5; color: #065f46; }
+    .banner.err { background: var(--err-bg); border: 1px solid var(--err-border); color: #991b1b; }
+    .banner.info { background: #eef4fb; border: 1px solid var(--border); color: var(--ink); }
+    .hubs {
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 12px; margin-top: 14px;
+    }
+    .hub {
+      background: #fff; border: 1px solid var(--border); border-radius: 12px; padding: 16px;
+      cursor: pointer; text-align: left; font-family: inherit; color: inherit;
+      transition: border-color 0.15s, box-shadow 0.15s;
+    }
+    .hub:hover { border-color: var(--blue); box-shadow: 0 4px 16px rgba(43,125,233,0.12); }
+    .hub h3 { font-size: 0.9rem; color: var(--blue); margin-bottom: 4px; }
+    .hub p { font-size: 0.72rem; color: var(--muted); }
+    .hub .count { font-size: 0.68rem; font-weight: 700; color: var(--ink); margin-top: 8px; }
+    .section-label {
+      font-size: 0.68rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em;
+      color: var(--muted); margin: 12px 0 6px; padding-top: 4px; border-top: 1px solid var(--border);
+    }
+    .section-label:first-child { border-top: none; margin-top: 0; }
+    .locked-card {
+      position: relative; opacity: 0.92;
+    }
+    .locked-card::after {
+      content: "Advisor-only"; position: absolute; top: 8px; right: 8px;
+      background: #fef3c7; color: #92400e; font-size: 0.62rem; font-weight: 700;
+      padding: 2px 7px; border-radius: 999px;
+    }
+    .toast {
+      position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(80px);
+      background: #1e2a4a; color: #fff; padding: 10px 16px; border-radius: 999px;
+      font-size: 0.8rem; font-weight: 600; opacity: 0; transition: all 0.2s; z-index: 50;
+    }
+    .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+    .mobile-note {
+      margin-top: 28px; padding: 10px 12px; background: #eef4fb; border: 1px solid var(--border);
+      border-radius: 8px; font-size: 0.72rem; color: var(--muted);
+    }
+    .skel {
+      height: 160px; border-radius: 12px; background: linear-gradient(90deg,#e8eef5 25%,#f4f8fc 50%,#e8eef5 75%);
+      background-size: 200% 100%; animation: shimmer 1.2s infinite;
+    }
+    @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+
+  </style>
+</head>
+<body>
+  <header class="thesis">
+    <span class="alt">ALT</span>
+    <h1>Direction B — Source as Master Category group</h1>
+    <p>Reuse Master Categories with <strong>grouped namespaces</strong> (Source vs Topic). One admin list with type column; one filter UI with sectioned chips. Less new schema; risk of mixing concepts. Sections — not a Source×Topic matrix.</p>
+  </header>
+  <nav class="nav">
+    <a href="../../index.html">← Hub #261</a>
+    <span class="sep">·</span>
+    <a href="../a/index.html">Dir A Dual-facet</a> <span class="sep">·</span> <span class="on">Dir B Grouped cats</span> <span class="sep">·</span> <a href="../c/index.html">Dir C Source hubs</a>
+    <span class="sep">·</span>
+    <a href="../../build-contract.html">Contract</a>
+    <span class="sep">·</span>
+    <a href="../../directions-brief.md">Brief</a>
+  </nav>
+  <div class="steps">
+<button type="button" class="step-btn on" data-screen="browse">1 · Advisor browse</button>
+<button type="button" class="step-btn" data-screen="empty">2 · Filter empty</button>
+<button type="button" class="step-btn" data-screen="edit">3 · Post edit</button>
+<button type="button" class="step-btn" data-screen="sources">4 · Grouped categories</button>
+<button type="button" class="step-btn" data-screen="cats">5 · Manage Categories</button>
+<button type="button" class="step-btn" data-screen="gated">6 · Advisor-only state</button>
+<button type="button" class="step-btn" data-screen="not209">7 · Not #209 callout</button>
+  </div>
+  <div class="oq-bar">
+    <strong>Open Qs (all directions):</strong> Source list enum vs admin CRUD? · Advisor-only = flag vs category? · Firm admin vs FC admin for Sources? · Backfill historical posts? (follow-up, not v1)
+  </div>
+  <div class="gap-note">
+    <strong>Not Advisor Categories (#209):</strong> #209 = advisor affiliation (AdvisorSource). This playground = <em>content</em> Source + topic/product taxonomy. Do not reopen #209. Separate from #260 My Media.
+  </div>
+
+  <div class="app">
+    <aside class="rail" aria-hidden="true">
+      <div class="ri">FC</div>
+      <div class="ri on" id="railLib">LIB</div>
+      <div class="ri">POST</div>
+      <div class="ri">ADM</div>
+      <div class="ri">SET</div>
+    </aside>
+    <div class="main">
+      <div class="topbar">
+        <div class="brand">FinancialContent <span class="who" id="whoLabel">Audience: Advisor · library browse</span></div>
+        <div class="who">Idea / playground · #261</div>
+      </div>
+      <div class="content">
+
+        <div class="screen on" id="s-browse">
+          <div class="page-head">
+            <h2>Content library <span class="aud">Advisor</span></h2>
+            <p class="sub">One filter UI with <strong>sectioned chips</strong> — Source group vs Topic group. Same Master Categories store; sections prevent Source×Topic matrix explosion.</p>
+          </div>
+          <div class="facet-row" style="background:#fff;border:1px solid var(--border);border-radius:12px;padding:12px 14px">
+            <div class="section-label">Source group</div>
+            <div class="chips">
+              <button type="button" class="chip on" data-group="source" onclick="toggleChip(this,'source')">FTT</button>
+              <button type="button" class="chip" data-group="source" onclick="toggleChip(this,'source')">FECBC</button>
+              <button type="button" class="chip on" data-group="source" onclick="toggleChip(this,'source')">Manulife</button>
+              <button type="button" class="chip" data-group="source" onclick="toggleChip(this,'source')">Sun Life</button>
+              <button type="button" class="chip" data-group="source" onclick="toggleChip(this,'source')">Other</button>
+            </div>
+            <div class="section-label">Topic group</div>
+            <div class="chips">
+              <button type="button" class="chip sec on" data-group="topic" onclick="toggleChip(this,'topic')">Retirement</button>
+              <button type="button" class="chip sec" data-group="topic" onclick="toggleChip(this,'topic')">Group benefits</button>
+              <button type="button" class="chip sec" data-group="topic" onclick="toggleChip(this,'topic')">Disability</button>
+              <button type="button" class="chip sec" data-group="topic" onclick="toggleChip(this,'topic')">Investing</button>
+            </div>
+          </div>
+          <div class="active-bar">
+            <span class="lab">Active (AND):</span>
+            <span class="pill">Source · FTT</span>
+            <span class="pill">Source · Manulife</span>
+            <span class="pill">Topic · Retirement</span>
+            <button type="button" class="chip clear" onclick="clearAllFilters()">Clear all</button>
+          </div>
+          
+          <div class="grid-posts">
+            <article class="pcard">
+              <div class="ph ftt"><span class="badge src">FTT</span></div>
+              <div class="body">
+                <h4>Market update: Q3 outlook</h4>
+                <div class="meta">Financial Tech Tools · Updated Sep 12</div>
+                <div class="tag-row"><span class="badge topic">Retirement</span><span class="badge topic">Investing</span></div>
+              </div>
+            </article>
+            <article class="pcard">
+              <div class="ph"><span class="badge src">Manulife</span></div>
+              <div class="body">
+                <h4>Group benefits enrollment tips</h4>
+                <div class="meta">Carrier · Manulife</div>
+                <div class="tag-row"><span class="badge topic">Group benefits</span></div>
+              </div>
+            </article>
+            <article class="pcard">
+              <div class="ph fecbc"><span class="badge src">FECBC</span></div>
+              <div class="body">
+                <h4>Compliance checklist for advisors</h4>
+                <div class="meta">FECBC</div>
+                <div class="tag-row"><span class="badge topic">Compliance</span></div>
+              </div>
+            </article>
+            <article class="pcard locked-card">
+              <div class="ph alt"><span class="badge src">Sun Life</span></div>
+              <div class="body">
+                <h4>Advisor-only sell sheet: Disability</h4>
+                <div class="meta">Carrier · Sun Life</div>
+                <div class="tag-row"><span class="badge topic">Disability</span><span class="badge lock">Advisor-only</span></div>
+              </div>
+            </article>
+            <article class="pcard">
+              <div class="ph"><span class="badge src">Other</span></div>
+              <div class="body">
+                <h4>Client conversation starters</h4>
+                <div class="meta">Other / FC</div>
+                <div class="tag-row"><span class="badge topic">Client engagement</span></div>
+              </div>
+            </article>
+            <article class="pcard">
+              <div class="ph ftt"><span class="badge src">FTT</span></div>
+              <div class="body">
+                <h4>Retirement income strategies</h4>
+                <div class="meta">Financial Tech Tools</div>
+                <div class="tag-row"><span class="badge topic">Retirement</span><span class="badge topic">Income</span></div>
+              </div>
+            </article>
+          </div>
+
+          <div class="banner warn" style="margin-top:14px">
+            <div><strong>Tradeoff:</strong> Less new schema, but Source and Topic share one admin list — risk of mixing concepts in reporting and bulk edits.</div>
+          </div>
+        </div>
+
+        <div class="screen" id="s-empty">
+          <div class="page-head">
+            <h2>Content library <span class="aud">Advisor</span></h2>
+            <p class="sub">Empty result with sectioned filters.</p>
+          </div>
+          <div class="empty">
+            <h3>No posts in this Source + Topic section combo</h3>
+            <p>Clear a section or pick another Source group chip.</p>
+            <button type="button" class="btn btn-primary" onclick="clearAllFilters()">Clear filters</button>
+          </div>
+        </div>
+
+        <div class="screen" id="s-edit">
+          <div class="page-head">
+            <h2>Edit content <span class="aud admin">Admin</span></h2>
+            <p class="sub">Categories picker is <strong>grouped</strong>: pick one Source-group tag + any Topic-group tags (enforce in UI).</p>
+          </div>
+          <div class="form-card">
+            <div class="field"><label>Title</label><input value="Group benefits enrollment tips" /></div>
+            <div class="field">
+              <label>Categories (grouped Master Categories)</label>
+              <div class="section-label">Source group (pick one)</div>
+              <div class="msel">
+                <button type="button" class="chip" onclick="document.querySelectorAll('[data-sg]').forEach(c=>c.classList.remove('on'));this.classList.add('on')" data-sg>FTT</button>
+                <button type="button" class="chip" onclick="document.querySelectorAll('[data-sg]').forEach(c=>c.classList.remove('on'));this.classList.add('on')" data-sg>FECBC</button>
+                <button type="button" class="chip on" onclick="document.querySelectorAll('[data-sg]').forEach(c=>c.classList.remove('on'));this.classList.add('on')" data-sg>Manulife</button>
+                <button type="button" class="chip" onclick="document.querySelectorAll('[data-sg]').forEach(c=>c.classList.remove('on'));this.classList.add('on')" data-sg>Other</button>
+              </div>
+              <div class="section-label">Topic group (multi)</div>
+              <div class="msel">
+                <button type="button" class="chip on" onclick="this.classList.toggle('on')">Group benefits</button>
+                <button type="button" class="chip" onclick="this.classList.toggle('on')">Retirement</button>
+                <button type="button" class="chip" onclick="this.classList.toggle('on')">Disability</button>
+              </div>
+            </div>
+            <div class="field">
+              <label>Visibility</label>
+              <div class="toggle" onclick="this.querySelector('.sw').classList.toggle('on')">
+                <div class="sw"></div>
+                <div><strong>Advisor-only</strong> <span style="color:var(--muted)">(flag still recommended even in B)</span></div>
+              </div>
+            </div>
+            <button type="button" class="btn btn-primary" onclick="showToast('Saved grouped categories (stub)')">Save</button>
+          </div>
+        </div>
+
+        <div class="screen" id="s-sources">
+          <div class="page-head">
+            <h2>Manage Categories (grouped) <span class="aud admin">Admin</span></h2>
+            <p class="sub">One admin list with a <strong>Type</strong> column (Source vs Topic). No separate Manage Sources page.</p>
+          </div>
+          <div class="toolbar">
+            <div class="chips">
+              <button type="button" class="chip on">All</button>
+              <button type="button" class="chip" onclick="showToast('Filter Source type')">Source</button>
+              <button type="button" class="chip" onclick="showToast('Filter Topic type')">Topic</button>
+            </div>
+            <button type="button" class="btn btn-primary" onclick="showToast('Add category stub')">+ Add</button>
+          </div>
+          <div class="table-wrap">
+            <table class="admin">
+              <thead><tr><th>Name</th><th>Type</th><th>Posts</th><th></th></tr></thead>
+              <tbody>
+                <tr><td><strong>FTT</strong></td><td><span class="badge src">Source</span></td><td>128</td><td><button class="btn btn-ghost">Edit</button></td></tr>
+                <tr><td><strong>FECBC</strong></td><td><span class="badge src">Source</span></td><td>64</td><td><button class="btn btn-ghost">Edit</button></td></tr>
+                <tr><td><strong>Manulife</strong></td><td><span class="badge src">Source</span></td><td>42</td><td><button class="btn btn-ghost">Edit</button></td></tr>
+                <tr><td><strong>Retirement</strong></td><td><span class="badge topic">Topic</span></td><td>86</td><td><button class="btn btn-ghost">Edit</button></td></tr>
+                <tr><td><strong>Group benefits</strong></td><td><span class="badge topic">Topic</span></td><td>54</td><td><button class="btn btn-ghost">Edit</button></td></tr>
+                <tr><td><strong>Disability</strong></td><td><span class="badge topic">Topic</span></td><td>31</td><td><button class="btn btn-ghost">Edit</button></td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="banner warn" style="margin-top:14px">
+            <div>Still <strong>not #209</strong> — these are content Master Categories with a type namespace, not AdvisorSource affiliation.</div>
+          </div>
+        </div>
+
+        <div class="screen" id="s-cats">
+          <div class="page-head">
+            <h2>Topics focus <span class="aud admin">Admin</span></h2>
+            <p class="sub">Reuse callout: filtering the same list to Type = Topic recovers today’s Manage Categories mental model.</p>
+          </div>
+          <div class="banner info">
+            <div>In Direction B, Manage Categories is the single list (step 4). This screen is the Topic-filtered view for comparison with Direction A’s split admin.</div>
+          </div>
+          <div class="table-wrap">
+            <table class="admin">
+              <thead><tr><th>Topic</th><th>Posts</th><th>Status</th></tr></thead>
+              <tbody>
+                <tr><td>Retirement</td><td>86</td><td>Active</td></tr>
+                <tr><td>Group benefits</td><td>54</td><td>Active</td></tr>
+                <tr><td>Disability</td><td>31</td><td>Active</td></tr>
+                <tr><td>Investing</td><td>47</td><td>Active</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="screen" id="s-gated">
+          <div class="page-head">
+            <h2>Advisor-only / group-benefits labeled state <span class="aud">Advisor</span></h2>
+            <p class="sub">When Visibility: Advisor-only is on (recommended), library shows a clear badge. Optional gated empty if filtered to client-safe only.</p>
+          </div>
+          <div class="banner ok">
+            <div><strong>Recommended:</strong> Visibility flag → badge on cards + optional “Advisor-only” filter chip. Topics stay about product; visibility stays about audience.</div>
+          </div>
+          <div class="facet-row">
+            <div class="facet-label">Quick filter</div>
+            <div class="chips">
+              <button type="button" class="chip on">Advisor-only</button>
+              <button type="button" class="chip" onclick="showToast('Show all (stub)')">All visibility</button>
+            </div>
+          </div>
+          <div class="grid-posts">
+            <article class="pcard locked-card">
+              <div class="ph alt"><span class="badge src">Sun Life</span></div>
+              <div class="body">
+                <h4>Advisor-only sell sheet: Disability</h4>
+                <div class="meta">Visible to advisors · hidden from client surfaces</div>
+                <div class="tag-row"><span class="badge topic">Disability</span><span class="badge lock">Advisor-only</span></div>
+              </div>
+            </article>
+            <article class="pcard locked-card">
+              <div class="ph"><span class="badge src">Manulife</span></div>
+              <div class="body">
+                <h4>Group benefits — internal pricing notes</h4>
+                <div class="meta">Advisor-only</div>
+                <div class="tag-row"><span class="badge topic">Group benefits</span><span class="badge lock">Advisor-only</span></div>
+              </div>
+            </article>
+          </div>
+          <div class="option-alt" style="margin-top:14px">
+            <strong>Alt:</strong> If product chooses category instead of flag, “Advisor-only sell” appears as a topic chip — risk of mixing visibility with taxonomy (called out as open Q).
+          </div>
+        </div>
+
+        <div class="screen" id="s-not209">
+          <div class="page-head">
+            <h2>Not Advisor Categories (#209)</h2>
+            <p class="sub">Keep this distinction visible for Alex / Angelina / Software / CoS so #209 is not reopened by accident.</p>
+          </div>
+          <div class="banner err">
+            <div>
+              <strong>#209 Manage Advisor Categories / AdvisorSource (closed)</strong><br/>
+              About <em>advisor affiliation</em> — which insurance/investment companies or programs an <strong>advisor</strong> is tied to.<br/><br/>
+              <strong>#261 (this playground)</strong><br/>
+              About <em>content</em> — which Source a <strong>post</strong> came from (carrier / FTT / FECBC / Other) and which topic/product Master Categories apply.<br/><br/>
+              Same words (“source”, “categories”) — different objects. Do not merge schemas or reopen #209 for this ask.
+            </div>
+          </div>
+          <div class="banner info">
+            <div><strong>Also separate:</strong> <a href="../../../260/">#260 My Media Library</a> is advisor personal media for compose — not content taxonomy.</div>
+          </div>
+          <div style="margin-top:14px;display:flex;gap:8px;flex-wrap:wrap">
+            <button type="button" class="btn btn-primary" onclick="showScreen('browse')">Back to browse</button>
+            <a class="btn btn-secondary" href="../../index.html">Hub #261</a>
+            <a class="btn btn-secondary" href="../../../209/">Open #209 mocks</a>
+          </div>
+        </div>
+
+        <p class="mobile-note"><strong>Mobile (brief):</strong> Source + topic facets likely collapse to filter sheets / stacked chips. Admin tables → stacked cards. Full mobile polish TBD after direction lock.</p>
+      </div>
+    </div>
+  </div>
+  <div class="toast" id="toast"></div>
+  <script>
+    const KEY = 'fc261-b-screen';
+    const WHO = {
+      browse: 'Audience: Advisor · library browse',
+      empty: 'Audience: Advisor · library browse',
+      edit: 'Audience: Admin · content / post edit',
+      sources: 'Audience: Admin · Manage Sources',
+      cats: 'Audience: Admin · Manage Categories (topics)',
+      gated: 'Audience: Advisor · gated / labeled',
+      not209: 'Audience: All · distinction callout'
+    };
+    function showToast(msg) {
+      const t = document.getElementById('toast');
+      t.textContent = msg; t.classList.add('show');
+      clearTimeout(window._tt); window._tt = setTimeout(() => t.classList.remove('show'), 2200);
+    }
+    function showScreen(id) {
+      document.querySelectorAll('.screen').forEach(s => s.classList.toggle('on', s.id === 's-' + id));
+      document.querySelectorAll('.step-btn').forEach(b => b.classList.toggle('on', b.dataset.screen === id));
+      const who = document.getElementById('whoLabel');
+      if (who) who.textContent = WHO[id] || '';
+      const rail = document.getElementById('railLib');
+      if (rail) {
+        document.querySelectorAll('.rail .ri').forEach(r => r.classList.remove('on'));
+        if (['sources','cats','edit'].includes(id)) document.querySelectorAll('.rail .ri')[3].classList.add('on');
+        else rail.classList.add('on');
+      }
+      try { localStorage.setItem(KEY, id); } catch(e) {}
+    }
+    document.querySelectorAll('.step-btn').forEach(b => b.addEventListener('click', () => showScreen(b.dataset.screen)));
+    function toggleChip(el, group) {
+      if (el.classList.contains('clear')) {
+        document.querySelectorAll('[data-group="'+group+'"]').forEach(c => c.classList.remove('on'));
+        showToast('Cleared ' + group + ' filters');
+        return;
+      }
+      el.classList.toggle('on');
+      showToast('Filter updated (AND across facets)');
+    }
+    function clearAllFilters() {
+      document.querySelectorAll('.chip[data-group]').forEach(c => c.classList.remove('on'));
+      showToast('All filters cleared');
+      showScreen('browse');
+    }
+    
+    (function init() {
+      let start = 'browse';
+      try { start = localStorage.getItem(KEY) || 'browse'; } catch(e) {}
+      if (![...document.querySelectorAll('.step-btn')].some(b => b.dataset.screen === start)) start = 'browse';
+      showScreen(start);
+    })();
+  </script>
+</body>
+</html>

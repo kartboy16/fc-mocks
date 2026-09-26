@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Build contract · #261 Content Source + topic (provisional)</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root { --bg:#f4f8fc; --ink:#1e2a4a; --muted:#5b6572; --blue:#2b7de9; --border:#d4e4f2; }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: Inter, system-ui, sans-serif; background: var(--bg); color: var(--ink); line-height: 1.55; padding: 32px 20px 72px; }
+    .wrap { max-width: 740px; margin: 0 auto; background: #fff; border: 1px solid var(--border); border-radius: 12px; padding: 28px 32px; }
+    h1 { font-size: 1.35rem; margin-bottom: 8px; }
+    h2 { font-size: 0.95rem; margin: 24px 0 10px; color: var(--blue); }
+    p, li { font-size: 0.88rem; color: var(--ink); }
+    .meta { font-size: 0.8rem; color: var(--muted); margin-bottom: 16px; }
+    .meta a { color: var(--blue); }
+    .badge {
+      display: inline-block; background: #fff8eb; color: #8a5a10; font-size: 0.72rem; font-weight: 700;
+      padding: 4px 10px; border-radius: 999px; border: 1px solid #f0d4a8; margin-bottom: 12px;
+    }
+    ul, ol { padding-left: 1.25rem; margin: 8px 0; }
+    li { margin-bottom: 4px; }
+    table { width: 100%; border-collapse: collapse; font-size: 0.82rem; margin: 10px 0; }
+    th, td { text-align: left; padding: 8px 10px; border: 1px solid var(--border); vertical-align: top; }
+    th { background: #eef4fb; font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.04em; color: var(--muted); }
+    code { background: #eef2f6; padding: 0.1em 0.35em; border-radius: 4px; font-size: 0.85em; }
+    .nav { margin-bottom: 16px; font-size: 0.8rem; }
+    .nav a { color: var(--blue); margin-right: 12px; }
+    .warn { background: #fff8eb; border: 1px solid #f0d4a8; border-radius: 8px; padding: 10px 12px; font-size: 0.82rem; color: #8a5a10; margin: 12px 0; }
+    .ok { background: #e8f5e9; border: 1px solid #a7d7b5; border-radius: 8px; padding: 10px 12px; font-size: 0.82rem; color: #065f46; margin: 12px 0; }
+    .err { background: #fef2f2; border: 1px solid #fecaca; border-radius: 8px; padding: 10px 12px; font-size: 0.82rem; color: #991b1b; margin: 12px 0; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="nav">
+      <a href="index.html">← Hub #261</a>
+      <a href="build-contract.md">Markdown</a>
+      <a href="directions/a/index.html">Direction A</a>
+      <a href="directions-brief.md">Brief</a>
+    </div>
+    <span class="badge">PROVISIONAL · working default = Direction A</span>
+    <h1>Build contract · Content Source + topic taxonomy</h1>
+    <p class="meta">
+      Issue <a href="https://github.com/kartboy16/content-library/issues/261">#261</a> ·
+      Mocks <a href="https://kartboy16.github.io/fc-mocks/261/">/261/</a> ·
+      Track: Idea / playground
+    </p>
+
+    <h2>One-liner</h2>
+    <p>Content posts get a first-class <strong>Source</strong> (carrier / FTT / FECBC / Other) <strong>and</strong> topic/product via <strong>Master Categories</strong>, with advisor <strong>dual-facet filters</strong> (AND, no mega-list), admin <strong>Manage Sources</strong> + Manage Categories, post edit Source + topics, and recommended <strong>Visibility: Advisor-only</strong> flag — until product locks. <strong>Not</strong> #209. <strong>Not</strong> #260.</p>
+
+    <h2>Acceptance criteria (refined)</h2>
+    <ul>
+      <li><strong>AC-1:</strong> Posts labeled with Source independent of topic Master Categories</li>
+      <li><strong>AC-2:</strong> Advisor browse/filter by Source <strong>and</strong> topic (independent facets, AND); empty state; no Source×Topic mega-list</li>
+      <li><strong>AC-3:</strong> Admin Manage Sources (CRUD or enum — open Q) + Manage Categories (topics)</li>
+      <li><strong>AC-4:</strong> Post edit: Source (single) + topics (multi) + Advisor-only (flag recommended; category option shown)</li>
+      <li><strong>AC-5:</strong> Advisor-only gated/labeled state; “not #209” callout on hub + directions</li>
+      <li><strong>AC-6:</strong> Clickable Pages mock at <code>fc-mocks/261/</code> + this contract before agent-ready</li>
+    </ul>
+
+    <h2>Open product questions</h2>
+    <div class="warn">Do not invent locked answers. Resolve before agent-ready.</div>
+    <ol>
+      <li>Exact <strong>Source list</strong> — fixed enum vs admin-managed CRUD?</li>
+      <li><strong>Advisor-only</strong> = visibility flag vs category?</li>
+      <li>Who edits Sources — <strong>firm admin</strong> vs <strong>FC admin</strong>?</li>
+      <li><strong>Backfill</strong> historical posts? (follow-up — not v1)</li>
+    </ol>
+
+    <h2>Working default (Direction A)</h2>
+    <div class="ok">First-class <strong>Source</strong> + Master Categories (topics) · dual-facet chips AND · Manage Sources + Manage Categories · Visibility: Advisor-only flag · <strong>NG</strong> ontology rewrite / backfill v1 / live publish / #209 / #260</div>
+
+    <div class="err"><strong>Not #209:</strong> Advisor Categories / AdvisorSource = advisor affiliation. This contract is <strong>content</strong> Source + topic only.</div>
+
+    <h2>States</h2>
+    <table>
+      <tr><th>State</th><th>Behavior</th></tr>
+      <tr><td>Browse populated</td><td>Dual facets; Source badge + topic tags on cards</td></tr>
+      <tr><td>Filter empty</td><td>Empty copy + Clear filters</td></tr>
+      <tr><td>Loading / error</td><td>Skeleton / inline error</td></tr>
+      <tr><td>Post edit</td><td>Source + topics + advisor-only flag</td></tr>
+      <tr><td>Manage Sources / Categories</td><td>Admin CRUD stubs</td></tr>
+      <tr><td>Advisor-only</td><td>Labeled / gated advisor state</td></tr>
+    </table>
+
+    <h2>In / out of scope</h2>
+    <p><strong>In:</strong> Source + topics, dual-facet (or B sections / C hubs), admin surfaces, post edit, empty/loading/error notes, desktop-first, #209/#260 boundaries.</p>
+    <p><strong>Out:</strong> Full ontology rewrite; historical backfill v1 (flag follow-up); live publish; #209 changes; #260 My Media; agent-ready from mock.</p>
+
+    <h2>Desktop vs mobile</h2>
+    <p><strong>Desktop</strong> (~1280) primary. <strong>Mobile</strong> brief — facets → sheets / stacked filters; polish TBD after lock.</p>
+
+    <h2>Primary files</h2>
+    <div class="warn">Guessed — <strong>TBD</strong> until codebase confirmed: post model/edit form · Manage Categories · new Manage Sources (A) or type column (B) · advisor library browse + filter chips · visibility flag.</div>
+
+    <h2>Backfill follow-up</h2>
+    <p>Historical posts without Source/topics are <strong>out of v1</strong>. Track follow-up once Source list + ownership locked.</p>
+
+    <h2>Handoff</h2>
+    <p>Provisional only. Parent / CoS owns Slack + GitHub. Do <strong>not</strong> mark agent-ready or wake Software developer from this mock alone.</p>
+  </div>
+</body>
+</html>

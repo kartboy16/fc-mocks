@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>FC — #261 Content Source + topic taxonomy</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #f4f8fc; --card: #fff; --ink: #1e2a4a; --muted: #5b6572;
+      --blue: #2b7de9; --border: #d4e4f2; --mint: #e6f1fb;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: Inter, system-ui, sans-serif; background: var(--bg); color: var(--ink); line-height: 1.55; }
+    .hero {
+      background: linear-gradient(135deg, #1e2a4a 0%, #2b7de9 100%);
+      color: #fff; padding: 40px 24px 36px;
+    }
+    .hero-inner { max-width: 880px; margin: 0 auto; }
+    .hero .eyebrow { font-size: 0.75rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; opacity: 0.85; margin-bottom: 10px; }
+    .hero h1 { font-size: 1.75rem; margin-bottom: 10px; }
+    .hero p { opacity: 0.92; max-width: 720px; font-size: 0.95rem; }
+    .rec {
+      display: inline-block; margin-top: 18px; background: #e8f5e9; color: #065f46;
+      font-weight: 700; font-size: 0.8rem; padding: 8px 14px; border-radius: 999px;
+    }
+    .wrap { max-width: 880px; margin: 0 auto; padding: 28px 24px 72px; }
+    .cta {
+      display: block; background: var(--blue); color: #fff !important; text-decoration: none;
+      text-align: center; padding: 16px 24px; border-radius: 12px; font-weight: 700;
+      font-size: 1rem; margin-bottom: 28px; box-shadow: 0 4px 16px rgba(43,125,233,0.35);
+    }
+    .cta:hover { filter: brightness(1.05); }
+    .cta small { display: block; font-weight: 500; opacity: 0.9; font-size: 0.8rem; margin-top: 4px; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 14px; }
+    .card {
+      background: var(--card); border: 1px solid var(--border); border-radius: 12px;
+      padding: 18px; text-decoration: none; color: inherit; display: block;
+      transition: border-color 0.15s, box-shadow 0.15s;
+    }
+    .card:hover { border-color: var(--blue); box-shadow: 0 4px 16px rgba(30,42,74,0.08); }
+    .card.recd { border-color: #2b7de9; box-shadow: 0 4px 16px rgba(43,125,233,0.12); }
+    .card h3 { font-size: 0.95rem; margin-bottom: 6px; color: var(--blue); }
+    .card p { font-size: 0.8rem; color: var(--muted); }
+    .card .tag {
+      display: inline-block; font-size: 0.65rem; font-weight: 700; background: var(--mint);
+      color: var(--blue); padding: 2px 8px; border-radius: 999px; margin-bottom: 8px;
+    }
+    .card .tag.rec-tag { background: var(--blue); color: #fff; }
+    h2 { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--muted); margin: 28px 0 12px; }
+    .problem {
+      margin: 0 0 20px; padding: 14px 16px; background: #fff8eb; border: 1px solid #f0d4a8;
+      border-radius: 10px; font-size: 0.85rem; color: #8a5a10;
+    }
+    .problem strong { color: #6b4408; }
+    .oq {
+      margin: 0 0 20px; padding: 14px 16px; background: #fff; border: 1px solid var(--border);
+      border-radius: 10px; font-size: 0.85rem;
+    }
+    .oq strong { display: block; margin-bottom: 8px; color: var(--ink); }
+    .oq ol { padding-left: 1.2rem; color: var(--muted); }
+    .oq li { margin-bottom: 4px; }
+    .oq .open { color: #b45309; font-weight: 600; font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.04em; }
+    .playground {
+      margin: 16px 0 0; padding: 12px 14px; background: #eef4fb; border: 1px solid var(--border);
+      border-radius: 10px; font-size: 0.85rem; color: var(--ink);
+    }
+    .constraint {
+      margin: 16px 0 0; padding: 12px 14px; background: #e8f5e9; border: 1px solid #a7d7b5;
+      border-radius: 10px; font-size: 0.85rem; color: #065f46;
+    }
+    .constraint.warn {
+      background: #fef2f2; border-color: #fecaca; color: #991b1b;
+    }
+    .meta { margin-top: 32px; font-size: 0.8rem; color: var(--muted); }
+    .meta a { color: var(--blue); }
+    code { background: #eef2f6; padding: 0.1em 0.35em; border-radius: 4px; font-size: 0.85em; }
+  </style>
+</head>
+<body>
+  <header class="hero">
+    <div class="hero-inner">
+      <div class="eyebrow">FinancialContent · content-library #261 · Idea / playground</div>
+      <h1>Content categorization by Source + topic/product</h1>
+      <p>Angelina ask: categorize by <strong>source</strong> (insurance/investment company, Financial Tech Tools, FECBC) <strong>and</strong> by <strong>topic/product</strong> (retirement, group benefits, advisor-only sell, etc.). End-to-end admin labels + advisor browse/filter. <strong>Not</strong> Advisor Categories / AdvisorSource (#209 closed). <strong>Not</strong> My Media Library (#260 — separate).</p>
+      <span class="rec">Recommend · Direction A — Dual-facet filters (Source × Topic)</span>
+    </div>
+  </header>
+
+  <div class="wrap">
+    <a class="cta" href="directions/a/index.html">
+      Open Direction A (recommended)
+      <small>First-class Source field + Master Categories (topics) · two independent filter facets · AND logic</small>
+    </a>
+    <p style="text-align:center;margin:-18px 0 24px;font-size:0.8rem;color:var(--muted)">
+      <a href="build-contract.html">Provisional build contract</a> ·
+      <a href="build-contract.md">Markdown</a> ·
+      <a href="directions-brief.md">Directions brief</a>
+    </p>
+
+    <div class="problem">
+      <strong>Problem:</strong> Content needs to be findable by <em>where it came from</em> (carrier / FTT / FECBC / Other) and by <em>what it’s about</em> (retirement, group benefits, etc.). Today Master Categories cover topics; there is no first-class Source facet for library browse. Avoid a Source×Topic combinatorial mega-list — reuse chip/filter patterns from Choose Services (#240) and active-filters (#243/#244).
+    </div>
+
+    <div class="constraint warn">
+      <strong>Not #209:</strong> <em>Manage Advisor Categories</em> / AdvisorSource = advisor affiliation (who the advisor is affiliated with). This issue is <strong>content</strong> Source + topic taxonomy for library posts. Do not reopen or confuse with #209 (closed).
+    </div>
+
+    <div class="oq">
+      <span class="open">Open product questions — do not invent locked answers</span>
+      <strong>Must resolve before agent-ready</strong>
+      <ol>
+        <li>Exact <strong>Source list</strong> — fixed enum vs admin-managed CRUD?</li>
+        <li><strong>Advisor-only</strong> (and group-benefits sell) = <strong>visibility flag</strong> vs special category?</li>
+        <li>Who edits Sources — <strong>firm admin</strong> vs <strong>FC admin</strong>?</li>
+        <li><strong>Backfill</strong> historical posts with Source + topics? (flagged as follow-up, not v1)</li>
+      </ol>
+    </div>
+
+    <div class="playground">
+      <strong>Playground note:</strong> Track is <strong>Idea / playground</strong>. Mocks are clickable HTML only — no live publish, no full ontology rewrite, no historical backfill in v1. Audience called out per screen: <strong>admin</strong> (labels) + <strong>advisor</strong> (browse/filter). Desktop-first (~1280); mobile noted briefly.
+    </div>
+
+    <div class="constraint">
+      <strong>Working default:</strong> Direction A until Alex/Angelina lock. Recommend <strong>Visibility: Advisor-only</strong> flag separate from topic categories (mock also shows category option). Do not mark agent-ready from this mock. Hosted only at <code>/261/</code>. Separate from #260 My Media.
+    </div>
+
+    <h2>Directions</h2>
+    <div class="grid">
+      <a class="card recd" href="directions/a/index.html">
+        <span class="tag rec-tag">RECOMMEND</span>
+        <h3>A — Dual-facet filters</h3>
+        <p>First-class Source field (carrier / FTT / FECBC / Other) separate from Master Categories (topic/product). Advisor: Source chips + Topic chips, AND logic. Admin: Manage Sources + Manage Categories. Post edit: Source select + category multi-select + Visibility flag.</p>
+      </a>
+      <a class="card" href="directions/b/index.html">
+        <span class="tag">ALT</span>
+        <h3>B — Source as Master Category group</h3>
+        <p>Reuse Master Categories with grouped namespaces (Source group vs Topic group). One admin list with type column; one filter UI with sectioned chips. Less new schema; risk of mixing concepts. Sections, not Source×Topic matrix.</p>
+      </a>
+      <a class="card" href="directions/c/index.html">
+        <span class="tag">ALT</span>
+        <h3>C — Browse by Source hubs</h3>
+        <p>Library home shows Source hubs (FTT / FECBC / Carriers…) then topic chips inside a hub. Admin still has Source + Categories. Strong for “whose content?”; weaker cross-source topic search — include “All sources” escape hatch.</p>
+      </a>
+    </div>
+
+    <h2>For Software / CoS</h2>
+    <p style="font-size:0.85rem;color:var(--muted)">Provisional contract: <a href="build-contract.html">HTML</a> · <a href="build-contract.md">Markdown</a>. Comparison: <a href="directions-brief.md">directions-brief.md</a>. Related UX: Choose Services (#240), active-filters chips (#243/#244). Distinct from <a href="../209/">#209 Manage Advisor Categories</a> and <a href="../260/">#260 My Media</a>.</p>
+
+    <div class="meta">
+      Issue <a href="https://github.com/kartboy16/content-library/issues/261">kartboy16/content-library#261</a> ·
+      Slack #fc-bugs <code>1790459762.463569</code> ·
+      Mocks repo <a href="https://github.com/kartboy16/fc-mocks">fc-mocks</a>
+    </div>
+  </div>
+</body>
+</html>
