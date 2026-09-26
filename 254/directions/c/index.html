@@ -1,0 +1,773 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Direction C — Past popover + landscape suggest row · #254 MAP Posts density</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+
+    :root {
+      --bg: #f4f8fc; --card: #fff; --ink: #1e2a4a; --muted: #5b6572;
+      --blue: #2b7de9; --blue-dark: #1e5bb8; --border: #d4e4f2; --mint: #e6f1fb;
+      --exclude: #c62828; --exclude-bg: #fff5f5; --row-hover: #f8fbfe;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: Inter, system-ui, sans-serif; background: var(--bg); color: var(--ink); font-size: 13px; line-height: 1.45; }
+    a { color: var(--blue); }
+    .thesis {
+      background: linear-gradient(135deg, #1e2a4a, #2b7de9); color: #fff;
+      padding: 16px 24px;
+    }
+    .thesis .rec {
+      display: inline-block; background: #fff; color: var(--blue); font-size: 0.68rem;
+      font-weight: 700; padding: 3px 10px; border-radius: 999px; margin-bottom: 8px;
+    }
+    .thesis .alt {
+      display: inline-block; background: rgba(255,255,255,0.18); color: #fff; font-size: 0.68rem;
+      font-weight: 700; padding: 3px 10px; border-radius: 999px; margin-bottom: 8px;
+    }
+    .thesis h1 { font-size: 1.05rem; margin-bottom: 4px; }
+    .thesis p { opacity: 0.9; font-size: 0.8rem; max-width: 860px; }
+    .nav {
+      padding: 8px 24px; font-size: 0.75rem; background: #fafafa;
+      border-bottom: 1px solid var(--border); display: flex; gap: 12px; flex-wrap: wrap; align-items: center;
+    }
+    .nav a { color: var(--blue); text-decoration: none; font-weight: 500; }
+    .nav .sep { color: #c0c8d4; }
+    .nav .on { font-weight: 700; color: var(--ink); }
+    .app {
+      display: flex; min-height: calc(100vh - 110px);
+    }
+    .rail {
+      width: 52px; background: #1e2a4a; flex-shrink: 0;
+      display: flex; flex-direction: column; align-items: center; padding: 12px 0; gap: 8px;
+    }
+    .rail .ri {
+      width: 32px; height: 32px; border-radius: 8px; background: rgba(255,255,255,0.08);
+      color: rgba(255,255,255,0.7); font-size: 0.65rem; font-weight: 700;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .rail .ri.on { background: var(--blue); color: #fff; }
+    .main { flex: 1; min-width: 0; padding: 14px 18px 48px; }
+    .callout {
+      display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 12px;
+    }
+    .callout > div {
+      flex: 1; min-width: 180px; background: #fff; border: 1px solid var(--border);
+      border-radius: 10px; padding: 8px 12px; font-size: 0.75rem;
+    }
+    .callout .lbl { font-size: 0.62rem; font-weight: 700; text-transform: uppercase; margin-bottom: 2px; }
+    .callout .before .lbl { color: #b45309; }
+    .callout .after .lbl { color: #047857; }
+    .page-head { margin-bottom: 10px; }
+    .page-head h2 { font-size: 1.2rem; font-weight: 700; }
+    .page-head .sub { color: var(--muted); font-size: 0.78rem; margin-top: 2px; max-width: 720px; }
+    .toolbar {
+      display: flex; gap: 8px; align-items: center; margin-bottom: 8px; flex-wrap: wrap;
+    }
+    .search-box {
+      flex: 1; min-width: 160px; max-width: 240px; padding: 7px 11px;
+      border: 1px solid var(--border); border-radius: 8px; font-family: inherit; font-size: 0.82rem;
+      background: #fff;
+    }
+    .tb-btn {
+      display: inline-flex; align-items: center; gap: 6px; padding: 6px 11px;
+      border: 1px solid var(--border); border-radius: 8px; background: #fff;
+      font-family: inherit; font-size: 0.78rem; font-weight: 500; color: var(--ink);
+      cursor: pointer; white-space: nowrap;
+    }
+    .tb-btn:hover { border-color: var(--blue); color: var(--blue); background: var(--mint); }
+    .tb-btn .badge {
+      background: var(--blue); color: #fff; font-size: 0.62rem; font-weight: 700;
+      min-width: 16px; height: 16px; border-radius: 999px; display: inline-flex;
+      align-items: center; justify-content: center; padding: 0 4px;
+    }
+    .tb-select, .tb-date {
+      padding: 6px 9px; border: 1px solid var(--border); border-radius: 8px;
+      font-family: inherit; font-size: 0.78rem; background: #fff; color: var(--ink);
+    }
+    .summary-chips {
+      display: flex; flex-wrap: nowrap; gap: 6px; align-items: center;
+      overflow-x: auto; padding: 2px 0; margin-bottom: 10px;
+    }
+    .sum-chip {
+      display: inline-flex; align-items: center; gap: 5px; padding: 5px 10px;
+      border-radius: 999px; font-size: 0.72rem; font-weight: 600;
+      white-space: nowrap; border: 1px solid transparent; font-family: inherit; cursor: default;
+    }
+    .sum-chip.include { background: var(--blue); color: #fff; }
+    .sum-chip.exclude { background: #fff; color: var(--exclude); border-color: var(--exclude); }
+    .clear-link {
+      margin-left: auto; color: var(--exclude); font-weight: 600; font-size: 0.72rem;
+      background: none; border: none; cursor: pointer; font-family: inherit; white-space: nowrap;
+    }
+    .panel {
+      background: var(--card); border: 1px solid var(--border); border-radius: 10px;
+      overflow: hidden; box-shadow: 0 1px 3px rgba(30,42,74,0.04);
+    }
+    table.adv { width: 100%; border-collapse: collapse; font-size: 0.78rem; table-layout: fixed; }
+    table.adv th {
+      text-align: left; padding: 9px 10px; background: #eef4fb; color: var(--muted);
+      font-weight: 600; font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.04em;
+      border-bottom: 1px solid var(--border); white-space: nowrap;
+    }
+    table.adv td {
+      padding: 10px; border-bottom: 1px solid #eef2f6; vertical-align: top;
+    }
+    table.adv tr:hover td { background: var(--row-hover); }
+    table.adv col.c-adv { width: 160px; }
+    table.adv col.c-src { width: 110px; }
+    table.adv col.c-svc { width: 140px; }
+    table.adv col.c-posts { width: auto; }
+    table.adv col.c-act { width: 88px; }
+    .advisor { display: flex; align-items: center; gap: 8px; }
+    .avatar {
+      width: 30px; height: 30px; border-radius: 999px; background: var(--mint);
+      color: var(--blue); font-weight: 700; font-size: 0.65rem;
+      display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    }
+    .advisor .name { font-weight: 600; font-size: 0.8rem; }
+    .advisor .firm { color: var(--muted); font-size: 0.68rem; }
+    .src-pill {
+      display: inline-block; background: #f0f4f8; color: var(--muted);
+      padding: 2px 7px; border-radius: 999px; font-size: 0.65rem; font-weight: 500;
+      margin: 1px 2px 1px 0;
+    }
+    .svc-chip {
+      display: inline-block; background: var(--mint); color: var(--blue-dark);
+      padding: 2px 7px; border-radius: 999px; font-size: 0.65rem; font-weight: 600; margin: 1px 2px;
+    }
+    .act-btn {
+      display: inline-flex; align-items: center; gap: 3px; padding: 4px 7px;
+      border: 1px solid var(--border); border-radius: 6px; background: #fff;
+      font-family: inherit; font-size: 0.68rem; font-weight: 500; color: var(--ink);
+      cursor: pointer; margin-bottom: 4px; width: 100%; justify-content: center;
+    }
+    .act-btn:hover { border-color: var(--blue); color: var(--blue); }
+    .pager {
+      display: flex; justify-content: flex-end; align-items: center; gap: 8px;
+      padding: 8px 12px; font-size: 0.72rem; color: var(--muted); border-top: 1px solid var(--border);
+    }
+    .pager button {
+      border: 1px solid var(--border); background: #fff; border-radius: 6px;
+      padding: 3px 8px; cursor: pointer; font-family: inherit;
+    }
+    .toast {
+      position: fixed; bottom: 24px; right: 24px; background: #1e2a4a; color: #fff;
+      padding: 10px 16px; border-radius: 8px; font-size: 0.8rem; display: none; z-index: 200;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.2); max-width: 320px;
+    }
+    .toast.show { display: block; animation: fadein 0.2s ease; }
+    @keyframes fadein { from { opacity: 0; transform: translateY(6px); } }
+    .before-note {
+      margin-top: 14px; border: 1px dashed #f0d4a8; background: #fff8eb;
+      border-radius: 10px; overflow: hidden;
+    }
+    .before-note summary {
+      padding: 10px 14px; cursor: pointer; font-size: 0.75rem; font-weight: 700;
+      color: #8a5a10; list-style: none;
+    }
+    .before-note summary::-webkit-details-marker { display: none; }
+    .before-note summary::before { content: "▸ "; }
+    .before-note[open] summary::before { content: "▾ "; }
+    .before-note .bn-body {
+      padding: 0 14px 12px; font-size: 0.75rem; color: #8a5a10;
+    }
+    .before-note .bn-body ul { margin: 6px 0 0 16px; }
+    .sec-label {
+      font-size: 0.65rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em;
+      color: var(--muted); margin-bottom: 6px; display: flex; align-items: center; gap: 6px;
+    }
+    .sec-label .n {
+      background: #eef4fb; color: var(--ink); padding: 1px 6px; border-radius: 999px;
+      font-size: 0.62rem;
+    }
+    .divider {
+      height: 1px; background: var(--border); margin: 8px 0;
+    }
+
+
+    .past-list {
+      max-height: 110px; overflow-y: auto; border: 1px solid var(--border);
+      border-radius: 8px; background: #fafbfd;
+    }
+    .past-row {
+      display: flex; align-items: center; gap: 8px; padding: 5px 8px;
+      border-bottom: 1px solid #eef2f6; cursor: pointer;
+    }
+    .past-row:last-child { border-bottom: none; }
+    .past-row:hover { background: var(--mint); }
+    .past-ico {
+      width: 28px; height: 28px; border-radius: 6px; flex-shrink: 0;
+      background: linear-gradient(135deg, #2b7de9, #1e2a4a);
+      color: #fff; font-size: 0.55rem; font-weight: 700;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .past-ico.fb { background: #1877f2; }
+    .past-ico.li { background: #0a66c2; }
+    .past-ico.tw { background: #111; }
+    .past-t { font-weight: 600; font-size: 0.72rem; line-height: 1.25; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .past-meta { color: var(--muted); font-size: 0.62rem; }
+    .past-row .txt { min-width: 0; flex: 1; }
+
+    .land-track {
+      display: flex; gap: 8px; overflow-x: auto; padding-bottom: 4px;
+      scroll-snap-type: x proximity;
+    }
+    .land-card {
+      flex: 0 0 300px; scroll-snap-align: start;
+      background: #fff; border: 1px solid var(--border); border-radius: 10px;
+      display: flex; gap: 10px; padding: 8px; height: 94px; align-items: stretch;
+    }
+    .land-card.gone { display: none; }
+    .land-img {
+      width: 68px; height: 68px; border-radius: 8px; flex-shrink: 0;
+      align-self: center; background-size: cover; background-position: center;
+    }
+    .land-body { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 3px; }
+    .land-title {
+      font-weight: 600; font-size: 0.74rem; line-height: 1.25;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .land-ex {
+      color: var(--muted); font-size: 0.65rem; white-space: nowrap;
+      overflow: hidden; text-overflow: ellipsis;
+    }
+    .land-tags { display: flex; gap: 4px; }
+    .land-actions { display: flex; gap: 4px; margin-top: auto; }
+    .btn-sched {
+      flex: 1; padding: 5px 8px; border: none; border-radius: 6px;
+      background: var(--blue); color: #fff; font-family: inherit;
+      font-size: 0.68rem; font-weight: 600; cursor: pointer;
+    }
+    .btn-sched:hover { background: var(--blue-dark); }
+    .btn-skip {
+      width: 28px; padding: 5px 0; border: 1px solid var(--border); border-radius: 6px;
+      background: #fff; color: var(--muted); font-family: inherit;
+      font-size: 0.85rem; font-weight: 700; cursor: pointer; line-height: 1;
+    }
+    .btn-skip:hover { border-color: var(--exclude); color: var(--exclude); background: var(--exclude-bg); }
+    .tag {
+      font-size: 0.58rem; font-weight: 600; background: var(--mint); color: var(--blue-dark);
+      padding: 1px 6px; border-radius: 999px;
+    }
+
+    .past-trigger {
+      display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px;
+      border: 1px solid var(--border); border-radius: 8px; background: #fff;
+      font-family: inherit; font-size: 0.75rem; font-weight: 600; color: var(--ink);
+      cursor: pointer; margin-bottom: 8px;
+    }
+    .past-trigger:hover { border-color: var(--blue); color: var(--blue); background: var(--mint); }
+    .past-trigger .caret { font-size: 0.65rem; opacity: 0.7; }
+    .past-pop-wrap { position: relative; display: inline-block; }
+    .past-pop {
+      position: absolute; top: calc(100% + 4px); left: 0; z-index: 40;
+      width: min(360px, 70vw); background: #fff; border: 1px solid var(--border);
+      border-radius: 12px; box-shadow: 0 12px 32px rgba(30,42,74,0.18);
+      padding: 10px; display: none;
+    }
+    .past-pop.open { display: block; animation: fadein 0.15s ease; }
+    .past-pop h4 { font-size: 0.8rem; margin-bottom: 8px; }
+    .past-pop .past-list { max-height: 220px; }
+
+    .posts-cell-c { max-height: 300px; }
+    
+  </style>
+</head>
+<body>
+  <header class="thesis">
+    <span class="alt">ALTERNATE · DIRECTION C</span>
+    <h1>Direction C — Past popover + landscape suggest row</h1>
+    <p>Past collapses to <strong>Past posts · N ▾</strong>. Cell body is almost entirely landscape suggestion cards (image left, Schedule on the right). Maximizes suggestion browsing; past is one click away.</p>
+  </header>
+  <nav class="nav">
+    <a href="../../index.html">← Hub #254</a>
+    <span class="sep">·</span>
+    <a href="../a/index.html">A</a>
+      <span class="sep">·</span>
+      <a href="../b/index.html">B</a>
+      <span class="sep">·</span>
+      <a href="../c/index.html" class="on">C</a>
+    <span class="sep">·</span>
+    <a href="../../directions-brief.md">Directions brief</a>
+    <span class="sep">·</span>
+    <a href="../../reference/cramped.png">Reference</a>
+  </nav>
+  <div class="app">
+    <aside class="rail" aria-hidden="true">
+      <div class="ri">CL</div>
+      <div class="ri on">MA</div>
+      <div class="ri">SM</div>
+      <div class="ri">EM</div>
+      <div class="ri">Cal</div>
+      <div class="ri">⚙</div>
+    </aside>
+    <div class="main">
+
+      <div class="callout">
+        <div class="before"><div class="lbl">Today</div><strong>Past steals vertical room</strong><br/>Suggest cards stay tall portraits</div>
+        <div class="after"><div class="lbl">This mock</div><strong>Past = one chip</strong><br/>Landscape cards · Schedule always visible</div>
+      </div>
+
+      <div class="page-head">
+        <h2>Manage Advisor Posts</h2>
+        <p class="sub">Review past posts and schedule suggested content for each advisor. Mock data — Canadian advisor titles.</p>
+      </div>
+      <div class="toolbar">
+        <input class="search-box" type="search" placeholder="Search advisors…" />
+        <button type="button" class="tb-btn">Filters <span class="badge">4</span></button>
+        <select class="tb-select"><option>Past 36 months</option></select>
+        <input class="tb-date" type="text" value="2026-10-01, 09:00 AM" readonly />
+        <button type="button" class="tb-btn">Refresh</button>
+      </div>
+      <div class="summary-chips">
+        <span class="sum-chip include">List source: Content · Website</span>
+        <span class="sum-chip exclude">Exclude topics · 35</span>
+        <span class="sum-chip exclude">Exclude suggest · 8</span>
+        <button type="button" class="clear-link">Clear all</button>
+      </div>
+
+      <div class="panel">
+        <table class="adv">
+          <colgroup>
+            <col class="c-adv" /><col class="c-src" /><col class="c-svc" /><col class="c-posts" /><col class="c-act" />
+          </colgroup>
+          <thead>
+            <tr>
+              <th>Advisor</th>
+              <th>Sources</th>
+              <th>Services &amp; products</th>
+              <th>Posts <span style="font-weight:500;text-transform:none;letter-spacing:0">(36 mo past – 12 mo future)</span></th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+
+            <tr>
+              <td>
+                <div class="advisor">
+                  <div class="avatar">SC</div>
+                  <div>
+                    <div class="name">Sarah Chen</div>
+                    <div class="firm">WealthPath Advisors<br/>Vancouver, BC</div>
+                  </div>
+                </div>
+              </td>
+              <td><span class="src-pill">Content library</span><span class="src-pill">Website</span></td>
+              <td><span class="svc-chip">Estate planning</span><span class="svc-chip">Retirement</span><span class="svc-chip">Tax</span></td>
+
+              <td>
+                <div class="posts-cell-c">
+                  <div class="past-pop-wrap">
+                    <button type="button" class="past-trigger" onclick="togglePast('p0', this)" aria-expanded="false">
+                      Past posts · 8 <span class="caret">▾</span>
+                    </button>
+                    <div class="past-pop" id="past-p0">
+                      <h4>Past posts · Sarah Chen</h4>
+                      <div class="past-list">
+                        
+        <div class="past-row" data-title="Investing as a Business Owner 2023">
+          <div class="past-ico">Web</div>
+          <div class="txt">
+            <div class="past-t">Investing as a Business Owner 2023</div>
+            <div class="past-meta">Oct 3, 2023 · Web</div>
+          </div>
+        </div>
+
+        <div class="past-row" data-title="RRSP vs TFSA: Which Comes First?">
+          <div class="past-ico">Web</div>
+          <div class="txt">
+            <div class="past-t">RRSP vs TFSA: Which Comes First?</div>
+            <div class="past-meta">Aug 14, 2024 · Web</div>
+          </div>
+        </div>
+
+        <div class="past-row" data-title="Estate Planning for Blended Families">
+          <div class="past-ico fb">FB</div>
+          <div class="txt">
+            <div class="past-t">Estate Planning for Blended Families</div>
+            <div class="past-meta">Jun 2, 2024 · FB</div>
+          </div>
+        </div>
+
+        <div class="past-row" data-title="Year-End Tax Planning Checklist">
+          <div class="past-ico">Web</div>
+          <div class="txt">
+            <div class="past-t">Year-End Tax Planning Checklist</div>
+            <div class="past-meta">Nov 18, 2023 · Web</div>
+          </div>
+        </div>
+
+        <div class="past-row" data-title="Understanding the Canadian Dividend Tax Credit">
+          <div class="past-ico li">LI</div>
+          <div class="txt">
+            <div class="past-t">Understanding the Canadian Dividend Tax Credit</div>
+            <div class="past-meta">Mar 9, 2025 · LI</div>
+          </div>
+        </div>
+
+        <div class="past-row" data-title="Mortgage Stress Test Explained">
+          <div class="past-ico">Web</div>
+          <div class="txt">
+            <div class="past-t">Mortgage Stress Test Explained</div>
+            <div class="past-meta">Jan 22, 2025 · Web</div>
+          </div>
+        </div>
+
+        <div class="past-row" data-title="RESP Strategies for New Parents">
+          <div class="past-ico tw">X</div>
+          <div class="txt">
+            <div class="past-t">RESP Strategies for New Parents</div>
+            <div class="past-meta">Sep 5, 2024 · X</div>
+          </div>
+        </div>
+
+        <div class="past-row" data-title="CPP Timing: When to Take Benefits">
+          <div class="past-ico">Web</div>
+          <div class="txt">
+            <div class="past-t">CPP Timing: When to Take Benefits</div>
+            <div class="past-meta">Apr 11, 2025 · Web</div>
+          </div>
+        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="sec-label">Suggested <span class="n">6</span></div>
+                  <div class="land-track">
+                    
+        <div class="land-card" data-card data-title="Navigating Market Volatility in 2026">
+          <div class="land-img" style="background:linear-gradient(135deg,#2b7de9,#1e2a4a)"></div>
+          <div class="land-body">
+            <div class="land-title">Navigating Market Volatility in 2026</div>
+            <div class="land-ex">How Canadian investors can stay the course when markets swing.</div>
+            <div class="land-tags"><span class="tag">Fits retirement</span></div>
+            <div class="land-actions">
+              <button type="button" class="btn-sched" onclick="scheduleCard(this)">Schedule</button>
+              <button type="button" class="btn-skip" onclick="skipCard(this)" title="Skip">×</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="land-card" data-card data-title="First-Time Home Buyer Incentive Update">
+          <div class="land-img" style="background:linear-gradient(135deg,#1e5bb8,#1e2a4a)"></div>
+          <div class="land-body">
+            <div class="land-title">First-Time Home Buyer Incentive Update</div>
+            <div class="land-ex">What changed for FTHBI and how advisors can frame the conversation.</div>
+            <div class="land-tags"><span class="tag">Fits mortgages</span></div>
+            <div class="land-actions">
+              <button type="button" class="btn-sched" onclick="scheduleCard(this)">Schedule</button>
+              <button type="button" class="btn-skip" onclick="skipCard(this)" title="Skip">×</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="land-card" data-card data-title="Corporate Class Funds Explained">
+          <div class="land-img" style="background:linear-gradient(135deg,#047857,#1e2a4a)"></div>
+          <div class="land-body">
+            <div class="land-title">Corporate Class Funds Explained</div>
+            <div class="land-ex">Tax-efficient growth inside a corporation — plain-language briefing.</div>
+            <div class="land-tags"><span class="tag">Fits tax</span></div>
+            <div class="land-actions">
+              <button type="button" class="btn-sched" onclick="scheduleCard(this)">Schedule</button>
+              <button type="button" class="btn-skip" onclick="skipCard(this)" title="Skip">×</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="land-card" data-card data-title="Charitable Giving & Tax Efficiency">
+          <div class="land-img" style="background:linear-gradient(135deg,#7c3aed,#1e2a4a)"></div>
+          <div class="land-body">
+            <div class="land-title">Charitable Giving & Tax Efficiency</div>
+            <div class="land-ex">Donation strategies that pair with year-end planning conversations.</div>
+            <div class="land-tags"><span class="tag">Fits estate</span></div>
+            <div class="land-actions">
+              <button type="button" class="btn-sched" onclick="scheduleCard(this)">Schedule</button>
+              <button type="button" class="btn-skip" onclick="skipCard(this)" title="Skip">×</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="land-card" data-card data-title="Retirement Income Sequencing">
+          <div class="land-img" style="background:linear-gradient(135deg,#c2410c,#1e2a4a)"></div>
+          <div class="land-body">
+            <div class="land-title">Retirement Income Sequencing</div>
+            <div class="land-ex">Which accounts to draw first — RRSP, TFSA, non-registered.</div>
+            <div class="land-tags"><span class="tag">Fits retirement</span></div>
+            <div class="land-actions">
+              <button type="button" class="btn-sched" onclick="scheduleCard(this)">Schedule</button>
+              <button type="button" class="btn-skip" onclick="skipCard(this)" title="Skip">×</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="land-card" data-card data-title="Protecting Wealth Across Generations">
+          <div class="land-img" style="background:linear-gradient(135deg,#0e7490,#1e2a4a)"></div>
+          <div class="land-body">
+            <div class="land-title">Protecting Wealth Across Generations</div>
+            <div class="land-ex">Trusts, insurance, and family meetings that reduce friction.</div>
+            <div class="land-tags"><span class="tag">Fits estate</span></div>
+            <div class="land-actions">
+              <button type="button" class="btn-sched" onclick="scheduleCard(this)">Schedule</button>
+              <button type="button" class="btn-skip" onclick="skipCard(this)" title="Skip">×</button>
+            </div>
+          </div>
+        </div>
+                  </div>
+                </div>
+              </td>
+
+              <td>
+                <button type="button" class="act-btn">Edit</button>
+                <button type="button" class="act-btn">History</button>
+              </td>
+            </tr>
+
+            <tr>
+              <td>
+                <div class="advisor">
+                  <div class="avatar">MO</div>
+                  <div>
+                    <div class="name">Michael Okonkwo</div>
+                    <div class="firm">Prairie Capital Planning<br/>Calgary, AB</div>
+                  </div>
+                </div>
+              </td>
+              <td><span class="src-pill">Content library</span><span class="src-pill">Website</span><span class="src-pill">Social</span></td>
+              <td><span class="svc-chip">Mortgages</span><span class="svc-chip">Insurance</span><span class="svc-chip">Retirement</span></td>
+
+              <td>
+                <div class="posts-cell-c">
+                  <div class="past-pop-wrap">
+                    <button type="button" class="past-trigger" onclick="togglePast('p1', this)" aria-expanded="false">
+                      Past posts · 8 <span class="caret">▾</span>
+                    </button>
+                    <div class="past-pop" id="past-p1">
+                      <h4>Past posts · Michael Okonkwo</h4>
+                      <div class="past-list">
+                        
+        <div class="past-row" data-title="Investing as a Business Owner 2023">
+          <div class="past-ico">Web</div>
+          <div class="txt">
+            <div class="past-t">Investing as a Business Owner 2023</div>
+            <div class="past-meta">Oct 3, 2023 · Web</div>
+          </div>
+        </div>
+
+        <div class="past-row" data-title="RRSP vs TFSA: Which Comes First?">
+          <div class="past-ico">Web</div>
+          <div class="txt">
+            <div class="past-t">RRSP vs TFSA: Which Comes First?</div>
+            <div class="past-meta">Aug 14, 2024 · Web</div>
+          </div>
+        </div>
+
+        <div class="past-row" data-title="Estate Planning for Blended Families">
+          <div class="past-ico fb">FB</div>
+          <div class="txt">
+            <div class="past-t">Estate Planning for Blended Families</div>
+            <div class="past-meta">Jun 2, 2024 · FB</div>
+          </div>
+        </div>
+
+        <div class="past-row" data-title="Year-End Tax Planning Checklist">
+          <div class="past-ico">Web</div>
+          <div class="txt">
+            <div class="past-t">Year-End Tax Planning Checklist</div>
+            <div class="past-meta">Nov 18, 2023 · Web</div>
+          </div>
+        </div>
+
+        <div class="past-row" data-title="Understanding the Canadian Dividend Tax Credit">
+          <div class="past-ico li">LI</div>
+          <div class="txt">
+            <div class="past-t">Understanding the Canadian Dividend Tax Credit</div>
+            <div class="past-meta">Mar 9, 2025 · LI</div>
+          </div>
+        </div>
+
+        <div class="past-row" data-title="Mortgage Stress Test Explained">
+          <div class="past-ico">Web</div>
+          <div class="txt">
+            <div class="past-t">Mortgage Stress Test Explained</div>
+            <div class="past-meta">Jan 22, 2025 · Web</div>
+          </div>
+        </div>
+
+        <div class="past-row" data-title="RESP Strategies for New Parents">
+          <div class="past-ico tw">X</div>
+          <div class="txt">
+            <div class="past-t">RESP Strategies for New Parents</div>
+            <div class="past-meta">Sep 5, 2024 · X</div>
+          </div>
+        </div>
+
+        <div class="past-row" data-title="CPP Timing: When to Take Benefits">
+          <div class="past-ico">Web</div>
+          <div class="txt">
+            <div class="past-t">CPP Timing: When to Take Benefits</div>
+            <div class="past-meta">Apr 11, 2025 · Web</div>
+          </div>
+        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="sec-label">Suggested <span class="n">6</span></div>
+                  <div class="land-track">
+                    
+        <div class="land-card" data-card data-title="Navigating Market Volatility in 2026">
+          <div class="land-img" style="background:linear-gradient(135deg,#2b7de9,#1e2a4a)"></div>
+          <div class="land-body">
+            <div class="land-title">Navigating Market Volatility in 2026</div>
+            <div class="land-ex">How Canadian investors can stay the course when markets swing.</div>
+            <div class="land-tags"><span class="tag">Fits retirement</span></div>
+            <div class="land-actions">
+              <button type="button" class="btn-sched" onclick="scheduleCard(this)">Schedule</button>
+              <button type="button" class="btn-skip" onclick="skipCard(this)" title="Skip">×</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="land-card" data-card data-title="First-Time Home Buyer Incentive Update">
+          <div class="land-img" style="background:linear-gradient(135deg,#1e5bb8,#1e2a4a)"></div>
+          <div class="land-body">
+            <div class="land-title">First-Time Home Buyer Incentive Update</div>
+            <div class="land-ex">What changed for FTHBI and how advisors can frame the conversation.</div>
+            <div class="land-tags"><span class="tag">Fits mortgages</span></div>
+            <div class="land-actions">
+              <button type="button" class="btn-sched" onclick="scheduleCard(this)">Schedule</button>
+              <button type="button" class="btn-skip" onclick="skipCard(this)" title="Skip">×</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="land-card" data-card data-title="Corporate Class Funds Explained">
+          <div class="land-img" style="background:linear-gradient(135deg,#047857,#1e2a4a)"></div>
+          <div class="land-body">
+            <div class="land-title">Corporate Class Funds Explained</div>
+            <div class="land-ex">Tax-efficient growth inside a corporation — plain-language briefing.</div>
+            <div class="land-tags"><span class="tag">Fits tax</span></div>
+            <div class="land-actions">
+              <button type="button" class="btn-sched" onclick="scheduleCard(this)">Schedule</button>
+              <button type="button" class="btn-skip" onclick="skipCard(this)" title="Skip">×</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="land-card" data-card data-title="Charitable Giving & Tax Efficiency">
+          <div class="land-img" style="background:linear-gradient(135deg,#7c3aed,#1e2a4a)"></div>
+          <div class="land-body">
+            <div class="land-title">Charitable Giving & Tax Efficiency</div>
+            <div class="land-ex">Donation strategies that pair with year-end planning conversations.</div>
+            <div class="land-tags"><span class="tag">Fits estate</span></div>
+            <div class="land-actions">
+              <button type="button" class="btn-sched" onclick="scheduleCard(this)">Schedule</button>
+              <button type="button" class="btn-skip" onclick="skipCard(this)" title="Skip">×</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="land-card" data-card data-title="Retirement Income Sequencing">
+          <div class="land-img" style="background:linear-gradient(135deg,#c2410c,#1e2a4a)"></div>
+          <div class="land-body">
+            <div class="land-title">Retirement Income Sequencing</div>
+            <div class="land-ex">Which accounts to draw first — RRSP, TFSA, non-registered.</div>
+            <div class="land-tags"><span class="tag">Fits retirement</span></div>
+            <div class="land-actions">
+              <button type="button" class="btn-sched" onclick="scheduleCard(this)">Schedule</button>
+              <button type="button" class="btn-skip" onclick="skipCard(this)" title="Skip">×</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="land-card" data-card data-title="Protecting Wealth Across Generations">
+          <div class="land-img" style="background:linear-gradient(135deg,#0e7490,#1e2a4a)"></div>
+          <div class="land-body">
+            <div class="land-title">Protecting Wealth Across Generations</div>
+            <div class="land-ex">Trusts, insurance, and family meetings that reduce friction.</div>
+            <div class="land-tags"><span class="tag">Fits estate</span></div>
+            <div class="land-actions">
+              <button type="button" class="btn-sched" onclick="scheduleCard(this)">Schedule</button>
+              <button type="button" class="btn-skip" onclick="skipCard(this)" title="Skip">×</button>
+            </div>
+          </div>
+        </div>
+                  </div>
+                </div>
+              </td>
+
+              <td>
+                <button type="button" class="act-btn">Edit</button>
+                <button type="button" class="act-btn">History</button>
+              </td>
+            </tr>
+
+          </tbody>
+        </table>
+        <div class="pager">
+          <span>1–20 of 119</span>
+          <button type="button">‹</button>
+          <button type="button">›</button>
+        </div>
+      </div>
+
+      <details class="before-note">
+        <summary>Before (today) — tall cards eat the Posts column</summary>
+        <div class="bn-body">
+          Suggested cards use portrait-tall images with title-on-image <em>and</em> title below; Schedule/Skip sit under a thick scrollbar and get clipped.
+          Past list + suggestions stack without a soft height cap, so only ~1 advisor row fits under the filter bar.
+          See <a href="../../reference/cramped.png">reference/cramped.png</a>. Independent of #252 scroll fill.
+        </div>
+      </details>
+
+    </div>
+  </div>
+  <div class="toast" id="toast"></div>
+  <script>
+
+  const toast = document.getElementById('toast');
+  let toastTimer;
+  function showToast(msg) {
+    toast.textContent = msg;
+    toast.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => toast.classList.remove('show'), 2200);
+  }
+  function scheduleCard(btn) {
+    const card = btn.closest('[data-card]');
+    const title = card?.dataset.title || 'Post';
+    showToast('Scheduled · ' + title + ' → Oct 1, 2026 9:00 AM');
+  }
+  function skipCard(btn) {
+    const card = btn.closest('[data-card]');
+    if (card) {
+      card.classList.add('gone');
+      showToast('Skipped suggestion');
+    }
+  }
+  document.querySelectorAll('.past-row').forEach(r => {
+    r.addEventListener('click', () => showToast('Past post · ' + (r.dataset.title || '')));
+  });
+
+  function togglePast(uid, btn) {
+    const pop = document.getElementById('past-' + uid);
+    const open = pop.classList.toggle('open');
+    btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+    // close others
+    document.querySelectorAll('.past-pop').forEach(p => {
+      if (p !== pop) p.classList.remove('open');
+    });
+    document.querySelectorAll('.past-trigger').forEach(b => {
+      if (b !== btn) b.setAttribute('aria-expanded', 'false');
+    });
+  }
+  document.addEventListener('click', (e) => {
+    if (!e.target.closest('.past-pop-wrap')) {
+      document.querySelectorAll('.past-pop').forEach(p => p.classList.remove('open'));
+      document.querySelectorAll('.past-trigger').forEach(b => b.setAttribute('aria-expanded', 'false'));
+    }
+  });
+  </script>
+</body>
+</html>
