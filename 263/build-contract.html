@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Build contract · #263 Master Categories kind (provisional)</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root { --bg:#f4f8fc; --ink:#1e2a4a; --muted:#5b6572; --blue:#2b7de9; --border:#d4e4f2; }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: Inter, system-ui, sans-serif; background: var(--bg); color: var(--ink); line-height: 1.55; padding: 32px 20px 72px; }
+    .wrap { max-width: 740px; margin: 0 auto; background: #fff; border: 1px solid var(--border); border-radius: 12px; padding: 28px 32px; }
+    h1 { font-size: 1.35rem; margin-bottom: 8px; }
+    h2 { font-size: 0.95rem; margin: 24px 0 10px; color: var(--blue); }
+    p, li { font-size: 0.88rem; color: var(--ink); }
+    .meta { font-size: 0.8rem; color: var(--muted); margin-bottom: 16px; }
+    .meta a { color: var(--blue); }
+    .badge {
+      display: inline-block; background: #fff8eb; color: #8a5a10; font-size: 0.72rem; font-weight: 700;
+      padding: 4px 10px; border-radius: 999px; border: 1px solid #f0d4a8; margin-bottom: 12px;
+    }
+    ul, ol { padding-left: 1.25rem; margin: 8px 0; }
+    li { margin-bottom: 4px; }
+    table { width: 100%; border-collapse: collapse; font-size: 0.82rem; margin: 10px 0; }
+    th, td { text-align: left; padding: 8px 10px; border: 1px solid var(--border); vertical-align: top; }
+    th { background: #eef4fb; font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.04em; color: var(--muted); }
+    code { background: #eef2f6; padding: 0.1em 0.35em; border-radius: 4px; font-size: 0.85em; }
+    .nav { margin-bottom: 16px; font-size: 0.8rem; }
+    .nav a { color: var(--blue); margin-right: 12px; }
+    .warn { background: #fff8eb; border: 1px solid #f0d4a8; border-radius: 8px; padding: 10px 12px; font-size: 0.82rem; color: #8a5a10; margin: 12px 0; }
+    .ok { background: #e8f5e9; border: 1px solid #a7d7b5; border-radius: 8px; padding: 10px 12px; font-size: 0.82rem; color: #065f46; margin: 12px 0; }
+    .err { background: #fef2f2; border: 1px solid #fecaca; border-radius: 8px; padding: 10px 12px; font-size: 0.82rem; color: #991b1b; margin: 12px 0; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="nav">
+      <a href="index.html">← Hub #263</a>
+      <a href="build-contract.md">Markdown</a>
+      <a href="directions/a/index.html">Direction A</a>
+      <a href="directions-brief.md">Brief</a>
+    </div>
+    <span class="badge">PROVISIONAL · working default = Direction A · not agent-ready</span>
+    <h1>Build contract · Curate Master Categories (product | service)</h1>
+    <p class="meta">
+      Issue <a href="https://github.com/kartboy16/content-library/issues/263">#263</a> ·
+      Mocks <a href="https://kartboy16.github.io/fc-mocks/263/">/263/</a> ·
+      Track: Idea / playground
+    </p>
+
+    <h2>One-liner</h2>
+    <p>Keep <strong>one</strong> <code>MasterCategories</code> collection. Add admin-settable <strong><code>kind: product | service</code></strong>, cleanup/hide junk, and update MAP Choose Services to group from <strong>stored kind</strong> (heuristic only when unset). Reuse Direction C popover (#240). No second collection.</p>
+
+    <h2>Acceptance criteria</h2>
+    <ul>
+      <li><strong>AC-1:</strong> Docs store <code>kind: 'product' | 'service'</code>; Admin can set/change it</li>
+      <li><strong>AC-2:</strong> Migration: existing cats get default kind (heuristic OK) so MAP does not blank-break</li>
+      <li><strong>AC-3:</strong> MAP Choose Services groups/chips use stored <code>kind</code> when present</li>
+      <li><strong>AC-4:</strong> Admin hide/remove junk without breaking HTML-post tagging for remaining cats</li>
+      <li><strong>AC-5:</strong> No second master collection; MasterCategories remains source of truth</li>
+    </ul>
+
+    <h2>Working default (Direction A)</h2>
+    <div class="ok">Dense Manage Categories + Kind column · Featured/Visible · filter chips · Hide/Remove · Add kind-required · MAP Direction-C popover from stored kind · heuristic only if unset</div>
+
+    <div class="err"><strong>Out of scope:</strong> New Mongo collection · #261 Source+topic · changing <code>AdvisorConfigs.websiteServices</code> · #209 AdvisorSource · Galaxy deploy · agent-ready from mock</div>
+
+    <h2>States</h2>
+    <table>
+      <tr><th>State</th><th>Behavior</th></tr>
+      <tr><td>Admin populated</td><td>Kind / Featured / Visible; filters</td></tr>
+      <tr><td>Empty / loading / error</td><td>Empty CTA · skeleton · Retry</td></tr>
+      <tr><td>Unset kind</td><td>Amber + heuristic hint; settable</td></tr>
+      <tr><td>Hide / Remove</td><td>Omitted from MAP; tagging intact for kept cats</td></tr>
+      <tr><td>MAP popover</td><td>Services + Products from stored kind; migration note if unset</td></tr>
+      <tr><td>Success</td><td>Toast on save / kind / hide</td></tr>
+    </table>
+
+    <h2>Desktop vs mobile</h2>
+    <p><strong>Desktop</strong> primary (~1280). <strong>Mobile:</strong> brief note — table may stack / drawer; popover already width-aware; polish TBD after lock.</p>
+
+    <h2>Handoff</h2>
+    <div class="warn">Provisional only. Not agent-ready until Alex locks direction. Parent owns Slack. Do not wake Software or deploy Galaxy from this mock.</div>
+
+    <p class="meta" style="margin-top:20px">
+      <a href="directions/a/index.html">Direction A</a> ·
+      <a href="directions/b/index.html">B</a> ·
+      <a href="directions/c/index.html">C</a> ·
+      <a href="directions-brief.md">Brief</a>
+    </p>
+  </div>
+</body>
+</html>
