@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Direction B — Full My Media page + Choose from library · #260</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #f4f8fc; --card: #fff; --ink: #1e2a4a; --muted: #5b6572;
+      --blue: #2b7de9; --blue-dark: #1e5bb8; --border: #d4e4f2; --mint: #e6f1fb;
+      --ok: #047857; --ok-bg: #e8f5e9; --warn: #b45309; --warn-bg: #fff8eb; --warn-border: #f0d4a8;
+      --err: #b91c1c; --err-bg: #fef2f2; --err-border: #fecaca;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: Inter, system-ui, sans-serif; background: var(--bg); color: var(--ink); font-size: 13px; line-height: 1.45; }
+    a { color: var(--blue); }
+    .thesis {
+      background: linear-gradient(135deg, #1e2a4a, #2b7de9); color: #fff; padding: 16px 24px;
+    }
+    .thesis .rec {
+      display: inline-block; background: #fff; color: var(--blue); font-size: 0.68rem;
+      font-weight: 700; padding: 3px 10px; border-radius: 999px; margin-bottom: 8px;
+    }
+    .thesis .alt {
+      display: inline-block; background: rgba(255,255,255,0.2); color: #fff; font-size: 0.68rem;
+      font-weight: 700; padding: 3px 10px; border-radius: 999px; margin-bottom: 8px;
+    }
+    .thesis h1 { font-size: 1.05rem; margin-bottom: 4px; }
+    .thesis p { opacity: 0.9; font-size: 0.8rem; max-width: 960px; }
+    .nav {
+      padding: 8px 24px; font-size: 0.75rem; background: #fafafa;
+      border-bottom: 1px solid var(--border); display: flex; gap: 12px; flex-wrap: wrap; align-items: center;
+    }
+    .nav a { color: var(--blue); text-decoration: none; font-weight: 500; }
+    .nav .sep { color: #c0c8d4; }
+    .nav .on { font-weight: 700; color: var(--ink); }
+    .steps {
+      display: flex; gap: 6px; flex-wrap: wrap; padding: 10px 24px; background: #fff;
+      border-bottom: 1px solid var(--border); align-items: center;
+    }
+    .step-btn {
+      border: 1px solid var(--border); background: #fff; color: var(--ink);
+      font-family: inherit; font-size: 0.7rem; font-weight: 600; padding: 6px 10px;
+      border-radius: 999px; cursor: pointer;
+    }
+    .step-btn:hover { border-color: var(--blue); color: var(--blue); background: var(--mint); }
+    .step-btn.on { background: var(--blue); color: #fff; border-color: var(--blue); }
+    .oq-bar {
+      margin: 12px 20px 0; padding: 10px 14px; background: var(--warn-bg); border: 1px solid var(--warn-border);
+      border-radius: 10px; font-size: 0.75rem; color: #8a5a10;
+    }
+    .oq-bar strong { color: #6b4408; }
+    .gap-note {
+      margin: 10px 20px 0; padding: 10px 14px; background: #eef4fb; border: 1px solid var(--border);
+      border-radius: 10px; font-size: 0.75rem; color: var(--ink);
+    }
+    .app { display: flex; min-height: calc(100vh - 200px); margin-top: 12px; }
+    .rail {
+      width: 52px; background: #1e2a4a; flex-shrink: 0;
+      display: flex; flex-direction: column; align-items: center; padding: 12px 0; gap: 8px;
+    }
+    .rail .ri {
+      width: 32px; height: 32px; border-radius: 8px; background: rgba(255,255,255,0.08);
+      color: rgba(255,255,255,0.7); font-size: 0.6rem; font-weight: 700;
+      display: flex; align-items: center; justify-content: center; cursor: default;
+    }
+    .rail .ri.on { background: var(--blue); color: #fff; }
+    .rail .ri.sm { font-size: 0.55rem; }
+    .main { flex: 1; min-width: 0; display: flex; flex-direction: column; background: var(--bg); }
+    .topbar {
+      display: flex; align-items: center; justify-content: space-between; gap: 12px;
+      padding: 10px 18px; background: #fff; border-bottom: 1px solid var(--border);
+    }
+    .topbar .brand { font-weight: 700; font-size: 0.9rem; }
+    .topbar .who { font-size: 0.75rem; color: var(--muted); }
+    .content { padding: 18px 20px 64px; max-width: 1080px; position: relative; }
+    .screen { display: none; }
+    .screen.on { display: block; }
+    .page-head h2 { font-size: 1.2rem; font-weight: 700; }
+    .page-head .sub { color: var(--muted); font-size: 0.8rem; margin-top: 4px; max-width: 640px; }
+    .compose {
+      background: #fff; border: 1px solid var(--border); border-radius: 12px;
+      margin-top: 14px; overflow: hidden; position: relative;
+    }
+    .compose-head {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 12px 16px; border-bottom: 1px solid var(--border);
+    }
+    .compose-head h3 { font-size: 0.95rem; }
+    .channels { display: flex; gap: 6px; }
+    .ch {
+      font-size: 0.65rem; font-weight: 700; padding: 4px 8px; border-radius: 6px;
+      background: var(--mint); color: var(--blue-dark); border: 1px solid var(--border);
+    }
+    .compose-body { padding: 14px 16px; min-height: 160px; position: relative; }
+    .compose-body textarea {
+      width: 100%; border: none; resize: vertical; min-height: 100px;
+      font-family: inherit; font-size: 0.9rem; color: var(--ink); outline: none;
+    }
+    .help-write {
+      margin-top: 8px; font-size: 0.75rem; color: var(--blue); font-weight: 600;
+    }
+    .media-toolbar {
+      display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+      padding: 10px 16px; border-top: 1px solid var(--border); background: #fafcfe;
+    }
+    .mt-btn {
+      display: inline-flex; align-items: center; gap: 6px;
+      border: 1px solid var(--border); background: #fff; color: var(--ink);
+      font-family: inherit; font-size: 0.75rem; font-weight: 600;
+      padding: 7px 11px; border-radius: 8px; cursor: pointer;
+    }
+    .mt-btn:hover { border-color: var(--blue); color: var(--blue); background: var(--mint); }
+    .mt-btn.primary { background: var(--blue); color: #fff; border-color: var(--blue); }
+    .mt-btn.primary:hover { filter: brightness(1.05); color: #fff; }
+    .hint {
+      font-size: 0.7rem; color: var(--muted); margin-left: 4px;
+    }
+    .hint strong { color: var(--blue-dark); font-weight: 600; }
+    .drop-overlay {
+      position: absolute; inset: 0; background: rgba(43,125,233,0.12);
+      border: 2px dashed var(--blue); border-radius: 10px; margin: 8px;
+      display: flex; align-items: center; justify-content: center;
+      flex-direction: column; gap: 6px; z-index: 5;
+      pointer-events: none;
+    }
+    .drop-overlay .big { font-size: 0.95rem; font-weight: 700; color: var(--blue-dark); }
+    .drop-overlay .sm { font-size: 0.75rem; color: var(--muted); }
+    .attach {
+      display: flex; align-items: center; gap: 10px; margin-top: 12px;
+      padding: 8px; background: var(--bg); border: 1px solid var(--border); border-radius: 10px;
+      max-width: 320px;
+    }
+    .attach .thumb {
+      width: 56px; height: 56px; border-radius: 8px; background: linear-gradient(135deg,#93c5fd,#2b7de9);
+      display: flex; align-items: center; justify-content: center; color: #fff; font-weight: 700; font-size: 0.7rem;
+      flex-shrink: 0;
+    }
+    .attach .thumb.vid { background: linear-gradient(135deg,#a78bfa,#4f46e5); }
+    .attach .meta { flex: 1; min-width: 0; }
+    .attach .meta .name { font-weight: 600; font-size: 0.8rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .attach .meta .size { font-size: 0.7rem; color: var(--muted); }
+    .attach .rm {
+      border: none; background: transparent; color: var(--err); font-weight: 700;
+      cursor: pointer; font-size: 0.75rem; padding: 4px 8px;
+    }
+    .compose-foot {
+      display: flex; justify-content: flex-end; gap: 8px; padding: 12px 16px;
+      border-top: 1px solid var(--border);
+    }
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+      padding: 9px 14px; border-radius: 8px; font-family: inherit; font-size: 0.8rem;
+      font-weight: 600; cursor: pointer; border: 1px solid transparent; text-decoration: none;
+    }
+    .btn-primary { background: var(--blue); color: #fff; }
+    .btn-primary:hover { filter: brightness(1.05); }
+    .btn-secondary { background: #fff; color: var(--ink); border-color: var(--border); }
+    .btn-secondary:hover { border-color: var(--blue); color: var(--blue); background: var(--mint); }
+    .btn-ghost { background: transparent; color: var(--blue); border: none; }
+    .drawer-backdrop {
+      position: absolute; inset: 0; background: rgba(30,42,74,0.35); z-index: 20;
+      display: flex; justify-content: flex-end;
+    }
+    .drawer {
+      width: min(420px, 100%); background: #fff; height: 100%;
+      box-shadow: -8px 0 32px rgba(30,42,74,0.15); display: flex; flex-direction: column;
+      animation: slidein 0.2s ease;
+    }
+    @keyframes slidein { from { transform: translateX(12px); opacity: 0.6; } }
+    .drawer-head {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 14px 16px; border-bottom: 1px solid var(--border);
+    }
+    .drawer-head h3 { font-size: 0.95rem; }
+    .drawer-body { flex: 1; overflow: auto; padding: 14px 16px; }
+    .drawer-foot {
+      padding: 12px 16px; border-top: 1px solid var(--border); display: flex; gap: 8px; flex-wrap: wrap;
+    }
+    .lib-drop {
+      border: 1.5px dashed var(--border); border-radius: 10px; padding: 14px;
+      text-align: center; color: var(--muted); font-size: 0.75rem; margin-bottom: 12px;
+      background: var(--bg);
+    }
+    .lib-drop.hot { border-color: var(--blue); background: var(--mint); color: var(--blue-dark); }
+    .grid-media {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px;
+    }
+    .grid-media.lg { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 12px; }
+    .mcard {
+      border: 1px solid var(--border); border-radius: 10px; overflow: hidden; background: #fff;
+      cursor: pointer; transition: border-color 0.15s, box-shadow 0.15s;
+    }
+    .mcard:hover, .mcard.sel { border-color: var(--blue); box-shadow: 0 2px 10px rgba(43,125,233,0.15); }
+    .mcard .ph {
+      aspect-ratio: 1; background: linear-gradient(135deg,#bfdbfe,#60a5fa);
+      display: flex; align-items: center; justify-content: center;
+      color: #fff; font-weight: 700; font-size: 0.7rem;
+    }
+    .mcard .ph.v { background: linear-gradient(135deg,#c4b5fd,#7c3aed); }
+    .mcard .ph.alt1 { background: linear-gradient(135deg,#86efac,#059669); }
+    .mcard .ph.alt2 { background: linear-gradient(135deg,#fcd34d,#d97706); }
+    .mcard .ph.alt3 { background: linear-gradient(135deg,#f9a8d4,#db2777); }
+    .mcard .cap { padding: 6px 8px; font-size: 0.68rem; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .empty {
+      text-align: center; padding: 48px 20px; color: var(--muted);
+    }
+    .empty .ico { font-size: 2rem; margin-bottom: 8px; }
+    .empty h4 { color: var(--ink); font-size: 0.95rem; margin-bottom: 6px; }
+    .skeleton {
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 12px;
+    }
+    .sk {
+      border-radius: 10px; background: linear-gradient(90deg,#e8eef5 25%,#f4f8fc 50%,#e8eef5 75%);
+      background-size: 200% 100%; animation: shimmer 1.2s infinite; aspect-ratio: 1;
+    }
+    @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+    .banner {
+      display: flex; align-items: flex-start; gap: 10px; flex-wrap: wrap;
+      padding: 10px 14px; border-radius: 10px; margin-bottom: 14px; font-size: 0.8rem;
+    }
+    .banner.err { background: var(--err-bg); border: 1px solid var(--err-border); color: var(--err); }
+    .banner.warn { background: var(--warn-bg); border: 1px solid var(--warn-border); color: #8a5a10; }
+    .banner.info { background: var(--mint); border: 1px solid var(--border); color: var(--blue-dark); }
+    .banner.ok { background: var(--ok-bg); border: 1px solid #a7d7b5; color: #065f46; }
+    .toast {
+      position: fixed; bottom: 24px; right: 24px; background: #1e2a4a; color: #fff;
+      padding: 10px 16px; border-radius: 8px; font-size: 0.8rem; display: none; z-index: 200;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+    }
+    .toast.show { display: block; animation: fadein 0.2s ease; }
+    @keyframes fadein { from { opacity: 0; transform: translateY(6px); } }
+    .coach {
+      position: absolute; bottom: 52px; left: 16px; background: #1e2a4a; color: #fff;
+      padding: 10px 12px; border-radius: 10px; font-size: 0.75rem; max-width: 240px; z-index: 8;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+    }
+    .coach::after {
+      content: ""; position: absolute; bottom: -6px; left: 24px;
+      border-left: 6px solid transparent; border-right: 6px solid transparent; border-top: 6px solid #1e2a4a;
+    }
+    .coach .x { float: right; cursor: pointer; opacity: 0.7; margin-left: 8px; }
+    .rail-media {
+      display: flex; align-items: center; gap: 8px; padding: 10px 16px;
+      border-top: 1px solid var(--border); background: #fafcfe; overflow-x: auto;
+    }
+    .rail-thumb {
+      width: 48px; height: 48px; border-radius: 8px; flex-shrink: 0;
+      background: linear-gradient(135deg,#93c5fd,#2b7de9); color: #fff;
+      display: flex; align-items: center; justify-content: center; font-size: 0.65rem; font-weight: 700;
+      border: 2px solid transparent; cursor: pointer;
+    }
+    .rail-thumb:hover { border-color: var(--blue); }
+    .rail-thumb.v { background: linear-gradient(135deg,#a78bfa,#4f46e5); }
+    .rail-add {
+      width: 48px; height: 48px; border-radius: 8px; flex-shrink: 0;
+      border: 1.5px dashed var(--border); background: #fff; color: var(--muted);
+      display: flex; align-items: center; justify-content: center; font-size: 1.1rem; font-weight: 700;
+      cursor: pointer;
+    }
+    .rail-add:hover { border-color: var(--blue); color: var(--blue); }
+    .modal-backdrop {
+      position: absolute; inset: 0; background: rgba(30,42,74,0.4); z-index: 30;
+      display: flex; align-items: center; justify-content: center; padding: 20px;
+    }
+    .modal {
+      background: #fff; border-radius: 12px; width: min(640px, 100%);
+      max-height: 90%; overflow: auto; box-shadow: 0 16px 48px rgba(30,42,74,0.2);
+    }
+    .modal-head {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 14px 18px; border-bottom: 1px solid var(--border);
+    }
+    .modal-body { padding: 16px 18px; }
+    .modal-foot {
+      padding: 12px 18px; border-top: 1px solid var(--border); display: flex; justify-content: flex-end; gap: 8px;
+    }
+    .lib-page-tools {
+      display: flex; gap: 8px; flex-wrap: wrap; margin: 14px 0; align-items: center;
+    }
+    .search {
+      flex: 1; min-width: 160px; padding: 8px 11px; border: 1px solid var(--border);
+      border-radius: 8px; font-family: inherit; font-size: 0.8rem;
+    }
+    .mobile-note {
+      margin-top: 20px; font-size: 0.72rem; color: var(--muted); padding: 10px 12px;
+      background: #fff; border: 1px dashed var(--border); border-radius: 8px;
+    }
+    .close-x {
+      border: none; background: transparent; font-size: 1.1rem; cursor: pointer; color: var(--muted); line-height: 1;
+    }
+</style>
+</head>
+<body>
+  <header class="thesis">
+    <span class="alt">ALT</span>
+    <h1>Direction B — Full My Media page + Choose from library</h1>
+    <p>First-class <strong>My Media Library</strong> nav page (browse, upload, empty/loading/error). Compose toolbar: <strong>Choose from library</strong> + upload. Discoverability via one-time coachmark on media icon. No permanent drop zone.</p>
+  </header>
+  <nav class="nav">
+    <a href="../../index.html">← Hub #260</a>
+    <span class="sep">·</span>
+    <a href="../a/index.html">A</a>
+    <a href="../b/index.html" class="on">B</a>
+    <a href="../c/index.html">C</a>
+    
+    <span class="sep">·</span>
+    <a href="../../directions-brief.md">Brief</a>
+    <a href="../../build-contract.html">Build contract</a>
+  </nav>
+  <div class="steps" role="tablist" aria-label="Screens">
+    <button type="button" class="step-btn on" data-screen="idle">1 · Compose idle</button>
+<button type="button" class="step-btn" data-screen="drag">2 · Drag-over</button>
+<button type="button" class="step-btn" data-screen="lib">3 · Library browse</button>
+<button type="button" class="step-btn" data-screen="empty">4 · Library empty</button>
+<button type="button" class="step-btn" data-screen="loading">5 · Library loading</button>
+<button type="button" class="step-btn" data-screen="upload">6 · Upload</button>
+<button type="button" class="step-btn" data-screen="pick">7 · Pick → attached</button>
+<button type="button" class="step-btn" data-screen="error">8 · Unsupported type</button>
+<button type="button" class="step-btn" data-screen="gap">9 · Discoverability note</button>
+  </div>
+  <div class="oq-bar">
+    <strong>Open (not locked):</strong> Library per-advisor vs firm-shared later? · Video size/format limits copy? · Upload-to-compose also auto-add to My Media? · Staging #153/#162 findable, or discoverability polish only?
+  </div>
+  <div class="gap-note">
+    <strong>#162:</strong> Idle compose = no permanent giant drop zone. Drop indicator only while dragging. Related shipped: #153 (compose drag-drop), #162 (indicator while dragging). Do not reinvent #153.
+  </div>
+
+  <div class="app" id="appShell">
+    <aside class="rail" aria-hidden="true">
+      <div class="ri">CL</div>
+      <div class="ri">MA</div>
+      <div class="ri on">SM</div>
+      <div class="ri sm" id="railLib">LIB</div>
+      <div class="ri">⚙</div>
+    </aside>
+    <div class="main">
+      <div class="topbar">
+        <div class="brand">FinancialContent · Advisor</div>
+        <div class="who">Alex Advisor · Desktop mock ~1280</div>
+      </div>
+      <div class="content" id="contentArea">
+        
+        <div class="screen on" id="s-idle">
+          <div class="page-head">
+            <h2>Post Now</h2>
+            <p class="sub">Compose idle — Choose from library + upload. No giant drop zone. Coachmark for discoverability.</p>
+          </div>
+          <div class="compose" style="position:relative">
+            <div class="compose-head">
+              <h3>Create social post</h3>
+              <div class="channels"><span class="ch">LinkedIn</span><span class="ch">Facebook</span></div>
+            </div>
+            <div class="compose-body">
+              <textarea placeholder="What would you like to share?">Quick client update on rates this week.</textarea>
+              <div class="help-write">✦ Help me write</div>
+            </div>
+            <div class="coach">You can also drop files here <span class="x" onclick="this.parentElement.style.display='none'">×</span><br/><span style="opacity:0.8">One-time coachmark · not a permanent zone</span></div>
+            <div class="media-toolbar">
+              <button type="button" class="mt-btn" onclick="showScreen('upload')">📷 Upload</button>
+              <button type="button" class="mt-btn primary" onclick="showScreen('lib')">📚 Choose from library</button>
+            </div>
+            <div class="compose-foot">
+              <button type="button" class="btn btn-secondary">Schedule</button>
+              <button type="button" class="btn btn-primary">Post</button>
+            </div>
+          </div>
+          <p style="margin-top:10px;font-size:0.75rem;color:var(--muted)">First-class <strong>My Media Library</strong> lives in left nav (LIB) for browse/manage.</p>
+        </div>
+
+        <div class="screen" id="s-drag">
+          <div class="page-head"><h2>Post Now</h2><p class="sub">Drag-over overlay only while dragging.</p></div>
+          <div class="compose">
+            <div class="compose-head"><h3>Create social post</h3></div>
+            <div class="compose-body" style="min-height:200px">
+              <textarea>Quick client update…</textarea>
+              <div class="drop-overlay">
+                <div class="big">Drop to attach</div>
+                <div class="sm">Images &amp; videos · consistent with #162</div>
+              </div>
+            </div>
+            <div class="media-toolbar">
+              <button type="button" class="mt-btn">📷 Upload</button>
+              <button type="button" class="mt-btn primary" onclick="showScreen('lib')">📚 Choose from library</button>
+            </div>
+            <div class="compose-foot">
+              <button type="button" class="btn btn-secondary" onclick="showScreen('idle')">Cancel</button>
+              <button type="button" class="btn btn-primary" onclick="showScreen('pick')">Simulate drop</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="screen" id="s-lib">
+          <div class="page-head">
+            <h2>My Media Library</h2>
+            <p class="sub">First-class nav page — browse advisor uploads.</p>
+          </div>
+          <div class="lib-page-tools">
+            <input class="search" placeholder="Search media…" />
+            <button type="button" class="btn btn-secondary" onclick="showScreen('upload')">Upload</button>
+            <button type="button" class="btn btn-primary" onclick="attachSelected()">Use in post</button>
+          </div>
+          <div class="grid-media lg"><div class="mcard" data-pick="market-chart.png" onclick="pickMedia(this)">
+        <div class="ph ">IMG</div>
+        <div class="cap">market-chart.png</div>
+      </div>
+<div class="mcard" data-pick="q3-update.mp4" onclick="pickMedia(this)">
+        <div class="ph v">VID</div>
+        <div class="cap">q3-update.mp4</div>
+      </div>
+<div class="mcard" data-pick="office.jpg" onclick="pickMedia(this)">
+        <div class="ph alt1">IMG</div>
+        <div class="cap">office.jpg</div>
+      </div>
+<div class="mcard" data-pick="webinar.png" onclick="pickMedia(this)">
+        <div class="ph alt2">IMG</div>
+        <div class="cap">webinar.png</div>
+      </div>
+<div class="mcard" data-pick="intro-reel.mp4" onclick="pickMedia(this)">
+        <div class="ph v">VID</div>
+        <div class="cap">intro-reel.mp4</div>
+      </div>
+<div class="mcard" data-pick="team.jpg" onclick="pickMedia(this)">
+        <div class="ph alt3">IMG</div>
+        <div class="cap">team.jpg</div>
+      </div></div>
+          <p style="margin-top:12px;font-size:0.75rem;color:var(--muted)">From compose, <strong>Choose from library</strong> can open this as a picker modal (same grid).</p>
+          <div style="margin-top:12px">
+            <button type="button" class="btn btn-secondary" onclick="showScreen('idle')">← Back to compose</button>
+          </div>
+        </div>
+
+        <div class="screen" id="s-empty">
+          <div class="page-head"><h2>My Media Library</h2><p class="sub">Empty state.</p></div>
+          <div class="empty" style="background:#fff;border:1px solid var(--border);border-radius:12px;margin-top:14px">
+            <div class="ico">🖼️</div>
+            <h4>Your library is empty</h4>
+            <p>Upload images and videos to reuse on social posts.</p>
+            <div style="margin-top:14px"><button type="button" class="btn btn-primary" onclick="showScreen('upload')">Upload media</button></div>
+          </div>
+        </div>
+
+        <div class="screen" id="s-loading">
+          <div class="page-head"><h2>My Media Library</h2><p class="sub">Loading…</p></div>
+          <div class="skeleton" style="margin-top:14px"><div class="sk"></div><div class="sk"></div><div class="sk"></div><div class="sk"></div><div class="sk"></div><div class="sk"></div></div>
+        </div>
+
+        <div class="screen" id="s-upload">
+          <div class="page-head"><h2>My Media Library · Upload</h2><p class="sub">File picker and/or drop on library page.</p></div>
+          <div class="lib-drop hot" style="padding:48px 20px;margin-top:14px">
+            <strong style="display:block;font-size:1rem;margin-bottom:8px">Drop files to upload</strong>
+            or <button type="button" class="btn btn-primary" style="margin-top:10px" onclick="simUpload()">Choose files…</button>
+            <p style="margin-top:12px">Formats / size limits: open product question</p>
+          </div>
+          <div class="banner info" style="margin-top:12px">Open Q: Does upload-to-compose also auto-add to My Media?</div>
+        </div>
+
+        <div class="screen" id="s-pick">
+          <div class="page-head"><h2>Post Now</h2><p class="sub">Chose from library — attached; remove works.</p></div>
+          <div class="compose">
+            <div class="compose-head"><h3>Create social post</h3><div class="channels"><span class="ch">LinkedIn</span></div></div>
+            <div class="compose-body">
+              <textarea>Quick client update on rates this week.</textarea>
+              <div class="attach">
+                <div class="thumb vid">VID</div>
+                <div class="meta"><div class="name">q3-update.mp4</div><div class="size">From My Media Library</div></div>
+                <button type="button" class="rm" onclick="removeAttach()">Remove</button>
+              </div>
+            </div>
+            <div class="media-toolbar">
+              <button type="button" class="mt-btn">📷 Upload</button>
+              <button type="button" class="mt-btn primary" onclick="showScreen('lib')">📚 Choose from library</button>
+            </div>
+            <div class="compose-foot">
+              <button type="button" class="btn btn-primary" onclick="showToast('Post stub · not live')">Post</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="screen" id="s-error">
+          <div class="page-head"><h2>Post Now</h2><p class="sub">Unsupported type.</p></div>
+          <div class="compose">
+            <div class="compose-head"><h3>Create social post</h3></div>
+            <div class="compose-body">
+              <div class="banner err"><strong>Unsupported file type.</strong> Use JPG, PNG, GIF, or MP4. (Limits TBD)</div>
+              <textarea>…</textarea>
+            </div>
+            <div class="media-toolbar">
+              <button type="button" class="mt-btn" onclick="showScreen('idle')">OK</button>
+              <button type="button" class="mt-btn primary" onclick="showScreen('lib')">📚 Choose from library</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="screen" id="s-gap">
+          <div class="page-head"><h2>Discoverability note</h2>
+            <p class="sub">Direction B relies on a one-time coachmark + Choose from library — not a permanent drop zone.</p>
+          </div>
+          <div class="banner warn">
+            <div>
+              If staging #153/#162 drag-drop still isn't findable, the coachmark (“You can also drop files here”) is the polish path.
+              Do not add an always-on giant drop panel. Library page remains the primary browse surface.
+            </div>
+          </div>
+          <button type="button" class="btn btn-primary" onclick="showScreen('idle')">See idle + coachmark</button>
+        </div>
+
+        <p class="mobile-note"><strong>Mobile (brief):</strong> Library likely full-screen sheet; picker-first over drag-drop. Full mobile polish TBD after direction lock.</p>
+      </div>
+    </div>
+  </div>
+  <div class="toast" id="toast"></div>
+  <script>
+    const KEY = 'fc260-b-screen';
+    function showToast(msg) {
+      const t = document.getElementById('toast');
+      t.textContent = msg; t.classList.add('show');
+      clearTimeout(window._tt); window._tt = setTimeout(() => t.classList.remove('show'), 2200);
+    }
+    function showScreen(id) {
+      document.querySelectorAll('.screen').forEach(s => s.classList.toggle('on', s.id === 's-' + id));
+      document.querySelectorAll('.step-btn').forEach(b => b.classList.toggle('on', b.dataset.screen === id));
+      try { localStorage.setItem(KEY, id); } catch(e) {}
+      const railLib = document.getElementById('railLib');
+      if (railLib) {
+        const libScreens = ['lib','empty','loading','upload'];
+        const isLib = libScreens.includes(id) && 'b' === 'b';
+        // B highlights LIB on library page screens; A/C keep SM for compose-centric
+        if ('b' === 'b') {
+          document.querySelectorAll('.rail .ri').forEach(r => r.classList.remove('on'));
+          if (['lib','empty','loading','upload'].includes(id)) railLib.classList.add('on');
+          else document.querySelector('.rail .ri:nth-child(3)').classList.add('on');
+        }
+      }
+    }
+    document.querySelectorAll('.step-btn').forEach(b => b.addEventListener('click', () => showScreen(b.dataset.screen)));
+    function pickMedia(el) {
+      document.querySelectorAll('.mcard').forEach(c => c.classList.remove('sel'));
+      el.classList.add('sel');
+      showToast('Selected · ' + (el.dataset.pick || 'media'));
+    }
+    function attachSelected() {
+      showScreen('pick');
+      showToast('Attached to draft');
+    }
+    function removeAttach() {
+      showToast('Attachment removed');
+      showScreen('idle');
+    }
+    function simUpload() {
+      showToast('Upload stub · added to My Media');
+      showScreen('lib');
+    }
+    function simError() {
+      showScreen('error');
+    }
+    (function init() {
+      let start = 'idle';
+      try { start = localStorage.getItem(KEY) || 'idle'; } catch(e) {}
+      if (![...document.querySelectorAll('.step-btn')].some(b => b.dataset.screen === start)) start = 'idle';
+      showScreen(start);
+    })();
+  </script>
+</body>
+</html>

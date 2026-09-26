@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>FC — #260 My Media Library + compose media</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #f4f8fc; --card: #fff; --ink: #1e2a4a; --muted: #5b6572;
+      --blue: #2b7de9; --border: #d4e4f2; --mint: #e6f1fb;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: Inter, system-ui, sans-serif; background: var(--bg); color: var(--ink); line-height: 1.55; }
+    .hero {
+      background: linear-gradient(135deg, #1e2a4a 0%, #2b7de9 100%);
+      color: #fff; padding: 40px 24px 36px;
+    }
+    .hero-inner { max-width: 880px; margin: 0 auto; }
+    .hero .eyebrow { font-size: 0.75rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; opacity: 0.85; margin-bottom: 10px; }
+    .hero h1 { font-size: 1.75rem; margin-bottom: 10px; }
+    .hero p { opacity: 0.92; max-width: 720px; font-size: 0.95rem; }
+    .rec {
+      display: inline-block; margin-top: 18px; background: #e8f5e9; color: #065f46;
+      font-weight: 700; font-size: 0.8rem; padding: 8px 14px; border-radius: 999px;
+    }
+    .wrap { max-width: 880px; margin: 0 auto; padding: 28px 24px 72px; }
+    .cta {
+      display: block; background: var(--blue); color: #fff !important; text-decoration: none;
+      text-align: center; padding: 16px 24px; border-radius: 12px; font-weight: 700;
+      font-size: 1rem; margin-bottom: 28px; box-shadow: 0 4px 16px rgba(43,125,233,0.35);
+    }
+    .cta:hover { filter: brightness(1.05); }
+    .cta small { display: block; font-weight: 500; opacity: 0.9; font-size: 0.8rem; margin-top: 4px; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 14px; }
+    .card {
+      background: var(--card); border: 1px solid var(--border); border-radius: 12px;
+      padding: 18px; text-decoration: none; color: inherit; display: block;
+      transition: border-color 0.15s, box-shadow 0.15s;
+    }
+    .card:hover { border-color: var(--blue); box-shadow: 0 4px 16px rgba(30,42,74,0.08); }
+    .card.recd { border-color: #2b7de9; box-shadow: 0 4px 16px rgba(43,125,233,0.12); }
+    .card h3 { font-size: 0.95rem; margin-bottom: 6px; color: var(--blue); }
+    .card p { font-size: 0.8rem; color: var(--muted); }
+    .card .tag {
+      display: inline-block; font-size: 0.65rem; font-weight: 700; background: var(--mint);
+      color: var(--blue); padding: 2px 8px; border-radius: 999px; margin-bottom: 8px;
+    }
+    .card .tag.rec-tag { background: var(--blue); color: #fff; }
+    h2 { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--muted); margin: 28px 0 12px; }
+    .problem {
+      margin: 0 0 20px; padding: 14px 16px; background: #fff8eb; border: 1px solid #f0d4a8;
+      border-radius: 10px; font-size: 0.85rem; color: #8a5a10;
+    }
+    .problem strong { color: #6b4408; }
+    .oq {
+      margin: 0 0 20px; padding: 14px 16px; background: #fff; border: 1px solid var(--border);
+      border-radius: 10px; font-size: 0.85rem;
+    }
+    .oq strong { display: block; margin-bottom: 8px; color: var(--ink); }
+    .oq ol { padding-left: 1.2rem; color: var(--muted); }
+    .oq li { margin-bottom: 4px; }
+    .oq .open { color: #b45309; font-weight: 600; font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.04em; }
+    .playground {
+      margin: 16px 0 0; padding: 12px 14px; background: #eef4fb; border: 1px solid var(--border);
+      border-radius: 10px; font-size: 0.85rem; color: var(--ink);
+    }
+    .constraint {
+      margin: 16px 0 0; padding: 12px 14px; background: #e8f5e9; border: 1px solid #a7d7b5;
+      border-radius: 10px; font-size: 0.85rem; color: #065f46;
+    }
+    .constraint.warn {
+      background: #fff8eb; border-color: #f0d4a8; color: #8a5a10;
+    }
+    .meta { margin-top: 32px; font-size: 0.8rem; color: var(--muted); }
+    .meta a { color: var(--blue); }
+    code { background: #eef2f6; padding: 0.1em 0.35em; border-radius: 4px; font-size: 0.85em; }
+  </style>
+</head>
+<body>
+  <header class="hero">
+    <div class="hero-inner">
+      <div class="eyebrow">FinancialContent · content-library #260 · Idea / playground</div>
+      <h1>My Media Library + compose media pick / drag-drop</h1>
+      <p>Angelina ask: drag-drop for social images/videos + floated “my media library?” Designer-first mocks — three directions for library surface + pick-from-library + discoverable drag-drop. Honors shipped <strong>#153</strong> / <strong>#162</strong> (no always-on giant drop zone). Audience: <strong>advisor</strong>, desktop-first.</p>
+      <span class="rec">Recommend · Direction A — Library drawer from compose</span>
+    </div>
+  </header>
+
+  <div class="wrap">
+    <a class="cta" href="directions/a/index.html">
+      Open Direction A (recommended)
+      <small>My Media drawer from Post Now toolbar · pick attaches · idle = no giant drop panel (#162)</small>
+    </a>
+    <p style="text-align:center;margin:-18px 0 24px;font-size:0.8rem;color:var(--muted)">
+      <a href="build-contract.html">Provisional build contract</a> ·
+      <a href="build-contract.md">Markdown</a> ·
+      <a href="directions-brief.md">Directions brief</a>
+    </p>
+
+    <div class="problem">
+      <strong>Problem:</strong> Advisors want to reuse their own images/videos and find drag-drop on social compose. #153/#162 shipped compose drag-drop (indicator only while dragging). This playground explores a <strong>My Media Library</strong> plus pick-from-library and discoverability polish — without reopening #153/#162 wholesale.
+    </div>
+
+    <div class="oq">
+      <span class="open">Open product questions — do not invent locked answers</span>
+      <strong>Must resolve before agent-ready</strong>
+      <ol>
+        <li>Library scoped <strong>per advisor only</strong> vs firm-shared later?</li>
+        <li><strong>Video size / format limits</strong> copy?</li>
+        <li>Does <strong>upload-to-compose also auto-add</strong> to My Media?</li>
+        <li>Staging: is #153/#162 drag-drop actually findable, or only a <strong>discoverability polish</strong>?</li>
+      </ol>
+    </div>
+
+    <div class="playground">
+      <strong>Playground note:</strong> Track is <strong>Idea / playground</strong>. Mocks are clickable HTML only — no live social publish, no DAM/team folders v1, no AI image drawer changes. Mobile noted briefly; desktop (~1280) is primary.
+    </div>
+
+    <div class="constraint warn">
+      <strong>#162 constraint:</strong> Idle compose = <em>no</em> permanent giant drop zone. Drop indicator appears <strong>only while dragging</strong> over compose. Media still via icon/picker + new library entry points. If staging drag-drop still feels hard to find, treat as a <strong>compose discoverability gap</strong> (hint / tooltip / toolbar copy) — do not reinvent #153.
+    </div>
+
+    <div class="constraint">
+      <strong>Working default:</strong> Direction A until Alex/Angelina lock. Do not mark agent-ready from this mock. Hosted only at <code>/260/</code>.
+    </div>
+
+    <h2>Directions</h2>
+    <div class="grid">
+      <a class="card recd" href="directions/a/index.html">
+        <span class="tag rec-tag">RECOMMEND</span>
+        <h3>A — Library drawer from compose</h3>
+        <p>Primary surface: My Media drawer/modal from Post Now media toolbar. Grid of prior uploads + Upload + drop into drawer. Compose keeps #162 idle/drag-over. Compact hint near media icon. Lightweight Library nav page for browse/manage.</p>
+      </a>
+      <a class="card" href="directions/b/index.html">
+        <span class="tag">ALT</span>
+        <h3>B — Full My Media page + Choose from library</h3>
+        <p>First-class My Media Library nav page. Compose toolbar: Choose from library + upload. Discoverability via one-time coachmark on media icon. No permanent drop zone.</p>
+      </a>
+      <a class="card" href="directions/c/index.html">
+        <span class="tag">ALT</span>
+        <h3>C — Compact media rail on compose</h3>
+        <p>Always-visible compact horizontal rail (recent thumbs + Upload + Library) — not a giant drop zone. Drag-over expands to overlay. “See all” opens full picker. Reuse without separate nav as main path.</p>
+      </a>
+    </div>
+
+    <h2>For Software / CoS</h2>
+    <p style="font-size:0.85rem;color:var(--muted)">Provisional contract: <a href="build-contract.html">HTML</a> · <a href="build-contract.md">Markdown</a>. Comparison: <a href="directions-brief.md">directions-brief.md</a>.</p>
+
+    <div class="meta">
+      <p>Issue: <a href="https://github.com/kartboy16/content-library/issues/260">content-library #260</a></p>
+      <p>Related: <a href="https://github.com/kartboy16/content-library/issues/153">#153</a> (closed) · <a href="https://github.com/kartboy16/content-library/issues/162">#162</a> (closed)</p>
+      <p>Slack: #fc-bugs · ts <code>1790459709.508909</code> · Reporter Angelina Hung</p>
+      <p>Repo: <a href="https://github.com/kartboy16/fc-mocks">kartboy16/fc-mocks</a> · path <code>/260/</code></p>
+      <p>Live: <a href="https://kartboy16.github.io/fc-mocks/260/">https://kartboy16.github.io/fc-mocks/260/</a></p>
+    </div>
+  </div>
+</body>
+</html>

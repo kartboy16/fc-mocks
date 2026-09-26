@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Build contract · #260 My Media Library (provisional)</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root { --bg:#f4f8fc; --ink:#1e2a4a; --muted:#5b6572; --blue:#2b7de9; --border:#d4e4f2; }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: Inter, system-ui, sans-serif; background: var(--bg); color: var(--ink); line-height: 1.55; padding: 32px 20px 72px; }
+    .wrap { max-width: 740px; margin: 0 auto; background: #fff; border: 1px solid var(--border); border-radius: 12px; padding: 28px 32px; }
+    h1 { font-size: 1.35rem; margin-bottom: 8px; }
+    h2 { font-size: 0.95rem; margin: 24px 0 10px; color: var(--blue); }
+    p, li { font-size: 0.88rem; color: var(--ink); }
+    .meta { font-size: 0.8rem; color: var(--muted); margin-bottom: 16px; }
+    .meta a { color: var(--blue); }
+    .badge {
+      display: inline-block; background: #fff8eb; color: #8a5a10; font-size: 0.72rem; font-weight: 700;
+      padding: 4px 10px; border-radius: 999px; border: 1px solid #f0d4a8; margin-bottom: 12px;
+    }
+    ul, ol { padding-left: 1.25rem; margin: 8px 0; }
+    li { margin-bottom: 4px; }
+    table { width: 100%; border-collapse: collapse; font-size: 0.82rem; margin: 10px 0; }
+    th, td { text-align: left; padding: 8px 10px; border: 1px solid var(--border); vertical-align: top; }
+    th { background: #eef4fb; font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.04em; color: var(--muted); }
+    code { background: #eef2f6; padding: 0.1em 0.35em; border-radius: 4px; font-size: 0.85em; }
+    .nav { margin-bottom: 16px; font-size: 0.8rem; }
+    .nav a { color: var(--blue); margin-right: 12px; }
+    .warn { background: #fff8eb; border: 1px solid #f0d4a8; border-radius: 8px; padding: 10px 12px; font-size: 0.82rem; color: #8a5a10; margin: 12px 0; }
+    .ok { background: #e8f5e9; border: 1px solid #a7d7b5; border-radius: 8px; padding: 10px 12px; font-size: 0.82rem; color: #065f46; margin: 12px 0; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="nav">
+      <a href="index.html">← Hub #260</a>
+      <a href="build-contract.md">Markdown</a>
+      <a href="directions/a/index.html">Direction A</a>
+      <a href="directions-brief.md">Brief</a>
+    </div>
+    <span class="badge">PROVISIONAL · working default = Direction A</span>
+    <h1>Build contract · My Media Library + compose media</h1>
+    <p class="meta">
+      Issue <a href="https://github.com/kartboy16/content-library/issues/260">#260</a> ·
+      Mocks <a href="https://kartboy16.github.io/fc-mocks/260/">/260/</a> ·
+      Track: Idea / playground
+    </p>
+
+    <h2>One-liner</h2>
+    <p>Advisors get a <strong>My Media Library</strong> (drawer-first in Direction A) to browse/reuse prior image/video uploads, <strong>pick from library</strong> on Post Now / social compose, <strong>upload</strong> via picker or drop, with <strong>#162-compliant</strong> drag-over-only indicators and clear empty/loading/error/remove — until product locks otherwise.</p>
+
+    <h2>Acceptance criteria (refined)</h2>
+    <ul>
+      <li><strong>AC-1:</strong> Clear My Media Library (or equivalent) for prior image/video uploads</li>
+      <li><strong>AC-2:</strong> Pick from library on Post Now / social compose → attach to draft</li>
+      <li><strong>AC-3:</strong> Upload (picker and/or drag-drop) into library and/or compose; unsupported types error clearly</li>
+      <li><strong>AC-4:</strong> Drag-drop discoverable; <strong>no permanent giant drop panel when idle</strong> (#162). Staging hard-to-find → hint/tooltip/copy — do not reinvent #153</li>
+      <li><strong>AC-5:</strong> Empty / loading / error states; remove/replace attachment before schedule/publish</li>
+      <li><strong>AC-6:</strong> Clickable Pages mock at <code>fc-mocks/260/</code> + this contract before agent-ready</li>
+    </ul>
+
+    <h2>Open product questions</h2>
+    <div class="warn">Do not invent locked answers. Resolve before agent-ready.</div>
+    <ol>
+      <li>Library scoped <strong>per advisor only</strong> vs firm-shared later?</li>
+      <li><strong>Video size / format limits</strong> copy?</li>
+      <li>Does <strong>upload-to-compose also auto-add</strong> to My Media?</li>
+      <li>Staging: is #153/#162 drag-drop findable, or only a <strong>discoverability polish</strong>?</li>
+    </ol>
+
+    <h2>Working default (Direction A)</h2>
+    <div class="ok">My Media <strong>drawer/modal</strong> from Post Now toolbar · compose idle = no giant drop zone · compact hint · lightweight Library nav · advisor-scoped thesis (still open) · <strong>NG DAM</strong></div>
+    <ul>
+      <li>Primary: drawer from “My Media” / “Library” in media toolbar</li>
+      <li>Compose: #162 drag-over overlay only while dragging</li>
+      <li>Hint: “Drop image or video, or open My Media.”</li>
+      <li>Out: full DAM/team folders/permissions; AI image drawer; live social publish</li>
+    </ul>
+
+    <h2>States</h2>
+    <table>
+      <thead><tr><th>State</th><th>Behavior</th></tr></thead>
+      <tbody>
+        <tr><td>Compose idle</td><td>Toolbar + hint; no permanent giant drop panel</td></tr>
+        <tr><td>Compose drag-over</td><td>Drop overlay while dragging only</td></tr>
+        <tr><td>Library browse</td><td>Populated grid; select to attach</td></tr>
+        <tr><td>Empty / loading</td><td>Empty CTA · skeleton</td></tr>
+        <tr><td>Upload</td><td>Picker and/or drop into library</td></tr>
+        <tr><td>Pick → attached</td><td>Draft attachment; remove/replace</td></tr>
+        <tr><td>Unsupported type</td><td>Clear error</td></tr>
+        <tr><td>Discoverability gap</td><td>Hint/tooltip/copy — not reinvent #153</td></tr>
+      </tbody>
+    </table>
+
+    <h2>Desktop vs mobile</h2>
+    <ul>
+      <li><strong>Desktop (~1280):</strong> Primary target as mocked</li>
+      <li><strong>Mobile:</strong> Brief — full-screen sheet / picker-first; polish TBD after lock</li>
+    </ul>
+
+    <h2>Primary files</h2>
+    <p><strong>TBD</strong> until codebase confirmed: Post Now media toolbar · My Media drawer/route · upload/attach helpers from #153/#162 · advisor asset list/storage API.</p>
+
+    <h2>Out of scope</h2>
+    <ul>
+      <li>Full DAM / team shared assets / folders / permissions v1 (<strong>flag NG DAM</strong>)</li>
+      <li>AI image generation drawer changes</li>
+      <li>Live social publish during playground</li>
+      <li>Marking <code>agent-ready</code> from mock work</li>
+    </ul>
+
+    <h2>Reference</h2>
+    <ul>
+      <li>Hub: <a href="https://kartboy16.github.io/fc-mocks/260/">/260/</a></li>
+      <li>Direction A: <a href="directions/a/index.html">directions/a/</a></li>
+      <li>Brief: <a href="directions-brief.md">directions-brief.md</a></li>
+      <li>Issue: <a href="https://github.com/kartboy16/content-library/issues/260">#260</a> · Related #153 · #162</li>
+    </ul>
+
+    <h2>Handoff</h2>
+    <p>Provisional only. Do <strong>not</strong> mark agent-ready until Alex/Angelina pick a direction and confirm open questions. Parent/CoS owns Slack + GH updates.</p>
+  </div>
+</body>
+</html>
