@@ -147,6 +147,9 @@
     .pop-foot{padding:10px 12px;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:6px;background:#fafbfd;border-radius:0 0 12px 12px}
     .pop-mig{padding:8px 10px;background:#fff8eb;border:1px solid #f0d4a8;border-radius:8px;font-size:0.68rem;color:#8a5a10;margin-bottom:8px}
     .map-note{margin-top:14px;padding:10px 14px;background:#f5f0fa;border:1px solid #d8cce8;border-radius:8px;font-size:0.78rem;color:#5b3d8a}
+    .preview-screen{max-width:860px;margin:0 auto;background:#f8fbfe;border:1px solid var(--border);border-radius:12px;padding:14px;box-shadow:0 2px 8px rgba(30,42,74,0.05)}
+    .preview-kicker{font-size:0.65rem;letter-spacing:.06em;font-weight:700;color:var(--blue);margin-bottom:8px}
+    .preview-panel{background:#fff;border:1px solid var(--border);border-radius:10px;padding:14px}
     @media(max-width:900px){.hide-sm{display:none!important}}
 
     .split{display:grid;grid-template-columns:minmax(280px,1fr) minmax(300px,380px);gap:14px;align-items:start}
@@ -178,20 +181,20 @@
   <div class="thesis">
     <span class="alt">ALT · DIRECTION B</span>
     <h1>Split admin — filterable list + detail drawer</h1>
-    <p>Left: searchable/filterable Master Categories. Right: drawer edits <strong>kind</strong>, featured, visible, hide. Same MAP Direction-C popover as A (stored kind).</p>
+    <p>Left: searchable/filterable Master Categories. Right: drawer edits <strong>Type</strong>, featured, visible, hide. Same MAP Direction-C popover as A (stored Type).</p>
   </div>
   <div class="steps">
     <button type="button" class="step-btn on" data-screen="admin">1 · Manage Categories</button>
-    <button type="button" class="step-btn" data-screen="map">2 · MAP Choose Services</button>
+    <button type="button" class="step-btn" data-screen="map">2 · MAP preview</button>
   </div>
-  <div class="note-bar"><strong>Alt to A:</strong> Better for sparse edits / mobile-ish focus on one row. Dense table (A) wins for bulk kind curation. Still one <code>MasterCategories</code> collection.</div>
-  <div class="mig-bar"><strong>Migration:</strong> Unset kind rows highlight amber in the list; drawer prompts set kind. Heuristic fallback only when unset.</div>
+  <div class="note-bar"><strong>Alt to A:</strong> Better for sparse edits / mobile-ish focus on one row. Dense table (A) wins for bulk Type curation. Still one <code>MasterCategories</code> collection.</div>
+  <div class="mig-bar"><strong>Migration:</strong> Unset Type rows highlight amber in the list; drawer prompts set Type. Heuristic fallback only when unset.</div>
 
   <div class="shell">
     <div class="screen on" id="screen-admin">
       <div class="page-head">
         <h2>Manage Categories <span class="aud">Admin</span></h2>
-        <p class="sub">Select a row → edit kind / featured / visible / hide in the drawer</p>
+        <p class="sub">Select a row → edit Type / featured / visible / hide in the drawer</p>
       </div>
       <div class="toolbar">
         <input class="search-box" type="search" id="catSearch" placeholder="Search…" />
@@ -206,18 +209,21 @@
       </div>
       <div class="split">
         <div class="list-panel" id="listPanel"></div>
-        <div class="drawer" id="drawer"><div class="drawer-empty">Select a category to edit kind, featured, visible, or hide.</div></div>
+        <div class="drawer" id="drawer"><div class="drawer-empty">Select a category to edit Type, featured, visible, or hide.</div></div>
       </div>
     </div>
 
-    <div class="screen" id="screen-map">
-      <div class="page-head">
-        <h2>Manage Advisor Posts <span class="aud map">MAP · Direction C chrome</span></h2>
-        <p class="sub">Same popover as A — Services / Products from stored kind</p>
+    <div class="screen preview-screen" id="screen-map">
+      <div class="preview-kicker">SECONDARY PREVIEW · Advisor sees it like this</div>
+      <div class="preview-panel">
+        <div class="page-head">
+          <h2>MAP Choose Services <span class="aud map">Preview only</span></h2>
+          <p class="sub">MAP reads Admin-set Type and groups it into Services / Products here.</p>
+        </div>
+        <div class="toolbar"><input class="search-box" type="search" id="advFilter" placeholder="Filter advisors…" /></div>
+        <div class="panel"><table class="adv"><thead><tr><th>Advisor</th><th>Services &amp; products</th><th>Actions</th></tr></thead><tbody id="advBody"></tbody></table></div>
+        <div class="map-note"><strong>One source of truth:</strong> Type is curated in Admin → Manage Categories. Advisors do not edit Type here; this compact MAP surface only previews the grouping.</div>
       </div>
-      <div class="toolbar"><input class="search-box" type="search" id="advFilter" placeholder="Filter advisors…" /></div>
-      <div class="panel"><table class="adv"><thead><tr><th>Advisor</th><th>Services &amp; products</th><th>Actions</th></tr></thead><tbody id="advBody"></tbody></table></div>
-      <div class="map-note"><strong>Stored kind:</strong> grouping prefers <code>kind</code>; heuristic only when unset (migration).</div>
     </div>
   </div>
 
@@ -226,7 +232,7 @@
     <div class="pop-head"><div><h3>Choose services &amp; products</h3><p class="sub" id="popSub"></p></div>
       <button type="button" class="pop-close" id="closePop">✕</button></div>
     <div class="pop-body">
-      <div class="pop-mig" id="popMig" style="display:none">Heuristic fallback for unset-kind items (migration).</div>
+      <div class="pop-mig" id="popMig" style="display:none">Heuristic fallback for unset Type items (migration).</div>
       <div class="pop-toolbar"><input class="search-box" id="popSearch" placeholder="Search…" /><span class="count-pill" id="countPill">0</span></div>
       <div id="groups"></div>
     </div>
@@ -296,16 +302,16 @@
   function renderDrawer(){
     const d=document.getElementById('drawer');
     const c=cats.find(x=>x.id===selectedId);
-    if(!c){d.innerHTML='<div class="drawer-empty">Select a category to edit kind, featured, visible, or hide.</div>';return;}
+    if(!c){d.innerHTML='<div class="drawer-empty">Select a category to edit Type, featured, visible, or hide.</div>';return;}
     d.innerHTML=`
       <h3>${c.name}</h3>
       <div class="slug">${c.slug}</div>
-      <div class="field"><label>Kind</label>
+      <div class="field"><label>Type</label>
         <div class="seg" id="drawerSeg">
           <button type="button" class="${c.kind==='service'?'on svc':(!c.kind?'unset':'')}" data-k="service">Service</button>
           <button type="button" class="${c.kind==='product'?'on prod':(!c.kind?'unset':'')}" data-k="product">Product</button>
         </div>
-        ${!c.kind?'<p style="font-size:0.7rem;color:#b45309;margin-top:6px">Unset — set kind before MAP trusts this row (heuristic meanwhile).</p>':''}
+        ${!c.kind?'<p style="font-size:0.7rem;color:#b45309;margin-top:6px">Unset — set Type before MAP trusts this row (heuristic meanwhile).</p>':''}
       </div>
       <div class="field"><label>Featured</label><div class="row"><button type="button" class="tog ${c.featured?'on':''}" id="dFeat"><i></i></button><span style="font-size:0.8rem">${c.featured?'Yes':'No'}</span></div></div>
       <div class="field"><label>Visible</label><div class="row"><button type="button" class="tog ${c.visible?'on':''}" id="dVis"><i></i></button><span style="font-size:0.8rem">${c.visible?'Yes':'No'}</span></div></div>
@@ -315,7 +321,7 @@
       </div>`;
     document.getElementById('drawerSeg').onclick=e=>{
       const b=e.target.closest('[data-k]'); if(!b) return;
-      c.kind=b.dataset.k; toast('Kind → '+c.kind); renderList(); renderDrawer();
+      c.kind=b.dataset.k; toast('Type → '+c.kind); renderList(); renderDrawer();
     };
     document.getElementById('dFeat').onclick=()=>{c.featured=!c.featured;renderList();renderDrawer();};
     document.getElementById('dVis').onclick=()=>{c.visible=!c.visible; if(c.visible) c.hidden=false; renderList();renderDrawer();};
@@ -343,8 +349,8 @@
   document.getElementById('catSearch').oninput=renderList;
   document.getElementById('addBtn').onclick=()=>{
     const name=prompt('Category name'); if(!name) return;
-    const kind=prompt('Kind: service or product','service');
-    if(kind!=='service'&&kind!=='product'){toast('Kind required',true);return;}
+    const kind=prompt('Type: service or product','service');
+    if(kind!=='service'&&kind!=='product'){toast('Type required',true);return;}
     const slug=name.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/(^-|-$)/g,'');
     const id='n'+Date.now();
     cats.unshift({id,name,slug,kind,featured:false,visible:true,hidden:false});
