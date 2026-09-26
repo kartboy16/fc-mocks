@@ -94,7 +94,7 @@
     .skel{height:12px;background:linear-gradient(90deg,#eef2f6,#f8fafc,#eef2f6);background-size:200% 100%;animation:sh 1.2s infinite;border-radius:4px;margin:8px 0}
     @keyframes sh{0%{background-position:200% 0}100%{background-position:-200% 0}}
     .err-box{padding:16px;background:var(--err-bg);border:1px solid var(--err-border);border-radius:8px;color:var(--err);font-size:0.8rem;margin-bottom:12px}
-    /* MAP table + popover (Direction C chrome) */
+    /* MAP preview + popover (Direction C chrome) */
     table.adv{width:100%;border-collapse:collapse;font-size:0.8rem}
     table.adv th{text-align:left;padding:10px 12px;background:#eef4fb;color:var(--muted);font-weight:600;font-size:0.7rem;text-transform:uppercase;letter-spacing:0.04em;border-bottom:1px solid var(--border);white-space:nowrap}
     table.adv td{padding:10px 12px;border-bottom:1px solid #eef2f6;vertical-align:top;position:relative}
@@ -221,8 +221,7 @@
                   <th>Type</th>
                   <th>Featured</th>
                   <th>Visible</th>
-                  <th>MAP</th>
-                  <th></th>
+                  <th>Actions</th>
                 </tr>
               </thead>
               <tbody id="catBody"></tbody>
@@ -352,7 +351,7 @@
     }
     // restore table if wiped
     if (!document.getElementById('catBody')) {
-      wrap.innerHTML = `<table class="cat"><thead><tr><th>Name</th><th>Type</th><th>Featured</th><th>Visible</th><th>MAP</th><th></th></tr></thead><tbody id="catBody"></tbody></table>`;
+      wrap.innerHTML = `<table class="cat"><thead><tr><th>Name</th><th>Type</th><th>Featured</th><th>Visible</th><th>Actions</th></tr></thead><tbody id="catBody"></tbody></table>`;
     }
     const tb = document.getElementById('catBody');
     tb.innerHTML = '';
@@ -379,7 +378,6 @@
       if (c.hidden || !c.visible) tr.classList.add('hidden-row');
       if (!c.kind) tr.classList.add('unset-kind');
       const rk = resolveKind(c);
-      const mapOk = !c.hidden && c.visible && !c.excludeMap;
       tr.innerHTML = `
         <td class="name-cell"><div class="nm">${c.name}</div><div class="slug">${c.slug}</div></td>
         <td>
@@ -391,7 +389,6 @@
         </td>
         <td><button type="button" class="tog ${c.featured?'on':''}" data-tog="featured" data-id="${c.id}" aria-label="Featured"><i></i></button></td>
         <td><button type="button" class="tog ${c.visible?'on':''}" data-tog="visible" data-id="${c.id}" aria-label="Visible"><i></i></button></td>
-        <td>${c.excludeMap ? '<span class="badge hid">excluded</span>' : (mapOk ? '<span class="badge '+rk.kind+'">'+rk.kind+'</span>' : '<span class="badge hid">hidden</span>')}</td>
         <td class="actions-cell">
           <button type="button" class="btn btn-sm btn-ghost" data-hide="${c.id}">${c.hidden || !c.visible ? 'Unhide' : 'Hide'}</button>
           <button type="button" class="btn btn-sm btn-danger" data-rm="${c.id}">Remove</button>
