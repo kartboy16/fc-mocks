@@ -3,69 +3,69 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Build contract · #263 Admin Type first, MAP preview only</title>
+  <title>Build contract · #263 Direction A locked</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <style>
     :root { --bg:#f4f8fc; --ink:#1e2a4a; --muted:#5b6572; --blue:#2b7de9; --border:#d4e4f2; }
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body { font-family: Inter, system-ui, sans-serif; background: var(--bg); color: var(--ink); line-height: 1.55; padding: 32px 20px 72px; }
-    .wrap { max-width: 760px; margin: 0 auto; background: #fff; border: 1px solid var(--border); border-radius: 12px; padding: 28px 32px; }
-    h1 { font-size: 1.35rem; margin-bottom: 8px; }
-    h2 { font-size: 0.95rem; margin: 24px 0 10px; color: var(--blue); }
-    p, li { font-size: 0.88rem; color: var(--ink); }
-    .meta { font-size: 0.8rem; color: var(--muted); margin-bottom: 16px; }
-    .meta a, a { color: var(--blue); }
-    .badge { display:inline-block; background:#fff8eb; color:#8a5a10; font-size:.72rem; font-weight:700; padding:4px 10px; border-radius:999px; border:1px solid #f0d4a8; margin-bottom:12px; }
-    ul { padding-left:1.25rem; margin:8px 0; } li { margin-bottom:4px; }
-    table { width:100%; border-collapse:collapse; font-size:.82rem; margin:10px 0; }
-    th,td { text-align:left; padding:8px 10px; border:1px solid var(--border); vertical-align:top; }
-    th { background:#eef4fb; font-size:.72rem; text-transform:uppercase; letter-spacing:.04em; color:var(--muted); }
-    code { background:#eef2f6; padding:.1em .35em; border-radius:4px; font-size:.85em; }
-    .nav { margin-bottom:16px; font-size:.8rem; } .nav a { margin-right:12px; }
-    .warn,.ok,.err { border-radius:8px; padding:10px 12px; font-size:.82rem; margin:12px 0; }
-    .warn { background:#fff8eb; border:1px solid #f0d4a8; color:#8a5a10; }
-    .ok { background:#e8f5e9; border:1px solid #a7d7b5; color:#065f46; }
-    .err { background:#fef2f2; border:1px solid #fecaca; color:#991b1b; }
+    .wrap { max-width: 780px; margin: 0 auto; background: #fff; border: 1px solid var(--border); border-radius: 12px; padding: 28px 32px; }
+    h1 { font-size: 1.35rem; margin-bottom: 8px; } h2 { font-size: .95rem; margin: 24px 0 10px; color: var(--blue); }
+    p, li { font-size: .88rem; color: var(--ink); } .meta { font-size: .8rem; color: var(--muted); margin-bottom: 16px; }
+    .meta a, a { color: var(--blue); } .badge { display:inline-block; background:#e8f5e9; color:#065f46; font-size:.72rem; font-weight:700; padding:4px 10px; border-radius:999px; border:1px solid #a7d7b5; margin-bottom:12px; }
+    ul { padding-left:1.25rem; margin:8px 0; } li { margin-bottom:4px; } table { width:100%; border-collapse:collapse; font-size:.82rem; margin:10px 0; }
+    th,td { text-align:left; padding:8px 10px; border:1px solid var(--border); vertical-align:top; } th { background:#eef4fb; font-size:.72rem; text-transform:uppercase; letter-spacing:.04em; color:var(--muted); }
+    code { background:#eef2f6; padding:.1em .35em; border-radius:4px; font-size:.85em; } .nav { margin-bottom:16px; font-size:.8rem; } .nav a { margin-right:12px; }
+    .ok,.warn { border-radius:8px; padding:10px 12px; font-size:.82rem; margin:12px 0; } .ok { background:#e8f5e9; border:1px solid #a7d7b5; color:#065f46; } .warn { background:#fff8eb; border:1px solid #f0d4a8; color:#8a5a10; }
   </style>
 </head>
 <body>
   <div class="wrap">
     <div class="nav"><a href="index.html">← Hub #263</a><a href="build-contract.md">Markdown</a><a href="directions/a/index.html">Direction A</a><a href="directions-brief.md">Brief</a></div>
-    <span class="badge">PROVISIONAL · working default = Direction A · not agent-ready</span>
+    <span class="badge">LOCKED · DIRECTION A · 2026-09-26 PT</span>
     <h1>Build contract · Admin Type first, MAP preview only</h1>
-    <p class="meta">Issue <a href="https://github.com/kartboy16/content-library/issues/263">#263</a> · Mocks <a href="https://kartboy16.github.io/fc-mocks/263/">/263/</a> · Track: Idea / playground</p>
+    <p class="meta">Issue <a href="https://github.com/kartboy16/content-library/issues/263">#263</a> · Mocks <a href="https://kartboy16.github.io/fc-mocks/263/">/263/</a> · Track: Idea / playground · Handoff awaits CoS agent-ready → Software developer</p>
+
+    <h2>Lock</h2>
+    <div class="ok"><strong>Alex Hung locked Direction A on 2026-09-26 PT:</strong> “263 looks good!”</div>
 
     <h2>One-liner</h2>
-    <p>Keep <strong>one</strong> <code>MasterCategories</code> collection. Lead with <strong>Admin → Manage Categories</strong>, where admins curate the visible <strong>Type: Product | Service</strong>, featured/visible state, filters, and junk cleanup. The provisional stored field is <code>kind: product | service</code>. MAP Choose Services is only a small secondary “Advisor sees it like this” preview: it groups Services / Products from the Admin-set value and does not let advisors edit Type.</p>
+    <p>Keep <strong>one</strong> <code>MasterCategories</code> collection. Lead with <strong>Admin → Manage Categories</strong>, where admins curate the visible <strong>Type: Product | Service</strong>, Featured and Visible state, filters, and junk cleanup. The stored field is <code>kind: product | service</code>. MAP Choose Services is only a small secondary “Advisor sees it like this” preview: it groups Services / Products from the Admin-set value and does not let advisors edit Type. There is no MAP Admin column and no second app chrome.</p>
 
     <h2>Acceptance criteria</h2>
     <ul>
-      <li><strong>AC-1:</strong> Existing <code>MasterCategories</code> docs store <code>kind: 'product' | 'service'</code>; Admin can set/change it. Visible UI calls this Type.</li>
-      <li><strong>AC-2:</strong> Migration gives existing categories a default <code>kind</code> (heuristic fallback only while unset) so MAP does not blank-break.</li>
-      <li><strong>AC-3:</strong> MAP preview groups sections and chips from stored <code>kind</code> when present.</li>
-      <li><strong>AC-4:</strong> Admin can hide/remove junk without breaking HTML-post tagging for remaining categories.</li>
-      <li><strong>AC-5:</strong> <code>MasterCategories</code> is the sole source of truth; no second products/services collection.</li>
-      <li><strong>AC-6:</strong> MAP is preview-only: no advisor Type editing and no competing full MAP app shell.</li>
+      <li><strong>AC-1:</strong> Master Category docs can store <code>kind: 'product' | 'service'</code>; Admin Categories can set/change it. Visible UI calls this field <strong>Type</strong>.</li>
+      <li><strong>AC-2:</strong> A one-time or lazy migration gives existing categories a default <code>kind</code> (heuristic fallback is acceptable only while unset) so MAP does not blank-break.</li>
+      <li><strong>AC-3:</strong> MAP Choose Services preview groups sections and chips from stored <code>kind</code> when present.</li>
+      <li><strong>AC-4:</strong> Admin can hide/remove categories that should not appear as advisor products/services without breaking HTML-post tagging for categories that remain.</li>
+      <li><strong>AC-5:</strong> No second master collection; <code>MasterCategories</code> remains the source of truth.</li>
     </ul>
 
-    <h2>Working default (Direction A)</h2>
-    <div class="ok">Primary: Admin → Manage Categories · dense table + Type column · Featured/Visible · filters · Hide/Remove · Add with Type required.<br />Secondary: compact MAP “Advisor sees it like this” preview grouped from Admin-set Type.</div>
-
-    <div class="err"><strong>Out of scope:</strong> #261 · new Mongo collection · changing <code>AdvisorConfigs.websiteServices</code> · #209 AdvisorSource · Galaxy deploy · agent-ready from mock</div>
+    <h2>Locked direction — Direction A</h2>
+    <div class="ok">Primary: Admin → Manage Categories · dense table + Type column · Featured · Visible · filters · Hide/Remove · Add with Type required.<br />Secondary: compact MAP “Advisor sees it like this” preview grouped from Admin-set Type.<br />Admin columns: Name · Type · Featured · Visible · Hide/Remove. <strong>No MAP Admin column.</strong></div>
 
     <h2>States</h2>
-    <table><tr><th>State</th><th>Behavior</th></tr>
-      <tr><td>Admin populated</td><td>Type / Featured / Visible; filters work</td></tr>
-      <tr><td>Empty / loading / error</td><td>Empty CTA · skeleton · Retry</td></tr>
-      <tr><td>Unset Type</td><td>Amber + heuristic hint; settable in Admin</td></tr>
-      <tr><td>Hide / Remove</td><td>Omitted from MAP preview; tagging intact</td></tr>
+    <table><tr><th>State</th><th>Required behavior</th></tr>
+      <tr><td>Admin populated</td><td>Name, Type, Featured, Visible, Hide/Remove; filters work</td></tr>
+      <tr><td>Admin empty</td><td>Clear empty state + Add with Type required</td></tr>
+      <tr><td>Admin loading</td><td>Skeleton / spinner on Admin table</td></tr>
+      <tr><td>Admin error</td><td>Inline error + Retry</td></tr>
+      <tr><td>Unset Type</td><td>Amber highlight; heuristic hint; settable in Admin</td></tr>
+      <tr><td>Hide / Remove junk</td><td>Hidden omitted from MAP; remove confirms; tagging intact</td></tr>
       <tr><td>MAP preview</td><td>Services + Products from stored <code>kind</code>; no Type editing</td></tr>
+      <tr><td>MAP fallback</td><td>Note only while eligible categories lack stored <code>kind</code></td></tr>
       <tr><td>Success</td><td>Toast on save / Type change / hide</td></tr>
     </table>
 
+    <h2>In scope</h2>
+    <ul><li>Direction A Admin dense table and Type (<code>kind</code>) field</li><li>Name, Type, Featured, Visible, Hide/Remove controls and Type / hidden / unset filters</li><li>MAP Choose Services grouping preview from stored Type</li><li>Migration fallback only while Type is unset</li><li>Empty / loading / error / success states; desktop-first (~1280)</li></ul>
+
+    <h2>Out of scope</h2>
+    <ul><li>New Mongo collection for products/services</li><li>#261 Content Source + topic taxonomy</li><li>Changing <code>AdvisorConfigs.websiteServices</code> storage</li><li>Advisor Categories / AdvisorSource (#209)</li><li>MAP Admin column or advisor Type editing</li><li>Galaxy / playground deploy; automatic <code>agent-ready</code> labeling; waking Software developer from mock alone</li></ul>
+
     <h2>Handoff</h2>
-    <div class="warn">Provisional only. Still not agent-ready until Alex locks direction. Do not wake Software or deploy Galaxy from this mock.</div>
-    <p class="meta" style="margin-top:20px"><a href="directions/a/index.html">Direction A</a> · <a href="directions/b/index.html">B</a> · <a href="directions/c/index.html">C</a> · <a href="directions-brief.md">Brief</a></p>
+    <div class="warn">Direction A is locked. This contract awaits CoS agent-ready review; after that handoff, Software developer can implement it. Do not add the <code>agent-ready</code> label or wake Software developer from this mock.</div>
+    <p class="meta" style="margin-top:20px"><a href="directions/a/index.html">Direction A</a> · <a href="directions/b/index.html">B (not chosen)</a> · <a href="directions/c/index.html">C (not chosen)</a> · <a href="directions-brief.md">Brief</a></p>
   </div>
 </body>
 </html>

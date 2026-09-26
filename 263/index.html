@@ -39,6 +39,8 @@
       transition: border-color 0.15s, box-shadow 0.15s;
     }
     .card:hover { border-color: var(--blue); box-shadow: 0 4px 16px rgba(30,42,74,0.08); }
+    .card.archived { opacity: .52; filter: grayscale(.55); border-style: dashed; }
+    .card.archived:hover { opacity: .72; border-color: var(--muted); box-shadow: none; }
     .card.recd { border-color: #2b7de9; box-shadow: 0 4px 16px rgba(43,125,233,0.12); }
     .card h3 { font-size: 0.95rem; margin-bottom: 6px; color: var(--blue); }
     .card p { font-size: 0.8rem; color: var(--muted); }
@@ -78,17 +80,17 @@
       <div class="eyebrow">FinancialContent · content-library #263 · Idea / playground</div>
       <h1>Admin Type first — MAP as preview</h1>
       <p>Keep <strong>one</strong> collection: <code>MasterCategories</code>. Admin curates each category’s <strong>Type: Product | Service</strong> and cleans the list. MAP Choose Services is only a small preview that groups from the stored Type — not a second app or source of truth.</p>
-      <span class="rec">Recommend · Direction A — Dense table + Type column</span>
+      <span class="rec">LOCKED · Direction A — Dense table + Type column</span>
     </div>
   </header>
 
   <div class="wrap">
     <a class="cta" href="directions/a/index.html">
-      Open Direction A (recommended)
+      Open Direction A (locked)
       <small>Type column (Product|Service) · Featured + Visible · filter chips · MAP preview grouped from stored Type</small>
     </a>
     <p style="text-align:center;margin:-18px 0 24px;font-size:0.8rem;color:var(--muted)">
-      <a href="build-contract.html">Provisional build contract</a> ·
+      <a href="build-contract.html">Locked build contract</a> ·
       <a href="build-contract.md">Markdown</a> ·
       <a href="directions-brief.md">Directions brief</a>
     </p>
@@ -112,35 +114,35 @@
     </div>
 
     <div class="playground">
-      <strong>Playground note:</strong> Track is <strong>Idea / playground</strong>. Recommend Direction A until Alex picks. <strong>Not agent-ready</strong> until direction lock. Related live UX: <a href="../manage-advisor-choose-services/directions/c/">MAP Choose Services Direction C</a> (#240) — keep only its grouping preview pattern; feed sections from Admin-set Type.
+      <strong>Lock note:</strong> Track is <strong>Idea / playground</strong>. Alex Hung locked Direction A on <strong>2026-09-26 PT</strong> (“263 looks good!”). Handoff awaits CoS agent-ready → Software developer. Related live UX: <a href="../manage-advisor-choose-services/directions/c/">MAP Choose Services Direction C</a> (#240) — keep only its grouping preview pattern; feed sections from Admin-set Type.
     </div>
 
     <h2>Directions</h2>
     <div class="grid">
       <a class="card recd" href="directions/a/index.html">
-        <span class="tag rec-tag">RECOMMEND</span>
+        <span class="tag rec-tag">LOCKED</span>
         <h3>A — Dense table + Type</h3>
         <p>Extend today’s Manage Categories: Type column (segmented Product|Service), Featured + Visible, filters, Hide/Remove junk, Add with Type required. MAP is a compact preview grouped by stored Type.</p>
       </a>
-      <a class="card" href="directions/b/index.html">
-        <span class="tag">ALT</span>
+      <a class="card archived" href="directions/b/index.html" aria-label="Direction B, not chosen">
+        <span class="tag">NOT CHOSEN</span>
         <h3>B — List + detail drawer</h3>
         <p>Split Admin: left filterable list, right detail drawer for Type / featured / visible / hide. MAP remains a compact preview.</p>
       </a>
-      <a class="card" href="directions/c/index.html">
-        <span class="tag">ALT</span>
+      <a class="card archived" href="directions/c/index.html" aria-label="Direction C, not chosen">
+        <span class="tag">NOT CHOSEN</span>
         <h3>C — Curate board</h3>
         <p>Columns Products | Services | Hidden/junk; move between columns sets Type/visibility. MAP remains a compact preview.</p>
       </a>
     </div>
 
     <h2>For Software / CoS</h2>
-    <p style="font-size:0.85rem;color:var(--muted)">Provisional contract (Direction A): <a href="build-contract.html">HTML</a> · <a href="build-contract.md">Markdown</a>. Comparison: <a href="directions-brief.md">directions-brief.md</a>. Related: <a href="../manage-advisor-choose-services/">MAP Choose Services</a> (#240) · <a href="../261/">#261</a> · <a href="../209/">#209</a>.</p>
+    <p style="font-size:0.85rem;color:var(--muted)">Locked contract (Direction A): <a href="build-contract.html">HTML</a> · <a href="build-contract.md">Markdown</a>. Comparison: <a href="directions-brief.md">directions-brief.md</a>. Related: <a href="../manage-advisor-choose-services/">MAP Choose Services</a> (#240) · <a href="../261/">#261</a> · <a href="../209/">#209</a>.</p>
 
     <div class="meta">
       Issue <a href="https://github.com/kartboy16/content-library/issues/263">kartboy16/content-library#263</a> ·
       Mocks repo <a href="https://github.com/kartboy16/fc-mocks">fc-mocks</a> ·
-      Not agent-ready until Alex locks direction
+      Direction A locked 2026-09-26 PT · awaiting CoS agent-ready handoff
     </div>
   </div>
 </body>
