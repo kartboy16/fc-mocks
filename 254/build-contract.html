@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Build contract · Manage Advisor Posts · Locked Direction A</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    body { font-family: Inter, system-ui, sans-serif; max-width: 760px; margin: 40px auto; padding: 0 24px 80px; color: #1e2a4a; line-height: 1.55; }
+    h1 { font-size: 22px; } h2 { font-size: 16px; margin-top: 28px; } h3 { font-size: 14px; margin-top: 20px; }
+    p, li { font-size: 14px; color: #3a4558; }
+    .ok { background: #e8f5e9; color: #1a7f4c; padding: 12px 14px; border-radius: 8px; font-size: 13px; margin-bottom: 16px; }
+    .rule { background: #eff6ff; color: #1e40af; padding: 12px 14px; border-radius: 8px; font-size: 13px; margin-bottom: 16px; }
+    .warn { background: #fff7ed; color: #9a3412; padding: 12px 14px; border-radius: 8px; font-size: 13px; margin-bottom: 16px; }
+    code { background: #eef2f6; padding: 1px 6px; border-radius: 4px; font-size: 12px; }
+    a { color: #2b7de9; } table { width: 100%; border-collapse: collapse; font-size: 13px; margin: 12px 0; }
+    th, td { border: 1px solid #d4e4f2; padding: 8px 10px; text-align: left; vertical-align: top; } th { background: #eef4fb; }
+    ul { padding-left: 1.2em; } .checklist { list-style: none; padding-left: 0; }
+    .checklist li { margin: 5px 0; }
+  </style>
+</head>
+<body>
+  <p class="ok"><strong>Locked · Alex 2026-09-25 (PT)</strong> — Direction A (dense stack). The Posts cell keeps a compact scrollable Past list above short horizontal suggestion cards; Schedule remains visible and two advisor rows can peek.</p>
+  <p class="rule"><strong>Default rule:</strong> Keep Past and Suggested visible together. Past owns an independent ~108px vertical scroll; suggestions use a horizontal carousel inside a soft ~300px Posts-cell height.</p>
+  <p class="warn"><strong>Scope:</strong> Posts-column presentation only in Admin Manage Advisor Posts. Do not implement #252 scroll-fill, #243 filters, #240 Choose Services, or redesign the Filters drawer.</p>
+
+  <h1>Build contract · Manage Advisor Posts (Direction A)</h1>
+  <p>Full markdown: <a href="build-contract.md">build-contract.md</a> · Mock: <a href="directions/a/">locked Direction A</a> · <a href="index.html">Hub</a></p>
+
+  <h2>One-liner</h2>
+  <p>The <strong>Posts</strong> cell is a compact, independently scrollable past-post list (~108px) stacked above short horizontal suggestion cards, inside a soft ~300px cell height. <strong>Schedule stays visible</strong>, and two advisor rows can peek below the filter bar.</p>
+
+  <h2>Locked layout</h2>
+  <ul>
+    <li>Keep Past and Suggested visible together; no mode switch or past popover.</li>
+    <li>Stack Past above Suggested with a thin divider.</li>
+    <li>Use a soft Posts-cell max-height of approximately <strong>300px</strong> (implementation target ~280–320px) so content does not make the table row grow without bound.</li>
+    <li>Target two advisor rows peeking on a typical laptop viewport below the filter bar.</li>
+  </ul>
+
+  <h3>Past list</h3>
+  <ul>
+    <li>Label it <strong>Past · N</strong> (or the existing equivalent with count).</li>
+    <li>Each compact row has a thumbnail/platform icon, title, date, and channel.</li>
+    <li>Independent vertical scroll, targeted at <strong>~108px</strong> (acceptable ~96–120px); extra history must not grow the cell.</li>
+    <li>Use one compact, truncated title line where needed. Empty state: <strong>No past posts</strong> (or equivalent).</li>
+  </ul>
+
+  <h3>Suggested cards</h3>
+  <ul>
+    <li>Horizontal carousel; cards do not wrap into another row.</li>
+    <li>Short image region of <strong>~72–88px</strong> (mock: ~80px).</li>
+    <li>Title appears once in the body—no title-on-image plus duplicate.</li>
+    <li>One-line excerpt and <strong>1–2 tags</strong>.</li>
+    <li><strong>Schedule</strong> and <strong>Skip</strong> remain visible on every card without hover or expansion.</li>
+    <li>Empty state: <strong>No suggested posts</strong> (or equivalent), without reserving a tall blank carousel.</li>
+  </ul>
+
+  <h2>Screens / states</h2>
+  <table>
+    <thead><tr><th>State</th><th>Required behavior</th></tr></thead>
+    <tbody>
+      <tr><td>Crowded</td><td>Past and suggestions stay stacked in the soft ~300px cell; two advisor rows can peek below the filter bar.</td></tr>
+      <tr><td>Scroll past</td><td>Past scrolls vertically in its own ~108px container; it does not scroll the table or suggestion carousel.</td></tr>
+      <tr><td>Schedule</td><td>Visible on-card and invokes the existing schedule flow/date context.</td></tr>
+      <tr><td>Skip</td><td>Visible on-card and dismisses only the selected suggestion without unexpected cell resizing.</td></tr>
+      <tr><td>Empty past</td><td>Show Past · 0 (or equivalent) and a clear no-past-posts state; suggestions remain available.</td></tr>
+      <tr><td>Empty suggests</td><td>Show a clear empty suggested state; past remains available and no tall blank area is reserved.</td></tr>
+    </tbody>
+  </table>
+
+  <h2>Acceptance criteria</h2>
+  <ul class="checklist">
+    <li>☐ Compact scrollable Past list above short horizontal suggestion cards.</li>
+    <li>☐ Past rows expose icon, title, date, and channel; scroll is independent.</li>
+    <li>☐ Cards use ~72–88px image, title once, one-line excerpt, 1–2 tags, and visible Schedule/Skip.</li>
+    <li>☐ Posts cell has soft ~300px height discipline and no unbounded row growth.</li>
+    <li>☐ Crowded, scroll-past, schedule, skip, empty-past, and empty-suggestions states work.</li>
+    <li>☐ Existing page chrome and non-Posts columns remain unchanged.</li>
+  </ul>
+
+  <h2>In scope</h2>
+  <ul>
+    <li>Posts column presentation only in Manage Advisor Posts.</li>
+    <li><code>AdminSuggestPostCard</code> and the past-post list (or successors), including sizing, overflow, empty states, and Schedule/Skip presentation.</li>
+  </ul>
+
+  <h2>Out of scope</h2>
+  <ul>
+    <li>#252 scroll-fill; #243 filters; #240 Choose Services</li>
+    <li>Redesigning the Filters drawer or other table columns</li>
+    <li>Mobile redesign beyond avoiding a Posts-cell regression</li>
+    <li>Filing issues, Slack updates, or marking agent-ready from the mock repo</li>
+  </ul>
+
+  <h2>Primary files</h2>
+  <p><code>imports/ui/admin/ManageAdvisorPosts.jsx</code> · <code>AdminSuggestPostCard</code> (or successor) · past-post list/styles used by Manage Advisor Posts</p>
+
+  <h2>Reference</h2>
+  <p><a href="directions/a/">Locked Direction A mock</a> · <a href="https://github.com/kartboy16/content-library/issues/254">content-library #254</a></p>
+
+  <h2>Handoff</h2>
+  <p>Implement against this contract and the locked mock. This task changes the mock repository only; no issue, Slack message, or agent-ready action is performed here.</p>
+  <p><a href="index.html">← Hub</a></p>
+</body>
+</html>

@@ -21,7 +21,7 @@
     .hero h1 { font-size: 1.75rem; margin-bottom: 10px; }
     .hero p { opacity: 0.92; max-width: 720px; font-size: 0.95rem; }
     .rec {
-      display: inline-block; margin-top: 18px; background: #fff; color: var(--blue);
+      display: inline-block; margin-top: 18px; background: #e8f5e9; color: #065f46;
       font-weight: 700; font-size: 0.8rem; padding: 8px 14px; border-radius: 999px;
     }
     .wrap { max-width: 880px; margin: 0 auto; padding: 28px 24px 72px; }
@@ -39,7 +39,8 @@
       transition: border-color 0.15s, box-shadow 0.15s;
     }
     .card:hover { border-color: var(--blue); box-shadow: 0 4px 16px rgba(30,42,74,0.08); }
-    .card.recd { border-color: var(--blue); box-shadow: 0 4px 16px rgba(43,125,233,0.12); }
+    .card.recd { border-color: #2b7de9; box-shadow: 0 4px 16px rgba(43,125,233,0.12); }
+    .card.locked { border-color: #1a7f4c; box-shadow: 0 4px 16px rgba(26,127,76,0.14); }
     .card h3 { font-size: 0.95rem; margin-bottom: 6px; color: var(--blue); }
     .card p { font-size: 0.8rem; color: var(--muted); }
     .card .tag {
@@ -47,6 +48,7 @@
       color: var(--blue); padding: 2px 8px; border-radius: 999px; margin-bottom: 8px;
     }
     .card .tag.rec-tag { background: var(--blue); color: #fff; }
+    .card .tag.locked-tag { background: #1a7f4c; color: #fff; }
     h2 { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--muted); margin: 28px 0 12px; }
     .ba { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 8px; }
     .ba > div { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 14px; font-size: 0.85rem; }
@@ -76,15 +78,17 @@
       <div class="eyebrow">FinancialContent · content-library #254 · Designer mocks</div>
       <h1>Manage Advisor Posts — Posts column density</h1>
       <p>Suggested-post cards are too tall; past posts and the suggestion carousel fight for vertical space. Only ~1 past post is visible, Schedule/Skip get clipped, and the advisor row feels cramped under the filter bar. Designer-first layout redesign of the <strong>Posts</strong> column.</p>
-      <span class="rec">Recommend · Direction A — Dense stack</span>
+      <span class="rec">Locked · Direction A — Dense stack · Alex 2026-09-25 (PT)</span>
     </div>
   </header>
 
   <div class="wrap">
     <a class="cta" href="directions/a/index.html">
-      Open Direction A (recommend)
+      Open Direction A (locked)
       <small>Compact past list + short suggest cards · Schedule always visible · ~2 advisor rows</small>
+      <small>Build contract: markdown + readable HTML</small>
     </a>
+    <p style="text-align:center;margin:-18px 0 24px;font-size:0.8rem;color:var(--muted)"><a href="build-contract.html">Read the locked build contract</a> · <a href="build-contract.md">Markdown</a></p>
 
     <div class="problem">
       <strong>Problem:</strong> Tall portrait suggestion cards (title on image + title below) dominate the Posts cell. Past list + carousel stack without a soft height cap → only one advisor row fits; action buttons clip under the carousel scrollbar.
@@ -105,13 +109,13 @@
     </div>
 
     <div class="constraint">
-      <strong>Scope notes:</strong> Independent of <code>#252</code> (Posts column scroll fills advisor row + Website-only) — do not wait on that. Also independent of crowded-filters (#243 Dir B) and Choose Services (#240). Mocks only until Alex locks; no full build-contract yet — see <a href="directions-brief.md">directions-brief.md</a>.
+      <strong>Scope notes:</strong> Independent of <code>#252</code> (Posts column scroll fills advisor row + Website-only) — do not wait on that. Also independent of crowded-filters (#243 Dir B) and Choose Services (#240). Direction A is locked by Alex. Read the <a href="build-contract.html">build contract</a> before implementation; the <a href="directions-brief.md">directions brief</a> remains the comparison context.
     </div>
 
     <h2>Directions</h2>
     <div class="grid">
-      <a class="card recd" href="directions/a/index.html">
-        <span class="tag rec-tag">RECOMMEND</span>
+      <a class="card locked" href="directions/a/index.html">
+        <span class="tag locked-tag">LOCKED</span>
         <h3>A — Dense stack</h3>
         <p>Keep past + suggestions stacked. Compact past list (scroll ~108px) + short cards (image ~80px, title once). Soft cap ~300px.</p>
       </a>
@@ -128,7 +132,7 @@
     </div>
 
     <h2>For Software / CoS</h2>
-    <p style="font-size:0.85rem;color:var(--muted)">Compare what each direction changes (still mocks — not locked): <a href="directions-brief.md">directions-brief.md</a></p>
+    <p style="font-size:0.85rem;color:var(--muted)">Implementation contract: <a href="build-contract.html">HTML</a> · <a href="build-contract.md">Markdown</a>. Comparison context: <a href="directions-brief.md">directions-brief.md</a></p>
 
     <div class="meta">
       <p>Issue: <a href="https://github.com/kartboy16/content-library/issues/254">content-library #254</a></p>
