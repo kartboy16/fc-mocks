@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Direction C — Advisor self-serve seats + firm overlay · #258</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #f4f8fc; --card: #fff; --ink: #1e2a4a; --muted: #5b6572;
+      --blue: #2b7de9; --blue-dark: #1e5bb8; --border: #d4e4f2; --mint: #e6f1fb;
+      --ok: #047857; --ok-bg: #e8f5e9; --warn: #b45309; --warn-bg: #fff8eb; --warn-border: #f0d4a8;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: Inter, system-ui, sans-serif; background: var(--bg); color: var(--ink); font-size: 13px; line-height: 1.45; }
+    a { color: var(--blue); }
+    .thesis {
+      background: linear-gradient(135deg, #1e2a4a, #2b7de9); color: #fff; padding: 16px 24px;
+    }
+    .thesis .alt {
+      display: inline-block; background: rgba(255,255,255,0.18); color: #fff; font-size: 0.68rem;
+      font-weight: 700; padding: 3px 10px; border-radius: 999px; margin-bottom: 8px;
+    }
+    .thesis h1 { font-size: 1.05rem; margin-bottom: 4px; }
+    .thesis p { opacity: 0.9; font-size: 0.8rem; max-width: 900px; }
+    .nav {
+      padding: 8px 24px; font-size: 0.75rem; background: #fafafa;
+      border-bottom: 1px solid var(--border); display: flex; gap: 12px; flex-wrap: wrap; align-items: center;
+    }
+    .nav a { color: var(--blue); text-decoration: none; font-weight: 500; }
+    .nav .sep { color: #c0c8d4; }
+    .nav .on { font-weight: 700; color: var(--ink); }
+    .steps {
+      display: flex; gap: 6px; flex-wrap: wrap; padding: 10px 24px; background: #fff;
+      border-bottom: 1px solid var(--border);
+    }
+    .step-btn {
+      border: 1px solid var(--border); background: #fff; color: var(--ink);
+      font-family: inherit; font-size: 0.72rem; font-weight: 600; padding: 6px 10px;
+      border-radius: 999px; cursor: pointer;
+    }
+    .step-btn:hover { border-color: var(--blue); color: var(--blue); background: var(--mint); }
+    .step-btn.on { background: var(--blue); color: #fff; border-color: var(--blue); }
+    .oq-bar {
+      margin: 12px 20px 0; padding: 10px 14px; background: var(--warn-bg); border: 1px solid var(--warn-border);
+      border-radius: 10px; font-size: 0.75rem; color: #8a5a10;
+    }
+    .oq-bar strong { color: #6b4408; }
+    .app { display: flex; min-height: calc(100vh - 160px); }
+    .rail {
+      width: 52px; background: #1e2a4a; flex-shrink: 0;
+      display: flex; flex-direction: column; align-items: center; padding: 12px 0; gap: 8px;
+    }
+    .rail .ri {
+      width: 32px; height: 32px; border-radius: 8px; background: rgba(255,255,255,0.08);
+      color: rgba(255,255,255,0.7); font-size: 0.65rem; font-weight: 700;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .rail .ri.on { background: var(--blue); color: #fff; }
+    .topbar {
+      display: flex; align-items: center; justify-content: space-between; gap: 12px;
+      padding: 10px 18px; background: #fff; border-bottom: 1px solid var(--border);
+    }
+    .topbar .brand { font-weight: 700; font-size: 0.9rem; }
+    .topbar .who { font-size: 0.75rem; color: var(--muted); }
+    .main { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+    .content { padding: 18px 20px 64px; max-width: 920px; }
+    .screen { display: none; }
+    .screen.on { display: block; }
+    .page-head h2 { font-size: 1.25rem; font-weight: 700; }
+    .page-head .sub { color: var(--muted); font-size: 0.8rem; margin-top: 4px; max-width: 680px; }
+    .badge-ex {
+      display: inline-block; font-size: 0.65rem; font-weight: 700; background: #f0f4f8;
+      color: var(--muted); padding: 2px 8px; border-radius: 999px; margin-left: 6px;
+    }
+    .branch {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 18px;
+    }
+    @media (max-width: 640px) { .branch { grid-template-columns: 1fr; } }
+    .branch-card {
+      background: #fff; border: 2px solid var(--border); border-radius: 12px; padding: 18px;
+      cursor: pointer; text-align: left; font-family: inherit; color: inherit;
+      transition: border-color 0.15s, box-shadow 0.15s;
+    }
+    .branch-card:hover, .branch-card.on {
+      border-color: var(--blue); box-shadow: 0 4px 16px rgba(43,125,233,0.12);
+    }
+    .branch-card .who-lbl {
+      font-size: 0.65rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em;
+      color: var(--blue); margin-bottom: 6px;
+    }
+    .branch-card h3 { font-size: 1rem; margin-bottom: 6px; }
+    .branch-card p { font-size: 0.8rem; color: var(--muted); }
+    .open-tag {
+      display: inline-block; margin-top: 10px; font-size: 0.68rem; font-weight: 700;
+      background: var(--warn-bg); color: var(--warn); padding: 3px 8px; border-radius: 999px;
+    }
+    .pricing-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px; margin-top: 16px;
+    }
+    .plan {
+      background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 18px;
+      display: flex; flex-direction: column; gap: 8px;
+    }
+    .plan.featured { border-color: var(--blue); }
+    .plan .name { font-weight: 700; }
+    .plan .price { font-size: 1.5rem; font-weight: 700; }
+    .plan .price span { font-size: 0.75rem; font-weight: 500; color: var(--muted); }
+    .plan ul { padding-left: 1.1rem; color: var(--muted); font-size: 0.78rem; }
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+      padding: 10px 16px; border-radius: 8px; font-family: inherit; font-size: 0.85rem;
+      font-weight: 600; cursor: pointer; border: 1px solid transparent;
+    }
+    .btn-primary { background: var(--blue); color: #fff; }
+    .btn-secondary { background: #fff; color: var(--ink); border-color: var(--border); }
+    .btn-secondary:hover { border-color: var(--blue); color: var(--blue); background: var(--mint); }
+    .btn-ghost { background: transparent; color: var(--blue); border: none; padding: 6px 0; }
+    .btn-block { width: 100%; }
+    .card-panel {
+      background: #fff; border: 1px solid var(--border); border-radius: 12px; padding: 18px; margin-top: 14px;
+    }
+    .card-panel h3 { font-size: 0.95rem; margin-bottom: 10px; }
+    .stat-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 10px; }
+    .stat {
+      background: var(--bg); border-radius: 10px; padding: 12px; border: 1px solid var(--border);
+    }
+    .stat .lbl { font-size: 0.65rem; font-weight: 700; text-transform: uppercase; color: var(--muted); }
+    .stat .val { font-size: 1rem; font-weight: 700; margin-top: 2px; }
+    .trial-chip {
+      display: inline-flex; background: var(--mint); color: var(--blue-dark);
+      font-weight: 700; font-size: 0.72rem; padding: 4px 10px; border-radius: 999px;
+    }
+    .banner {
+      display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap;
+      padding: 10px 14px; border-radius: 10px; margin-bottom: 14px; font-size: 0.8rem;
+    }
+    .banner.info { background: var(--mint); border: 1px solid var(--border); color: var(--blue-dark); }
+    .banner.warn { background: var(--warn-bg); border: 1px solid var(--warn-border); color: #8a5a10; }
+    .seats { margin-top: 12px; }
+    .seat-row {
+      display: flex; align-items: center; justify-content: space-between; gap: 10px;
+      padding: 10px 0; border-bottom: 1px solid #eef2f6; font-size: 0.8rem;
+    }
+    .seat-row:last-child { border-bottom: none; }
+    .avatar {
+      width: 28px; height: 28px; border-radius: 999px; background: var(--mint); color: var(--blue);
+      font-weight: 700; font-size: 0.65rem; display: inline-flex; align-items: center; justify-content: center;
+      margin-right: 8px;
+    }
+    .field { margin-bottom: 12px; }
+    .field label { display: block; font-size: 0.72rem; font-weight: 600; color: var(--muted); margin-bottom: 4px; }
+    .field input {
+      width: 100%; padding: 9px 11px; border: 1px solid var(--border); border-radius: 8px;
+      font-family: inherit; font-size: 0.85rem;
+    }
+    .actions { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 14px; }
+    .ph { font-size: 0.7rem; color: var(--muted); font-style: italic; margin-top: 8px; }
+    .hide-rail .rail, .hide-rail .topbar { display: none; }
+    .hide-rail .content { max-width: 100%; padding-top: 24px; }
+    .toast {
+      position: fixed; bottom: 24px; right: 24px; background: #1e2a4a; color: #fff;
+      padding: 10px 16px; border-radius: 8px; font-size: 0.8rem; display: none; z-index: 200;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+    }
+    .toast.show { display: block; animation: fadein 0.2s ease; }
+    @keyframes fadein { from { opacity: 0; transform: translateY(6px); } }
+  </style>
+</head>
+<body>
+  <header class="thesis">
+    <span class="alt">ALT · SURFACES FIRM VS ADVISOR</span>
+    <h1>Direction C — Advisor self-serve seats + optional firm overlay</h1>
+    <p>Explicit branch UI for the open question <strong>who pays</strong>. Advisor can start a personal 30-day trial, or firm admin buys seats (EXAMPLE Starter / Growth CAD). Seat invite stub + billing summary for both paths.</p>
+  </header>
+  <nav class="nav">
+    <a href="../../index.html">← Hub #258</a>
+    <span class="sep">·</span>
+    <a href="../a/index.html">A</a>
+    <a href="../b/index.html">B</a>
+    <a href="../c/index.html" class="on">C</a>
+    <span class="sep">·</span>
+    <a href="../../directions-brief.md">Brief</a>
+    <a href="../../build-contract.html">Build contract</a>
+  </nav>
+  <div class="steps" role="tablist">
+    <button type="button" class="step-btn on" data-screen="picker">1 · Plan picker / who pays</button>
+    <button type="button" class="step-btn" data-screen="advisor">2 · Advisor trial start</button>
+    <button type="button" class="step-btn" data-screen="firm">3 · Firm admin seats</button>
+    <button type="button" class="step-btn" data-screen="billing">4 · Billing summary</button>
+  </div>
+  <div class="oq-bar">
+    <strong>Open (not locked):</strong> Who pays — firm vs advisor? · Card required upfront? · Plan tiers / prices? · Existing accounts get a trial?
+    This direction’s job is to <em>surface</em> firm vs advisor — not lock it.
+  </div>
+
+  <div class="app" id="appShell">
+    <aside class="rail" aria-hidden="true">
+      <div class="ri">CL</div>
+      <div class="ri">MA</div>
+      <div class="ri">SM</div>
+      <div class="ri on">⚙</div>
+    </aside>
+    <div class="main">
+      <div class="topbar">
+        <div class="brand">FinancialContent</div>
+        <div class="who" id="topWho">Choose payer path</div>
+      </div>
+      <div class="content">
+
+        <section class="screen on" id="screen-picker" data-chrome="marketing">
+          <div class="page-head">
+            <h2>How will you pay?</h2>
+            <p class="sub">Open product question — firm vs advisor. Pick a branch to explore the mock. Prices are <strong>Example · not locked</strong>.</p>
+          </div>
+          <div class="branch">
+            <button type="button" class="branch-card" data-goto="advisor" id="branchAdv">
+              <div class="who-lbl">Advisor path</div>
+              <h3>I pay for myself</h3>
+              <p>Start a personal 30-day trial. EXAMPLE Starter or Growth. Card optional per product lock (shown with card-upfront stub here).</p>
+              <span class="open-tag">Open: firm vs advisor payer</span>
+            </button>
+            <button type="button" class="branch-card" data-goto="firm" id="branchFirm">
+              <div class="who-lbl">Firm admin path</div>
+              <h3>My firm buys seats</h3>
+              <p>Firm admin purchases seat packs, invites advisors. Overlay on firm Settings / Billing. EXAMPLE CAD tiers.</p>
+              <span class="open-tag">Open: firm vs advisor payer</span>
+            </button>
+          </div>
+          <div class="pricing-grid" style="margin-top:24px">
+            <div class="plan">
+              <div class="name">Starter <span class="badge-ex">Example · not locked</span></div>
+              <div class="price">$49 <span>CAD / mo</span></div>
+              <ul><li>1 advisor seat</li><li>30-day free trial</li><li>Core library</li></ul>
+            </div>
+            <div class="plan featured">
+              <div class="name">Growth <span class="badge-ex">Example · not locked</span></div>
+              <div class="price">$129 <span>CAD / mo</span></div>
+              <ul><li>Up to 10 seats (example)</li><li>30-day free trial</li><li>Library + scheduling</li></ul>
+            </div>
+          </div>
+          <p class="ph">Tier names and CAD amounts are placeholders for product/pricing lock.</p>
+        </section>
+
+        <section class="screen" id="screen-advisor" data-chrome="app">
+          <div class="banner info">
+            <span><span class="trial-chip">Advisor trial</span> · Personal seat · Ends Oct 26, 2026</span>
+          </div>
+          <div class="page-head">
+            <h2>Start advisor trial</h2>
+            <p class="sub">Self-serve path. Stripe Checkout stub (playground). Firm overlay not required for this seat.</p>
+          </div>
+          <div class="card-panel" style="max-width:440px">
+            <h3>Advisor · Growth <span class="badge-ex">Example · not locked</span></h3>
+            <div class="field"><label>Email</label><input type="email" value="jordan@pacificwealth.ca" readonly /></div>
+            <div class="field"><label>Plan</label><input type="text" value="Growth · $129 CAD/mo after trial (example)" readonly /></div>
+            <div class="field"><label>Card (stub)</label><input type="text" value="4242 4242 4242 4242" readonly /></div>
+            <button type="button" class="btn btn-primary btn-block" data-goto="billing" data-payer="advisor">Start 30-day trial</button>
+            <p class="ph">Card-upfront shown as one option; soft trial still an open question (see Direction B).</p>
+            <button type="button" class="btn btn-ghost" data-goto="picker">← Change who pays</button>
+          </div>
+        </section>
+
+        <section class="screen" id="screen-firm" data-chrome="app">
+          <div class="banner warn">
+            <span><strong>Firm overlay:</strong> Pacific Wealth Partners pays · advisors get seats via invite · Open: firm vs advisor payer</span>
+          </div>
+          <div class="page-head">
+            <h2>Firm seats</h2>
+            <p class="sub">Firm admin buys a seat pack (EXAMPLE Growth). Invite advisors. Billing stays on the firm.</p>
+          </div>
+          <div class="card-panel">
+            <h3>Seat pack · Growth <span class="badge-ex">Example · not locked</span></h3>
+            <div class="stat-row">
+              <div class="stat"><div class="lbl">Seats</div><div class="val">10 included</div></div>
+              <div class="stat"><div class="lbl">Used</div><div class="val">3 / 10</div></div>
+              <div class="stat"><div class="lbl">Price</div><div class="val">$129 CAD/mo</div></div>
+              <div class="stat"><div class="lbl">Trial</div><div class="val">30 days</div></div>
+            </div>
+            <div class="seats">
+              <div class="seat-row">
+                <span><span class="avatar">AH</span>Alex Hung · Admin</span>
+                <span style="color:var(--ok);font-weight:600">Active</span>
+              </div>
+              <div class="seat-row">
+                <span><span class="avatar">JM</span>Jordan Mills · Advisor</span>
+                <span style="color:var(--ok);font-weight:600">Active</span>
+              </div>
+              <div class="seat-row">
+                <span><span class="avatar">SC</span>Sarah Chen · Advisor</span>
+                <span style="color:var(--muted)">Invite pending</span>
+              </div>
+            </div>
+            <div class="actions">
+              <div class="field" style="flex:1;min-width:200px;margin:0">
+                <label>Invite email</label>
+                <input type="email" id="inviteEmail" placeholder="advisor@firm.ca" />
+              </div>
+              <button type="button" class="btn btn-secondary" id="inviteBtn" style="align-self:flex-end">Send invite (stub)</button>
+            </div>
+            <div class="actions">
+              <button type="button" class="btn btn-primary" data-goto="billing" data-payer="firm">Continue to billing summary</button>
+              <button type="button" class="btn btn-ghost" data-goto="picker">← Change who pays</button>
+            </div>
+            <p class="ph">Seat invite is a stub — no email sent. Existing-account trial eligibility still open.</p>
+          </div>
+        </section>
+
+        <section class="screen" id="screen-billing" data-chrome="app">
+          <div class="banner info" id="billingBanner">
+            <span><span class="trial-chip">Trial · ends Oct 26, 2026</span> · Billing summary</span>
+          </div>
+          <div class="page-head">
+            <h2>Billing summary</h2>
+            <p class="sub">Reflects the branch you chose. Switch paths from the plan picker to compare firm vs advisor payer UX.</p>
+          </div>
+          <div class="card-panel">
+            <h3 id="billingTitle">Subscription</h3>
+            <div class="stat-row">
+              <div class="stat"><div class="lbl">Payer</div><div class="val" id="billPayer">—</div></div>
+              <div class="stat"><div class="lbl">Plan</div><div class="val" id="billPlan">Growth <span class="badge-ex">Example</span></div></div>
+              <div class="stat"><div class="lbl">Amount</div><div class="val" id="billAmt">$129 CAD/mo</div></div>
+              <div class="stat"><div class="lbl">Status</div><div class="val">Trial active</div></div>
+            </div>
+            <div class="actions">
+              <button type="button" class="btn btn-secondary" id="portalC">Manage billing (portal stub)</button>
+              <button type="button" class="btn btn-ghost" data-goto="picker">↺ Back to who-pays picker</button>
+            </div>
+            <p class="ph">Provisional until Alex/Angelina lock payer model and prices.</p>
+          </div>
+        </section>
+
+      </div>
+    </div>
+  </div>
+  <div class="toast" id="toast"></div>
+
+  <script>
+    (function () {
+      var shell = document.getElementById('appShell');
+      var toast = document.getElementById('toast');
+      var topWho = document.getElementById('topWho');
+      var buttons = document.querySelectorAll('.step-btn');
+      var screens = document.querySelectorAll('.screen');
+      var payer = 'advisor';
+
+      function showToast(msg) {
+        toast.textContent = msg;
+        toast.classList.add('show');
+        clearTimeout(showToast._t);
+        showToast._t = setTimeout(function () { toast.classList.remove('show'); }, 2200);
+      }
+      function setPayer(p) {
+        payer = p;
+        try { localStorage.setItem('fc258-c-payer', p); } catch (e) {}
+        var firm = p === 'firm';
+        topWho.textContent = firm ? 'Pacific Wealth Partners · Firm admin' : 'Jordan Mills · Advisor';
+        document.getElementById('billPayer').textContent = firm ? 'Firm' : 'Advisor';
+        document.getElementById('billPlan').innerHTML = 'Growth <span class="badge-ex">Example</span>';
+        document.getElementById('billAmt').textContent = '$129 CAD/mo';
+        document.getElementById('billingTitle').textContent = firm ? 'Firm subscription' : 'Advisor subscription';
+        document.getElementById('billingBanner').innerHTML = firm
+          ? '<span><span class="trial-chip">Firm trial · ends Oct 26, 2026</span> · Seats billed to firm</span>'
+          : '<span><span class="trial-chip">Advisor trial · ends Oct 26, 2026</span> · Personal billing</span>';
+      }
+      function go(id) {
+        screens.forEach(function (s) { s.classList.toggle('on', s.id === 'screen-' + id); });
+        buttons.forEach(function (b) { b.classList.toggle('on', b.getAttribute('data-screen') === id); });
+        var active = document.getElementById('screen-' + id);
+        var chrome = active && active.getAttribute('data-chrome');
+        shell.classList.toggle('hide-rail', chrome === 'marketing');
+        try { localStorage.setItem('fc258-c-screen', id); } catch (e) {}
+      }
+
+      buttons.forEach(function (b) {
+        b.addEventListener('click', function () { go(b.getAttribute('data-screen')); });
+      });
+      document.querySelectorAll('[data-goto]').forEach(function (el) {
+        el.addEventListener('click', function () {
+          var id = el.getAttribute('data-goto');
+          var p = el.getAttribute('data-payer');
+          if (id === 'advisor') setPayer('advisor');
+          if (id === 'firm') setPayer('firm');
+          if (p) setPayer(p);
+          go(id);
+          if (id === 'billing') showToast('Trial started · ' + payer + ' payer (demo)');
+        });
+      });
+      document.getElementById('inviteBtn').addEventListener('click', function () {
+        var em = document.getElementById('inviteEmail').value || 'advisor@firm.ca';
+        showToast('Invite stub sent to ' + em);
+      });
+      document.getElementById('portalC').addEventListener('click', function () {
+        showToast('Customer Portal stub — playground only');
+      });
+
+      var savedP = null, savedS = null;
+      try {
+        savedP = localStorage.getItem('fc258-c-payer');
+        savedS = localStorage.getItem('fc258-c-screen');
+      } catch (e) {}
+      setPayer(savedP || 'advisor');
+      go(savedS || 'picker');
+    })();
+  </script>
+</body>
+</html>

@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Direction B — Soft trial (no card until convert) · #258</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #f4f8fc; --card: #fff; --ink: #1e2a4a; --muted: #5b6572;
+      --blue: #2b7de9; --blue-dark: #1e5bb8; --border: #d4e4f2; --mint: #e6f1fb;
+      --ok: #047857; --ok-bg: #e8f5e9; --warn: #b45309; --warn-bg: #fff8eb; --warn-border: #f0d4a8;
+      --danger: #c62828; --danger-bg: #fff5f5;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: Inter, system-ui, sans-serif; background: var(--bg); color: var(--ink); font-size: 13px; line-height: 1.45; }
+    a { color: var(--blue); }
+    .thesis {
+      background: linear-gradient(135deg, #1e2a4a, #2b7de9); color: #fff; padding: 16px 24px;
+    }
+    .thesis .alt {
+      display: inline-block; background: rgba(255,255,255,0.18); color: #fff; font-size: 0.68rem;
+      font-weight: 700; padding: 3px 10px; border-radius: 999px; margin-bottom: 8px;
+    }
+    .thesis h1 { font-size: 1.05rem; margin-bottom: 4px; }
+    .thesis p { opacity: 0.9; font-size: 0.8rem; max-width: 900px; }
+    .nav {
+      padding: 8px 24px; font-size: 0.75rem; background: #fafafa;
+      border-bottom: 1px solid var(--border); display: flex; gap: 12px; flex-wrap: wrap; align-items: center;
+    }
+    .nav a { color: var(--blue); text-decoration: none; font-weight: 500; }
+    .nav .sep { color: #c0c8d4; }
+    .nav .on { font-weight: 700; color: var(--ink); }
+    .steps {
+      display: flex; gap: 6px; flex-wrap: wrap; padding: 10px 24px; background: #fff;
+      border-bottom: 1px solid var(--border); align-items: center;
+    }
+    .step-btn {
+      border: 1px solid var(--border); background: #fff; color: var(--ink);
+      font-family: inherit; font-size: 0.72rem; font-weight: 600; padding: 6px 10px;
+      border-radius: 999px; cursor: pointer;
+    }
+    .step-btn:hover { border-color: var(--blue); color: var(--blue); background: var(--mint); }
+    .step-btn.on { background: var(--blue); color: #fff; border-color: var(--blue); }
+    .oq-bar {
+      margin: 12px 20px 0; padding: 10px 14px; background: var(--warn-bg); border: 1px solid var(--warn-border);
+      border-radius: 10px; font-size: 0.75rem; color: #8a5a10;
+    }
+    .oq-bar strong { color: #6b4408; }
+    .app { display: flex; min-height: calc(100vh - 160px); }
+    .rail {
+      width: 52px; background: #1e2a4a; flex-shrink: 0;
+      display: flex; flex-direction: column; align-items: center; padding: 12px 0; gap: 8px;
+    }
+    .rail .ri {
+      width: 32px; height: 32px; border-radius: 8px; background: rgba(255,255,255,0.08);
+      color: rgba(255,255,255,0.7); font-size: 0.65rem; font-weight: 700;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .rail .ri.on { background: var(--blue); color: #fff; }
+    .topbar {
+      display: flex; align-items: center; justify-content: space-between; gap: 12px;
+      padding: 10px 18px; background: #fff; border-bottom: 1px solid var(--border);
+    }
+    .topbar .brand { font-weight: 700; font-size: 0.9rem; }
+    .topbar .who { font-size: 0.75rem; color: var(--muted); display: flex; align-items: center; gap: 8px; }
+    .main { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+    .content { padding: 18px 20px 64px; max-width: 880px; }
+    .screen { display: none; }
+    .screen.on { display: block; }
+    .page-head h2 { font-size: 1.25rem; font-weight: 700; }
+    .page-head .sub { color: var(--muted); font-size: 0.8rem; margin-top: 4px; max-width: 640px; }
+    .badge-ex {
+      display: inline-block; font-size: 0.65rem; font-weight: 700; background: #f0f4f8;
+      color: var(--muted); padding: 2px 8px; border-radius: 999px; margin-left: 6px;
+    }
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+      padding: 10px 16px; border-radius: 8px; font-family: inherit; font-size: 0.85rem;
+      font-weight: 600; cursor: pointer; border: 1px solid transparent; text-decoration: none;
+    }
+    .btn-primary { background: var(--blue); color: #fff; }
+    .btn-primary:hover { filter: brightness(1.05); }
+    .btn-secondary { background: #fff; color: var(--ink); border-color: var(--border); }
+    .btn-secondary:hover { border-color: var(--blue); color: var(--blue); background: var(--mint); }
+    .btn-ghost { background: transparent; color: var(--blue); border: none; padding: 6px 0; }
+    .btn-block { width: 100%; }
+    .signup {
+      max-width: 420px; margin: 18px auto 0; background: #fff; border: 1px solid var(--border);
+      border-radius: 12px; padding: 22px; box-shadow: 0 4px 20px rgba(30,42,74,0.06);
+    }
+    .field { margin-bottom: 12px; }
+    .field label { display: block; font-size: 0.72rem; font-weight: 600; color: var(--muted); margin-bottom: 4px; }
+    .field input {
+      width: 100%; padding: 9px 11px; border: 1px solid var(--border); border-radius: 8px;
+      font-family: inherit; font-size: 0.85rem; background: #fff;
+    }
+    .soft-note {
+      margin: 12px 0; padding: 8px 10px; background: var(--ok-bg); border-radius: 8px;
+      font-size: 0.72rem; color: #065f46;
+    }
+    .ph { font-size: 0.7rem; color: var(--muted); font-style: italic; margin-top: 8px; }
+    .trial-chip {
+      display: inline-flex; align-items: center; gap: 6px; background: var(--mint); color: var(--blue-dark);
+      font-weight: 700; font-size: 0.72rem; padding: 4px 10px; border-radius: 999px;
+    }
+    .trial-chip.warn { background: var(--warn-bg); color: var(--warn); }
+    .trial-chip.danger { background: var(--danger-bg); color: var(--danger); }
+    .trial-chip.ok { background: var(--ok-bg); color: var(--ok); }
+    .banner {
+      display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap;
+      padding: 10px 14px; border-radius: 10px; margin-bottom: 14px; font-size: 0.8rem;
+    }
+    .banner.info { background: var(--mint); border: 1px solid var(--border); color: var(--blue-dark); }
+    .banner.warn { background: var(--warn-bg); border: 1px solid var(--warn-border); color: #8a5a10; }
+    .banner.danger { background: var(--danger-bg); border: 1px solid #f5c2c2; color: var(--danger); }
+    .banner.ok { background: var(--ok-bg); border: 1px solid #a7d7b5; color: #065f46; }
+    .card-panel {
+      background: #fff; border: 1px solid var(--border); border-radius: 12px; padding: 18px; margin-top: 14px;
+    }
+    .card-panel h3 { font-size: 0.95rem; margin-bottom: 10px; }
+    .home-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; margin-top: 14px; }
+    .home-card {
+      background: #fff; border: 1px solid var(--border); border-radius: 10px; padding: 14px;
+    }
+    .home-card .t { font-weight: 700; font-size: 0.85rem; }
+    .home-card .d { color: var(--muted); font-size: 0.75rem; margin-top: 4px; }
+    .stat-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; }
+    .stat {
+      background: var(--bg); border-radius: 10px; padding: 12px; border: 1px solid var(--border);
+    }
+    .stat .lbl { font-size: 0.65rem; font-weight: 700; text-transform: uppercase; color: var(--muted); }
+    .stat .val { font-size: 1.05rem; font-weight: 700; margin-top: 2px; }
+    .actions { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 14px; }
+    .modal-overlay {
+      position: fixed; inset: 0; background: rgba(30,42,74,0.4); display: none;
+      align-items: center; justify-content: center; z-index: 100; padding: 16px;
+    }
+    .modal-overlay.open { display: flex; }
+    .modal {
+      width: min(440px, 100%); background: #fff; border-radius: 12px; padding: 22px;
+      box-shadow: 0 16px 40px rgba(30,42,74,0.25);
+    }
+    .modal h3 { font-size: 1rem; margin-bottom: 4px; }
+    .modal .hint { font-size: 0.75rem; color: var(--muted); margin-bottom: 14px; }
+    .paywall {
+      max-width: 480px; margin: 40px auto; text-align: center; background: #fff;
+      border: 1px solid var(--border); border-radius: 12px; padding: 32px 24px;
+    }
+    .paywall .lock {
+      width: 56px; height: 56px; border-radius: 999px; background: var(--danger-bg); color: var(--danger);
+      display: flex; align-items: center; justify-content: center; font-size: 1.4rem; margin: 0 auto 14px;
+    }
+    .hide-rail .rail, .hide-rail .topbar { display: none; }
+    .hide-rail .content { max-width: 100%; padding-top: 24px; }
+    .toast {
+      position: fixed; bottom: 24px; right: 24px; background: #1e2a4a; color: #fff;
+      padding: 10px 16px; border-radius: 8px; font-size: 0.8rem; display: none; z-index: 200;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+    }
+    .toast.show { display: block; animation: fadein 0.2s ease; }
+    @keyframes fadein { from { opacity: 0; transform: translateY(6px); } }
+  </style>
+</head>
+<body>
+  <header class="thesis">
+    <span class="alt">ALT · LOWER FRICTION</span>
+    <h1>Direction B — Soft trial (no card until convert)</h1>
+    <p>Signup starts a 30-day trial <strong>without</strong> a card. Persistent trial chip/banner in-app. Before or at trial end, add payment via <strong>Stripe Payment Element</strong> stub. Expired state shows a paywall. Surfaces open Q: card-upfront vs soft trial.</p>
+  </header>
+  <nav class="nav">
+    <a href="../../index.html">← Hub #258</a>
+    <span class="sep">·</span>
+    <a href="../a/index.html">A</a>
+    <a href="../b/index.html" class="on">B</a>
+    <a href="../c/index.html">C</a>
+    <span class="sep">·</span>
+    <a href="../../directions-brief.md">Brief</a>
+    <a href="../../build-contract.html">Build contract</a>
+  </nav>
+  <div class="steps" role="tablist">
+    <button type="button" class="step-btn on" data-screen="signup">1 · Signup / start trial</button>
+    <button type="button" class="step-btn" data-screen="home">2 · App home + trial banner</button>
+    <button type="button" class="step-btn" data-screen="pay">3 · Add payment</button>
+    <button type="button" class="step-btn" data-screen="expired">4 · Expired paywall</button>
+    <button type="button" class="step-btn" data-screen="billing">5 · Billing after convert</button>
+  </div>
+  <div class="oq-bar">
+    <strong>Open (not locked):</strong> Who pays — firm vs advisor? · Card required upfront? · Plan tiers / prices? · Existing accounts get a trial?
+    Soft trial answers “card upfront?” with <em>no</em> for this direction only — still a product decision.
+  </div>
+
+  <div class="app" id="appShell">
+    <aside class="rail" aria-hidden="true">
+      <div class="ri on">CL</div>
+      <div class="ri">MA</div>
+      <div class="ri">SM</div>
+      <div class="ri">⚙</div>
+    </aside>
+    <div class="main">
+      <div class="topbar">
+        <div class="brand">FinancialContent</div>
+        <div class="who">
+          <span class="trial-chip" id="topChip">Trial · 28 days left</span>
+          Jordan Mills · Advisor
+        </div>
+      </div>
+      <div class="content">
+
+        <section class="screen on" id="screen-signup" data-chrome="marketing">
+          <div class="signup">
+            <h2 style="font-size:1.15rem;margin-bottom:4px">Start free — no card needed</h2>
+            <p style="font-size:0.8rem;color:var(--muted);margin-bottom:14px">30-day trial of FinancialContent. Add a payment method before the trial ends. <span class="badge-ex">Example · not locked</span></p>
+            <div class="soft-note">No card collected at signup (this direction). Conversion uses Stripe Payment Element later.</div>
+            <div class="field">
+              <label>Work email</label>
+              <input type="email" value="jordan@pacificwealth.ca" />
+            </div>
+            <div class="field">
+              <label>Full name</label>
+              <input type="text" value="Jordan Mills" />
+            </div>
+            <div class="field">
+              <label>Firm (optional)</label>
+              <input type="text" value="Pacific Wealth Partners" />
+            </div>
+            <button type="button" class="btn btn-primary btn-block" data-goto="home">Start 30-day free trial</button>
+            <p class="ph">Signup / legal copy placeholder. Existing-account trial eligibility still open.</p>
+          </div>
+        </section>
+
+        <section class="screen" id="screen-home" data-chrome="app">
+          <div class="banner info">
+            <span><span class="trial-chip">Trial · ends Oct 26, 2026</span> · No payment method yet · Add payment anytime</span>
+            <button type="button" class="btn btn-primary" id="openPayFromHome">Add payment</button>
+          </div>
+          <div class="page-head">
+            <h2>Home</h2>
+            <p class="sub">Advisor app chrome. Trial banner persists until convert or expiry. Mock Canadian content tiles.</p>
+          </div>
+          <div class="home-cards">
+            <div class="home-card"><div class="t">Suggested posts</div><div class="d">B.C. Budget 2026 · RRSP checklist</div></div>
+            <div class="home-card"><div class="t">Calendar</div><div class="d">3 scheduled this week</div></div>
+            <div class="home-card"><div class="t">Library</div><div class="d">Canada Money Facts · Tax Tips</div></div>
+          </div>
+          <div class="actions">
+            <button type="button" class="btn btn-secondary" data-goto="expired">Simulate trial expired →</button>
+            <button type="button" class="btn btn-ghost" data-goto="pay">Go to Add payment screen →</button>
+          </div>
+        </section>
+
+        <section class="screen" id="screen-pay" data-chrome="app">
+          <div class="banner warn">
+            <span><span class="trial-chip warn">Trial · 5 days left</span> · Add a payment method to keep access after Oct 26, 2026</span>
+          </div>
+          <div class="page-head">
+            <h2>Add payment method</h2>
+            <p class="sub">Stripe Payment Element stub — playground / test mode. No live keys. Example plan price shown.</p>
+          </div>
+          <div class="card-panel" style="max-width:440px">
+            <h3>Payment <span class="badge-ex">Payment Element stub</span></h3>
+            <div class="field">
+              <label>Card</label>
+              <input type="text" value="4242 4242 4242 4242" readonly />
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+              <div class="field"><label>Expiry</label><input type="text" value="12 / 28" readonly /></div>
+              <div class="field"><label>CVC</label><input type="text" value="123" readonly /></div>
+            </div>
+            <div class="field">
+              <label>Plan after trial</label>
+              <input type="text" value="Advisor · $49 CAD/mo (Example · not locked)" readonly />
+            </div>
+            <button type="button" class="btn btn-primary btn-block" data-goto="billing" id="savePay">Save &amp; continue trial</button>
+            <p class="ph">Who pays still open — this mock shows advisor self-serve as one branch of soft trial.</p>
+          </div>
+        </section>
+
+        <section class="screen" id="screen-expired" data-chrome="marketing">
+          <div class="paywall">
+            <div class="lock">🔒</div>
+            <h2 style="font-size:1.2rem;margin-bottom:6px">Trial ended</h2>
+            <p style="color:var(--muted);font-size:0.85rem;margin-bottom:16px">Your 30-day free trial ended on Oct 26, 2026. Add a payment method to restore access. <span class="badge-ex">Example · not locked</span></p>
+            <p style="font-size:0.8rem;margin-bottom:16px"><strong>$49 CAD/mo</strong> Advisor plan (example) · or contact firm admin if firm pays</p>
+            <div class="actions" style="justify-content:center">
+              <button type="button" class="btn btn-primary" id="openPayFromPaywall">Add payment</button>
+              <button type="button" class="btn btn-secondary" data-goto="home">← Back to home (demo)</button>
+            </div>
+            <p class="ph">Paywall / legal copy placeholder for compliance review.</p>
+          </div>
+        </section>
+
+        <section class="screen" id="screen-billing" data-chrome="app">
+          <div class="banner ok">
+            <span><span class="trial-chip ok">Active</span> · Payment on file · Converts / renewed at example price</span>
+          </div>
+          <div class="page-head">
+            <h2>Billing</h2>
+            <p class="sub">After Payment Element success. Soft trial converted without card-at-signup friction.</p>
+          </div>
+          <div class="card-panel">
+            <h3>Subscription</h3>
+            <div class="stat-row">
+              <div class="stat"><div class="lbl">Status</div><div class="val" style="color:var(--ok)">Active</div></div>
+              <div class="stat"><div class="lbl">Plan</div><div class="val">Advisor <span class="badge-ex">Example</span></div></div>
+              <div class="stat"><div class="lbl">Amount</div><div class="val">$49 CAD/mo</div></div>
+              <div class="stat"><div class="lbl">Method</div><div class="val">•••• 4242</div></div>
+            </div>
+            <div class="actions">
+              <button type="button" class="btn btn-ghost" data-goto="signup">↺ Restart from signup</button>
+            </div>
+          </div>
+        </section>
+
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="payModal" aria-hidden="true">
+    <div class="modal" role="dialog" aria-label="Add payment">
+      <h3>Add payment <span class="badge-ex">Payment Element stub</span></h3>
+      <p class="hint">Modal variant from home / paywall. Stripe test mode — no real charge.</p>
+      <div class="field"><label>Card</label><input type="text" value="4242 4242 4242 4242" readonly /></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+        <div class="field"><label>Expiry</label><input type="text" value="12 / 28" readonly /></div>
+        <div class="field"><label>CVC</label><input type="text" value="123" readonly /></div>
+      </div>
+      <button type="button" class="btn btn-primary btn-block" id="modalSave">Save payment method</button>
+      <button type="button" class="btn btn-ghost" id="modalClose" style="margin-top:8px">Cancel</button>
+    </div>
+  </div>
+  <div class="toast" id="toast"></div>
+
+  <script>
+    (function () {
+      var shell = document.getElementById('appShell');
+      var toast = document.getElementById('toast');
+      var modal = document.getElementById('payModal');
+      var buttons = document.querySelectorAll('.step-btn');
+      var screens = document.querySelectorAll('.screen');
+
+      function showToast(msg) {
+        toast.textContent = msg;
+        toast.classList.add('show');
+        clearTimeout(showToast._t);
+        showToast._t = setTimeout(function () { toast.classList.remove('show'); }, 2200);
+      }
+      function go(id) {
+        screens.forEach(function (s) { s.classList.toggle('on', s.id === 'screen-' + id); });
+        buttons.forEach(function (b) { b.classList.toggle('on', b.getAttribute('data-screen') === id); });
+        var active = document.getElementById('screen-' + id);
+        var chrome = active && active.getAttribute('data-chrome');
+        shell.classList.toggle('hide-rail', chrome === 'marketing');
+        try { localStorage.setItem('fc258-b-screen', id); } catch (e) {}
+      }
+      function openModal() { modal.classList.add('open'); modal.setAttribute('aria-hidden', 'false'); }
+      function closeModal() { modal.classList.remove('open'); modal.setAttribute('aria-hidden', 'true'); }
+
+      buttons.forEach(function (b) {
+        b.addEventListener('click', function () { go(b.getAttribute('data-screen')); closeModal(); });
+      });
+      document.querySelectorAll('[data-goto]').forEach(function (el) {
+        el.addEventListener('click', function () {
+          var id = el.getAttribute('data-goto');
+          go(id);
+          if (id === 'home') showToast('Trial started — no card collected');
+          if (id === 'billing') showToast('Payment saved · converted (demo)');
+        });
+      });
+      document.getElementById('openPayFromHome').addEventListener('click', openModal);
+      document.getElementById('openPayFromPaywall').addEventListener('click', function () { go('pay'); });
+      document.getElementById('modalClose').addEventListener('click', closeModal);
+      document.getElementById('modalSave').addEventListener('click', function () {
+        closeModal();
+        go('billing');
+        showToast('Payment Element stub · method saved');
+      });
+      modal.addEventListener('click', function (e) { if (e.target === modal) closeModal(); });
+
+      var saved = null;
+      try { saved = localStorage.getItem('fc258-b-screen'); } catch (e) {}
+      go(saved || 'signup');
+    })();
+  </script>
+</body>
+</html>

@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>FC — #258 30-day free trial + Stripe integration</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #f4f8fc; --card: #fff; --ink: #1e2a4a; --muted: #5b6572;
+      --blue: #2b7de9; --border: #d4e4f2; --mint: #e6f1fb;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: Inter, system-ui, sans-serif; background: var(--bg); color: var(--ink); line-height: 1.55; }
+    .hero {
+      background: linear-gradient(135deg, #1e2a4a 0%, #2b7de9 100%);
+      color: #fff; padding: 40px 24px 36px;
+    }
+    .hero-inner { max-width: 880px; margin: 0 auto; }
+    .hero .eyebrow { font-size: 0.75rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; opacity: 0.85; margin-bottom: 10px; }
+    .hero h1 { font-size: 1.75rem; margin-bottom: 10px; }
+    .hero p { opacity: 0.92; max-width: 720px; font-size: 0.95rem; }
+    .rec {
+      display: inline-block; margin-top: 18px; background: #e8f5e9; color: #065f46;
+      font-weight: 700; font-size: 0.8rem; padding: 8px 14px; border-radius: 999px;
+    }
+    .wrap { max-width: 880px; margin: 0 auto; padding: 28px 24px 72px; }
+    .cta {
+      display: block; background: var(--blue); color: #fff !important; text-decoration: none;
+      text-align: center; padding: 16px 24px; border-radius: 12px; font-weight: 700;
+      font-size: 1rem; margin-bottom: 28px; box-shadow: 0 4px 16px rgba(43,125,233,0.35);
+    }
+    .cta:hover { filter: brightness(1.05); }
+    .cta small { display: block; font-weight: 500; opacity: 0.9; font-size: 0.8rem; margin-top: 4px; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 14px; }
+    .card {
+      background: var(--card); border: 1px solid var(--border); border-radius: 12px;
+      padding: 18px; text-decoration: none; color: inherit; display: block;
+      transition: border-color 0.15s, box-shadow 0.15s;
+    }
+    .card:hover { border-color: var(--blue); box-shadow: 0 4px 16px rgba(30,42,74,0.08); }
+    .card.recd { border-color: #2b7de9; box-shadow: 0 4px 16px rgba(43,125,233,0.12); }
+    .card h3 { font-size: 0.95rem; margin-bottom: 6px; color: var(--blue); }
+    .card p { font-size: 0.8rem; color: var(--muted); }
+    .card .tag {
+      display: inline-block; font-size: 0.65rem; font-weight: 700; background: var(--mint);
+      color: var(--blue); padding: 2px 8px; border-radius: 999px; margin-bottom: 8px;
+    }
+    .card .tag.rec-tag { background: var(--blue); color: #fff; }
+    h2 { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--muted); margin: 28px 0 12px; }
+    .problem {
+      margin: 0 0 20px; padding: 14px 16px; background: #fff8eb; border: 1px solid #f0d4a8;
+      border-radius: 10px; font-size: 0.85rem; color: #8a5a10;
+    }
+    .problem strong { color: #6b4408; }
+    .oq {
+      margin: 0 0 20px; padding: 14px 16px; background: #fff; border: 1px solid var(--border);
+      border-radius: 10px; font-size: 0.85rem;
+    }
+    .oq strong { display: block; margin-bottom: 8px; color: var(--ink); }
+    .oq ol { padding-left: 1.2rem; color: var(--muted); }
+    .oq li { margin-bottom: 4px; }
+    .oq .open { color: #b45309; font-weight: 600; font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.04em; }
+    .playground {
+      margin: 16px 0 0; padding: 12px 14px; background: #eef4fb; border: 1px solid var(--border);
+      border-radius: 10px; font-size: 0.85rem; color: var(--ink);
+    }
+    .constraint {
+      margin: 16px 0 0; padding: 12px 14px; background: #e8f5e9; border: 1px solid #a7d7b5;
+      border-radius: 10px; font-size: 0.85rem; color: #065f46;
+    }
+    .meta { margin-top: 32px; font-size: 0.8rem; color: var(--muted); }
+    .meta a { color: var(--blue); }
+    code { background: #eef2f6; padding: 0.1em 0.35em; border-radius: 4px; font-size: 0.85em; }
+  </style>
+</head>
+<body>
+  <header class="hero">
+    <div class="hero-inner">
+      <div class="eyebrow">FinancialContent · content-library #258 · Idea / playground</div>
+      <h1>30-day free trial + Stripe integration</h1>
+      <p>Angelina ask: add a 30-day free trial and Stripe billing. Designer-first mocks — three directions for firm vs advisor payer, card-upfront vs soft trial, and self-serve seats. <strong>Not</strong> staging/main.</p>
+      <span class="rec">Recommend · Direction A — Firm checkout + card-upfront trial</span>
+    </div>
+  </header>
+
+  <div class="wrap">
+    <a class="cta" href="directions/a/index.html">
+      Open Direction A (recommended)
+      <small>Firm pays · Stripe Checkout stub · 30-day trial with card collected now · Billing + portal</small>
+    </a>
+    <p style="text-align:center;margin:-18px 0 24px;font-size:0.8rem;color:var(--muted)">
+      <a href="build-contract.html">Provisional build contract</a> ·
+      <a href="build-contract.md">Markdown</a> ·
+      <a href="directions-brief.md">Directions brief</a>
+    </p>
+
+    <div class="problem">
+      <strong>Problem:</strong> FinancialContent needs a clear 30-day free trial path and Stripe-backed payment/subscription after (or at) trial start. Product questions (who pays, card upfront, tiers, existing accounts) are still open — mocks must surface them, not invent locked answers.
+    </div>
+
+    <div class="oq">
+      <span class="open">Open product questions — do not invent locked answers</span>
+      <strong>Must resolve before agent-ready</strong>
+      <ol>
+        <li>Who pays — <strong>firm</strong> vs <strong>advisor</strong>?</li>
+        <li><strong>Card required upfront</strong> for trial?</li>
+        <li><strong>Plan tiers / prices?</strong> (mocks use clearly labeled EXAMPLE / placeholder CAD only)</li>
+        <li>Do <strong>existing accounts</strong> get a trial?</li>
+      </ol>
+    </div>
+
+    <div class="playground">
+      <strong>Playground note:</strong> Track is <strong>Idea / playground</strong>. Stripe flows are <em>stubs</em> (Checkout UI, Payment Element shell, Customer Portal link) — no live keys, no real charges. Prices marked <code>Example · not locked</code>. Legal/billing copy is placeholder for Canada / FC compliance review.
+    </div>
+
+    <div class="constraint">
+      <strong>Working default:</strong> Direction A until Alex/Angelina lock. Do not mark agent-ready from this mock. Hosted only at <code>/258/</code>.
+    </div>
+
+    <h2>Directions</h2>
+    <div class="grid">
+      <a class="card recd" href="directions/a/index.html">
+        <span class="tag rec-tag">RECOMMEND</span>
+        <h3>A — Firm checkout + card-upfront trial</h3>
+        <p>Firm/admin pays. Pricing → Stripe Checkout stub (trial + card now) → success → Billing “Trial · ends {date}” + Manage billing portal stub. Ending-soon banner + converted state.</p>
+      </a>
+      <a class="card" href="directions/b/index.html">
+        <span class="tag">ALT</span>
+        <h3>B — Soft trial (no card until convert)</h3>
+        <p>Lower friction. Signup starts trial without card → persistent trial chip → Add payment (Payment Element stub) before/at end → paywall if expired.</p>
+      </a>
+      <a class="card" href="directions/c/index.html">
+        <span class="tag">ALT</span>
+        <h3>C — Advisor self-serve seats + firm overlay</h3>
+        <p>Surfaces firm-vs-advisor. Advisor personal trial OR firm admin buys seats. EXAMPLE Starter / Growth CAD tiers. Seat invite stub.</p>
+      </a>
+    </div>
+
+    <h2>For Software / CoS</h2>
+    <p style="font-size:0.85rem;color:var(--muted)">Provisional contract: <a href="build-contract.html">HTML</a> · <a href="build-contract.md">Markdown</a>. Comparison: <a href="directions-brief.md">directions-brief.md</a>. README: <a href="README.md">README.md</a></p>
+
+    <div class="meta">
+      <p>Issue: <a href="https://github.com/kartboy16/content-library/issues/258">content-library #258</a></p>
+      <p>Repo: <a href="https://github.com/kartboy16/fc-mocks">kartboy16/fc-mocks</a> · path <code>/258/</code></p>
+      <p>Live: <a href="https://kartboy16.github.io/fc-mocks/258/">https://kartboy16.github.io/fc-mocks/258/</a></p>
+    </div>
+  </div>
+</body>
+</html>

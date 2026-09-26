@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Build contract · #258 trial + Stripe (provisional)</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root { --bg:#f4f8fc; --ink:#1e2a4a; --muted:#5b6572; --blue:#2b7de9; --border:#d4e4f2; }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: Inter, system-ui, sans-serif; background: var(--bg); color: var(--ink); line-height: 1.55; padding: 32px 20px 72px; }
+    .wrap { max-width: 740px; margin: 0 auto; background: #fff; border: 1px solid var(--border); border-radius: 12px; padding: 28px 32px; }
+    h1 { font-size: 1.35rem; margin-bottom: 8px; }
+    h2 { font-size: 0.95rem; margin: 24px 0 10px; color: var(--blue); }
+    p, li { font-size: 0.88rem; color: var(--ink); }
+    .meta { font-size: 0.8rem; color: var(--muted); margin-bottom: 16px; }
+    .meta a { color: var(--blue); }
+    .badge {
+      display: inline-block; background: #fff8eb; color: #8a5a10; font-size: 0.72rem; font-weight: 700;
+      padding: 4px 10px; border-radius: 999px; border: 1px solid #f0d4a8; margin-bottom: 12px;
+    }
+    ul, ol { padding-left: 1.25rem; margin: 8px 0; }
+    li { margin-bottom: 4px; }
+    table { width: 100%; border-collapse: collapse; font-size: 0.82rem; margin: 10px 0; }
+    th, td { text-align: left; padding: 8px 10px; border: 1px solid var(--border); vertical-align: top; }
+    th { background: #eef4fb; font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.04em; color: var(--muted); }
+    code { background: #eef2f6; padding: 0.1em 0.35em; border-radius: 4px; font-size: 0.85em; }
+    .nav { margin-bottom: 16px; font-size: 0.8rem; }
+    .nav a { color: var(--blue); margin-right: 12px; }
+    .warn { background: #fff8eb; border: 1px solid #f0d4a8; border-radius: 8px; padding: 10px 12px; font-size: 0.82rem; color: #8a5a10; margin: 12px 0; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="nav">
+      <a href="index.html">← Hub #258</a>
+      <a href="build-contract.md">Markdown</a>
+      <a href="directions/a/index.html">Direction A</a>
+      <a href="directions-brief.md">Brief</a>
+    </div>
+    <span class="badge">PROVISIONAL · working default = Direction A</span>
+    <h1>Build contract · 30-day free trial + Stripe</h1>
+    <p class="meta">
+      Issue <a href="https://github.com/kartboy16/content-library/issues/258">#258</a> ·
+      Mocks <a href="https://kartboy16.github.io/fc-mocks/258/">/258/</a> ·
+      Track: Idea / playground
+    </p>
+
+    <h2>One-liner</h2>
+    <p>Firm/admin starts a <strong>30-day free trial</strong> via <strong>Stripe Checkout</strong> (test mode) with <strong>card collected upfront</strong>, then sees trial status, ending-soon, and converted states in <strong>Billing &amp; plan</strong>, with <strong>Customer Portal</strong> for manage/cancel — until product locks otherwise.</p>
+
+    <h2>Acceptance criteria (from issue)</h2>
+    <ul>
+      <li><strong>AC-1:</strong> New or existing signup/billing UX clearly offers a 30-day free trial</li>
+      <li><strong>AC-2:</strong> Stripe for payment method capture / subscription after trial (or at start if card-upfront — open product question)</li>
+      <li><strong>AC-3:</strong> Trial start/end and conversion states visible to the account admin</li>
+      <li><strong>AC-4:</strong> Happy-path playground demo without charging real money (Stripe test mode)</li>
+    </ul>
+
+    <h2>Open product questions</h2>
+    <div class="warn">Do not invent locked answers. Resolve before agent-ready.</div>
+    <ol>
+      <li>Who pays — <strong>firm</strong> vs <strong>advisor</strong>?</li>
+      <li><strong>Card required upfront</strong> for trial?</li>
+      <li><strong>Plan tiers / prices?</strong> (EXAMPLE / placeholder CAD only in mocks)</li>
+      <li>Do <strong>existing accounts</strong> get a trial?</li>
+    </ol>
+
+    <h2>Working default (Direction A)</h2>
+    <ul>
+      <li><strong>Payer:</strong> Firm / admin (thesis of A; still open)</li>
+      <li><strong>Card:</strong> Required at Checkout start of trial</li>
+      <li><strong>Prices:</strong> EXAMPLE only (e.g. Firm Starter ~$79 CAD/mo, Growth ~$199 CAD/mo) — not locked</li>
+      <li><strong>Stripe:</strong> Checkout with <code>trial_period_days=30</code> + Customer Portal</li>
+      <li><strong>In-app:</strong> Trial · ends {date}, ending-soon ≤7 days, Active after convert</li>
+    </ul>
+
+    <h2>States</h2>
+    <table>
+      <thead><tr><th>State</th><th>Behavior</th></tr></thead>
+      <tbody>
+        <tr><td>Pricing / start</td><td>Clear 30-day offer; EXAMPLE prices labeled</td></tr>
+        <tr><td>Checkout (test)</td><td>Card capture / Stripe Checkout; $0 due today</td></tr>
+        <tr><td>Success</td><td>Trial started; end date; path into Billing</td></tr>
+        <tr><td>Trial active</td><td>Status, plan, end date, Manage billing</td></tr>
+        <tr><td>Ending soon</td><td>≤7 days banner; keep / cancel via portal</td></tr>
+        <tr><td>Converted</td><td>Active subscription; example next invoice</td></tr>
+        <tr><td>B / C alts</td><td>Soft trial paywall; firm vs advisor branch</td></tr>
+      </tbody>
+    </table>
+
+    <h2>In scope</h2>
+    <ul>
+      <li>Signup / pricing / start-trial UX for playground</li>
+      <li>Stripe test-mode Checkout + Customer Portal path</li>
+      <li>Billing surfaces for trial / ending / active</li>
+      <li>Ending-soon messaging (placeholder legal copy)</li>
+    </ul>
+
+    <h2>Out of scope</h2>
+    <ul>
+      <li>Live / production Stripe charges</li>
+      <li>Locked CAD prices or tier names</li>
+      <li>Marking issue <code>agent-ready</code> from mock work</li>
+      <li>Staging/main ship without product lock</li>
+      <li>B/C models unless locked instead of A</li>
+    </ul>
+
+    <h2>Primary files <em>(guessed — TBD)</em></h2>
+    <ul>
+      <li>Billing / settings UI — <strong>TBD</strong> until codebase confirmed</li>
+      <li>Signup / onboarding / pricing — <strong>TBD</strong></li>
+      <li>Stripe webhook / subscription helpers — <strong>TBD</strong></li>
+      <li>Stripe <strong>test</strong> keys for playground only — <strong>TBD</strong></li>
+    </ul>
+
+    <h2>Handoff</h2>
+    <p>Provisional only. Parent posts Slack/GH. Do <strong>not</strong> mark agent-ready until Alex/Angelina pick a direction and confirm open questions.</p>
+    <p class="meta" style="margin-top:16px"><a href="build-contract.md">Also available as Markdown</a></p>
+  </div>
+</body>
+</html>
