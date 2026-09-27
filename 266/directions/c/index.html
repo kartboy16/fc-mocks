@@ -1,0 +1,682 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Direction C — Icon + tooltip compact · #266 Pick a post for me</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #f4f8fc; --card: #fff; --ink: #1e2a4a; --muted: #5b6572;
+      --blue: #2b7de9; --blue-dark: #1e5bb8; --border: #d4e4f2; --mint: #e6f1fb;
+      --exclude: #c62828; --exclude-bg: #fff5f5; --row-hover: #f8fbfe;
+      --ok: #047857; --ok-bg: #e8f5e9; --warn: #9a3412; --warn-bg: #fff7ed;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: Inter, system-ui, sans-serif; background: var(--bg); color: var(--ink); font-size: 13px; line-height: 1.45; }
+    a { color: var(--blue); }
+    .thesis {
+      background: linear-gradient(135deg, #1e2a4a, #2b7de9); color: #fff; padding: 16px 24px;
+    }
+    .thesis .rec {
+      display: inline-block; background: #fff; color: var(--blue); font-size: 0.68rem;
+      font-weight: 700; padding: 3px 10px; border-radius: 999px; margin-bottom: 8px;
+    }
+    .thesis h1 { font-size: 1.05rem; margin-bottom: 4px; }
+    .thesis p { opacity: 0.9; font-size: 0.8rem; max-width: 900px; }
+    .nav {
+      padding: 8px 24px; font-size: 0.75rem; background: #fafafa;
+      border-bottom: 1px solid var(--border); display: flex; gap: 12px; flex-wrap: wrap; align-items: center;
+    }
+    .nav a { color: var(--blue); text-decoration: none; font-weight: 500; }
+    .nav .sep { color: #c0c8d4; }
+    .nav .on { font-weight: 700; color: var(--ink); }
+    .app { display: flex; min-height: calc(100vh - 110px); }
+    .rail {
+      width: 52px; background: #1e2a4a; flex-shrink: 0;
+      display: flex; flex-direction: column; align-items: center; padding: 12px 0; gap: 8px;
+    }
+    .rail .ri {
+      width: 32px; height: 32px; border-radius: 8px; background: rgba(255,255,255,0.08);
+      color: rgba(255,255,255,0.7); font-size: 0.65rem; font-weight: 700;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .rail .ri.on { background: var(--blue); color: #fff; }
+    .main { flex: 1; min-width: 0; padding: 14px 18px 48px; }
+    .demo-bar {
+      display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-bottom: 12px;
+      padding: 10px 12px; background: #fff; border: 1px solid var(--border); border-radius: 10px;
+    }
+    .demo-bar .lbl { font-size: 0.65rem; font-weight: 700; text-transform: uppercase; color: var(--muted); margin-right: 4px; }
+    .demo-btn {
+      padding: 5px 10px; border: 1px solid var(--border); border-radius: 8px; background: #fff;
+      font-family: inherit; font-size: 0.72rem; font-weight: 600; color: var(--ink); cursor: pointer;
+    }
+    .demo-btn:hover, .demo-btn.on { border-color: var(--blue); color: var(--blue); background: var(--mint); }
+    .demo-note {
+      flex: 1 1 220px; font-size: 0.72rem; color: var(--muted); min-width: 180px;
+    }
+    .ac7 {
+      margin-bottom: 12px; padding: 10px 12px; background: #eff6ff; border: 1px solid #bfdbfe;
+      border-radius: 10px; font-size: 0.75rem; color: #1e40af;
+    }
+    .ac7 strong { color: #1e3a8a; }
+    .page-head { margin-bottom: 10px; }
+    .page-head h2 { font-size: 1.2rem; font-weight: 700; }
+    .page-head .sub { color: var(--muted); font-size: 0.78rem; margin-top: 2px; max-width: 780px; }
+    .toolbar { display: flex; gap: 8px; align-items: center; margin-bottom: 8px; flex-wrap: wrap; }
+    .search-box {
+      flex: 1; min-width: 160px; max-width: 240px; padding: 7px 11px;
+      border: 1px solid var(--border); border-radius: 8px; font-family: inherit; font-size: 0.82rem; background: #fff;
+    }
+    .tb-btn {
+      display: inline-flex; align-items: center; gap: 6px; padding: 6px 11px;
+      border: 1px solid var(--border); border-radius: 8px; background: #fff;
+      font-family: inherit; font-size: 0.78rem; font-weight: 500; color: var(--ink); cursor: pointer;
+    }
+    .panel {
+      background: var(--card); border: 1px solid var(--border); border-radius: 10px;
+      overflow: hidden; box-shadow: 0 1px 3px rgba(30,42,74,0.04);
+    }
+    table.adv { width: 100%; border-collapse: collapse; font-size: 0.78rem; table-layout: fixed; }
+    table.adv th {
+      text-align: left; padding: 9px 10px; background: #eef4fb; color: var(--muted);
+      font-weight: 600; font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.04em;
+      border-bottom: 1px solid var(--border); white-space: nowrap;
+    }
+    table.adv td { padding: 10px; border-bottom: 1px solid #eef2f6; vertical-align: top; }
+    table.adv tr:hover td { background: var(--row-hover); }
+    table.adv col.c-adv { width: 150px; }
+    table.adv col.c-src { width: 100px; }
+    table.adv col.c-svc { width: 130px; }
+    table.adv col.c-posts { width: auto; }
+    table.adv col.c-act { width: 148px; }
+    .advisor { display: flex; align-items: center; gap: 8px; }
+    .avatar {
+      width: 30px; height: 30px; border-radius: 999px; background: var(--mint);
+      color: var(--blue); font-weight: 700; font-size: 0.65rem;
+      display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    }
+    .advisor .name { font-weight: 600; font-size: 0.8rem; }
+    .advisor .firm { color: var(--muted); font-size: 0.68rem; }
+    .src-pill {
+      display: inline-block; background: #f0f4f8; color: var(--muted);
+      padding: 2px 7px; border-radius: 999px; font-size: 0.65rem; font-weight: 500; margin: 1px 2px 1px 0;
+    }
+    .svc-chip {
+      display: inline-block; background: var(--mint); color: var(--blue-dark);
+      padding: 2px 7px; border-radius: 999px; font-size: 0.65rem; font-weight: 600; margin: 1px 2px;
+    }
+    .svc-empty { color: #8a94a6; font-size: 0.72rem; }
+    .act-stack { display: flex; flex-direction: column; gap: 4px; }
+    .act-btn {
+      display: inline-flex; align-items: center; justify-content: center; gap: 4px;
+      padding: 5px 8px; border: 1px solid var(--border); border-radius: 6px; background: #fff;
+      font-family: inherit; font-size: 0.68rem; font-weight: 500; color: var(--ink);
+      cursor: pointer; width: 100%; white-space: nowrap;
+    }
+    .act-btn:hover:not(:disabled) { border-color: var(--blue); color: var(--blue); }
+    .act-btn.primary {
+      background: var(--blue); color: #fff; border-color: var(--blue); font-weight: 600;
+    }
+    .act-btn.primary:hover:not(:disabled) { background: var(--blue-dark); color: #fff; }
+    .act-btn.pick {
+      background: #fff; color: var(--blue); border-color: var(--blue); font-weight: 600;
+    }
+    .act-btn.pick:hover:not(:disabled) { background: var(--mint); }
+    .act-btn:disabled { opacity: 0.55; cursor: not-allowed; }
+    .act-btn.loading { pointer-events: none; }
+    .act-btn .spin {
+      width: 10px; height: 10px; border: 2px solid rgba(43,125,233,0.25);
+      border-top-color: var(--blue); border-radius: 50%; animation: spin 0.7s linear infinite;
+    }
+    .act-btn.primary .spin { border-color: rgba(255,255,255,0.3); border-top-color: #fff; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .act-hint { font-size: 0.6rem; color: var(--muted); text-align: center; line-height: 1.3; }
+    .sec-label {
+      font-size: 0.65rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em;
+      color: var(--muted); margin-bottom: 6px; display: flex; align-items: center; gap: 6px;
+    }
+    .sec-label .n {
+      background: #eef4fb; color: var(--ink); padding: 1px 6px; border-radius: 999px; font-size: 0.62rem;
+    }
+    .divider { height: 1px; background: var(--border); margin: 8px 0; }
+    .past-list {
+      max-height: 110px; overflow-y: auto; border: 1px solid var(--border);
+      border-radius: 8px; background: #fafbfd;
+    }
+    .past-row {
+      display: flex; align-items: center; gap: 8px; padding: 5px 8px;
+      border-bottom: 1px solid #eef2f6;
+    }
+    .past-row:last-child { border-bottom: none; }
+    .past-row.recent3 { background: #f0f7ff; }
+    .past-ico {
+      width: 28px; height: 28px; border-radius: 6px; flex-shrink: 0;
+      background: linear-gradient(135deg, #2b7de9, #1e2a4a);
+      color: #fff; font-size: 0.55rem; font-weight: 700;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .past-ico.fb { background: #1877f2; }
+    .past-ico.li { background: #0a66c2; }
+    .past-t { font-weight: 600; font-size: 0.72rem; line-height: 1.25; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .past-meta { color: var(--muted); font-size: 0.62rem; display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
+    .cat-pill {
+      display: inline-block; background: #eef2f6; color: var(--ink);
+      padding: 0 5px; border-radius: 4px; font-size: 0.58rem; font-weight: 700;
+    }
+    .cat-pill.avoid { background: #fee2e2; color: #991b1b; }
+    .past-row .txt { min-width: 0; flex: 1; }
+    .sug-track {
+      display: flex; gap: 8px; overflow-x: auto; padding-bottom: 4px;
+      scroll-snap-type: x proximity; min-height: 40px;
+    }
+    .sug-card {
+      flex: 0 0 168px; scroll-snap-align: start;
+      background: #fff; border: 1px solid var(--border); border-radius: 10px;
+      overflow: hidden; display: flex; flex-direction: column; position: relative;
+    }
+    .sug-card.picked {
+      border-color: var(--blue); box-shadow: 0 0 0 2px rgba(43,125,233,0.2);
+      animation: popin 0.35s ease;
+    }
+    .sug-card .new-badge {
+      position: absolute; top: 6px; left: 6px; background: var(--blue); color: #fff;
+      font-size: 0.55rem; font-weight: 700; padding: 2px 6px; border-radius: 999px; z-index: 1;
+    }
+    @keyframes popin { from { opacity: 0; transform: scale(0.94); } }
+    .sug-img { height: 80px; background-size: cover; background-position: center; }
+    .sug-body { padding: 8px; display: flex; flex-direction: column; gap: 4px; flex: 1; }
+    .sug-title {
+      font-weight: 600; font-size: 0.72rem; line-height: 1.3;
+      display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+    }
+    .sug-ex {
+      color: var(--muted); font-size: 0.65rem; white-space: nowrap;
+      overflow: hidden; text-overflow: ellipsis;
+    }
+    .sug-why {
+      font-size: 0.62rem; color: var(--blue-dark); font-weight: 600;
+      background: var(--mint); padding: 2px 6px; border-radius: 4px;
+    }
+    .sug-tags { display: flex; gap: 4px; flex-wrap: wrap; }
+    .tag {
+      font-size: 0.58rem; font-weight: 600; background: var(--mint); color: var(--blue-dark);
+      padding: 1px 6px; border-radius: 999px;
+    }
+    .sug-actions { display: flex; gap: 4px; padding: 0 8px 8px; margin-top: auto; }
+    .btn-sched {
+      flex: 1; padding: 5px 6px; border: none; border-radius: 6px;
+      background: var(--blue); color: #fff; font-family: inherit;
+      font-size: 0.68rem; font-weight: 600; cursor: pointer;
+    }
+    .btn-sched:hover { background: var(--blue-dark); }
+    .btn-skip {
+      width: 28px; padding: 5px 0; border: 1px solid var(--border); border-radius: 6px;
+      background: #fff; color: var(--muted); font-family: inherit;
+      font-size: 0.85rem; font-weight: 700; cursor: pointer; line-height: 1;
+    }
+    .btn-skip:hover { border-color: var(--exclude); color: var(--exclude); background: var(--exclude-bg); }
+    .posts-cell { max-height: 300px; display: flex; flex-direction: column; }
+    .state-box {
+      display: none; padding: 12px 10px; border: 1px dashed var(--border); border-radius: 8px;
+      background: #fafbfd; text-align: center; font-size: 0.72rem; color: var(--muted);
+    }
+    .state-box.show { display: block; }
+    .state-box.loading { border-style: solid; border-color: #bfdbfe; background: #eff6ff; color: #1e40af; }
+    .state-box.empty { border-color: #f0d4a8; background: #fff8eb; color: #8a5a10; }
+    .state-box.exhausted { border-color: #fecaca; background: #fef2f2; color: #991b1b; }
+    .state-box.nosvc { border-color: #c4b5fd; background: #f5f3ff; color: #5b21b6; }
+    .state-box strong { display: block; margin-bottom: 4px; font-size: 0.78rem; }
+    .state-box .linkish {
+      display: inline-block; margin-top: 6px; color: var(--blue); font-weight: 600;
+      background: none; border: none; font-family: inherit; font-size: 0.72rem; cursor: pointer; text-decoration: underline;
+    }
+    .toast {
+      position: fixed; bottom: 24px; right: 24px; background: #1e2a4a; color: #fff;
+      padding: 10px 16px; border-radius: 8px; font-size: 0.8rem; display: none; z-index: 200;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.2); max-width: 340px;
+    }
+    .toast.show { display: block; animation: fadein 0.2s ease; }
+    @keyframes fadein { from { opacity: 0; transform: translateY(6px); } }
+    .legend {
+      margin-top: 14px; font-size: 0.72rem; color: var(--muted);
+      padding: 10px 12px; background: #fff; border: 1px solid var(--border); border-radius: 10px;
+    }
+    .legend code { background: #eef2f6; padding: 0.1em 0.35em; border-radius: 4px; font-size: 0.9em; }
+
+    .act-row { display: flex; gap: 4px; width: 100%; align-items: stretch; }
+    .act-row .act-btn.grow { flex: 1; }
+    .icon-pick {
+      width: 32px; flex-shrink: 0; border: 1px solid var(--blue); border-radius: 6px;
+      background: #fff; color: var(--blue); cursor: pointer;
+      display: flex; align-items: center; justify-content: center; font-size: 0.95rem;
+      position: relative;
+    }
+    .icon-pick:hover:not(:disabled) { background: var(--mint); }
+    .icon-pick:disabled { opacity: 0.55; cursor: not-allowed; }
+    .icon-pick .tip {
+      display: none; position: absolute; bottom: calc(100% + 6px); right: 0;
+      background: #1e2a4a; color: #fff; font-size: 0.65rem; font-weight: 600;
+      padding: 6px 8px; border-radius: 6px; white-space: nowrap; z-index: 30;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    }
+    .icon-pick .tip::after {
+      content: ''; position: absolute; top: 100%; right: 10px;
+      border: 5px solid transparent; border-top-color: #1e2a4a;
+    }
+    .icon-pick:hover .tip, .icon-pick:focus .tip { display: block; }
+    .icon-pick .spin {
+      width: 12px; height: 12px; border: 2px solid rgba(43,125,233,0.25);
+      border-top-color: var(--blue); border-radius: 50%; animation: spin 0.7s linear infinite;
+    }
+
+  </style>
+</head>
+<body>
+  <header class="thesis">
+    <span class="rec">ALT · DIRECTION C</span>
+    <h1>Direction C — Icon + tooltip compact</h1>
+    <p><strong>Suggest posts</strong> stays a text button. A sparkle/wand icon beside it is <strong>Pick a post for me</strong> (tooltip on hover). Same AC-7 states. Note density vs locked <a href="../../../254/directions/a/" style="color:#fff;text-decoration:underline">#254</a> — icon saves vertical space but is easier to miss.</p>
+  </header>
+  <nav class="nav">
+    <a href="../../index.html">← Hub #266</a>
+    <span class="sep">·</span>
+    <a href="../a/index.html">A</a>
+    <span class="sep">·</span>
+    <a href="../b/index.html">B</a>
+    <span class="sep">·</span>
+    <a href="../c/index.html" class="on">C</a>
+    <span class="sep">·</span>
+    <a href="../../build-contract.html">Build contract</a>
+  </nav>
+  <div class="app">
+    <aside class="rail" aria-hidden="true">
+      <div class="ri">CL</div>
+      <div class="ri on">MA</div>
+      <div class="ri">SM</div>
+      <div class="ri">EM</div>
+      <div class="ri">Cal</div>
+      <div class="ri">⚙</div>
+    </aside>
+    <div class="main">
+      <div class="ac7">
+        <strong>AC-7 demo:</strong> Last 3 posted (highlighted) are categories <em>Retirement</em>, <em>Tax</em>, <em>Estate</em>. A successful Pick must land outside those. Exhausted state fires when every remaining candidate shares one of those categories — never a silent no-op.
+      </div>
+
+      <div class="demo-bar">
+        <span class="lbl">Demo state</span>
+        <button type="button" class="demo-btn on" data-demo="idle" onclick="setDemo('idle')">Idle</button>
+        <button type="button" class="demo-btn" data-demo="loading" onclick="setDemo('loading')">Loading</button>
+        <button type="button" class="demo-btn" data-demo="success" onclick="setDemo('success')">Success (≠ last 3 cats)</button>
+        <button type="button" class="demo-btn" data-demo="exhausted" onclick="setDemo('exhausted')">Exhausted (AC-7)</button>
+        <button type="button" class="demo-btn" data-demo="empty" onclick="setDemo('empty')">Empty / no fit</button>
+        <button type="button" class="demo-btn" data-demo="nosvc" onclick="setDemo('nosvc')">No services</button>
+        <span class="demo-note" id="demoNote">Click the ✦ icon (tooltip: Pick a post for me), or use demo buttons.</span>
+      </div>
+
+      <div class="page-head">
+        <h2>Manage Advisor Posts</h2>
+        <p class="sub">Mock · Direction C icon control. Suggest text + sparkle icon “Pick a post for me”.</p>
+      </div>
+      <div class="toolbar">
+        <input class="search-box" type="search" placeholder="Search advisors…" />
+        <button type="button" class="tb-btn">Filters</button>
+        <button type="button" class="tb-btn">Refresh</button>
+      </div>
+
+      <div class="panel">
+        <table class="adv">
+          <colgroup>
+            <col class="c-adv" /><col class="c-src" /><col class="c-svc" /><col class="c-posts" /><col class="c-act" />
+          </colgroup>
+          <thead>
+            <tr>
+              <th>Advisor</th>
+              <th>Sources</th>
+              <th>Services &amp; products</th>
+              <th>Posts</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- Row 1: Sarah — primary interactive -->
+            <tr id="row-sarah">
+              <td>
+                <div class="advisor">
+                  <div class="avatar">SC</div>
+                  <div>
+                    <div class="name">Sarah Chen</div>
+                    <div class="firm">WealthPath Advisors<br/>Vancouver, BC</div>
+                  </div>
+                </div>
+              </td>
+              <td><span class="src-pill">Content library</span><span class="src-pill">Website</span></td>
+              <td id="svc-sarah">
+                <span class="svc-chip">Estate planning</span>
+                <span class="svc-chip">Retirement</span>
+                <span class="svc-chip">Tax</span>
+                <span class="svc-chip">Insurance</span>
+              </td>
+              <td>
+                <div class="posts-cell">
+                  <div class="sec-label">Past <span class="n">6</span> <span style="font-weight:500;text-transform:none;letter-spacing:0;color:#5b6572">· last 3 highlighted</span></div>
+                  <div class="past-list">
+                    <div class="past-row recent3">
+                      <div class="past-ico">Web</div>
+                      <div class="txt">
+                        <div class="past-t">CPP Timing: When to Take Benefits</div>
+                        <div class="past-meta">Apr 11, 2025 · Web · <span class="cat-pill avoid">Retirement</span></div>
+                      </div>
+                    </div>
+                    <div class="past-row recent3">
+                      <div class="past-ico">Web</div>
+                      <div class="txt">
+                        <div class="past-t">Year-End Tax Planning Checklist</div>
+                        <div class="past-meta">Mar 2, 2025 · Web · <span class="cat-pill avoid">Tax</span></div>
+                      </div>
+                    </div>
+                    <div class="past-row recent3">
+                      <div class="past-ico fb">FB</div>
+                      <div class="txt">
+                        <div class="past-t">Estate Planning for Blended Families</div>
+                        <div class="past-meta">Feb 18, 2025 · FB · <span class="cat-pill avoid">Estate</span></div>
+                      </div>
+                    </div>
+                    <div class="past-row">
+                      <div class="past-ico li">LI</div>
+                      <div class="txt">
+                        <div class="past-t">Understanding Dividend Tax Credit</div>
+                        <div class="past-meta">Jan 9, 2025 · LI · <span class="cat-pill">Tax</span></div>
+                      </div>
+                    </div>
+                    <div class="past-row">
+                      <div class="past-ico">Web</div>
+                      <div class="txt">
+                        <div class="past-t">RRSP vs TFSA: Which Comes First?</div>
+                        <div class="past-meta">Aug 14, 2024 · Web · <span class="cat-pill">Retirement</span></div>
+                      </div>
+                    </div>
+                    <div class="past-row">
+                      <div class="past-ico">Web</div>
+                      <div class="txt">
+                        <div class="past-t">Mortgage Stress Test Explained</div>
+                        <div class="past-meta">Jan 22, 2025 · Web · <span class="cat-pill">Mortgages</span></div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="divider"></div>
+                  <div class="sec-label">Suggested <span class="n" id="sug-count">2</span></div>
+                  <div class="state-box loading" id="state-loading">
+                    <strong>Picking a post…</strong>
+                    Matching services + avoiding last 3 categories
+                  </div>
+                  <div class="state-box empty" id="state-empty">
+                    <strong>No post fits right now</strong>
+                    Nothing left after WP history + exclusions. Try Suggest posts for a broader batch, or widen services.
+                  </div>
+                  <div class="state-box exhausted" id="state-exhausted">
+                    <strong>No posts outside your last 3 categories</strong>
+                    Remaining candidates are all <em>Retirement</em>, <em>Tax</em>, or <em>Estate</em> — same as your last 3 posted. Wait for diversity or suggest a batch and skip collisions manually.
+                  </div>
+                  <div class="state-box nosvc" id="state-nosvc">
+                    <strong>Choose services first</strong>
+                    Pick needs confirmed products/services for ranking.
+                    <button type="button" class="linkish" onclick="alert('Opens Choose services popover (#240 Dir C) — not redesigned here.')">Open Choose services</button>
+                  </div>
+                  <div class="sug-track" id="sug-track">
+                    <div class="sug-card" data-base>
+                      <div class="sug-img" style="background:linear-gradient(135deg,#2b7de9,#1e2a4a)"></div>
+                      <div class="sug-body">
+                        <div class="sug-title">Navigating Market Volatility in 2026</div>
+                        <div class="sug-ex">Stay the course when markets swing.</div>
+                        <div class="sug-why">Fits retirement</div>
+                        <div class="sug-tags"><span class="tag">Retirement</span></div>
+                      </div>
+                      <div class="sug-actions">
+                        <button type="button" class="btn-sched" onclick="toast('Schedule — no auto-publish')">Schedule</button>
+                        <button type="button" class="btn-skip" onclick="skipBase(this)" title="Skip">×</button>
+                      </div>
+                    </div>
+                    <div class="sug-card" data-base>
+                      <div class="sug-img" style="background:linear-gradient(135deg,#7c3aed,#1e2a4a)"></div>
+                      <div class="sug-body">
+                        <div class="sug-title">Charitable Giving &amp; Tax Efficiency</div>
+                        <div class="sug-ex">Donation strategies for year-end talks.</div>
+                        <div class="sug-why">Fits tax</div>
+                        <div class="sug-tags"><span class="tag">Tax</span></div>
+                      </div>
+                      <div class="sug-actions">
+                        <button type="button" class="btn-sched" onclick="toast('Schedule — no auto-publish')">Schedule</button>
+                        <button type="button" class="btn-skip" onclick="skipBase(this)" title="Skip">×</button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </td>
+              <td>
+                <div class="act-stack">
+                  <div class="act-row">
+                    <button type="button" class="act-btn grow" onclick="toast('Suggest posts — batch load (unchanged)')">Suggest posts</button>
+                    <button type="button" class="icon-pick" id="btn-pick" onclick="runPick()" aria-label="Pick a post for me">
+                      ✦
+                      <span class="tip">Pick a post for me</span>
+                    </button>
+                  </div>
+                  <button type="button" class="act-btn" onclick="alert('Choose services (#240)')">Choose services</button>
+                  <button type="button" class="act-btn">Load from WP</button>
+                  <div class="act-hint" id="act-hint">Avoids: Retirement · Tax · Estate</div>
+                </div>
+              </td>
+            </tr>
+
+            <!-- Row 2: Michael — idle reference -->
+            <tr>
+              <td>
+                <div class="advisor">
+                  <div class="avatar">MO</div>
+                  <div>
+                    <div class="name">Michael Okonkwo</div>
+                    <div class="firm">Prairie Capital Planning<br/>Calgary, AB</div>
+                  </div>
+                </div>
+              </td>
+              <td><span class="src-pill">Content library</span><span class="src-pill">Website</span></td>
+              <td>
+                <span class="svc-chip">Mortgages</span>
+                <span class="svc-chip">Insurance</span>
+                <span class="svc-chip">Retirement</span>
+              </td>
+              <td>
+                <div class="posts-cell">
+                  <div class="sec-label">Past <span class="n">3</span></div>
+                  <div class="past-list" style="max-height:78px">
+                    <div class="past-row recent3">
+                      <div class="past-ico">Web</div>
+                      <div class="txt">
+                        <div class="past-t">First-Time Buyer Incentive Update</div>
+                        <div class="past-meta">May 1, 2025 · Web · <span class="cat-pill avoid">Mortgages</span></div>
+                      </div>
+                    </div>
+                    <div class="past-row recent3">
+                      <div class="past-ico">Web</div>
+                      <div class="txt">
+                        <div class="past-t">Term Life vs Whole Life</div>
+                        <div class="past-meta">Apr 12, 2025 · Web · <span class="cat-pill avoid">Insurance</span></div>
+                      </div>
+                    </div>
+                    <div class="past-row recent3">
+                      <div class="past-ico fb">FB</div>
+                      <div class="txt">
+                        <div class="past-t">Retirement Income Sequencing</div>
+                        <div class="past-meta">Mar 20, 2025 · FB · <span class="cat-pill avoid">Retirement</span></div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="divider"></div>
+                  <div class="sec-label">Suggested <span class="n">1</span></div>
+                  <div class="sug-track">
+                    <div class="sug-card">
+                      <div class="sug-img" style="background:linear-gradient(135deg,#0e7490,#1e2a4a)"></div>
+                      <div class="sug-body">
+                        <div class="sug-title">Protecting Wealth Across Generations</div>
+                        <div class="sug-ex">Trusts and family meetings.</div>
+                        <div class="sug-why">Fits insurance</div>
+                        <div class="sug-tags"><span class="tag">Estate</span></div>
+                      </div>
+                      <div class="sug-actions">
+                        <button type="button" class="btn-sched" onclick="toast('Schedule')">Schedule</button>
+                        <button type="button" class="btn-skip" title="Skip">×</button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </td>
+              <td>
+                <div class="act-stack">
+                  <div class="act-row">
+                    <button type="button" class="act-btn grow">Suggest posts</button>
+                    <button type="button" class="icon-pick" aria-label="Pick a post for me">✦<span class="tip">Pick a post for me</span></button>
+                  </div>
+                  <button type="button" class="act-btn">Choose services</button>
+                  <div class="act-hint">Avoids: Mortgages · Insurance · Retirement</div>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="legend">
+        <strong>Direction C notes:</strong> Compact icon preserves #254 density. Tooltip + aria-label carry the full name. Risk: lower discoverability vs A. Same success (Insurance ≠ last 3) and exhausted microcopy.
+      </div>
+    </div>
+  </div>
+  <div class="toast" id="toast"></div>
+
+  <script>
+    var pickCardHtml =
+      '<div class="sug-card picked" id="picked-card">' +
+        '<span class="new-badge">Picked for you</span>' +
+        '<div class="sug-img" style="background:linear-gradient(135deg,#c2410c,#1e2a4a)"></div>' +
+        '<div class="sug-body">' +
+          '<div class="sug-title">Term Life vs Whole Life — Client Talking Points</div>' +
+          '<div class="sug-ex">Plain-language comparison for discovery calls.</div>' +
+          '<div class="sug-why">Fits insurance · avoided Retirement, Tax, Estate</div>' +
+          '<div class="sug-tags"><span class="tag">Insurance</span></div>' +
+        '</div>' +
+        '<div class="sug-actions">' +
+          '<button type="button" class="btn-sched" onclick="toast(\'Schedule — stays in Suggested; no auto-publish\')">Schedule</button>' +
+          '<button type="button" class="btn-skip" onclick="document.getElementById(\'picked-card\').remove(); updateCount(); toast(\'Skipped\')" title="Skip">×</button>' +
+        '</div>' +
+      '</div>';
+
+    var current = 'idle';
+    var servicesHtml = document.getElementById('svc-sarah').innerHTML;
+
+    function toast(msg) {
+      var t = document.getElementById('toast');
+      t.textContent = msg;
+      t.classList.add('show');
+      clearTimeout(toast._tm);
+      toast._tm = setTimeout(function () { t.classList.remove('show'); }, 2600);
+    }
+
+    function hideStates() {
+      ['state-loading','state-empty','state-exhausted','state-nosvc'].forEach(function (id) {
+        document.getElementById(id).classList.remove('show');
+      });
+    }
+
+    function showTrack(show) {
+      document.getElementById('sug-track').style.display = show ? 'flex' : 'none';
+    }
+
+    function removePicked() {
+      var p = document.getElementById('picked-card');
+      if (p) p.remove();
+    }
+
+    function updateCount() {
+      var n = document.querySelectorAll('#sug-track .sug-card').length;
+      document.getElementById('sug-count').textContent = String(n);
+    }
+
+    function setBtn(state) {
+      var btn = document.getElementById('btn-pick');
+      btn.disabled = false;
+      if (state === 'loading') {
+        btn.disabled = true;
+        btn.innerHTML = '<span class="spin"></span><span class="tip">Picking…</span>';
+      } else {
+        btn.innerHTML = '✦<span class="tip">Pick a post for me</span>';
+      }
+    }
+
+    function setDemo(state) {
+      current = state;
+      document.querySelectorAll('.demo-btn').forEach(function (b) {
+        b.classList.toggle('on', b.getAttribute('data-demo') === state);
+      });
+      hideStates();
+      removePicked();
+      setBtn(state);
+      document.getElementById('svc-sarah').innerHTML = servicesHtml;
+      document.getElementById('act-hint').textContent = 'Avoids: Retirement · Tax · Estate';
+
+      var note = document.getElementById('demoNote');
+      if (state === 'idle') {
+        showTrack(true);
+        note.innerHTML = 'Idle · Hover ✦ for tooltip; click to pick one into Suggested.';
+      } else if (state === 'loading') {
+        showTrack(false);
+        document.getElementById('state-loading').classList.add('show');
+        note.textContent = 'Loading · distinct from Suggest posts batch spinner; single-pick copy.';
+      } else if (state === 'success') {
+        showTrack(true);
+        document.getElementById('sug-track').insertAdjacentHTML('afterbegin', pickCardHtml);
+        note.innerHTML = 'Success · Picked <strong>Insurance</strong> card (≠ Retirement / Tax / Estate). Microcopy calls out avoided categories.';
+        toast('Added to Suggested — Schedule or Skip when ready');
+      } else if (state === 'exhausted') {
+        showTrack(false);
+        document.getElementById('state-exhausted').classList.add('show');
+        note.innerHTML = 'AC-7 exhausted · Every remaining candidate collides with last 3 categories — clear UI, not a silent no-op.';
+      } else if (state === 'empty') {
+        showTrack(false);
+        document.getElementById('state-empty').classList.add('show');
+        note.textContent = 'Empty / no fit · WP history + exclusions left nothing (separate from AC-7 category collision).';
+      } else if (state === 'nosvc') {
+        showTrack(false);
+        document.getElementById('svc-sarah').innerHTML = '<span class="svc-empty">No services saved</span>';
+        document.getElementById('state-nosvc').classList.add('show');
+        document.getElementById('act-hint').textContent = 'Needs services to rank';
+        note.innerHTML = 'No-services · Prompt Choose services (#52 / #240). No second services store.';
+      }
+      updateCount();
+    }
+
+    function runPick() {
+      if (current === 'nosvc') {
+        setDemo('nosvc');
+        return;
+      }
+      setDemo('loading');
+      setTimeout(function () {
+        // Alternate success vs exhausted on repeated clicks for demo
+        if (runPick._n % 2 === 1) setDemo('exhausted');
+        else setDemo('success');
+        runPick._n = (runPick._n || 0) + 1;
+      }, 900);
+    }
+
+    function skipBase(btn) {
+      var card = btn.closest('.sug-card');
+      if (card) card.remove();
+      updateCount();
+      toast('Skipped');
+    }
+
+    setDemo('idle');
+  </script>
+</body>
+</html>

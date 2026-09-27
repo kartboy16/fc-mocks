@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>FC — #266 MAP Pick a post for me</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #f4f8fc; --card: #fff; --ink: #1e2a4a; --muted: #5b6572;
+      --blue: #2b7de9; --border: #d4e4f2; --mint: #e6f1fb;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: Inter, system-ui, sans-serif; background: var(--bg); color: var(--ink); line-height: 1.55; }
+    .hero {
+      background: linear-gradient(135deg, #1e2a4a 0%, #2b7de9 100%);
+      color: #fff; padding: 40px 24px 36px;
+    }
+    .hero-inner { max-width: 880px; margin: 0 auto; }
+    .hero .eyebrow { font-size: 0.75rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; opacity: 0.85; margin-bottom: 10px; }
+    .hero h1 { font-size: 1.75rem; margin-bottom: 10px; }
+    .hero p { opacity: 0.92; max-width: 720px; font-size: 0.95rem; }
+    .rec {
+      display: inline-block; margin-top: 18px; background: #e8f5e9; color: #065f46;
+      font-weight: 700; font-size: 0.8rem; padding: 8px 14px; border-radius: 999px;
+    }
+    .wrap { max-width: 880px; margin: 0 auto; padding: 28px 24px 72px; }
+    .cta {
+      display: block; background: var(--blue); color: #fff !important; text-decoration: none;
+      text-align: center; padding: 16px 24px; border-radius: 12px; font-weight: 700;
+      font-size: 1rem; margin-bottom: 28px; box-shadow: 0 4px 16px rgba(43,125,233,0.35);
+    }
+    .cta:hover { filter: brightness(1.05); }
+    .cta small { display: block; font-weight: 500; opacity: 0.9; font-size: 0.8rem; margin-top: 4px; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 14px; }
+    .card {
+      background: var(--card); border: 1px solid var(--border); border-radius: 12px;
+      padding: 18px; text-decoration: none; color: inherit; display: block;
+      transition: border-color 0.15s, box-shadow 0.15s;
+    }
+    .card:hover { border-color: var(--blue); box-shadow: 0 4px 16px rgba(30,42,74,0.08); }
+    .card.recd { border-color: #2b7de9; box-shadow: 0 4px 16px rgba(43,125,233,0.12); }
+    .card h3 { font-size: 0.95rem; margin-bottom: 6px; color: var(--blue); }
+    .card p { font-size: 0.8rem; color: var(--muted); }
+    .card .tag {
+      display: inline-block; font-size: 0.65rem; font-weight: 700; background: var(--mint);
+      color: var(--blue); padding: 2px 8px; border-radius: 999px; margin-bottom: 8px;
+    }
+    .card .tag.rec-tag { background: var(--blue); color: #fff; }
+    h2 { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--muted); margin: 28px 0 12px; }
+    .problem {
+      margin: 0 0 20px; padding: 14px 16px; background: #fff8eb; border: 1px solid #f0d4a8;
+      border-radius: 10px; font-size: 0.85rem; color: #8a5a10;
+    }
+    .problem strong { color: #6b4408; }
+    .ac7 {
+      margin: 0 0 20px; padding: 14px 16px; background: #eff6ff; border: 1px solid #bfdbfe;
+      border-radius: 10px; font-size: 0.85rem; color: #1e40af;
+    }
+    .ac7 strong { color: #1e3a8a; }
+    .ac7 ul { margin: 8px 0 0; padding-left: 1.2rem; }
+    .oos {
+      margin: 0 0 20px; padding: 14px 16px; background: #fef2f2; border: 1px solid #fecaca;
+      border-radius: 10px; font-size: 0.85rem; color: #991b1b;
+    }
+    .oos ul { margin: 8px 0 0; padding-left: 1.2rem; }
+    .prov {
+      margin: 16px 0 0; padding: 12px 14px; background: #fff7ed; border: 1px solid #fed7aa;
+      border-radius: 10px; font-size: 0.85rem; color: #9a3412;
+    }
+    .meta { margin-top: 32px; font-size: 0.8rem; color: var(--muted); }
+    .meta a { color: var(--blue); }
+    code { background: #eef2f6; padding: 0.1em 0.35em; border-radius: 4px; font-size: 0.85em; }
+  </style>
+</head>
+<body>
+  <header class="hero">
+    <div class="hero-inner">
+      <div class="eyebrow">FinancialContent · content-library #266 · Designer mocks</div>
+      <h1>MAP — “Pick a post for me” beside Suggest posts</h1>
+      <p>One-click pick grounded in the advisor’s products/services + WP history, dropped into that row’s <strong>Suggested</strong> scroller. Suggest posts stays for batch. No auto-publish — Schedule/Skip unchanged. Includes <strong>AC-7</strong> category diversity vs last 3 posted.</p>
+      <span class="rec">Recommend Direction A — Sibling primary actions</span>
+    </div>
+  </header>
+
+  <div class="wrap">
+    <a class="cta" href="directions/a/index.html">
+      Open Direction A (recommended)
+      <small>Sibling Pick button · demo: idle → loading → success (≠ last 3 cats) → exhausted → no-services</small>
+    </a>
+    <p style="text-align:center;margin:-18px 0 24px;font-size:0.8rem;color:var(--muted)">
+      <a href="build-contract.html">Provisional build contract</a> ·
+      <a href="build-contract.md">Markdown</a>
+    </p>
+
+    <div class="problem">
+      <strong>Problem:</strong> Suggest posts loads a batch. Alex wants an explicit one-action control (Content Library “Pick for me” feel) that ranks by <code>AdvisorConfigs.websiteServices</code>, respects WP/MAP exclusions, and adds <em>one</em> library post to Suggested — admin still Schedules/Skips.
+    </div>
+
+    <div class="ac7">
+      <strong>AC-7 (Alex, NEW):</strong> When Pick runs, look at the advisor’s <strong>last 3 posted</strong> items. Do <em>not</em> pick a post in the same Master Category / topic tag as any of those three.
+      <ul>
+        <li>Mocks show a <strong>successful pick</strong> whose category differs (e.g. Insurance vs last-3 Retirement / Tax / Estate) with avoid-set microcopy.</li>
+        <li>Mocks show an <strong>exhausted</strong> state when every remaining candidate collides — e.g. “No posts outside your last 3 categories” — never a silent no-op.</li>
+      </ul>
+    </div>
+
+    <div class="oos">
+      <strong>Out of scope:</strong>
+      <ul>
+        <li>Replacing Suggest posts</li>
+        <li>Auto-publish / monthly batch scheduler</li>
+        <li>New Master Categories collection (<a href="../263/">#263</a> Type Product|Service is separate)</li>
+        <li>Redesigning #52 crawl</li>
+      </ul>
+    </div>
+
+    <div class="prov">
+      <strong>Provisional / staging:</strong> Designer mocks only. Not agent-ready until Alex locks a direction. Do not wake Software developer from this hub.
+    </div>
+
+    <h2>Directions</h2>
+    <div class="grid">
+      <a class="card recd" href="directions/a/index.html">
+        <span class="tag rec-tag">RECOMMENDED</span>
+        <h3>A — Sibling primary actions</h3>
+        <p>Full “Pick a post for me” button beside/under Suggest posts. Clearest discoverability; matches MAP action stack. Interactive AC-7 states.</p>
+      </a>
+      <a class="card" href="directions/b/index.html">
+        <span class="tag">ALT</span>
+        <h3>B — Split button / menu</h3>
+        <p>Suggest = primary; chevron menu = “Pick one for me”. Same outcomes; one click deeper.</p>
+      </a>
+      <a class="card" href="directions/c/index.html">
+        <span class="tag">ALT</span>
+        <h3>C — Icon + tooltip</h3>
+        <p>Suggest text + sparkle icon. Best density vs #254; easiest to miss. Same states.</p>
+      </a>
+    </div>
+
+    <h2>Related mocks</h2>
+    <p style="font-size:0.85rem;color:var(--muted)">
+      Chrome / cards: <a href="../254/directions/a/">#254 Dir A (locked)</a> ·
+      Choose services: <a href="../manage-advisor-choose-services/directions/c/">#240 Dir C</a> ·
+      Type curation: <a href="../263/">#263</a>
+    </p>
+
+    <div class="meta">
+      <p>Issue: <a href="https://github.com/kartboy16/content-library/issues/266">content-library #266</a></p>
+      <p>Repo: <a href="https://github.com/kartboy16/fc-mocks">kartboy16/fc-mocks</a> · path <code>/266/</code></p>
+      <p>Live: <a href="https://kartboy16.github.io/fc-mocks/266/">kartboy16.github.io/fc-mocks/266/</a></p>
+    </div>
+  </div>
+</body>
+</html>
