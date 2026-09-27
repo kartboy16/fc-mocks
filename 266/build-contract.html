@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Build contract (provisional) · #266 Pick a post for me</title>
+  <title>Build contract · #266 Pick a post for me</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <style>
     body { font-family: Inter, system-ui, sans-serif; max-width: 760px; margin: 40px auto; padding: 0 24px 80px; color: #1e2a4a; line-height: 1.55; }
@@ -20,8 +20,8 @@
   </style>
 </head>
 <body>
-  <p class="warn"><strong>PROVISIONAL</strong> — Designer recommendation only (Direction A). Not locked by Alex. Not agent-ready. Staging track. Do not implement until Alex picks a direction and CoS marks ready.</p>
-  <p class="ok"><strong>Recommended:</strong> Direction A — Sibling primary actions (“Pick a post for me” beside/under Suggest posts).</p>
+  <p class="ok"><strong>LOCKED</strong> — Direction A locked by Alex 2026-09-26 PT; agent-ready; staging track; contract frozen for Software developer.</p>
+  <p class="ok"><strong>Locked:</strong> Direction A — Sibling primary actions (“Pick a post for me” beside/under Suggest posts).</p>
   <p class="rule"><strong>AC-7:</strong> Exclude candidates whose category matches any of the advisor’s last 3 posted. If all remaining collide → clear exhausted UI (never silent).</p>
 
   <h1>Build contract · MAP Pick a post for me (#266)</h1>
@@ -30,7 +30,7 @@
   <h2>One-liner</h2>
   <p>On each Manage Advisor Posts advisor row, add <strong>Pick a post for me</strong> next to <strong>Suggest posts</strong>. One click ranks a library post using that advisor’s confirmed services + WP/MAP exclusions, skips categories from the last 3 posted, and prepends the result to that row’s Suggested scroller. Admin still Schedules or Skips — <strong>no auto-publish</strong>.</p>
 
-  <h2>Recommended UI (Direction A)</h2>
+  <h2>Locked UI (Direction A)</h2>
   <ul>
     <li>Actions column: stack Suggest posts, then outline primary <strong>Pick a post for me</strong>, then Choose services / Load from WP as today.</li>
     <li>Widen actions column slightly vs #254 (~140–150px) so labels wrap cleanly.</li>
@@ -50,7 +50,7 @@
 
   <h2>Screens / states</h2>
   <table>
-    <thead><tr><th>State</th><th>UI</th><th>Copy (provisional)</th></tr></thead>
+    <thead><tr><th>State</th><th>UI</th><th>Copy</th></tr></thead>
     <tbody>
       <tr><td>Idle</td><td>Pick button enabled when services exist (or after #52 empty-scan path)</td><td>Button label: <strong>Pick a post for me</strong></td></tr>
       <tr><td>Loading</td><td>Button spinner / inline “Picking…”; optional soft placeholder in Suggested</td><td>Picking a post… · Matching services + avoiding last 3 categories</td></tr>

@@ -20,9 +20,10 @@
     .hero .eyebrow { font-size: 0.75rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; opacity: 0.85; margin-bottom: 10px; }
     .hero h1 { font-size: 1.75rem; margin-bottom: 10px; }
     .hero p { opacity: 0.92; max-width: 720px; font-size: 0.95rem; }
-    .rec {
+    .lock {
       display: inline-block; margin-top: 18px; background: #e8f5e9; color: #065f46;
       font-weight: 700; font-size: 0.8rem; padding: 8px 14px; border-radius: 999px;
+      border: 1px solid #a7d7b5;
     }
     .wrap { max-width: 880px; margin: 0 auto; padding: 28px 24px 72px; }
     .cta {
@@ -64,9 +65,9 @@
       border-radius: 10px; font-size: 0.85rem; color: #991b1b;
     }
     .oos ul { margin: 8px 0 0; padding-left: 1.2rem; }
-    .prov {
-      margin: 16px 0 0; padding: 12px 14px; background: #fff7ed; border: 1px solid #fed7aa;
-      border-radius: 10px; font-size: 0.85rem; color: #9a3412;
+    .lock-note {
+      margin: 16px 0 0; padding: 12px 14px; background: #e8f5e9; border: 1px solid #a7d7b5;
+      border-radius: 10px; font-size: 0.85rem; color: #1a7f4c;
     }
     .meta { margin-top: 32px; font-size: 0.8rem; color: var(--muted); }
     .meta a { color: var(--blue); }
@@ -79,17 +80,17 @@
       <div class="eyebrow">FinancialContent · content-library #266 · Designer mocks</div>
       <h1>MAP — “Pick a post for me” beside Suggest posts</h1>
       <p>One-click pick grounded in the advisor’s products/services + WP history, dropped into that row’s <strong>Suggested</strong> scroller. Suggest posts stays for batch. No auto-publish — Schedule/Skip unchanged. Includes <strong>AC-7</strong> category diversity vs last 3 posted.</p>
-      <span class="rec">Recommend Direction A — Sibling primary actions</span>
+      <span class="lock">LOCKED · Direction A — Sibling primary actions</span>
     </div>
   </header>
 
   <div class="wrap">
     <a class="cta" href="directions/a/index.html">
-      Open Direction A (recommended)
+      Open Direction A (locked)
       <small>Sibling Pick button · demo: idle → loading → success (≠ last 3 cats) → exhausted → no-services</small>
     </a>
     <p style="text-align:center;margin:-18px 0 24px;font-size:0.8rem;color:var(--muted)">
-      <a href="build-contract.html">Provisional build contract</a> ·
+      <a href="build-contract.html">Locked build contract</a> ·
       <a href="build-contract.md">Markdown</a>
     </p>
 
@@ -115,14 +116,14 @@
       </ul>
     </div>
 
-    <div class="prov">
-      <strong>Provisional / staging:</strong> Designer mocks only. Not agent-ready until Alex locks a direction. Do not wake Software developer from this hub.
+    <div class="lock-note">
+      <strong>Locked / agent-ready:</strong> Alex locked Direction A on <strong>2026-09-26 PT</strong>. Staging build is with Software developer; no further mock rework unless tweaks are requested.
     </div>
 
     <h2>Directions</h2>
     <div class="grid">
       <a class="card recd" href="directions/a/index.html">
-        <span class="tag rec-tag">RECOMMENDED</span>
+        <span class="tag rec-tag">LOCKED</span>
         <h3>A — Sibling primary actions</h3>
         <p>Full “Pick a post for me” button beside/under Suggest posts. Clearest discoverability; matches MAP action stack. Interactive AC-7 states.</p>
       </a>

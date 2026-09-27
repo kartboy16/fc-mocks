@@ -1,8 +1,8 @@
-# Build contract (PROVISIONAL) · #266 MAP Pick a post for me
+# Build contract · #266 MAP Pick a post for me
 
-> **PROVISIONAL** — Designer recommendation (Direction A). Not locked by Alex. Not agent-ready. Staging only.
+> **LOCKED** — Direction A locked by Alex 2026-09-26 PT; agent-ready; staging track; contract frozen for Software developer.
 
-**Recommended:** Direction A — Sibling primary actions (“Pick a post for me” beside/under Suggest posts).
+**Locked:** Direction A — Sibling primary actions (“Pick a post for me” beside/under Suggest posts).
 
 **AC-7:** Exclude candidates whose category matches any of the advisor’s last 3 posted. If all remaining collide → clear exhausted UI (never silent).
 
@@ -10,7 +10,7 @@
 
 On each Manage Advisor Posts advisor row, add **Pick a post for me** next to **Suggest posts**. One click ranks a library post using that advisor’s confirmed services + WP/MAP exclusions, skips categories from the last 3 posted, and prepends the result to that row’s Suggested scroller. Admin still Schedules or Skips — **no auto-publish**.
 
-## Recommended UI (Direction A)
+## Locked UI (Direction A)
 
 - Actions column: Suggest posts → outline primary **Pick a post for me** → Choose services / Load from WP.
 - Widen actions column slightly (~140–150px) vs #254.
@@ -28,7 +28,7 @@ On each Manage Advisor Posts advisor row, add **Pick a post for me** next to **S
 
 ## Screens / states
 
-| State | UI | Copy (provisional) |
+| State | UI | Copy |
 | --- | --- | --- |
 | Idle | Pick enabled when services exist (or after #52 empty-scan) | **Pick a post for me** |
 | Loading | Spinner / “Picking…” | Picking a post… · Matching services + avoiding last 3 categories |
