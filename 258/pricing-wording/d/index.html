@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Pricing wording D — Plain benefit · #258</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #f4f8fc; --card: #fff; --ink: #1e2a4a; --muted: #5b6572;
+      --blue: #2b7de9; --blue-dark: #1e5bb8; --border: #d4e4f2; --mint: #e6f1fb;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: Inter, system-ui, sans-serif; background: var(--bg); color: var(--ink); font-size: 13px; line-height: 1.45; }
+    a { color: var(--blue); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    .nav {
+      padding: 8px 24px; font-size: 0.75rem; background: #fafafa;
+      border-bottom: 1px solid var(--border); display: flex; gap: 12px; flex-wrap: wrap; align-items: center;
+    }
+    .nav .sep { color: #c0c8d4; }
+    .nav .on { font-weight: 700; color: var(--ink); }
+    .marketing { max-width: 480px; margin: 0 auto; padding: 40px 20px 64px; }
+    .page-head h1 { font-size: 1.35rem; font-weight: 700; }
+    .page-head .sub { color: var(--muted); font-size: 0.85rem; margin-top: 6px; max-width: 440px; }
+    .plan {
+      position: relative; background: var(--card); border: 2px solid var(--blue);
+      border-radius: 14px; padding: 28px 24px 24px; margin-top: 28px;
+      display: flex; flex-direction: column; gap: 12px;
+      box-shadow: 0 8px 28px rgba(43,125,233,0.14);
+    }
+    .ribbon {
+      position: absolute; top: -12px; left: 20px;
+      background: var(--blue); color: #fff; font-size: 0.68rem; font-weight: 700;
+      letter-spacing: 0.04em; text-transform: uppercase;
+      padding: 4px 12px; border-radius: 999px;
+      box-shadow: 0 2px 8px rgba(43,125,233,0.35);
+    }
+    .plan .name { font-weight: 700; font-size: 1.1rem; margin-top: 4px; }
+    .plan .price { font-size: 2rem; font-weight: 700; line-height: 1.1; }
+    .plan .price span { font-size: 0.85rem; font-weight: 500; color: var(--muted); }
+    .plan .micro { font-size: 0.72rem; color: var(--muted); margin-top: -4px; }
+    .plan ul { padding-left: 1.15rem; color: var(--muted); font-size: 0.85rem; margin: 4px 0 8px; }
+    .plan ul li { margin-bottom: 7px; }
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center;
+      padding: 12px 16px; border-radius: 8px; font-family: inherit; font-size: 0.9rem;
+      font-weight: 600; cursor: pointer; border: none; text-decoration: none;
+      background: var(--blue); color: #fff; width: 100%;
+    }
+    .btn:hover { filter: brightness(1.05); text-decoration: none; }
+    .ph { font-size: 0.68rem; color: var(--muted); font-style: italic; text-align: center; }
+
+  </style>
+</head>
+<body>
+  <nav class="nav">
+    <a href="../index.html">← Wording hub</a>
+    <span class="sep">·</span>
+    <a href="../a/index.html">A</a> · <a href="../b/index.html">B</a> · <a href="../c/index.html">C</a> · <a href="../d/index.html" class="on">D</a>
+    <span class="sep">·</span>
+    <a href="../../index.html">#258 hub</a>
+    <span class="sep">·</span>
+    <span class="on">D — Plain benefit</span>
+  </nav>
+  <div class="marketing">
+    <div class="page-head">
+      <h1>Start your 30-day free trial</h1>
+      <p class="sub">Firm billing for FinancialContent. Pick a plan — card collected at checkout.</p>
+    </div>
+      <div class="plan" id="pricing-card">
+        <span class="ribbon">Intro pricing</span>
+        <div class="name">Firm · Starter</div>
+        <div class="price">$79 <span>CAD / mo after trial</span></div>
+        <p class="micro">Cancel anytime during trial · Card at checkout</p>
+        <ul>
+            <li>30-day free trial</li>
+            <li>Publish content to your site, social, and email</li>
+            <li>All-in-one alternative to Mailchimp & Hootsuite</li>
+            <li>Firm admin billing</li>
+        </ul>
+        <a class="btn" href="#">Start 30-day trial</a>
+        <p class="ph">Playground stub · not a live offer</p>
+      </div>
+  </div>
+</body>
+</html>
