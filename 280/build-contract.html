@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Build contract · #280 Dual-license (provisional)</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root { --bg:#f4f8fc; --ink:#1e2a4a; --muted:#5b6572; --blue:#2b7de9; --border:#d4e4f2; }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: Inter, system-ui, sans-serif; background: var(--bg); color: var(--ink); line-height: 1.55; padding: 32px 20px 72px; }
+    .wrap { max-width: 720px; margin: 0 auto; background: #fff; border: 1px solid var(--border); border-radius: 12px; padding: 28px 32px; }
+    h1 { font-size: 1.35rem; margin-bottom: 8px; }
+    h2 { font-size: 0.95rem; margin: 24px 0 10px; color: var(--ink); }
+    p, li { font-size: 0.9rem; color: var(--muted); }
+    ul, ol { padding-left: 1.2rem; margin: 8px 0; }
+    li { margin-bottom: 4px; }
+    .status { display: inline-block; background: #fff8eb; color: #8a5a10; font-weight: 700; font-size: 0.75rem; padding: 6px 12px; border-radius: 999px; border: 1px solid #f0d4a8; margin-bottom: 14px; }
+    .rec { display: inline-block; background: #e8f5e9; color: #065f46; font-weight: 700; font-size: 0.75rem; padding: 6px 12px; border-radius: 999px; margin-bottom: 14px; margin-left: 6px; }
+    a { color: var(--blue); }
+    code { background: #eef2f6; padding: 0.1em 0.35em; border-radius: 4px; font-size: 0.85em; }
+    table { width: 100%; border-collapse: collapse; font-size: 0.85rem; margin: 10px 0; }
+    th, td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--border); vertical-align: top; }
+    th { background: #eef4fb; color: var(--muted); font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.04em; }
+    .nav { margin-bottom: 16px; font-size: 0.8rem; }
+    .nav a { margin-right: 10px; }
+    strong { color: var(--ink); }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="nav">
+      <a href="index.html">#280 hub</a>
+      <a href="directions/a/index.html">Dir A</a>
+      <a href="directions/b/index.html">Dir B</a>
+      <a href="directions/c/index.html">Dir C</a>
+      <a href="build-contract.md">Markdown</a>
+    </div>
+    <span class="status">PROVISIONAL</span>
+    <span class="rec">Recommend A</span>
+    <h1>Build contract · #280 Dual-license advisor profiles</h1>
+    <p style="margin-bottom:12px"><strong>Issue:</strong> <a href="https://github.com/kartboy16/content-library/issues/280">content-library #280</a> · <strong>Mocks:</strong> <a href="https://kartboy16.github.io/fc-mocks/280/">Pages /280/</a> · Idea / playground</p>
+
+    <h2>One-liner</h2>
+    <p>Dual-licensed advisors keep <strong>one login</strong> with three <strong>branding kits</strong> — Investments, Insurance, and Both (two logo slots). A clear <strong>Working as</strong> switcher drives compose/preview logos; missing logos show an empty state with a path to Profile; send confirms which kit applies. <strong>Not</strong> #209 Advisor Categories / affiliation.</p>
+
+    <h2>Recommend</h2>
+    <p><strong>Direction A</strong> — License contexts on one advisor. Both-logos path is an explicit third kit.</p>
+    <ul>
+      <li><strong>B</strong> (separate profiles): hard isolation; <strong>NG-1</strong> seat/confusion risk.</li>
+      <li><strong>C</strong> (send-time checkboxes): smallest change; easy to forget; no sticky mode.</li>
+    </ul>
+
+    <h2>Acceptance criteria (draft)</h2>
+    <ul>
+      <li><strong>AC-1:</strong> Clear investments vs insurance (and/or both) without wrong branding.</li>
+      <li><strong>AC-2:</strong> Designed path for sends needing both logos.</li>
+      <li><strong>AC-3:</strong> Logos per context; empty/missing states designed.</li>
+      <li><strong>AC-4:</strong> Obvious switcher; admin setup if ownership says so.</li>
+      <li><strong>AC-5:</strong> Pages mock + this contract before agent-ready.</li>
+    </ul>
+
+    <h2>Open product questions</h2>
+    <ol>
+      <li>Firm admin vs advisor self-serve for kits?</li>
+      <li>Does “Both” need its own disclosures or concatenate Inv+Ins?</li>
+      <li>Seat billing if Direction B (flag NG-1)?</li>
+      <li>Does context switch also filter library content (#261 Source) or only branding?</li>
+      <li>Website vs email vs social — same kit switcher everywhere?</li>
+    </ol>
+    <p>Do not invent locked answers until product confirms.</p>
+
+    <h2>Working default (Direction A)</h2>
+    <table>
+      <thead><tr><th>Surface</th><th>Behavior</th></tr></thead>
+      <tbody>
+        <tr><td>Firm admin</td><td>Enable Dual-licensed; kits overview</td></tr>
+        <tr><td>Advisor profile</td><td>Three kits + logos + disclosure stubs</td></tr>
+        <tr><td>App chrome</td><td>Working as: {kit} ▾</td></tr>
+        <tr><td>Compose / preview</td><td>Active kit logos; Both = two logos</td></tr>
+        <tr><td>Missing logo</td><td>Empty state + Add logo in Profile</td></tr>
+        <tr><td>Send</td><td>Confirm strip naming active kit</td></tr>
+      </tbody>
+    </table>
+
+    <h2>Out of scope</h2>
+    <ul>
+      <li><strong>NG-1:</strong> Billing / seats rework</li>
+      <li><strong>NG-2:</strong> Live publish during playground</li>
+      <li><strong>NG-3:</strong> Auto-merge / agent-ready from mock work</li>
+      <li>#209 affiliation · #261 Source unless product ties kit to library filter</li>
+    </ul>
+
+    <h2>Reference</h2>
+    <ul>
+      <li><a href="https://kartboy16.github.io/fc-mocks/280/">Hub</a></li>
+      <li><a href="https://kartboy16.github.io/fc-mocks/280/directions/a/">Dir A</a> · <a href="https://kartboy16.github.io/fc-mocks/280/directions/b/">B</a> · <a href="https://kartboy16.github.io/fc-mocks/280/directions/c/">C</a></li>
+      <li><a href="build-contract.md">Markdown source</a></li>
+    </ul>
+  </div>
+</body>
+</html>

@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Direction B — Separate profiles · #280</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #f4f8fc; --card: #fff; --ink: #1e2a4a; --muted: #5b6572;
+      --blue: #2b7de9; --blue-dark: #1e5bb8; --border: #d4e4f2; --mint: #e6f1fb;
+      --ok: #047857; --ok-bg: #e8f5e9; --warn: #b45309; --warn-bg: #fff8eb; --warn-border: #f0d4a8;
+      --err: #b91c1c; --err-bg: #fef2f2; --err-border: #fecaca;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: Inter, system-ui, sans-serif; background: var(--bg); color: var(--ink); font-size: 13px; line-height: 1.45; }
+    a { color: var(--blue); }
+    .thesis {
+      background: linear-gradient(135deg, #1e2a4a, #2b7de9); color: #fff; padding: 16px 24px;
+    }
+    .thesis .alt {
+      display: inline-block; background: rgba(255,255,255,0.2); color: #fff; font-size: 0.68rem;
+      font-weight: 700; padding: 3px 10px; border-radius: 999px; margin-bottom: 8px;
+    }
+    .thesis h1 { font-size: 1.05rem; margin-bottom: 4px; }
+    .thesis p { opacity: 0.9; font-size: 0.8rem; max-width: 960px; }
+    .nav {
+      padding: 8px 24px; font-size: 0.75rem; background: #fafafa;
+      border-bottom: 1px solid var(--border); display: flex; gap: 12px; flex-wrap: wrap; align-items: center;
+    }
+    .nav a { color: var(--blue); text-decoration: none; font-weight: 500; }
+    .nav .sep { color: #c0c8d4; }
+    .nav .on { font-weight: 700; color: var(--ink); }
+    .steps {
+      display: flex; gap: 6px; flex-wrap: wrap; padding: 10px 24px; background: #fff;
+      border-bottom: 1px solid var(--border); align-items: center;
+    }
+    .steps .lbl { font-size: 0.65rem; font-weight: 700; text-transform: uppercase; color: var(--muted); margin-right: 4px; }
+    .step-btn {
+      border: 1px solid var(--border); background: #fff; color: var(--ink);
+      font-family: inherit; font-size: 0.7rem; font-weight: 600; padding: 6px 10px;
+      border-radius: 999px; cursor: pointer;
+    }
+    .step-btn:hover { border-color: var(--blue); color: var(--blue); background: var(--mint); }
+    .step-btn.on { background: var(--blue); color: #fff; border-color: var(--blue); }
+    .ng-bar {
+      margin: 12px 20px 0; padding: 10px 14px; background: var(--err-bg); border: 1px solid var(--err-border);
+      border-radius: 10px; font-size: 0.75rem; color: #991b1b;
+    }
+    .ng-bar strong { color: #7f1d1d; }
+    .app { display: flex; min-height: calc(100vh - 200px); margin-top: 12px; }
+    .rail {
+      width: 52px; background: #1e2a4a; flex-shrink: 0;
+      display: flex; flex-direction: column; align-items: center; padding: 12px 0; gap: 8px;
+    }
+    .rail .ri {
+      width: 32px; height: 32px; border-radius: 8px; background: rgba(255,255,255,0.08);
+      color: rgba(255,255,255,0.7); font-size: 0.55rem; font-weight: 700;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .rail .ri.on { background: var(--blue); color: #fff; }
+    .main { flex: 1; min-width: 0; background: var(--bg); }
+    .topbar {
+      display: flex; align-items: center; justify-content: space-between; gap: 12px;
+      padding: 10px 18px; background: #fff; border-bottom: 1px solid var(--border); flex-wrap: wrap;
+    }
+    .topbar .brand { font-weight: 700; font-size: 0.9rem; }
+    .content { padding: 18px 20px 64px; max-width: 960px; }
+    .screen { display: none; }
+    .screen.on { display: block; }
+    .page-head h2 { font-size: 1.2rem; font-weight: 700; }
+    .page-head .sub { color: var(--muted); font-size: 0.8rem; margin-top: 4px; max-width: 720px; }
+    .card {
+      background: #fff; border: 1px solid var(--border); border-radius: 12px;
+      padding: 16px; margin-top: 14px; box-shadow: 0 1px 3px rgba(30,42,74,0.04);
+    }
+    .btn {
+      display: inline-flex; align-items: center; gap: 6px; padding: 7px 12px;
+      border: 1px solid var(--border); border-radius: 8px; background: #fff;
+      font-family: inherit; font-size: 0.78rem; font-weight: 600; color: var(--ink); cursor: pointer;
+    }
+    .btn:hover { border-color: var(--blue); color: var(--blue); background: var(--mint); }
+    .btn.primary { background: var(--blue); color: #fff; border-color: var(--blue); }
+    .btn.primary:hover { background: var(--blue-dark); color: #fff; }
+    .btn.sm { padding: 4px 8px; font-size: 0.7rem; }
+    .plist { display: flex; flex-direction: column; gap: 10px; margin-top: 10px; }
+    .prow {
+      display: flex; align-items: center; gap: 12px; padding: 12px; border: 1px solid var(--border);
+      border-radius: 10px; background: #fafbfd; cursor: pointer;
+    }
+    .prow:hover, .prow.on { border-color: var(--blue); background: var(--mint); }
+    .avatar {
+      width: 40px; height: 40px; border-radius: 999px; background: var(--mint);
+      color: var(--blue); font-weight: 700; font-size: 0.7rem;
+      display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    }
+    .avatar.ins { background: #e8f5e9; color: #047857; }
+    .avatar.both { background: #f3e8ff; color: #6b21a8; }
+    .prow .name { font-weight: 700; font-size: 0.88rem; }
+    .prow .meta { font-size: 0.72rem; color: var(--muted); }
+    .pill {
+      display: inline-block; font-size: 0.65rem; font-weight: 700; padding: 2px 8px; border-radius: 999px;
+      background: var(--mint); color: var(--blue-dark); margin-left: auto;
+    }
+    .pill.warn { background: var(--warn-bg); color: var(--warn); }
+    .pill.ok { background: var(--ok-bg); color: var(--ok); }
+    .logo-mark {
+      width: 36px; height: 28px; border-radius: 4px; display: inline-flex; align-items: center; justify-content: center;
+      font-size: 0.55rem; font-weight: 800; color: #fff; margin-right: 4px;
+    }
+    .logo-mark.inv { background: #1e5bb8; }
+    .logo-mark.ins { background: #047857; }
+    .logo-box {
+      display: inline-flex; align-items: center; gap: 6px; padding: 6px 10px;
+      border: 1px solid var(--border); border-radius: 8px; background: #fff; font-size: 0.72rem; font-weight: 600;
+    }
+    .preview {
+      border: 1px solid var(--border); border-radius: 12px; background: #fff; overflow: hidden; margin-top: 12px;
+    }
+    .preview-head {
+      padding: 10px 14px; background: #eef4fb; border-bottom: 1px solid var(--border);
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    .preview-head .label { font-size: 0.68rem; font-weight: 700; text-transform: uppercase; color: var(--muted); }
+    .preview-body { padding: 16px; }
+    .preview-title { font-size: 1rem; font-weight: 700; margin-bottom: 6px; }
+    .preview-copy { font-size: 0.82rem; color: var(--muted); margin-bottom: 10px; }
+    .hint { font-size: 0.72rem; color: var(--muted); margin-top: 8px; }
+    .switcher {
+      display: inline-flex; align-items: center; gap: 6px; padding: 6px 10px;
+      background: var(--mint); border: 1px solid var(--border); border-radius: 8px;
+      font-size: 0.78rem; font-weight: 600; cursor: pointer; position: relative;
+    }
+    .menu {
+      position: absolute; top: calc(100% + 4px); right: 0; min-width: 220px;
+      background: #fff; border: 1px solid var(--border); border-radius: 10px;
+      box-shadow: 0 8px 24px rgba(30,42,74,0.12); z-index: 20; display: none; overflow: hidden;
+    }
+    .menu.open { display: block; }
+    .menu button {
+      display: block; width: 100%; text-align: left; padding: 8px 12px; border: none; background: #fff;
+      font-family: inherit; font-size: 0.78rem; font-weight: 600; color: var(--ink); cursor: pointer;
+    }
+    .menu button:hover { background: var(--mint); color: var(--blue); }
+    .field { margin-bottom: 10px; }
+    .field label { display: block; font-size: 0.68rem; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 4px; }
+    .field input, .field textarea {
+      width: 100%; padding: 8px 10px; border: 1px solid var(--border); border-radius: 8px;
+      font-family: inherit; font-size: 0.82rem; background: #fff;
+    }
+    .proscons {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 12px;
+    }
+    @media (max-width: 640px) { .proscons { grid-template-columns: 1fr; } }
+    .pc { padding: 10px 12px; border-radius: 8px; font-size: 0.75rem; }
+    .pc.pro { background: var(--ok-bg); color: var(--ok); }
+    .pc.con { background: var(--err-bg); color: var(--err); }
+    .pc strong { display: block; margin-bottom: 4px; }
+  </style>
+</head>
+<body>
+  <header class="thesis">
+    <span class="alt">ALT · Direction B · NG-1 seat risk</span>
+    <h1>Separate profiles (two logins / two seats feel)</h1>
+    <p>Distinct advisor profiles — Investments persona vs Insurance persona. “Both” = a third profile <em>or</em> send-time multi-logo pick. Hard isolation; higher confusion and possible seat billing impact.</p>
+  </header>
+
+  <nav class="nav">
+    <a href="../../index.html">#280 hub</a>
+    <span class="sep">·</span>
+    <a href="../a/index.html">A</a>
+    <span class="sep">·</span>
+    <span class="on">B (alt)</span>
+    <span class="sep">·</span>
+    <a href="../c/index.html">C</a>
+    <span class="sep">·</span>
+    <a href="../../build-contract.html">Build contract</a>
+  </nav>
+
+  <div class="steps">
+    <span class="lbl">Steps</span>
+    <button type="button" class="step-btn on" data-step="1">1. Profile list</button>
+    <button type="button" class="step-btn" data-step="2">2. Switch account</button>
+    <button type="button" class="step-btn" data-step="3">3. Compose (one persona)</button>
+    <button type="button" class="step-btn" data-step="4">4. Both as 3rd profile</button>
+    <button type="button" class="step-btn" data-step="5">5. NG-1 callout</button>
+  </div>
+
+  <div class="ng-bar">
+    <strong>NG-1 flag:</strong> Separate profiles can feel like two (or three) seats. Do not invent billing/seats rework from this mock — product must decide before any seat implication ships.
+  </div>
+
+  <div class="app">
+    <aside class="rail" aria-hidden="true">
+      <div class="ri on">FC</div>
+      <div class="ri">Lib</div>
+      <div class="ri">Map</div>
+      <div class="ri">Set</div>
+    </aside>
+    <div class="main">
+      <div class="topbar">
+        <span class="brand">FinancialContent</span>
+        <div class="switcher" id="acctSwitcher">
+          Account: <span id="acctLabel">Pat Chen · Investments</span> ▾
+          <div class="menu" id="acctMenu">
+            <button type="button" data-acct="inv">Pat Chen · Investments</button>
+            <button type="button" data-acct="ins">Pat Chen · Insurance</button>
+            <button type="button" data-acct="both">Pat Chen · Both logos</button>
+          </div>
+        </div>
+      </div>
+      <div class="content">
+        <section class="screen on" id="screen1">
+          <div class="page-head">
+            <h2>Your advisor profiles</h2>
+            <p class="sub">Same person appears as separate profiles. Assistants must pick the right one before composing.</p>
+          </div>
+          <div class="card">
+            <div class="plist">
+              <div class="prow on" data-goto="3">
+                <div class="avatar">PC</div>
+                <div>
+                  <div class="name">Pat Chen · Investments</div>
+                  <div class="meta">Horizon Investment Dealer · 1 logo</div>
+                </div>
+                <span class="pill ok">Active</span>
+              </div>
+              <div class="prow" data-goto="2">
+                <div class="avatar ins">PC</div>
+                <div>
+                  <div class="name">Pat Chen · Insurance</div>
+                  <div class="meta">Pacific MGA · 1 logo</div>
+                </div>
+                <span class="pill">Switch</span>
+              </div>
+              <div class="prow" data-goto="4">
+                <div class="avatar both">PC</div>
+                <div>
+                  <div class="name">Pat Chen · Both logos</div>
+                  <div class="meta">Third profile for dual-logo sends</div>
+                </div>
+                <span class="pill warn">Optional 3rd</span>
+              </div>
+            </div>
+            <div class="proscons">
+              <div class="pc pro"><strong>Pros</strong>Hard isolation of branding and history per persona.</div>
+              <div class="pc con"><strong>Cons</strong>Feels like two seats; assistants may pick wrong profile; Both as 3rd multiplies clutter.</div>
+            </div>
+            <div style="margin-top:12px">
+              <button type="button" class="btn primary" data-goto="2">Switch account metaphor →</button>
+            </div>
+          </div>
+        </section>
+
+        <section class="screen" id="screen2">
+          <div class="page-head">
+            <h2>Switch account</h2>
+            <p class="sub">Header “Account” menu swaps to the Insurance persona. Full context reload — not a light branding kit switch.</p>
+          </div>
+          <div class="card">
+            <p style="font-size:0.85rem;margin-bottom:12px">Now signed in as <strong>Pat Chen · Insurance</strong>.</p>
+            <div class="logo-box"><span class="logo-mark ins">PMG</span> Pacific MGA</div>
+            <p class="hint">Investments history, library filters, and dealer logo are not visible on this persona.</p>
+            <div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap">
+              <button type="button" class="btn" data-goto="1">Back to list</button>
+              <button type="button" class="btn primary" data-goto="3">Compose as Investments →</button>
+            </div>
+          </div>
+        </section>
+
+        <section class="screen" id="screen3">
+          <div class="page-head">
+            <h2>Compose · Investments persona</h2>
+            <p class="sub">Only this profile’s logo appears. To use insurance branding, switch account entirely.</p>
+          </div>
+          <div class="card">
+            <div class="field"><label>Subject</label><input value="RRSP contribution tips" /></div>
+            <div class="field"><label>Body</label><textarea rows="2">Three simple ways to make the most of your RRSP room…</textarea></div>
+            <div class="preview">
+              <div class="preview-head">
+                <span class="label">Preview · Investments profile</span>
+                <span class="pill">1 logo</span>
+              </div>
+              <div class="preview-body">
+                <div class="logo-box" style="margin-bottom:10px"><span class="logo-mark inv">HID</span> Horizon Investment Dealer</div>
+                <div class="preview-title">RRSP contribution tips</div>
+                <div class="preview-copy">Three simple ways to make the most of your RRSP room…</div>
+              </div>
+            </div>
+            <div style="margin-top:12px">
+              <button type="button" class="btn primary" data-goto="4">Both as third profile →</button>
+            </div>
+          </div>
+        </section>
+
+        <section class="screen" id="screen4">
+          <div class="page-head">
+            <h2>Both logos · third profile (or send override)</h2>
+            <p class="sub">Option 1: a third profile that carries both logos. Option 2: stay on one persona and pick a second logo at send (heavier than Dir C alone).</p>
+          </div>
+          <div class="card">
+            <div class="preview">
+              <div class="preview-head">
+                <span class="label">Preview · Both profile</span>
+                <span class="pill ok">2 logos</span>
+              </div>
+              <div class="preview-body">
+                <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px">
+                  <div class="logo-box"><span class="logo-mark inv">HID</span> Horizon</div>
+                  <div class="logo-box"><span class="logo-mark ins">PMG</span> Pacific</div>
+                </div>
+                <div class="preview-title">Holistic planning: investments + protection</div>
+              </div>
+            </div>
+            <p class="hint">Third profile solves AC-2 but adds another “seat feel” and more list clutter for assistants.</p>
+            <div style="margin-top:12px">
+              <button type="button" class="btn primary" data-goto="5">NG-1 / why not recommend →</button>
+            </div>
+          </div>
+        </section>
+
+        <section class="screen" id="screen5">
+          <div class="page-head">
+            <h2>Why Direction A is preferred</h2>
+            <p class="sub">B remains a valid comparison when hard isolation outweighs cost — but it trips NG-1 and assistant confusion.</p>
+          </div>
+          <div class="card">
+            <div class="ng-bar" style="margin:0 0 12px">
+              <strong>NG-1:</strong> Mock implies multiple profiles that may map to seats/billing. Product must explicitly accept or reject seat impact before agent-ready on B.
+            </div>
+            <ul style="padding-left:1.2rem;font-size:0.82rem;color:var(--muted)">
+              <li>Assistants (50s–60s advisors’ helpers) must remember which “Pat” is which.</li>
+              <li>No sticky “Working as” on one login — full account switch.</li>
+              <li>Both path either needs a 3rd profile or a one-off override (weaker than A’s kit).</li>
+            </ul>
+            <div style="margin-top:14px;display:flex;gap:8px;flex-wrap:wrap">
+              <a class="btn primary" href="../a/index.html">Open recommended Direction A</a>
+              <a class="btn" href="../../index.html">Back to hub</a>
+            </div>
+          </div>
+        </section>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      var labels = {
+        1: "Pat Chen · Investments",
+        2: "Pat Chen · Insurance",
+        3: "Pat Chen · Investments",
+        4: "Pat Chen · Both logos",
+        5: "Pat Chen · Both logos"
+      };
+      function showStep(n) {
+        document.querySelectorAll(".screen").forEach(function (el) {
+          el.classList.toggle("on", el.id === "screen" + n);
+        });
+        document.querySelectorAll(".step-btn").forEach(function (btn) {
+          btn.classList.toggle("on", Number(btn.getAttribute("data-step")) === n);
+        });
+        document.getElementById("acctLabel").textContent = labels[n];
+        document.getElementById("acctMenu").classList.remove("open");
+      }
+      document.querySelectorAll(".step-btn").forEach(function (btn) {
+        btn.addEventListener("click", function () { showStep(Number(btn.getAttribute("data-step"))); });
+      });
+      document.querySelectorAll("[data-goto]").forEach(function (el) {
+        el.addEventListener("click", function () { showStep(Number(el.getAttribute("data-goto"))); });
+      });
+      document.getElementById("acctSwitcher").addEventListener("click", function (e) {
+        e.stopPropagation();
+        document.getElementById("acctMenu").classList.toggle("open");
+      });
+      document.querySelectorAll("#acctMenu button").forEach(function (b) {
+        b.addEventListener("click", function (e) {
+          e.stopPropagation();
+          var a = b.getAttribute("data-acct");
+          if (a === "inv") showStep(3);
+          else if (a === "ins") showStep(2);
+          else showStep(4);
+        });
+      });
+      document.addEventListener("click", function () {
+        document.getElementById("acctMenu").classList.remove("open");
+      });
+    })();
+  </script>
+</body>
+</html>

@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Direction C — Send-time logo override · #280</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #f4f8fc; --card: #fff; --ink: #1e2a4a; --muted: #5b6572;
+      --blue: #2b7de9; --blue-dark: #1e5bb8; --border: #d4e4f2; --mint: #e6f1fb;
+      --ok: #047857; --ok-bg: #e8f5e9; --warn: #b45309; --warn-bg: #fff8eb; --warn-border: #f0d4a8;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: Inter, system-ui, sans-serif; background: var(--bg); color: var(--ink); font-size: 13px; line-height: 1.45; }
+    a { color: var(--blue); }
+    .thesis {
+      background: linear-gradient(135deg, #1e2a4a, #2b7de9); color: #fff; padding: 16px 24px;
+    }
+    .thesis .alt {
+      display: inline-block; background: rgba(255,255,255,0.2); color: #fff; font-size: 0.68rem;
+      font-weight: 700; padding: 3px 10px; border-radius: 999px; margin-bottom: 8px;
+    }
+    .thesis h1 { font-size: 1.05rem; margin-bottom: 4px; }
+    .thesis p { opacity: 0.9; font-size: 0.8rem; max-width: 960px; }
+    .nav {
+      padding: 8px 24px; font-size: 0.75rem; background: #fafafa;
+      border-bottom: 1px solid var(--border); display: flex; gap: 12px; flex-wrap: wrap; align-items: center;
+    }
+    .nav a { color: var(--blue); text-decoration: none; font-weight: 500; }
+    .nav .sep { color: #c0c8d4; }
+    .nav .on { font-weight: 700; color: var(--ink); }
+    .steps {
+      display: flex; gap: 6px; flex-wrap: wrap; padding: 10px 24px; background: #fff;
+      border-bottom: 1px solid var(--border); align-items: center;
+    }
+    .steps .lbl { font-size: 0.65rem; font-weight: 700; text-transform: uppercase; color: var(--muted); margin-right: 4px; }
+    .step-btn {
+      border: 1px solid var(--border); background: #fff; color: var(--ink);
+      font-family: inherit; font-size: 0.7rem; font-weight: 600; padding: 6px 10px;
+      border-radius: 999px; cursor: pointer;
+    }
+    .step-btn:hover { border-color: var(--blue); color: var(--blue); background: var(--mint); }
+    .step-btn.on { background: var(--blue); color: #fff; border-color: var(--blue); }
+    .oq-bar {
+      margin: 12px 20px 0; padding: 10px 14px; background: var(--warn-bg); border: 1px solid var(--warn-border);
+      border-radius: 10px; font-size: 0.75rem; color: #8a5a10;
+    }
+    .app { display: flex; min-height: calc(100vh - 200px); margin-top: 12px; }
+    .rail {
+      width: 52px; background: #1e2a4a; flex-shrink: 0;
+      display: flex; flex-direction: column; align-items: center; padding: 12px 0; gap: 8px;
+    }
+    .rail .ri {
+      width: 32px; height: 32px; border-radius: 8px; background: rgba(255,255,255,0.08);
+      color: rgba(255,255,255,0.7); font-size: 0.55rem; font-weight: 700;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .rail .ri.on { background: var(--blue); color: #fff; }
+    .main { flex: 1; min-width: 0; background: var(--bg); }
+    .topbar {
+      display: flex; align-items: center; justify-content: space-between; gap: 12px;
+      padding: 10px 18px; background: #fff; border-bottom: 1px solid var(--border);
+    }
+    .topbar .brand { font-weight: 700; font-size: 0.9rem; }
+    .topbar .who { font-size: 0.75rem; color: var(--muted); }
+    .content { padding: 18px 20px 64px; max-width: 960px; }
+    .screen { display: none; }
+    .screen.on { display: block; }
+    .page-head h2 { font-size: 1.2rem; font-weight: 700; }
+    .page-head .sub { color: var(--muted); font-size: 0.8rem; margin-top: 4px; max-width: 720px; }
+    .card {
+      background: #fff; border: 1px solid var(--border); border-radius: 12px;
+      padding: 16px; margin-top: 14px; box-shadow: 0 1px 3px rgba(30,42,74,0.04);
+    }
+    .btn {
+      display: inline-flex; align-items: center; gap: 6px; padding: 7px 12px;
+      border: 1px solid var(--border); border-radius: 8px; background: #fff;
+      font-family: inherit; font-size: 0.78rem; font-weight: 600; color: var(--ink); cursor: pointer;
+    }
+    .btn:hover { border-color: var(--blue); color: var(--blue); background: var(--mint); }
+    .btn.primary { background: var(--blue); color: #fff; border-color: var(--blue); }
+    .btn.primary:hover { background: var(--blue-dark); color: #fff; }
+    .btn.sm { padding: 4px 8px; font-size: 0.7rem; }
+    .field { margin-bottom: 10px; }
+    .field label { display: block; font-size: 0.68rem; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 4px; }
+    .field input, .field textarea {
+      width: 100%; padding: 8px 10px; border: 1px solid var(--border); border-radius: 8px;
+      font-family: inherit; font-size: 0.82rem; background: #fff;
+    }
+    .logo-mark {
+      width: 36px; height: 28px; border-radius: 4px; display: inline-flex; align-items: center; justify-content: center;
+      font-size: 0.55rem; font-weight: 800; color: #fff;
+    }
+    .logo-mark.inv { background: #1e5bb8; }
+    .logo-mark.ins { background: #047857; }
+    .logo-box {
+      display: flex; align-items: center; gap: 10px; padding: 10px 12px;
+      border: 1px solid var(--border); border-radius: 10px; background: #fafbfd; margin-bottom: 8px;
+    }
+    .logo-box .meta { flex: 1; }
+    .logo-box .name { font-weight: 700; font-size: 0.82rem; }
+    .logo-box .sub { font-size: 0.7rem; color: var(--muted); }
+    .check {
+      display: flex; align-items: flex-start; gap: 10px; padding: 10px 12px;
+      border: 1px solid var(--border); border-radius: 10px; background: #fff; margin-bottom: 8px;
+      cursor: pointer;
+    }
+    .check.on { border-color: var(--blue); background: var(--mint); }
+    .check input { margin-top: 3px; width: 16px; height: 16px; accent-color: var(--blue); }
+    .check .txt { font-size: 0.82rem; font-weight: 600; }
+    .check .sub { font-size: 0.7rem; color: var(--muted); font-weight: 500; margin-top: 2px; }
+    .preview {
+      border: 1px solid var(--border); border-radius: 12px; background: #fff; overflow: hidden; margin-top: 12px;
+    }
+    .preview-head {
+      padding: 10px 14px; background: #eef4fb; border-bottom: 1px solid var(--border);
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    .preview-head .label { font-size: 0.68rem; font-weight: 700; text-transform: uppercase; color: var(--muted); }
+    .preview-body { padding: 16px; }
+    .preview-title { font-size: 1rem; font-weight: 700; margin-bottom: 6px; }
+    .preview-copy { font-size: 0.82rem; color: var(--muted); margin-bottom: 10px; }
+    .logo-row { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 10px; min-height: 36px; }
+    .logo-chip {
+      display: inline-flex; align-items: center; gap: 6px; padding: 6px 10px;
+      border: 1px solid var(--border); border-radius: 8px; background: #fff; font-size: 0.72rem; font-weight: 600;
+    }
+    .pill {
+      display: inline-block; font-size: 0.65rem; font-weight: 700; padding: 2px 8px; border-radius: 999px;
+      background: var(--mint); color: var(--blue-dark);
+    }
+    .pill.warn { background: var(--warn-bg); color: var(--warn); }
+    .pill.ok { background: var(--ok-bg); color: var(--ok); }
+    .hint { font-size: 0.72rem; color: var(--muted); margin-top: 8px; }
+    .empty-note {
+      padding: 8px 10px; background: var(--warn-bg); border: 1px solid var(--warn-border);
+      border-radius: 8px; font-size: 0.72rem; color: #8a5a10;
+    }
+    .proscons {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 12px;
+    }
+    @media (max-width: 640px) { .proscons { grid-template-columns: 1fr; } }
+    .pc { padding: 10px 12px; border-radius: 8px; font-size: 0.75rem; }
+    .pc.pro { background: var(--ok-bg); color: var(--ok); }
+    .pc.con { background: #fef2f2; color: #991b1b; }
+    .pc strong { display: block; margin-bottom: 4px; }
+  </style>
+</head>
+<body>
+  <header class="thesis">
+    <span class="alt">ALT · Direction C · minimal</span>
+    <h1>One profile + send-time logo override only</h1>
+    <p>Single profile holds both logos. At send, checkboxes: “Include investment dealer logo” / “Include insurance logo”. Tiny change — easy to forget; no sticky insurance mode for browsing.</p>
+  </header>
+
+  <nav class="nav">
+    <a href="../../index.html">#280 hub</a>
+    <span class="sep">·</span>
+    <a href="../a/index.html">A</a>
+    <span class="sep">·</span>
+    <a href="../b/index.html">B</a>
+    <span class="sep">·</span>
+    <span class="on">C (alt)</span>
+    <span class="sep">·</span>
+    <a href="../../build-contract.html">Build contract</a>
+  </nav>
+
+  <div class="steps">
+    <span class="lbl">Steps</span>
+    <button type="button" class="step-btn on" data-step="1">1. Profile assets</button>
+    <button type="button" class="step-btn" data-step="2">2. Compose checkboxes</button>
+    <button type="button" class="step-btn" data-step="3">3. Both checked</button>
+    <button type="button" class="step-btn" data-step="4">4. Tradeoffs</button>
+  </div>
+
+  <div class="oq-bar">
+    <strong>Tradeoff:</strong> Meets AC-2 (both logos) with least UI — but no “I’m in insurance mode” for browsing/content filters. Easy to forget which boxes were checked last time.
+  </div>
+
+  <div class="app">
+    <aside class="rail" aria-hidden="true">
+      <div class="ri on">FC</div>
+      <div class="ri">Lib</div>
+      <div class="ri">Map</div>
+      <div class="ri">Set</div>
+    </aside>
+    <div class="main">
+      <div class="topbar">
+        <span class="brand">FinancialContent</span>
+        <span class="who">Pat Chen · Horizon Wealth · one profile</span>
+      </div>
+      <div class="content">
+        <section class="screen on" id="screen1">
+          <div class="page-head">
+            <h2>Profile · Logo assets</h2>
+            <p class="sub">One profile stores both logos. No license “modes” — selection happens only at send.</p>
+          </div>
+          <div class="card">
+            <div class="logo-box">
+              <span class="logo-mark inv">HID</span>
+              <div class="meta">
+                <div class="name">Investment dealer logo</div>
+                <div class="sub">Horizon Investment Dealer</div>
+              </div>
+              <button type="button" class="btn sm">Replace</button>
+            </div>
+            <div class="logo-box">
+              <span class="logo-mark ins">PMG</span>
+              <div class="meta">
+                <div class="name">Insurance / MGA logo</div>
+                <div class="sub">Pacific MGA</div>
+              </div>
+              <button type="button" class="btn sm">Replace</button>
+            </div>
+            <p class="hint">Missing logo: empty slot + “Add logo” (same empty-state idea as A, but no kit framing).</p>
+            <div style="margin-top:12px">
+              <button type="button" class="btn primary" data-goto="2">Compose with logo checkboxes →</button>
+            </div>
+          </div>
+        </section>
+
+        <section class="screen" id="screen2">
+          <div class="page-head">
+            <h2>Compose · Logo checkboxes</h2>
+            <p class="sub">Pick which logos to include on this send. Default mock: investments only checked.</p>
+          </div>
+          <div class="card">
+            <div class="field"><label>Subject</label><input value="RRSP contribution tips" /></div>
+            <div class="field"><label>Include on this send</label></div>
+            <label class="check on" id="chkInv">
+              <input type="checkbox" checked id="inputInv" />
+              <div>
+                <div class="txt">Include investment dealer logo</div>
+                <div class="sub">Horizon Investment Dealer</div>
+              </div>
+            </label>
+            <label class="check" id="chkIns">
+              <input type="checkbox" id="inputIns" />
+              <div>
+                <div class="txt">Include insurance logo</div>
+                <div class="sub">Pacific MGA</div>
+              </div>
+            </label>
+            <div class="preview">
+              <div class="preview-head">
+                <span class="label">Preview</span>
+                <span class="pill" id="prevPill">1 logo · Investments</span>
+              </div>
+              <div class="preview-body">
+                <div class="logo-row" id="prevLogos"></div>
+                <div class="preview-title">RRSP contribution tips</div>
+                <div class="preview-copy">Three simple ways to make the most of your RRSP room…</div>
+                <div class="empty-note" id="prevEmpty" style="display:none">Select at least one logo, or add a missing logo in Profile.</div>
+              </div>
+            </div>
+            <div style="margin-top:12px">
+              <button type="button" class="btn primary" data-goto="3">Check both logos →</button>
+            </div>
+          </div>
+        </section>
+
+        <section class="screen" id="screen3">
+          <div class="page-head">
+            <h2>Both logos checked</h2>
+            <p class="sub">AC-2 path exists — but it is per-send memory, not a saved “Both” kit.</p>
+          </div>
+          <div class="card">
+            <label class="check on">
+              <input type="checkbox" checked disabled />
+              <div><div class="txt">Include investment dealer logo</div></div>
+            </label>
+            <label class="check on">
+              <input type="checkbox" checked disabled />
+              <div><div class="txt">Include insurance logo</div></div>
+            </label>
+            <div class="preview">
+              <div class="preview-head">
+                <span class="label">Preview</span>
+                <span class="pill ok">2 logos</span>
+              </div>
+              <div class="preview-body">
+                <div class="logo-row">
+                  <span class="logo-chip"><span class="logo-mark inv">HID</span> Horizon</span>
+                  <span class="logo-chip"><span class="logo-mark ins">PMG</span> Pacific</span>
+                </div>
+                <div class="preview-title">Holistic planning: investments + protection</div>
+              </div>
+            </div>
+            <p class="hint">Next send may default wrong if last checkbox state is sticky or forgotten.</p>
+            <div style="margin-top:12px">
+              <button type="button" class="btn primary" data-goto="4">Tradeoffs →</button>
+            </div>
+          </div>
+        </section>
+
+        <section class="screen" id="screen4">
+          <div class="page-head">
+            <h2>Tradeoffs vs A</h2>
+            <p class="sub">C is the smallest build. Prefer when dual-logo is rare and sticky mode is not needed.</p>
+          </div>
+          <div class="card">
+            <div class="proscons">
+              <div class="pc pro"><strong>Pros</strong>Minimal change · one profile · both logos possible at send · no seat feel.</div>
+              <div class="pc con"><strong>Cons</strong>Easy to forget · no sticky “insurance mode” for browse/filters · dual-logo not a repeatable kit · weaker AC-4 switcher.</div>
+            </div>
+            <p class="hint" style="margin-top:12px">Recommend <strong>Direction A</strong> when dual-licensed advisors regularly need Investments vs Insurance vs Both as working modes.</p>
+            <div style="margin-top:14px;display:flex;gap:8px;flex-wrap:wrap">
+              <a class="btn primary" href="../a/index.html">Open recommended Direction A</a>
+              <a class="btn" href="../../index.html">Back to hub</a>
+            </div>
+          </div>
+        </section>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      function showStep(n) {
+        document.querySelectorAll(".screen").forEach(function (el) {
+          el.classList.toggle("on", el.id === "screen" + n);
+        });
+        document.querySelectorAll(".step-btn").forEach(function (btn) {
+          btn.classList.toggle("on", Number(btn.getAttribute("data-step")) === n);
+        });
+        if (n === 2) refreshPreview();
+        if (n === 3) {
+          document.getElementById("inputInv").checked = true;
+          document.getElementById("inputIns").checked = true;
+        }
+      }
+      function refreshPreview() {
+        var inv = document.getElementById("inputInv").checked;
+        var ins = document.getElementById("inputIns").checked;
+        document.getElementById("chkInv").classList.toggle("on", inv);
+        document.getElementById("chkIns").classList.toggle("on", ins);
+        var row = document.getElementById("prevLogos");
+        row.innerHTML = "";
+        if (inv) {
+          row.innerHTML += '<span class="logo-chip"><span class="logo-mark inv">HID</span> Horizon</span>';
+        }
+        if (ins) {
+          row.innerHTML += '<span class="logo-chip"><span class="logo-mark ins">PMG</span> Pacific</span>';
+        }
+        var pill = document.getElementById("prevPill");
+        var empty = document.getElementById("prevEmpty");
+        if (!inv && !ins) {
+          pill.textContent = "No logos";
+          pill.className = "pill warn";
+          empty.style.display = "block";
+        } else if (inv && ins) {
+          pill.textContent = "2 logos";
+          pill.className = "pill ok";
+          empty.style.display = "none";
+        } else if (inv) {
+          pill.textContent = "1 logo · Investments";
+          pill.className = "pill";
+          empty.style.display = "none";
+        } else {
+          pill.textContent = "1 logo · Insurance";
+          pill.className = "pill";
+          empty.style.display = "none";
+        }
+      }
+      document.querySelectorAll(".step-btn").forEach(function (btn) {
+        btn.addEventListener("click", function () { showStep(Number(btn.getAttribute("data-step"))); });
+      });
+      document.querySelectorAll("[data-goto]").forEach(function (btn) {
+        btn.addEventListener("click", function () { showStep(Number(btn.getAttribute("data-goto"))); });
+      });
+      document.getElementById("inputInv").addEventListener("change", refreshPreview);
+      document.getElementById("inputIns").addEventListener("change", refreshPreview);
+      refreshPreview();
+    })();
+  </script>
+</body>
+</html>

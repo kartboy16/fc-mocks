@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>FC — #280 Dual-license advisor profiles</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #f4f8fc; --card: #fff; --ink: #1e2a4a; --muted: #5b6572;
+      --blue: #2b7de9; --border: #d4e4f2; --mint: #e6f1fb;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: Inter, system-ui, sans-serif; background: var(--bg); color: var(--ink); line-height: 1.55; }
+    .hero {
+      background: linear-gradient(135deg, #1e2a4a 0%, #2b7de9 100%);
+      color: #fff; padding: 40px 24px 36px;
+    }
+    .hero-inner { max-width: 880px; margin: 0 auto; }
+    .hero .eyebrow { font-size: 0.75rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; opacity: 0.85; margin-bottom: 10px; }
+    .hero h1 { font-size: 1.75rem; margin-bottom: 10px; }
+    .hero p { opacity: 0.92; max-width: 720px; font-size: 0.95rem; }
+    .rec {
+      display: inline-block; margin-top: 18px; background: #e8f5e9; color: #065f46;
+      font-weight: 700; font-size: 0.8rem; padding: 8px 14px; border-radius: 999px;
+    }
+    .wrap { max-width: 880px; margin: 0 auto; padding: 28px 24px 72px; }
+    .cta {
+      display: block; background: var(--blue); color: #fff !important; text-decoration: none;
+      text-align: center; padding: 16px 24px; border-radius: 12px; font-weight: 700;
+      font-size: 1rem; margin-bottom: 28px; box-shadow: 0 4px 16px rgba(43,125,233,0.35);
+    }
+    .cta:hover { filter: brightness(1.05); }
+    .cta small { display: block; font-weight: 500; opacity: 0.9; font-size: 0.8rem; margin-top: 4px; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 14px; }
+    .card {
+      background: var(--card); border: 1px solid var(--border); border-radius: 12px;
+      padding: 18px; text-decoration: none; color: inherit; display: block;
+      transition: border-color 0.15s, box-shadow 0.15s;
+    }
+    .card:hover { border-color: var(--blue); box-shadow: 0 4px 16px rgba(30,42,74,0.08); }
+    .card.recd { border-color: #2b7de9; box-shadow: 0 4px 16px rgba(43,125,233,0.12); }
+    .card h3 { font-size: 0.95rem; margin-bottom: 6px; color: var(--blue); }
+    .card p { font-size: 0.8rem; color: var(--muted); }
+    .card .tag {
+      display: inline-block; font-size: 0.65rem; font-weight: 700; background: var(--mint);
+      color: var(--blue); padding: 2px 8px; border-radius: 999px; margin-bottom: 8px;
+    }
+    .card .tag.rec-tag { background: var(--blue); color: #fff; }
+    h2 { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--muted); margin: 28px 0 12px; }
+    .problem {
+      margin: 0 0 20px; padding: 14px 16px; background: #fff8eb; border: 1px solid #f0d4a8;
+      border-radius: 10px; font-size: 0.85rem; color: #8a5a10;
+    }
+    .problem strong { color: #6b4408; }
+    .oq {
+      margin: 0 0 20px; padding: 14px 16px; background: #fff; border: 1px solid var(--border);
+      border-radius: 10px; font-size: 0.85rem;
+    }
+    .oq strong { display: block; margin-bottom: 8px; color: var(--ink); }
+    .oq ol { padding-left: 1.2rem; color: var(--muted); }
+    .oq li { margin-bottom: 4px; }
+    .oq .open { color: #b45309; font-weight: 600; font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.04em; }
+    .playground {
+      margin: 16px 0 0; padding: 12px 14px; background: #eef4fb; border: 1px solid var(--border);
+      border-radius: 10px; font-size: 0.85rem; color: var(--ink);
+    }
+    .constraint {
+      margin: 16px 0 0; padding: 12px 14px; background: #e8f5e9; border: 1px solid #a7d7b5;
+      border-radius: 10px; font-size: 0.85rem; color: #065f46;
+    }
+    .constraint.warn {
+      background: #fef2f2; border-color: #fecaca; color: #991b1b;
+    }
+    .ac {
+      margin: 0 0 20px; padding: 14px 16px; background: #eff6ff; border: 1px solid #bfdbfe;
+      border-radius: 10px; font-size: 0.85rem; color: #1e40af;
+    }
+    .ac strong { color: #1e3a8a; }
+    .ac ul { margin: 8px 0 0; padding-left: 1.2rem; }
+    .meta { margin-top: 32px; font-size: 0.8rem; color: var(--muted); }
+    .meta a { color: var(--blue); }
+    code { background: #eef2f6; padding: 0.1em 0.35em; border-radius: 4px; font-size: 0.85em; }
+  </style>
+</head>
+<body>
+  <header class="hero">
+    <div class="hero-inner">
+      <div class="eyebrow">FinancialContent · content-library #280 · Idea / playground</div>
+      <h1>Multiple advisor profiles for dual-licensed advisors</h1>
+      <p>Angelina ask: dual-licensed advisors need an <strong>investments</strong> context, an <strong>insurance</strong> context, and sometimes <strong>both</strong> the investment dealer logo and the insurance logo on one send — without wrong branding.</p>
+      <span class="rec">Recommend · Direction A — License contexts on one advisor</span>
+    </div>
+  </header>
+
+  <div class="wrap">
+    <a class="cta" href="directions/a/index.html">
+      Open Direction A (recommended)
+      <small>One login · three branding kits (Investments / Insurance / Both) · switcher + compose preview · both-logos path explicit</small>
+    </a>
+    <p style="text-align:center;margin:-18px 0 24px;font-size:0.8rem;color:var(--muted)">
+      <a href="build-contract.html">Provisional build contract</a> ·
+      <a href="build-contract.md">Markdown</a>
+    </p>
+
+    <div class="problem">
+      <strong>Problem:</strong> Some advisors are dual licensed. They need investments branding for some sends, insurance branding for others, and sometimes <em>both</em> logos on one piece. Today there is no clear way to keep those kits separate and switch without mixing the wrong dealer/MGA logo.
+    </div>
+
+    <div class="constraint warn">
+      <strong>Not #209:</strong> Advisor Categories / AdvisorSource = affiliation (who the advisor is affiliated with). This issue is <strong>license / branding context</strong> for dual-licensed people — logos and disclosures per Investments / Insurance / Both. Do not confuse with #209.
+    </div>
+
+    <div class="ac">
+      <strong>Draft AC (Designer may refine):</strong>
+      <ul>
+        <li><strong>AC-1:</strong> Clear investments vs insurance context (and/or combined both path) without wrong branding.</li>
+        <li><strong>AC-2:</strong> Designed path for sends needing both logos.</li>
+        <li><strong>AC-3:</strong> Logos assignable per profile/context; empty/missing logo states designed.</li>
+        <li><strong>AC-4:</strong> Obvious switcher in advisor UI; admin setup if ownership says so.</li>
+        <li><strong>AC-5:</strong> Pages mock + short build contract.</li>
+      </ul>
+    </div>
+
+    <div class="oq">
+      <span class="open">Open product questions — do not invent locked answers</span>
+      <strong>Must resolve before agent-ready</strong>
+      <ol>
+        <li>Firm <strong>admin</strong> vs advisor <strong>self-serve</strong> for kits?</li>
+        <li>Does <strong>“Both”</strong> need its own disclosures or concatenate Inv+Ins?</li>
+        <li>Seat billing if Direction B (flag <strong>NG-1</strong>)?</li>
+        <li>Does context switch also <strong>filter library content</strong> (#261 Source) or only branding?</li>
+        <li>Website vs email vs social — <strong>same kit switcher</strong> everywhere?</li>
+      </ol>
+    </div>
+
+    <div class="playground">
+      <strong>Playground note:</strong> Track is <strong>Idea / playground</strong>. Clickable HTML only — no live publish, no billing/seats rework. Audience: advisors in their 50s–60s + assistants — plain words. Do <strong>not</strong> mark agent-ready from this mock.
+    </div>
+    <div class="constraint">
+      <strong>Working default:</strong> Direction A until Alex/Angelina lock. One person, one login, three branding kits. “Both” is a third kit (not invent-at-send) so dual-logo sends are repeatable. Hosted only at <code>/280/</code>.
+    </div>
+
+    <h2>Directions</h2>
+    <div class="grid">
+      <a class="card recd" href="directions/a/index.html">
+        <span class="tag rec-tag">RECOMMEND</span>
+        <h3>A — License contexts on one advisor</h3>
+        <p>One login · Investments / Insurance / Both kits · header switcher · compose preview follows active kit · missing-logo empty state · send confirm strip.</p>
+      </a>
+      <a class="card" href="directions/b/index.html">
+        <span class="tag">ALT · NG-1 risk</span>
+        <h3>B — Separate profiles (two logins feel)</h3>
+        <p>Distinct Investments vs Insurance personas. Hard isolation. Seat/confusion risk — call out NG-1. Both = third profile or send-time pick.</p>
+      </a>
+      <a class="card" href="directions/c/index.html">
+        <span class="tag">ALT · minimal</span>
+        <h3>C — Send-time logo override only</h3>
+        <p>Single profile holds both logos; checkboxes at send. Tiny change. Easy to forget; no sticky “insurance mode” for browsing.</p>
+      </a>
+    </div>
+
+    <h2>Related</h2>
+    <p style="font-size:0.85rem;color:var(--muted)">
+      Not affiliation: <a href="../209/">#209 Advisor Categories</a> ·
+      Content Source (separate): <a href="../261/">#261</a>
+    </p>
+
+    <div class="meta">
+      <p>Issue: <a href="https://github.com/kartboy16/content-library/issues/280">content-library #280</a></p>
+      <p>Repo: <a href="https://github.com/kartboy16/fc-mocks">kartboy16/fc-mocks</a> · path <code>/280/</code></p>
+      <p>Live: <a href="https://kartboy16.github.io/fc-mocks/280/">kartboy16.github.io/fc-mocks/280/</a></p>
+      <p>Reporter: Angelina · Do not Slack from Designer executor (CoS tips after parent).</p>
+    </div>
+  </div>
+</body>
+</html>
