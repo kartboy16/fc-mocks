@@ -29,7 +29,7 @@ Do **not** invent locked answers. Surface on hub + every direction.
 | **Existing** | **Manage Categories** = MasterCategories / topic tags (sibling of Manage Advisor Categories) |
 | **#209** | AdvisorSource affiliation — **do not confuse** with content Source |
 | **Related UX** | Choose Services (#240), active-filters chips (#243/#244) — reuse filter patterns; avoid combo-list explosion |
-| **Audience** | **Admin** labels + **advisor** browse/filter (specify per screen) |
+| **Audience** | **Both** — **advisor browse primary** + **admin** labeling (specify per screen; a-fc ships both) |
 | **Out of scope** | Full ontology rewrite / historical backfill in v1; live publish during playground; agent-ready from mock |
 
 ---
@@ -57,6 +57,17 @@ Do **not** invent locked answers. Surface on hub + every direction.
 **Screens:** Advisor browse (populated) · Filter empty · Post edit (Source + topics + flag) · Manage Sources · Manage Categories · Advisor-only gated/labeled · #209 distinction callout
 
 **Tradeoff:** Clearest mental model (source ≠ topic). Slightly more schema/admin surface. Best default for browse + filter without Source×Topic explosion.
+
+### A · FC look (`directions/a-fc/`) — primary review surface
+
+**Not a new direction letter.** Higher-fidelity clickable HTML of **Direction A** inside real **financialcontent.ca** advisor library chrome (rail, hero, search, pills, teal card headers, Topics drawer).
+
+| | |
+|---|---|
+| **Live** | https://kartboy16.github.io/fc-mocks/261/directions/a-fc/ |
+| **Audiences** | **Both** — **advisor browse primary** + **admin labeling** (Angelina) |
+| **Contract** | Unchanged from A: Source × Topic AND · Manage Sources + Manage Categories · Advisor-only visibility flag |
+| **Abstract A** | Keep for comparison wire; prefer a-fc for FC-fidelity stakeholder review |
 
 ---
 
@@ -114,4 +125,4 @@ Do **not** invent locked answers. Surface on hub + every direction.
 
 ## Recommendation
 
-**Ship Direction A as working default** (Source + Topic) until Alex/Angelina lock. Keep B / C / D as comparison — D for Advisorstream + HeyAdvisor sidebar familiarity and the optional Life Events axis. Flag backfill, Type, Sharing, Date/Saved as follow-ups. Do not confuse with #209 or #260. **Not agent-ready.**
+**Ship Direction A as working default** (Source + Topic) until Alex/Angelina lock. Prefer **a-fc** (FC chrome hi-fi of A) for review; keep abstract A / B / C / D as comparison — D for Advisorstream + HeyAdvisor sidebar familiarity and the optional Life Events axis. Flag backfill, Type, Sharing, Date/Saved as follow-ups. Do not confuse with #209 or #260. **Not agent-ready.**

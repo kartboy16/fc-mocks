@@ -39,6 +39,12 @@ Until lock:
 
 Directions B (grouped), C (Source hubs), and D (sidebar browse synthesizing Advisorstream + HeyAdvisor) remain comparison mocks.
 
+### A · FC look (hi-fi view — not a new direction)
+
+`directions/a-fc/` is an FC-fidelity view of **Direction A** for stakeholder review. **Contract unchanged:** Source × Topic AND · Manage Sources + Manage Categories · Advisor-only visibility flag. Audiences: **both**, with **advisor browse primary** + admin labeling. Abstract A remains the comparison wire. Live: https://kartboy16.github.io/fc-mocks/261/directions/a-fc/
+
+
+
 ### Competitor refs + product choice (2026-09-29)
 
 - **Advisorstream:** Sources · Publishers · Topics · Date/Saved → map Sources+Publishers to **Source**; Topics to Master Categories; Date/Saved optional later.
@@ -104,7 +110,8 @@ Historical posts without Source / topics are **out of v1**. Track a follow-up on
 ## Reference links
 
 - Hub: https://kartboy16.github.io/fc-mocks/261/  
-- Direction A: https://kartboy16.github.io/fc-mocks/261/directions/a/  
+- Direction A · FC look (primary): https://kartboy16.github.io/fc-mocks/261/directions/a-fc/  
+- Direction A (abstract): https://kartboy16.github.io/fc-mocks/261/directions/a/  
 - Direction D: https://kartboy16.github.io/fc-mocks/261/directions/d/  
 - Directions brief: [directions-brief.md](directions-brief.md)  
 - Issue: https://github.com/kartboy16/content-library/issues/261  

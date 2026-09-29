@@ -1,0 +1,1154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Direction A · FC look — Dual-facet · #261</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --fc-blue: #2b7de9;
+      --fc-blue-dark: #1e5bb8;
+      --fc-hero: #7eb3ef;
+      --rail-bg: #eef2f6;
+      --rail-active: #d6e6fa;
+      --ink: #1a2332;
+      --muted: #6b7280;
+      --border: #d8e0ea;
+      --bg: #ffffff;
+      --page: #f7f9fc;
+      --admin-purple: #7c3aed;
+      --lock-red: #e11d48;
+      --warn-bg: #fff8eb; --warn-border: #f0d4a8; --warn-ink: #8a5a10;
+      --ok-bg: #e8f5e9; --ok-ink: #065f46;
+      --err-bg: #fef2f2; --err-border: #fecaca; --err-ink: #991b1b;
+      --mint: #e6f1fb;
+      --card-grad: linear-gradient(160deg, #0d7377 0%, #14919b 40%, #2d6a4f 100%);
+      --card-grad-2: linear-gradient(160deg, #0e7490 0%, #0f766e 50%, #166534 100%);
+      --card-grad-3: linear-gradient(160deg, #115e59 0%, #0f766e 45%, #3f6212 100%);
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: var(--page); color: var(--ink); font-size: 13px; line-height: 1.45;
+      min-width: 1100px;
+    }
+    a { color: var(--fc-blue); }
+    button { font-family: inherit; }
+    .idea-banner {
+      background: linear-gradient(90deg, #1e2a4a, #2b7de9);
+      color: #fff; padding: 8px 16px; font-size: 0.72rem;
+      display: flex; flex-wrap: wrap; gap: 8px 16px; align-items: center; justify-content: space-between;
+    }
+    .idea-banner strong { font-weight: 700; }
+    .idea-banner a { color: #fff; text-decoration: underline; opacity: 0.95; }
+    .idea-banner .links { display: flex; gap: 12px; flex-wrap: wrap; }
+    .steps {
+      display: flex; gap: 6px; flex-wrap: wrap; padding: 8px 16px;
+      background: #fff; border-bottom: 1px solid var(--border); align-items: center;
+    }
+    .steps .lab { font-size: 0.68rem; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.04em; margin-right: 4px; }
+    .step-btn {
+      border: 1px solid var(--border); background: #fff; color: var(--ink);
+      font-size: 0.7rem; font-weight: 600; padding: 5px 10px;
+      border-radius: 999px; cursor: pointer;
+    }
+    .step-btn:hover { border-color: var(--fc-blue); color: var(--fc-blue); background: var(--mint); }
+    .step-btn.on { background: var(--fc-blue); color: #fff; border-color: var(--fc-blue); }
+    .step-btn.admin-chip { border-color: #ddd6fe; }
+    .step-btn.admin-chip.on { background: var(--admin-purple); border-color: var(--admin-purple); }
+    .shell { display: flex; min-height: calc(100vh - 90px); }
+    .rail {
+      width: 88px; background: var(--rail-bg); flex-shrink: 0;
+      display: flex; flex-direction: column; align-items: center;
+      padding: 12px 6px 16px; border-right: 1px solid #e2e8f0;
+    }
+    .rail-logo {
+      display: flex; flex-direction: column; align-items: center; gap: 4px;
+      margin-bottom: 18px; text-align: center; padding: 0 2px;
+    }
+    .rail-logo .mark {
+      width: 28px; height: 28px; border-radius: 6px; background: var(--fc-blue); color: #fff;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .rail-logo .mark svg { width: 16px; height: 16px; fill: #fff; }
+    .rail-logo .name { font-size: 0.52rem; font-weight: 700; color: #1e3a5f; line-height: 1.15; }
+    .rail-nav { display: flex; flex-direction: column; gap: 4px; width: 100%; flex: 1; }
+    .rail-item {
+      display: flex; flex-direction: column; align-items: center; gap: 3px;
+      padding: 10px 4px; border-radius: 10px; cursor: default;
+      color: #4b5563; font-size: 0.58rem; font-weight: 600; position: relative;
+      border: none; background: transparent; width: 100%;
+    }
+    .rail-item svg { width: 22px; height: 22px; stroke: currentColor; fill: none; stroke-width: 1.6; }
+    .rail-item.on { background: var(--rail-active); color: var(--fc-blue); }
+    .rail-item.on::before {
+      content: ""; position: absolute; left: -6px; top: 8px; bottom: 8px; width: 3px;
+      background: var(--fc-blue); border-radius: 0 3px 3px 0;
+    }
+    .rail-profile { margin-top: auto; display: flex; flex-direction: column; align-items: center; gap: 4px; padding-top: 12px; }
+    .rail-avatar {
+      width: 36px; height: 36px; border-radius: 50%; background: var(--fc-blue);
+      color: #fff; font-weight: 700; font-size: 0.75rem;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .rail-profile span { font-size: 0.58rem; font-weight: 600; color: #4b5563; }
+    .main { flex: 1; min-width: 0; background: var(--bg); display: flex; flex-direction: column; }
+    .main-inner { flex: 1; display: flex; min-height: 0; }
+    .drawer {
+      width: 240px; background: #f3f5f8; border-right: 1px solid var(--border);
+      flex-shrink: 0; display: none; flex-direction: column;
+    }
+    .drawer.open { display: flex; }
+    .drawer-head {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 14px 14px 10px; font-weight: 700; font-size: 0.95rem;
+    }
+    .drawer-close { border: none; background: transparent; cursor: pointer; font-size: 1.1rem; color: var(--muted); padding: 4px 6px; }
+    .drawer-list { overflow-y: auto; padding: 4px 10px 20px; flex: 1; }
+    .drawer-item {
+      display: flex; align-items: center; gap: 8px; padding: 7px 6px;
+      font-size: 0.8rem; color: var(--fc-blue); cursor: pointer; border-radius: 6px;
+    }
+    .drawer-item:hover { background: #e8eef5; }
+    .drawer-item input { accent-color: var(--fc-blue); width: 14px; height: 14px; }
+    .drawer-sep { height: 1px; background: #d8e0ea; margin: 8px 4px; }
+    .drawer-item .av {
+      width: 20px; height: 20px; border-radius: 4px; display: inline-flex;
+      align-items: center; justify-content: center; font-size: 0.5rem; font-weight: 800; color: #fff;
+    }
+    .pane { flex: 1; min-width: 0; overflow-y: auto; padding: 28px 36px 64px; }
+    .screen { display: none; }
+    .screen.on { display: block; }
+    .hero-title {
+      text-align: center; font-size: 1.85rem; font-weight: 400;
+      color: var(--fc-hero); margin-bottom: 18px; letter-spacing: -0.01em;
+    }
+    .search-wrap { max-width: 640px; margin: 0 auto 20px; position: relative; }
+    .search-wrap input {
+      width: 100%; border: 1px solid #cfd8e3; border-radius: 999px;
+      padding: 12px 18px 12px 44px; font-size: 0.9rem; font-family: inherit; outline: none; background: #fff;
+    }
+    .search-wrap input:focus { border-color: var(--fc-blue); box-shadow: 0 0 0 3px rgba(43,125,233,0.15); }
+    .search-wrap .mag { position: absolute; left: 16px; top: 50%; transform: translateY(-50%); color: var(--fc-blue); width: 18px; height: 18px; }
+    .pills { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin-bottom: 22px; }
+    .pill {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 8px 14px; border-radius: 999px; font-size: 0.78rem; font-weight: 600;
+      border: 1.5px solid var(--fc-blue); background: #fff; color: var(--fc-blue); cursor: pointer;
+    }
+    .pill svg { width: 15px; height: 15px; stroke: currentColor; fill: none; stroke-width: 1.8; }
+    .pill.on { background: var(--fc-blue); color: #fff; border-color: var(--fc-blue); box-shadow: 0 2px 8px rgba(43,125,233,0.35); }
+    .pill.on svg { stroke: #fff; }
+    .subhead { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-bottom: 14px; }
+    .subhead h2 { font-size: 1.15rem; font-weight: 700; color: #1e3a5f; }
+    .status-pills { display: inline-flex; background: #eef1f5; border-radius: 999px; padding: 2px; gap: 2px; }
+    .status-pills button {
+      border: none; background: transparent; padding: 5px 12px; border-radius: 999px;
+      font-size: 0.72rem; font-weight: 600; color: var(--muted); cursor: pointer;
+    }
+    .status-pills button.on { background: #d1d5db; color: var(--ink); }
+    .btn-create {
+      margin-left: auto; background: var(--fc-blue); color: #fff; border: none;
+      padding: 9px 16px; border-radius: 8px; font-weight: 600; font-size: 0.8rem; cursor: pointer;
+    }
+    .btn-create:hover { filter: brightness(1.05); }
+
+    .facet-strip {
+      background: #f4f8fc; border: 1px solid var(--border); border-radius: 12px;
+      padding: 12px 14px; margin-bottom: 12px;
+    }
+    .facet-row { margin-bottom: 10px; }
+    .facet-row:last-child { margin-bottom: 0; }
+    .facet-label {
+      font-size: 0.65rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em;
+      color: var(--muted); margin-bottom: 6px;
+    }
+    .chips { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+    .chip {
+      border: 1px solid var(--border); background: #fff; color: var(--ink);
+      font-size: 0.72rem; font-weight: 600; padding: 5px 10px;
+      border-radius: 999px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px;
+    }
+    .chip:hover { border-color: var(--fc-blue); color: var(--fc-blue); background: var(--mint); }
+    .chip.on { background: var(--fc-blue); color: #fff; border-color: var(--fc-blue); }
+    .chip.sec.on { background: #1e2a4a; border-color: #1e2a4a; }
+    .chip.clear { border-style: dashed; color: var(--muted); }
+    .av {
+      width: 18px; height: 18px; border-radius: 4px; display: inline-flex;
+      align-items: center; justify-content: center; font-size: 0.5rem; font-weight: 800;
+      color: #fff; flex-shrink: 0;
+    }
+    .av.ftt { background: #059669; }
+    .av.fsb { background: #b45309; }
+    .av.ppi { background: #7c3aed; }
+    .av.gw { background: #64748b; }
+    .av.carrier { background: #1e2a4a; }
+    .av.fecbc { background: #d97706; }
+    .active-bar {
+      display: flex; flex-wrap: wrap; gap: 6px; align-items: center; margin-bottom: 14px;
+      padding: 8px 10px; background: #fff; border: 1px solid var(--border); border-radius: 10px;
+      font-size: 0.72rem;
+    }
+    .active-bar .lab { color: var(--muted); font-weight: 600; margin-right: 4px; }
+    .active-pill {
+      display: inline-flex; align-items: center; gap: 4px;
+      background: var(--mint); color: var(--fc-blue-dark); font-weight: 600;
+      padding: 3px 8px; border-radius: 999px; border: 1px solid var(--border);
+    }
+    .active-pill .x { cursor: pointer; font-weight: 700; opacity: 0.7; border: none; background: none; color: inherit; }
+    .grid-posts { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+    @media (max-width: 1200px) { .grid-posts { grid-template-columns: repeat(3, 1fr); } }
+    .pcard {
+      background: #fff; border: 1px solid var(--border); border-radius: 10px; overflow: hidden;
+      display: flex; flex-direction: column;
+    }
+    .pcard:hover { box-shadow: 0 4px 14px rgba(30,42,74,0.08); }
+    .pcard .ph {
+      height: 130px; background: var(--card-grad); position: relative;
+      display: flex; flex-direction: column; justify-content: flex-end; padding: 10px 12px;
+    }
+    .pcard .ph.g2 { background: var(--card-grad-2); }
+    .pcard .ph.g3 { background: var(--card-grad-3); }
+    .pcard .ph-icons {
+      position: absolute; top: 8px; left: 8px; right: 8px;
+      display: flex; justify-content: space-between; align-items: flex-start;
+    }
+    .pcard .ph-icons .right { display: flex; gap: 6px; }
+    .icon-btn {
+      width: 28px; height: 28px; border-radius: 50%; background: rgba(0,0,0,0.35);
+      border: none; color: #fff; display: flex; align-items: center; justify-content: center; cursor: pointer;
+    }
+    .icon-btn svg { width: 14px; height: 14px; stroke: #fff; fill: none; stroke-width: 1.8; }
+    .icon-btn.lock { background: var(--lock-red); }
+    .icon-btn.lock svg { fill: #fff; stroke: none; }
+    .ph-meta { font-size: 0.65rem; color: rgba(255,255,255,0.85); font-weight: 500; }
+    .src-badge {
+      display: inline-block; font-size: 0.6rem; font-weight: 700; padding: 2px 7px;
+      border-radius: 999px; background: rgba(255,255,255,0.92); color: var(--ink); margin-bottom: 4px;
+    }
+    .pcard .body { padding: 12px 14px 14px; }
+    .pcard h4 { font-size: 0.85rem; font-weight: 700; color: #1e3a5f; line-height: 1.35; margin-bottom: 6px; }
+    .tag-row { display: flex; flex-wrap: wrap; gap: 4px; }
+    .badge-topic {
+      font-size: 0.6rem; font-weight: 700; padding: 2px 7px; border-radius: 999px;
+      background: var(--mint); color: var(--fc-blue-dark); border: 1px solid var(--border);
+    }
+    .badge-lock {
+      font-size: 0.6rem; font-weight: 700; padding: 2px 7px; border-radius: 999px;
+      background: #fef3c7; color: #92400e;
+    }
+    .empty { margin-top: 40px; padding: 48px 20px; text-align: center; }
+    .empty h3 { font-size: 1.05rem; margin-bottom: 6px; color: #374151; }
+    .empty p { color: var(--muted); font-size: 0.85rem; margin-bottom: 16px; }
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+      padding: 9px 14px; border-radius: 8px; font-size: 0.8rem;
+      font-weight: 600; cursor: pointer; border: 1px solid transparent; text-decoration: none;
+    }
+    .btn-primary { background: var(--fc-blue); color: #fff; }
+    .btn-primary:hover { filter: brightness(1.05); }
+    .btn-secondary { background: #fff; color: var(--ink); border-color: var(--border); }
+    .btn-secondary:hover { border-color: var(--fc-blue); color: var(--fc-blue); background: var(--mint); }
+    .btn-ghost { background: transparent; color: var(--fc-blue); border: none; padding: 6px 8px; }
+    .btn-danger { background: #fff; color: var(--err-ink); border: 1px solid var(--err-border); }
+    .btn-sm { padding: 5px 10px; font-size: 0.72rem; }
+    .admin-back {
+      color: var(--fc-blue); font-weight: 600; font-size: 0.85rem; text-decoration: none;
+      display: inline-flex; align-items: center; gap: 4px; margin-bottom: 12px; cursor: pointer;
+      border: none; background: none; font-family: inherit;
+    }
+    .admin-title-row { display: flex; align-items: center; gap: 10px; margin-bottom: 4px; }
+    .admin-title-row h2 { font-size: 1.35rem; font-weight: 700; color: #1e3a5f; }
+    .admin-tag {
+      font-size: 0.65rem; font-weight: 700; padding: 2px 8px; border-radius: 999px;
+      background: #f3e8ff; color: var(--admin-purple);
+    }
+    .aud-tag {
+      font-size: 0.65rem; font-weight: 700; padding: 2px 8px; border-radius: 999px;
+      background: var(--mint); color: var(--fc-blue-dark);
+    }
+    .admin-sub { color: var(--muted); font-size: 0.8rem; margin-bottom: 16px; max-width: 720px; }
+    .info-banner {
+      display: flex; gap: 10px; align-items: flex-start; padding: 12px 14px;
+      background: #e8f1fc; border: 1px solid #b8d4f5; border-radius: 10px;
+      font-size: 0.78rem; color: #1e3a5f; margin-bottom: 16px;
+    }
+    .info-banner .ico {
+      width: 20px; height: 20px; border-radius: 50%; background: var(--fc-blue);
+      color: #fff; font-weight: 700; font-size: 0.7rem; display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    }
+    .banner {
+      display: flex; gap: 10px; align-items: flex-start; padding: 12px 14px;
+      border-radius: 10px; font-size: 0.78rem; margin-bottom: 14px;
+    }
+    .banner.warn { background: var(--warn-bg); border: 1px solid var(--warn-border); color: var(--warn-ink); }
+    .banner.ok { background: var(--ok-bg); border: 1px solid #a7d7b5; color: var(--ok-ink); }
+    .banner.err { background: var(--err-bg); border: 1px solid var(--err-border); color: var(--err-ink); }
+    .banner.info { background: #eef4fb; border: 1px solid var(--border); color: var(--ink); }
+    .admin-toolbar { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin-bottom: 12px; }
+    .admin-toolbar input, .admin-toolbar select {
+      border: 1px solid var(--border); border-radius: 8px; padding: 8px 10px;
+      font-family: inherit; font-size: 0.8rem; background: #fff;
+    }
+    .filter-pills { display: flex; gap: 6px; flex-wrap: wrap; }
+    .filter-pills button {
+      border: 1px solid var(--border); background: #fff; padding: 5px 12px; border-radius: 999px;
+      font-size: 0.72rem; font-weight: 600; cursor: pointer; color: var(--ink);
+    }
+    .filter-pills button.on { background: var(--fc-blue); color: #fff; border-color: var(--fc-blue); }
+    .add-row {
+      display: flex; gap: 8px; align-items: center; flex-wrap: wrap;
+      background: #fff; border: 1px solid var(--border); border-radius: 10px;
+      padding: 12px; margin-bottom: 14px;
+    }
+    .add-row input, .add-row select {
+      border: 1px solid var(--border); border-radius: 8px; padding: 8px 10px;
+      font-family: inherit; font-size: 0.8rem;
+    }
+    .add-row .btn-disabled { opacity: 0.55; pointer-events: none; }
+    .table-wrap { background: #fff; border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
+    table.admin { width: 100%; border-collapse: collapse; font-size: 0.8rem; }
+    table.admin th {
+      text-align: left; padding: 10px 12px; background: #eef4fb; color: var(--muted);
+      font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.04em;
+      border-bottom: 1px solid var(--border);
+    }
+    table.admin td { padding: 12px; border-bottom: 1px solid var(--border); vertical-align: middle; }
+    table.admin tr:last-child td { border-bottom: none; }
+    table.admin .slug { font-size: 0.68rem; color: var(--muted); }
+    .type-pills { display: inline-flex; gap: 4px; }
+    .type-pills span {
+      padding: 3px 10px; border-radius: 999px; font-size: 0.68rem; font-weight: 600;
+      background: #eef1f5; color: var(--muted);
+    }
+    .type-pills span.on { background: var(--fc-blue); color: #fff; }
+    .tog {
+      width: 36px; height: 20px; border-radius: 999px; background: #c0c8d4; position: relative;
+      display: inline-block; cursor: pointer; border: none; vertical-align: middle;
+    }
+    .tog.on { background: var(--fc-blue); }
+    .tog::after {
+      content: ""; position: absolute; top: 2px; left: 2px; width: 16px; height: 16px;
+      border-radius: 50%; background: #fff; transition: left 0.15s;
+    }
+    .tog.on::after { left: 18px; }
+    .form-card {
+      background: #fff; border: 1px solid var(--border); border-radius: 12px;
+      padding: 20px 22px; max-width: 640px;
+    }
+    .field { margin-bottom: 16px; }
+    .field label {
+      display: block; font-size: 0.72rem; font-weight: 700; color: var(--muted);
+      text-transform: uppercase; letter-spacing: 0.03em; margin-bottom: 6px;
+    }
+    .field input, .field select, .field textarea {
+      width: 100%; border: 1px solid var(--border); border-radius: 8px; padding: 9px 11px;
+      font-family: inherit; font-size: 0.85rem; color: var(--ink); background: #fff;
+    }
+    .toggle-row {
+      display: flex; align-items: center; gap: 10px; padding: 10px 12px;
+      background: var(--page); border: 1px solid var(--border); border-radius: 10px; cursor: pointer;
+    }
+    .option-alt {
+      margin-top: 8px; padding: 8px 10px; background: var(--warn-bg); border: 1px solid var(--warn-border);
+      border-radius: 8px; font-size: 0.72rem; color: var(--warn-ink);
+    }
+    .toast {
+      position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(80px);
+      background: #1e2a4a; color: #fff; padding: 10px 16px; border-radius: 999px;
+      font-size: 0.8rem; font-weight: 600; opacity: 0; transition: all 0.2s; z-index: 50;
+      pointer-events: none;
+    }
+    .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+    .mobile-note {
+      margin-top: 28px; padding: 10px 12px; background: #eef4fb; border: 1px solid var(--border);
+      border-radius: 8px; font-size: 0.72rem; color: var(--muted);
+    }
+    .later-note { margin-top: 10px; font-size: 0.7rem; color: var(--muted); font-style: italic; }
+  </style>
+</head>
+<body>
+
+  <div class="idea-banner">
+    <div>
+      <strong>Direction A · FC chrome · Advisor primary · Admin labeling · Idea/playground · Not agent-ready</strong>
+      — hi-fi of dual-facet A (not a new direction)
+    </div>
+    <div class="links">
+      <a href="../../index.html">← Hub #261</a>
+      <a href="../a/index.html">Abstract A</a>
+      <a href="../../build-contract.html">Contract</a>
+      <a href="../../directions-brief.md">Brief</a>
+    </div>
+  </div>
+
+  <div class="steps">
+    <span class="lab">Screens</span>
+    <button type="button" class="step-btn on" data-screen="browse">1 · Advisor browse</button>
+    <button type="button" class="step-btn" data-screen="topics">2 · Topics drawer</button>
+    <button type="button" class="step-btn" data-screen="empty">3 · Filter empty</button>
+    <button type="button" class="step-btn" data-screen="gated">4 · Advisor-only</button>
+    <button type="button" class="step-btn admin-chip" data-screen="edit">5 · Post edit</button>
+    <button type="button" class="step-btn admin-chip" data-screen="sources">6 · Manage Sources</button>
+    <button type="button" class="step-btn admin-chip" data-screen="cats">7 · Manage Categories</button>
+    <button type="button" class="step-btn admin-chip" data-screen="not209">8 · Not #209</button>
+  </div>
+
+  <div class="shell">
+    <aside class="rail" aria-label="FC navigation">
+      <div class="rail-logo">
+        <div class="mark" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><rect x="3" y="14" width="3.5" height="7" rx="0.5"/><rect x="9" y="9" width="3.5" height="12" rx="0.5"/><rect x="15" y="4" width="3.5" height="17" rx="0.5"/></svg>
+        </div>
+        <div class="name">Financial<br/>Content.ca</div>
+      </div>
+      <nav class="rail-nav">
+        <button type="button" class="rail-item on" title="Content">
+          <svg viewBox="0 0 24 24"><path d="M7 3h7l5 5v13a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1z"/><path d="M14 3v5h5"/></svg>
+          Content
+        </button>
+        <button type="button" class="rail-item" title="Website">
+          <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="13" rx="1.5"/><path d="M8 21h8M12 17v4"/></svg>
+          Website
+        </button>
+        <button type="button" class="rail-item" title="Social Media">
+          <svg viewBox="0 0 24 24"><circle cx="6" cy="12" r="2.5"/><circle cx="18" cy="7" r="2.5"/><circle cx="18" cy="17" r="2.5"/><path d="M8.2 11.2l7-3.2M8.2 12.8l7 3.2"/></svg>
+          Social Media
+        </button>
+        <button type="button" class="rail-item" title="Email">
+          <svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="1.5"/><path d="M3.5 7l8.5 6 8.5-6"/></svg>
+          Email
+        </button>
+      </nav>
+      <div class="rail-profile">
+        <div class="rail-avatar">AH</div>
+        <span>Profile</span>
+      </div>
+    </aside>
+
+    <div class="main">
+      <div class="main-inner">
+        <aside class="drawer" id="topicsDrawer" aria-label="Topics">
+          <div class="drawer-head">
+            Topics
+            <button type="button" class="drawer-close" onclick="closeDrawer()" aria-label="Close">×</button>
+          </div>
+          <div class="drawer-list">
+            <label class="drawer-item"><input type="checkbox" data-topic="business owners" onchange="onTopicCheck(this)" /> business owners</label>
+            <label class="drawer-item"><input type="checkbox" data-topic="critical illness insurance" onchange="onTopicCheck(this)" /> critical illness insurance</label>
+            <label class="drawer-item"><input type="checkbox" data-topic="estate planning" onchange="onTopicCheck(this)" /> estate planning</label>
+            <label class="drawer-item"><input type="checkbox" data-topic="incorporated professionals" onchange="onTopicCheck(this)" /> incorporated professionals</label>
+            <label class="drawer-item"><input type="checkbox" data-topic="life insurance" onchange="onTopicCheck(this)" /> life insurance</label>
+            <label class="drawer-item"><input type="checkbox" data-topic="Retirement" checked onchange="onTopicCheck(this)" /> Retirement</label>
+            <label class="drawer-item"><input type="checkbox" data-topic="RRSP" onchange="onTopicCheck(this)" /> RRSP</label>
+            <div class="drawer-sep"></div>
+            <label class="drawer-item"><input type="checkbox" data-topic="Accountants" onchange="onTopicCheck(this)" /> Accountants</label>
+            <label class="drawer-item"><input type="checkbox" data-topic="Assumption Life" onchange="onTopicCheck(this)" /> Assumption Life</label>
+            <label class="drawer-item"><input type="checkbox" data-topic="Budget" onchange="onTopicCheck(this)" /> Budget</label>
+            <label class="drawer-item"><input type="checkbox" data-topic="Buy Sell" onchange="onTopicCheck(this)" /> Buy Sell</label>
+            <label class="drawer-item"><input type="checkbox" data-topic="Canada Life" onchange="onTopicCheck(this)" /> Canada Life</label>
+            <label class="drawer-item"><input type="checkbox" data-topic="Charitable Gifting" onchange="onTopicCheck(this)" /> Charitable Gifting</label>
+            <label class="drawer-item"><input type="checkbox" data-topic="CLU Comment" onchange="onTopicCheck(this)" /> CLU Comment</label>
+            <label class="drawer-item"><input type="checkbox" data-topic="Debt" onchange="onTopicCheck(this)" /> Debt</label>
+            <label class="drawer-item"><input type="checkbox" data-topic="dental benefits" onchange="onTopicCheck(this)" /> dental benefits</label>
+            <label class="drawer-item"><input type="checkbox" data-topic="Disability" onchange="onTopicCheck(this)" /> Disability</label>
+            <label class="drawer-item"><input type="checkbox" data-topic="Group benefits" onchange="onTopicCheck(this)" /> Group benefits</label>
+            <label class="drawer-item"><input type="checkbox" data-topic="Investing" onchange="onTopicCheck(this)" /> Investing</label>
+            <label class="drawer-item"><input type="checkbox" data-topic="Compliance" onchange="onTopicCheck(this)" /> Compliance</label>
+          </div>
+        </aside>
+
+        <aside class="drawer" id="sourcesDrawer" aria-label="Sources">
+          <div class="drawer-head">
+            Sources
+            <button type="button" class="drawer-close" onclick="closeDrawer()" aria-label="Close">×</button>
+          </div>
+          <div class="drawer-list">
+            <label class="drawer-item"><input type="checkbox" data-src="FTT" checked onchange="onSourceCheck(this)" /> <span class="av ftt">FT</span> FTT</label>
+            <label class="drawer-item"><input type="checkbox" data-src="FSB" onchange="onSourceCheck(this)" /> <span class="av fsb">FS</span> FSB</label>
+            <label class="drawer-item"><input type="checkbox" data-src="PPI" onchange="onSourceCheck(this)" /> <span class="av ppi">PP</span> PPI</label>
+            <label class="drawer-item"><input type="checkbox" data-src="Ghostwritten" onchange="onSourceCheck(this)" /> <span class="av gw">Gw</span> Ghostwritten</label>
+            <label class="drawer-item"><input type="checkbox" data-src="Carriers" checked onchange="onSourceCheck(this)" /> <span class="av carrier">+</span> Carriers</label>
+            <label class="drawer-item"><input type="checkbox" data-src="FECBC" onchange="onSourceCheck(this)" /> <span class="av fecbc">FE</span> FECBC</label>
+          </div>
+        </aside>
+
+        <div class="pane">
+
+          <div class="screen on" id="s-browse">
+            <h1 class="hero-title">What will you share today?</h1>
+            <div class="search-wrap">
+              <svg class="mag" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
+              <input type="search" placeholder="Search" aria-label="Search" />
+            </div>
+            <div class="pills">
+              <button type="button" class="pill on" onclick="setMainPill(this,'All Content')">
+                <svg viewBox="0 0 24 24"><path d="M4 10.5L12 4l8 6.5V20a1 1 0 0 1-1 1h-5v-6H10v6H5a1 1 0 0 1-1-1v-9.5z"/></svg>
+                All Content
+              </button>
+              <button type="button" class="pill" onclick="setMainPill(this,'Favorites')">
+                <svg viewBox="0 0 24 24"><path d="M12 3.5l2.4 4.9 5.4.8-3.9 3.8.9 5.4L12 15.8 7.2 18.4l.9-5.4L4.2 9.2l5.4-.8L12 3.5z"/></svg>
+                Favorites
+              </button>
+              <button type="button" class="pill" onclick="setMainPill(this,'Hidden')">
+                <svg viewBox="0 0 24 24"><path d="M3 3l18 18M10.5 10.6a3 3 0 0 0 4 4"/></svg>
+                Hidden
+              </button>
+              <button type="button" class="pill" onclick="openTopicsDrawer(this)">
+                <svg viewBox="0 0 24 24"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7z"/></svg>
+                Topics
+              </button>
+              <button type="button" class="pill" onclick="setMainPill(this,'Compliance Approved')">
+                <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M8 12.5l2.5 2.5L16 9.5"/></svg>
+                Compliance Approved
+              </button>
+              <button type="button" class="pill" onclick="setMainPill(this,'Pick for me')">
+                <svg viewBox="0 0 24 24"><path d="M12 3v3M12 18v3M3 12h3M18 12h3M5.6 5.6l2.1 2.1M16.3 16.3l2.1 2.1"/></svg>
+                Pick for me
+              </button>
+            </div>
+
+            <div class="subhead">
+              <h2>All Content</h2>
+              <div class="status-pills">
+                <button type="button" class="on">All</button>
+                <button type="button">Scheduled 0</button>
+                <button type="button">Published 0</button>
+              </div>
+              <button type="button" class="btn-create" onclick="showScreen('edit')">+ Create New Post</button>
+            </div>
+
+            <div class="facet-strip">
+              <div class="facet-row">
+                <div class="facet-label">Source <span style="font-weight:500;text-transform:none;letter-spacing:0;color:var(--muted)">(logo chips · AND with topics · companion to Topics drawer)</span></div>
+                <div class="chips" id="sourceChips">
+                  <button type="button" class="chip on" data-group="source" data-val="FTT" onclick="toggleChip(this)"><span class="av ftt">FT</span>FTT</button>
+                  <button type="button" class="chip" data-group="source" data-val="FSB" onclick="toggleChip(this)"><span class="av fsb">FS</span>FSB</button>
+                  <button type="button" class="chip" data-group="source" data-val="PPI" onclick="toggleChip(this)"><span class="av ppi">PP</span>PPI</button>
+                  <button type="button" class="chip" data-group="source" data-val="Ghostwritten" onclick="toggleChip(this)"><span class="av gw">Gw</span>Ghostwritten</button>
+                  <button type="button" class="chip on" data-group="source" data-val="Carriers" onclick="toggleChip(this)"><span class="av carrier">+</span>Carriers</button>
+                  <button type="button" class="chip" data-group="source" data-val="FECBC" onclick="toggleChip(this)"><span class="av fecbc">FE</span>FECBC</button>
+                  <button type="button" class="chip" onclick="openSourcesDrawer()">More…</button>
+                  <button type="button" class="chip clear" onclick="clearFacet('source')">Clear source</button>
+                </div>
+              </div>
+              <div class="facet-row">
+                <div class="facet-label">Topic / product <span style="font-weight:500;text-transform:none;letter-spacing:0;color:var(--muted)">(or open Topics pill → drawer)</span></div>
+                <div class="chips" id="topicChips">
+                  <button type="button" class="chip sec on" data-group="topic" data-val="Retirement" onclick="toggleChip(this)">Retirement</button>
+                  <button type="button" class="chip sec" data-group="topic" data-val="Group benefits" onclick="toggleChip(this)">Group benefits</button>
+                  <button type="button" class="chip sec" data-group="topic" data-val="Disability" onclick="toggleChip(this)">Disability</button>
+                  <button type="button" class="chip sec" data-group="topic" data-val="Investing" onclick="toggleChip(this)">Investing</button>
+                  <button type="button" class="chip sec" data-group="topic" data-val="Compliance" onclick="toggleChip(this)">Compliance</button>
+                  <button type="button" class="chip clear" onclick="clearFacet('topic')">Clear topics</button>
+                </div>
+              </div>
+            </div>
+
+            <div class="active-bar" id="activeBar">
+              <span class="lab">Active:</span>
+              <span class="active-pill">Source: FTT <button type="button" class="x" onclick="removeActive('source','FTT')">×</button></span>
+              <span class="active-pill">Source: Carriers <button type="button" class="x" onclick="removeActive('source','Carriers')">×</button></span>
+              <span class="active-pill">Topic: Retirement <button type="button" class="x" onclick="removeActive('topic','Retirement')">×</button></span>
+              <button type="button" class="chip clear" onclick="clearAllFilters()">Clear all</button>
+            </div>
+
+            <div class="grid-posts" id="browseGrid">
+
+              <article class="pcard">
+                <div class="ph">
+                  <div class="ph-icons">
+                    <button type="button" class="icon-btn" aria-label="Favorite"><svg viewBox="0 0 24 24"><path d="M12 3.5l2.4 4.9 5.4.8-3.9 3.8.9 5.4L12 15.8 7.2 18.4l.9-5.4L4.2 9.2l5.4-.8L12 3.5z"/></svg></button>
+                    <div class="right">
+                      <button type="button" class="icon-btn" aria-label="Hide"><svg viewBox="0 0 24 24"><path d="M3 3l18 18M10.5 10.6a3 3 0 0 0 4 4"/></svg></button>
+                      
+                    </div>
+                  </div>
+                  <span class="src-badge">FTT</span>
+                  <div class="ph-meta">Content library</div>
+                </div>
+                <div class="body">
+                  <h4>Market update: Q3 outlook</h4>
+                  <div class="tag-row"><span class="badge-topic">Retirement</span><span class="badge-topic">Investing</span></div>
+                </div>
+              </article>
+              <article class="pcard">
+                <div class="ph g2">
+                  <div class="ph-icons">
+                    <button type="button" class="icon-btn" aria-label="Favorite"><svg viewBox="0 0 24 24"><path d="M12 3.5l2.4 4.9 5.4.8-3.9 3.8.9 5.4L12 15.8 7.2 18.4l.9-5.4L4.2 9.2l5.4-.8L12 3.5z"/></svg></button>
+                    <div class="right">
+                      <button type="button" class="icon-btn" aria-label="Hide"><svg viewBox="0 0 24 24"><path d="M3 3l18 18M10.5 10.6a3 3 0 0 0 4 4"/></svg></button>
+                      <button type="button" class="icon-btn lock" aria-label="Advisor-only"><svg viewBox="0 0 24 24"><path d="M7 11V8a5 5 0 0 1 10 0v3"/><rect x="5" y="11" width="14" height="10" rx="2"/></svg></button>
+                    </div>
+                  </div>
+                  <span class="src-badge">Manulife</span>
+                  <div class="ph-meta">Content library</div>
+                </div>
+                <div class="body">
+                  <h4>Group benefits enrollment tips</h4>
+                  <div class="tag-row"><span class="badge-topic">Group benefits</span><span class="badge-lock">Advisor-only</span></div>
+                </div>
+              </article>
+              <article class="pcard">
+                <div class="ph g3">
+                  <div class="ph-icons">
+                    <button type="button" class="icon-btn" aria-label="Favorite"><svg viewBox="0 0 24 24"><path d="M12 3.5l2.4 4.9 5.4.8-3.9 3.8.9 5.4L12 15.8 7.2 18.4l.9-5.4L4.2 9.2l5.4-.8L12 3.5z"/></svg></button>
+                    <div class="right">
+                      <button type="button" class="icon-btn" aria-label="Hide"><svg viewBox="0 0 24 24"><path d="M3 3l18 18M10.5 10.6a3 3 0 0 0 4 4"/></svg></button>
+                      
+                    </div>
+                  </div>
+                  <span class="src-badge">FECBC</span>
+                  <div class="ph-meta">Content library</div>
+                </div>
+                <div class="body">
+                  <h4>Compliance checklist for advisors</h4>
+                  <div class="tag-row"><span class="badge-topic">Compliance</span></div>
+                </div>
+              </article>
+              <article class="pcard">
+                <div class="ph">
+                  <div class="ph-icons">
+                    <button type="button" class="icon-btn" aria-label="Favorite"><svg viewBox="0 0 24 24"><path d="M12 3.5l2.4 4.9 5.4.8-3.9 3.8.9 5.4L12 15.8 7.2 18.4l.9-5.4L4.2 9.2l5.4-.8L12 3.5z"/></svg></button>
+                    <div class="right">
+                      <button type="button" class="icon-btn" aria-label="Hide"><svg viewBox="0 0 24 24"><path d="M3 3l18 18M10.5 10.6a3 3 0 0 0 4 4"/></svg></button>
+                      <button type="button" class="icon-btn lock" aria-label="Advisor-only"><svg viewBox="0 0 24 24"><path d="M7 11V8a5 5 0 0 1 10 0v3"/><rect x="5" y="11" width="14" height="10" rx="2"/></svg></button>
+                    </div>
+                  </div>
+                  <span class="src-badge">Sun Life</span>
+                  <div class="ph-meta">Content library</div>
+                </div>
+                <div class="body">
+                  <h4>Advisor-only sell sheet: Disability</h4>
+                  <div class="tag-row"><span class="badge-topic">Disability</span><span class="badge-lock">Advisor-only</span></div>
+                </div>
+              </article>
+              <article class="pcard">
+                <div class="ph g2">
+                  <div class="ph-icons">
+                    <button type="button" class="icon-btn" aria-label="Favorite"><svg viewBox="0 0 24 24"><path d="M12 3.5l2.4 4.9 5.4.8-3.9 3.8.9 5.4L12 15.8 7.2 18.4l.9-5.4L4.2 9.2l5.4-.8L12 3.5z"/></svg></button>
+                    <div class="right">
+                      <button type="button" class="icon-btn" aria-label="Hide"><svg viewBox="0 0 24 24"><path d="M3 3l18 18M10.5 10.6a3 3 0 0 0 4 4"/></svg></button>
+                      
+                    </div>
+                  </div>
+                  <span class="src-badge">FTT</span>
+                  <div class="ph-meta">Content library</div>
+                </div>
+                <div class="body">
+                  <h4>Retirement income strategies</h4>
+                  <div class="tag-row"><span class="badge-topic">Retirement</span><span class="badge-topic">Income</span></div>
+                </div>
+              </article>
+              <article class="pcard">
+                <div class="ph g3">
+                  <div class="ph-icons">
+                    <button type="button" class="icon-btn" aria-label="Favorite"><svg viewBox="0 0 24 24"><path d="M12 3.5l2.4 4.9 5.4.8-3.9 3.8.9 5.4L12 15.8 7.2 18.4l.9-5.4L4.2 9.2l5.4-.8L12 3.5z"/></svg></button>
+                    <div class="right">
+                      <button type="button" class="icon-btn" aria-label="Hide"><svg viewBox="0 0 24 24"><path d="M3 3l18 18M10.5 10.6a3 3 0 0 0 4 4"/></svg></button>
+                      
+                    </div>
+                  </div>
+                  <span class="src-badge">Co-operators</span>
+                  <div class="ph-meta">Content library</div>
+                </div>
+                <div class="body">
+                  <h4>What are segregated funds?</h4>
+                  <div class="tag-row"><span class="badge-topic">Investing</span></div>
+                </div>
+              </article>
+              <article class="pcard">
+                <div class="ph">
+                  <div class="ph-icons">
+                    <button type="button" class="icon-btn" aria-label="Favorite"><svg viewBox="0 0 24 24"><path d="M12 3.5l2.4 4.9 5.4.8-3.9 3.8.9 5.4L12 15.8 7.2 18.4l.9-5.4L4.2 9.2l5.4-.8L12 3.5z"/></svg></button>
+                    <div class="right">
+                      <button type="button" class="icon-btn" aria-label="Hide"><svg viewBox="0 0 24 24"><path d="M3 3l18 18M10.5 10.6a3 3 0 0 0 4 4"/></svg></button>
+                      
+                    </div>
+                  </div>
+                  <span class="src-badge">PPI</span>
+                  <div class="ph-meta">Content library</div>
+                </div>
+                <div class="body">
+                  <h4>Benefits Now for Advisors Product Guide</h4>
+                  <div class="tag-row"><span class="badge-topic">Group benefits</span></div>
+                </div>
+              </article>
+              <article class="pcard">
+                <div class="ph g2">
+                  <div class="ph-icons">
+                    <button type="button" class="icon-btn" aria-label="Favorite"><svg viewBox="0 0 24 24"><path d="M12 3.5l2.4 4.9 5.4.8-3.9 3.8.9 5.4L12 15.8 7.2 18.4l.9-5.4L4.2 9.2l5.4-.8L12 3.5z"/></svg></button>
+                    <div class="right">
+                      <button type="button" class="icon-btn" aria-label="Hide"><svg viewBox="0 0 24 24"><path d="M3 3l18 18M10.5 10.6a3 3 0 0 0 4 4"/></svg></button>
+                      
+                    </div>
+                  </div>
+                  <span class="src-badge">Ghostwritten</span>
+                  <div class="ph-meta">Content library</div>
+                </div>
+                <div class="body">
+                  <h4>Client conversation starters</h4>
+                  <div class="tag-row"><span class="badge-topic">Client engagement</span></div>
+                </div>
+              </article>
+            </div>
+
+            <div class="banner ok" style="margin-top:16px">
+              <div><strong>AND logic · Direction A:</strong> Results match selected Sources <em>and</em> selected Topics. Source logo avatars (FTT, FSB, PPI, Ghostwritten, Carriers, FECBC) sit native under the FC pill row. Carriers is a rollup — no Source×Topic mega-list.</div>
+            </div>
+            <p class="later-note">Life Events axis (HeyAdvisor-style) = optional later — not required for a-fc / Direction A v1.</p>
+            <p class="mobile-note"><strong>Audiences:</strong> Advisor browse = primary · Admin labeling (Manage Sources / Categories / post edit) in same mock via step chips. Desktop ~1280.</p>
+          </div>
+
+          <div class="screen" id="s-topics">
+            <h1 class="hero-title">What will you share today?</h1>
+            <div class="search-wrap">
+              <svg class="mag" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
+              <input type="search" placeholder="Search" aria-label="Search" />
+            </div>
+            <div class="pills">
+              <button type="button" class="pill" onclick="setMainPill(this,'All Content')"><svg viewBox="0 0 24 24"><path d="M4 10.5L12 4l8 6.5V20a1 1 0 0 1-1 1h-5v-6H10v6H5a1 1 0 0 1-1-1v-9.5z"/></svg>All Content</button>
+              <button type="button" class="pill"><svg viewBox="0 0 24 24"><path d="M12 3.5l2.4 4.9 5.4.8-3.9 3.8.9 5.4L12 15.8"/></svg>Favorites</button>
+              <button type="button" class="pill"><svg viewBox="0 0 24 24"><path d="M3 3l18 18"/></svg>Hidden</button>
+              <button type="button" class="pill on"><svg viewBox="0 0 24 24"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7z"/></svg>Topics</button>
+              <button type="button" class="pill"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M8 12.5l2.5 2.5L16 9.5"/></svg>Compliance Approved</button>
+              <button type="button" class="pill"><svg viewBox="0 0 24 24"><path d="M12 3v3M12 18v3"/></svg>Pick for me</button>
+            </div>
+            <div class="subhead">
+              <h2>Topics</h2>
+              <div class="status-pills"><button type="button" class="on">All</button><button type="button">Scheduled 0</button><button type="button">Published 0</button></div>
+              <button type="button" class="btn-create" onclick="showScreen('edit')">+ Create New Post</button>
+            </div>
+            <div class="facet-strip">
+              <div class="facet-label">Source (stays available while Topics drawer is open — dual facet)</div>
+              <div class="chips">
+                <button type="button" class="chip on"><span class="av ftt">FT</span>FTT</button>
+                <button type="button" class="chip on"><span class="av carrier">+</span>Carriers</button>
+                <button type="button" class="chip" onclick="openSourcesDrawer()">All sources…</button>
+              </div>
+            </div>
+            <div class="active-bar">
+              <span class="lab">Active:</span>
+              <span class="active-pill">Source: FTT</span>
+              <span class="active-pill">Source: Carriers</span>
+              <span class="active-pill">Topic: Retirement</span>
+              <button type="button" class="chip clear" onclick="clearAllFilters()">Clear all</button>
+            </div>
+            <div class="banner info">
+              <div><strong>Topics drawer</strong> matches FC screenshot 17 — checkbox list beside the library. Direction A adds <strong>Source</strong> companion chips (and optional Sources drawer) so both facets stay first-class. AND across facets.</div>
+            </div>
+            <div class="grid-posts">
+              <article class="pcard"><div class="ph"><span class="src-badge">FTT</span><div class="ph-meta">Content library</div></div><div class="body"><h4>Market update: Q3 outlook</h4><div class="tag-row"><span class="badge-topic">Retirement</span></div></div></article>
+              <article class="pcard"><div class="ph g2"><span class="src-badge">FTT</span><div class="ph-meta">Content library</div></div><div class="body"><h4>Retirement income strategies</h4><div class="tag-row"><span class="badge-topic">Retirement</span></div></div></article>
+              <article class="pcard"><div class="ph g3"><span class="src-badge">Sun Life</span><div class="ph-meta">Content library</div></div><div class="body"><h4>RRSP season talking points</h4><div class="tag-row"><span class="badge-topic">Retirement</span><span class="badge-topic">RRSP</span></div></div></article>
+              <article class="pcard"><div class="ph"><span class="src-badge">Manulife</span><div class="ph-meta">Content library</div></div><div class="body"><h4>Estate planning basics</h4><div class="tag-row"><span class="badge-topic">estate planning</span></div></div></article>
+            </div>
+          </div>
+
+          <div class="screen" id="s-empty">
+            <h1 class="hero-title">What will you share today?</h1>
+            <div class="search-wrap">
+              <svg class="mag" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
+              <input type="search" placeholder="Search" />
+            </div>
+            <div class="pills">
+              <button type="button" class="pill on"><svg viewBox="0 0 24 24"><path d="M4 10.5L12 4l8 6.5V20a1 1 0 0 1-1 1h-5v-6H10v6H5a1 1 0 0 1-1-1v-9.5z"/></svg>All Content</button>
+              <button type="button" class="pill"><svg viewBox="0 0 24 24"><path d="M12 3.5l2.4 4.9 5.4.8-3.9 3.8.9 5.4L12 15.8"/></svg>Favorites</button>
+              <button type="button" class="pill"><svg viewBox="0 0 24 24"><path d="M3 3l18 18"/></svg>Hidden</button>
+              <button type="button" class="pill" onclick="showScreen('topics')"><svg viewBox="0 0 24 24"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7z"/></svg>Topics</button>
+              <button type="button" class="pill"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/></svg>Compliance Approved</button>
+              <button type="button" class="pill"><svg viewBox="0 0 24 24"><path d="M12 3v3"/></svg>Pick for me</button>
+            </div>
+            <div class="subhead">
+              <h2>All Content</h2>
+              <div class="status-pills"><button type="button" class="on">All</button><button type="button">Scheduled 0</button><button type="button">Published 0</button></div>
+              <button type="button" class="btn-create" onclick="showScreen('edit')">+ Create New Post</button>
+            </div>
+            <div class="active-bar">
+              <span class="lab">Active:</span>
+              <span class="active-pill">Source: FECBC</span>
+              <span class="active-pill">Topic: Disability</span>
+              <button type="button" class="chip clear" onclick="clearAllFilters()">Clear all</button>
+            </div>
+            <div class="empty">
+              <h3>No posts found</h3>
+              <p>Try adjusting your filters or search.</p>
+              <button type="button" class="btn btn-primary" onclick="clearAllFilters()">Clear filters</button>
+              <button type="button" class="btn btn-secondary" style="margin-left:8px" onclick="showScreen('browse')">Show populated example</button>
+            </div>
+            <div class="banner info" style="margin-top:8px">
+              <div>Empty state matches FC compliance-filter feel (screenshot 18). Historical untagged posts = backfill follow-up, not v1.</div>
+            </div>
+          </div>
+
+          <div class="screen" id="s-gated">
+            <h1 class="hero-title">What will you share today?</h1>
+            <div class="search-wrap">
+              <svg class="mag" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
+              <input type="search" placeholder="Search" />
+            </div>
+            <div class="pills">
+              <button type="button" class="pill on"><svg viewBox="0 0 24 24"><path d="M4 10.5L12 4l8 6.5V20a1 1 0 0 1-1 1h-5v-6H10v6H5a1 1 0 0 1-1-1v-9.5z"/></svg>All Content</button>
+              <button type="button" class="pill"><svg viewBox="0 0 24 24"><path d="M12 3.5l2.4 4.9 5.4.8-3.9 3.8.9 5.4L12 15.8"/></svg>Favorites</button>
+              <button type="button" class="pill"><svg viewBox="0 0 24 24"><path d="M3 3l18 18"/></svg>Hidden</button>
+              <button type="button" class="pill" onclick="showScreen('topics')"><svg viewBox="0 0 24 24"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7z"/></svg>Topics</button>
+              <button type="button" class="pill"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/></svg>Compliance Approved</button>
+              <button type="button" class="pill"><svg viewBox="0 0 24 24"><path d="M12 3v3"/></svg>Pick for me</button>
+            </div>
+            <div class="subhead">
+              <h2>Advisor-only</h2>
+              <span class="aud-tag">Advisor</span>
+              <div class="status-pills"><button type="button" class="on">All</button><button type="button">Scheduled 0</button><button type="button">Published 0</button></div>
+              <button type="button" class="btn-create" onclick="showScreen('edit')">+ Create New Post</button>
+            </div>
+            <div class="banner ok">
+              <div><strong>Recommended:</strong> Visibility: Advisor-only flag → red lock on card header + badge. Topics stay about “what”; visibility about “who can see.”</div>
+            </div>
+            <div class="chips" style="margin-bottom:14px">
+              <button type="button" class="chip on">Advisor-only</button>
+              <button type="button" class="chip" onclick="showToast('Show all visibility (stub)')">All visibility</button>
+            </div>
+            <div class="grid-posts">
+              <article class="pcard">
+                <div class="ph g2">
+                  <div class="ph-icons">
+                    <button type="button" class="icon-btn" aria-label="Favorite"><svg viewBox="0 0 24 24"><path d="M12 3.5l2.4 4.9 5.4.8-3.9 3.8.9 5.4L12 15.8"/></svg></button>
+                    <div class="right">
+                      <button type="button" class="icon-btn" aria-label="Hide"><svg viewBox="0 0 24 24"><path d="M3 3l18 18"/></svg></button>
+                      <button type="button" class="icon-btn lock" aria-label="Advisor-only"><svg viewBox="0 0 24 24"><path d="M7 11V8a5 5 0 0 1 10 0v3"/><rect x="5" y="11" width="14" height="10" rx="2"/></svg></button>
+                    </div>
+                  </div>
+                  <span class="src-badge">Sun Life</span>
+                  <div class="ph-meta">Content library</div>
+                </div>
+                <div class="body"><h4>Advisor-only sell sheet: Disability</h4><div class="tag-row"><span class="badge-topic">Disability</span><span class="badge-lock">Advisor-only</span></div></div>
+              </article>
+              <article class="pcard">
+                <div class="ph">
+                  <div class="ph-icons">
+                    <button type="button" class="icon-btn" aria-label="Favorite"><svg viewBox="0 0 24 24"><path d="M12 3.5l2.4 4.9 5.4.8-3.9 3.8.9 5.4L12 15.8"/></svg></button>
+                    <div class="right">
+                      <button type="button" class="icon-btn" aria-label="Hide"><svg viewBox="0 0 24 24"><path d="M3 3l18 18"/></svg></button>
+                      <button type="button" class="icon-btn lock" aria-label="Advisor-only"><svg viewBox="0 0 24 24"><path d="M7 11V8a5 5 0 0 1 10 0v3"/><rect x="5" y="11" width="14" height="10" rx="2"/></svg></button>
+                    </div>
+                  </div>
+                  <span class="src-badge">Manulife</span>
+                  <div class="ph-meta">Content library</div>
+                </div>
+                <div class="body"><h4>Group benefits — internal pricing notes</h4><div class="tag-row"><span class="badge-topic">Group benefits</span><span class="badge-lock">Advisor-only</span></div></div>
+              </article>
+            </div>
+            <div class="option-alt" style="margin-top:14px">
+              <strong>Alt (open Q):</strong> Model advisor-only as a special Master Category instead of a visibility flag — risk of mixing visibility with taxonomy.
+            </div>
+          </div>
+
+          <div class="screen" id="s-edit">
+            <button type="button" class="admin-back" onclick="showScreen('browse')">← Back</button>
+            <div class="admin-title-row">
+              <h2>Edit content</h2>
+              <span class="admin-tag">Admin</span>
+            </div>
+            <p class="admin-sub">Assign <strong>Source</strong> (single) + <strong>topics</strong> (multi via Master Categories). Recommend <strong>Visibility: Advisor-only</strong> flag separate from topic.</p>
+            <div class="form-card">
+              <div class="field">
+                <label>Title</label>
+                <input value="Advisor-only sell sheet: Disability" />
+              </div>
+              <div class="field">
+                <label>Source <span style="font-weight:500;text-transform:none;letter-spacing:0">(single · first-class field)</span></label>
+                <select>
+                  <option>Select source…</option>
+                  <option>Financial Tech Tools (FTT)</option>
+                  <option>FSB</option>
+                  <option>PPI</option>
+                  <option>Ghostwritten</option>
+                  <option>FECBC</option>
+                  <option selected>Sun Life (carrier)</option>
+                  <option>Manulife (carrier)</option>
+                  <option>Other</option>
+                </select>
+              </div>
+              <div class="field">
+                <label>Topics / products <span style="font-weight:500;text-transform:none;letter-spacing:0">(Master Categories · multi)</span></label>
+                <div class="chips">
+                  <button type="button" class="chip on" onclick="this.classList.toggle('on')">Disability</button>
+                  <button type="button" class="chip" onclick="this.classList.toggle('on')">Group benefits</button>
+                  <button type="button" class="chip" onclick="this.classList.toggle('on')">Retirement</button>
+                  <button type="button" class="chip" onclick="this.classList.toggle('on')">Investing</button>
+                  <button type="button" class="chip" onclick="this.classList.toggle('on')">Compliance</button>
+                </div>
+              </div>
+              <div class="field">
+                <label>Visibility <span style="font-weight:500;text-transform:none;letter-spacing:0">(recommended)</span></label>
+                <div class="toggle-row" onclick="var s=this.querySelector('.tog');s.classList.toggle('on');showToast('Visibility toggled (stub)')">
+                  <button type="button" class="tog on" aria-label="Advisor-only"></button>
+                  <div>
+                    <strong>Advisor-only</strong><br/>
+                    <span style="color:var(--muted);font-size:0.75rem">Hide from client-facing surfaces; show red lock + badge in advisor library.</span>
+                  </div>
+                </div>
+                <div class="option-alt">
+                  <strong>Alt option (open Q):</strong> Model advisor-only / group-benefits-sell as a <em>special Master Category</em> instead of a visibility flag. Mock shows both; Designer recommends the flag.
+                </div>
+              </div>
+              <div style="display:flex;gap:8px;margin-top:8px">
+                <button type="button" class="btn btn-primary" onclick="showToast('Saved Source + topics + visibility (stub)')">Save</button>
+                <button type="button" class="btn btn-secondary" onclick="showScreen('browse')">Cancel</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="screen" id="s-sources">
+            <button type="button" class="admin-back" onclick="showScreen('browse')">← Back</button>
+            <div class="admin-title-row">
+              <h2>Manage Sources</h2>
+              <span class="admin-tag">Admin</span>
+            </div>
+            <p class="admin-sub">Content Sources · CRUD mirroring Manage Categories density · logo optional · open Q: enum vs admin-managed · firm vs FC admin</p>
+            <div class="info-banner">
+              <div class="ico">i</div>
+              <div><strong>Sources</strong> is the first-class label for where a post came from (FTT, carriers, FECBC, Ghostwritten…). Independent of Master Categories (topics). Do not confuse with AdvisorSource (#209).</div>
+            </div>
+            <div class="admin-toolbar">
+              <input style="min-width:200px" placeholder="Search sources…" />
+              <div class="filter-pills">
+                <button type="button" class="on">All</button>
+                <button type="button">Partner</button>
+                <button type="button">Carrier</button>
+                <button type="button">Association</button>
+                <button type="button">Hidden</button>
+              </div>
+            </div>
+            <div class="add-row">
+              <input placeholder="Name" style="flex:1;min-width:140px" />
+              <select><option>Type (required)</option><option>Partner</option><option>Carrier</option><option>Association</option><option>Other</option></select>
+              <button type="button" class="btn btn-primary btn-disabled">+ Add Source</button>
+            </div>
+            <div class="table-wrap">
+              <table class="admin">
+                <thead><tr><th>Name</th><th>Type</th><th>Posts</th><th>Visible</th><th>Actions</th></tr></thead>
+                <tbody>
+                  <tr><td><strong>Financial Tech Tools</strong><div class="slug">ftt</div></td><td><div class="type-pills"><span class="on">Partner</span></div></td><td>128</td><td><button type="button" class="tog on" onclick="this.classList.toggle('on')"></button></td><td><button type="button" class="btn btn-ghost btn-sm" onclick="showToast('Edit stub')">Edit</button> <button type="button" class="btn btn-danger btn-sm" onclick="showToast('Remove stub')">Remove</button></td></tr>
+                  <tr><td><strong>FSB</strong><div class="slug">fsb</div></td><td><div class="type-pills"><span class="on">Partner</span></div></td><td>41</td><td><button type="button" class="tog on" onclick="this.classList.toggle('on')"></button></td><td><button type="button" class="btn btn-ghost btn-sm">Edit</button> <button type="button" class="btn btn-danger btn-sm">Remove</button></td></tr>
+                  <tr><td><strong>PPI</strong><div class="slug">ppi</div></td><td><div class="type-pills"><span class="on">Partner</span></div></td><td>33</td><td><button type="button" class="tog on" onclick="this.classList.toggle('on')"></button></td><td><button type="button" class="btn btn-ghost btn-sm">Edit</button> <button type="button" class="btn btn-danger btn-sm">Remove</button></td></tr>
+                  <tr><td><strong>Ghostwritten</strong><div class="slug">ghostwritten</div></td><td><div class="type-pills"><span class="on">Other</span></div></td><td>22</td><td><button type="button" class="tog on" onclick="this.classList.toggle('on')"></button></td><td><button type="button" class="btn btn-ghost btn-sm">Edit</button> <button type="button" class="btn btn-danger btn-sm">Remove</button></td></tr>
+                  <tr><td><strong>Manulife</strong><div class="slug">manulife</div></td><td><div class="type-pills"><span class="on">Carrier</span></div></td><td>42</td><td><button type="button" class="tog on" onclick="this.classList.toggle('on')"></button></td><td><button type="button" class="btn btn-ghost btn-sm">Edit</button> <button type="button" class="btn btn-danger btn-sm">Remove</button></td></tr>
+                  <tr><td><strong>Sun Life</strong><div class="slug">sun-life</div></td><td><div class="type-pills"><span class="on">Carrier</span></div></td><td>37</td><td><button type="button" class="tog on" onclick="this.classList.toggle('on')"></button></td><td><button type="button" class="btn btn-ghost btn-sm">Edit</button> <button type="button" class="btn btn-danger btn-sm">Remove</button></td></tr>
+                  <tr><td><strong>FECBC</strong><div class="slug">fecbc</div></td><td><div class="type-pills"><span class="on">Association</span></div></td><td>64</td><td><button type="button" class="tog on" onclick="this.classList.toggle('on')"></button></td><td><button type="button" class="btn btn-ghost btn-sm">Edit</button> <button type="button" class="btn btn-danger btn-sm">Remove</button></td></tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="banner warn" style="margin-top:14px">
+              <div><strong>Open Q:</strong> Fixed enum vs admin-managed CRUD? Firm admin vs FC admin ownership?</div>
+            </div>
+          </div>
+
+          <div class="screen" id="s-cats">
+            <button type="button" class="admin-back" onclick="showScreen('browse')">← Back</button>
+            <div class="admin-title-row">
+              <h2>Manage Categories</h2>
+              <span class="admin-tag">Admin</span>
+            </div>
+            <p class="admin-sub">MasterCategories · set Type · featured/visible · cleanup junk for MAP trustworthiness — topics only in Direction A (Sources live under Manage Sources)</p>
+            <div class="info-banner">
+              <div class="ico">i</div>
+              <div><strong>MasterCategories</strong> is the sole source of truth for Product/Service Types (topics). Featured / Visible / Hidden control the advisor-facing Topics filter. <strong>Do not fold Source into this list</strong> in Direction A.</div>
+            </div>
+            <div class="admin-toolbar">
+              <input style="min-width:200px" placeholder="Search categories…" />
+              <div class="filter-pills">
+                <button type="button" class="on">All</button>
+                <button type="button">Services</button>
+                <button type="button">Products</button>
+                <button type="button">Hidden</button>
+                <button type="button">Unset Type</button>
+              </div>
+            </div>
+            <div class="add-row">
+              <input placeholder="Name" style="flex:1;min-width:140px" />
+              <select><option>Type (required)</option><option>Service</option><option>Product</option></select>
+              <button type="button" class="btn btn-primary btn-disabled">+ Add category</button>
+            </div>
+            <div class="table-wrap">
+              <table class="admin">
+                <thead><tr><th>Name</th><th>Type</th><th>Featured</th><th>Visible</th><th>Actions</th></tr></thead>
+                <tbody>
+                  <tr><td><strong>Retirement</strong><div class="slug">retirement</div></td><td><div class="type-pills"><span class="on">Service</span><span>Product</span></div></td><td><button type="button" class="tog" onclick="this.classList.toggle('on')"></button></td><td><button type="button" class="tog on" onclick="this.classList.toggle('on')"></button></td><td><button type="button" class="btn btn-secondary btn-sm">Unhide</button> <button type="button" class="btn btn-danger btn-sm">Remove</button></td></tr>
+                  <tr><td><strong>Group benefits</strong><div class="slug">group-benefits</div></td><td><div class="type-pills"><span class="on">Service</span><span>Product</span></div></td><td><button type="button" class="tog on" onclick="this.classList.toggle('on')"></button></td><td><button type="button" class="tog on" onclick="this.classList.toggle('on')"></button></td><td><button type="button" class="btn btn-secondary btn-sm">Unhide</button> <button type="button" class="btn btn-danger btn-sm">Remove</button></td></tr>
+                  <tr><td><strong>Disability</strong><div class="slug">disability</div></td><td><div class="type-pills"><span class="on">Product</span><span>Service</span></div></td><td><button type="button" class="tog" onclick="this.classList.toggle('on')"></button></td><td><button type="button" class="tog on" onclick="this.classList.toggle('on')"></button></td><td><button type="button" class="btn btn-secondary btn-sm">Unhide</button> <button type="button" class="btn btn-danger btn-sm">Remove</button></td></tr>
+                  <tr><td><strong>Investing</strong><div class="slug">investing</div></td><td><div class="type-pills"><span class="on">Service</span><span>Product</span></div></td><td><button type="button" class="tog" onclick="this.classList.toggle('on')"></button></td><td><button type="button" class="tog on" onclick="this.classList.toggle('on')"></button></td><td><button type="button" class="btn btn-secondary btn-sm">Unhide</button> <button type="button" class="btn btn-danger btn-sm">Remove</button></td></tr>
+                  <tr><td><strong>Compliance</strong><div class="slug">compliance</div></td><td><div class="type-pills"><span class="on">Service</span><span>Product</span></div></td><td><button type="button" class="tog" onclick="this.classList.toggle('on')"></button></td><td><button type="button" class="tog on" onclick="this.classList.toggle('on')"></button></td><td><button type="button" class="btn btn-secondary btn-sm">Unhide</button> <button type="button" class="btn btn-danger btn-sm">Remove</button></td></tr>
+                  <tr><td><strong>2018 Only</strong><div class="slug">2018-only</div></td><td><div class="type-pills"><span class="on">Service</span><span>Product</span></div></td><td><button type="button" class="tog" onclick="this.classList.toggle('on')"></button></td><td><button type="button" class="tog" onclick="this.classList.toggle('on')"></button></td><td><button type="button" class="btn btn-secondary btn-sm">Unhide</button> <button type="button" class="btn btn-danger btn-sm">Remove</button></td></tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="banner info" style="margin-top:14px">
+              <div><strong>Reuse:</strong> Same density &amp; patterns as today’s Manage Categories (screenshot 10). Topics only here. Sources → Manage Sources.</div>
+            </div>
+          </div>
+
+          <div class="screen" id="s-not209">
+            <button type="button" class="admin-back" onclick="showScreen('browse')">← Back</button>
+            <div class="admin-title-row">
+              <h2>Not Advisor Categories (#209)</h2>
+            </div>
+            <p class="admin-sub">Keep this distinction visible for Alex / Angelina / Software / CoS so #209 is not reopened by accident.</p>
+            <div class="banner err">
+              <div>
+                <strong>#209 Manage Advisor Categories / AdvisorSource (closed)</strong><br/>
+                About <em>advisor affiliation</em> — which insurance/investment companies or programs an <strong>advisor</strong> is tied to.<br/><br/>
+                <strong>#261 (this playground · Direction A · FC look)</strong><br/>
+                About <em>content</em> — which Source a <strong>post</strong> came from (carrier / FTT / FECBC / Other) and which topic/product Master Categories apply.<br/><br/>
+                Same words (“source”, “categories”) — different objects. Do not merge schemas or reopen #209 for this ask.
+              </div>
+            </div>
+            <div class="banner info">
+              <div><strong>Also separate:</strong> <a href="../../../260/">#260 My Media Library</a> is advisor personal media for compose — not content taxonomy.</div>
+            </div>
+            <div style="margin-top:14px;display:flex;gap:8px;flex-wrap:wrap">
+              <button type="button" class="btn btn-primary" onclick="showScreen('browse')">Back to advisor browse</button>
+              <a class="btn btn-secondary" href="../../index.html">Hub #261</a>
+              <a class="btn btn-secondary" href="../a/index.html">Abstract A</a>
+              <a class="btn btn-secondary" href="../../../209/">Open #209 mocks</a>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script>
+    var SCREEN_KEY = 'fc261-afc-screen';
+    var toastTimer = null;
+
+    function showToast(msg) {
+      var t = document.getElementById('toast');
+      t.textContent = msg;
+      t.classList.add('show');
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(function () { t.classList.remove('show'); }, 2200);
+    }
+
+    function closeDrawer() {
+      document.getElementById('topicsDrawer').classList.remove('open');
+      document.getElementById('sourcesDrawer').classList.remove('open');
+    }
+
+    function openTopicsDrawer(btn) {
+      closeDrawer();
+      document.getElementById('topicsDrawer').classList.add('open');
+      if (btn) {
+        document.querySelectorAll('.pills .pill').forEach(function (p) { p.classList.remove('on'); });
+        btn.classList.add('on');
+      }
+      showToast('Topics drawer open · Source chips still AND');
+    }
+
+    function openSourcesDrawer() {
+      document.getElementById('topicsDrawer').classList.remove('open');
+      document.getElementById('sourcesDrawer').classList.add('open');
+      showToast('Sources drawer · companion to Topics');
+    }
+
+    function showScreen(id) {
+      document.querySelectorAll('.screen').forEach(function (s) {
+        s.classList.toggle('on', s.id === 's-' + id);
+      });
+      document.querySelectorAll('.step-btn').forEach(function (b) {
+        b.classList.toggle('on', b.dataset.screen === id);
+      });
+      closeDrawer();
+      if (id === 'topics') {
+        document.getElementById('topicsDrawer').classList.add('open');
+      }
+      try { localStorage.setItem(SCREEN_KEY, id); } catch (e) {}
+      window.scrollTo(0, 0);
+    }
+
+    document.querySelectorAll('.step-btn').forEach(function (b) {
+      b.addEventListener('click', function () { showScreen(b.dataset.screen); });
+    });
+
+    function setMainPill(el, name) {
+      var row = el.parentElement;
+      row.querySelectorAll('.pill').forEach(function (p) { p.classList.remove('on'); });
+      el.classList.add('on');
+      if (name === 'Topics') {
+        openTopicsDrawer(el);
+        return;
+      }
+      closeDrawer();
+      showToast(name + ' (stub)');
+    }
+
+    function toggleChip(el) {
+      el.classList.toggle('on');
+      syncActiveBar();
+      showToast('Filter updated (AND across facets)');
+    }
+
+    function clearFacet(group) {
+      document.querySelectorAll('[data-group="' + group + '"]').forEach(function (c) {
+        c.classList.remove('on');
+      });
+      syncActiveBar();
+      showToast('Cleared ' + group + ' filters');
+    }
+
+    function clearAllFilters() {
+      document.querySelectorAll('[data-group]').forEach(function (c) { c.classList.remove('on'); });
+      syncActiveBar();
+      showToast('All filters cleared');
+      showScreen('browse');
+    }
+
+    function removeActive(group, val) {
+      document.querySelectorAll('[data-group="' + group + '"][data-val="' + val + '"]').forEach(function (c) {
+        c.classList.remove('on');
+      });
+      syncActiveBar();
+      showToast('Removed ' + val);
+    }
+
+    function syncActiveBar() {
+      var bar = document.getElementById('activeBar');
+      if (!bar) return;
+      var parts = ['<span class="lab">Active:</span>'];
+      document.querySelectorAll('#sourceChips [data-group="source"].on').forEach(function (c) {
+        var v = c.dataset.val;
+        parts.push('<span class="active-pill">Source: ' + v + ' <button type="button" class="x" onclick="removeActive(\'source\',\'' + v + '\')">×</button></span>');
+      });
+      document.querySelectorAll('#topicChips [data-group="topic"].on').forEach(function (c) {
+        var v = c.dataset.val;
+        parts.push('<span class="active-pill">Topic: ' + v + ' <button type="button" class="x" onclick="removeActive(\'topic\',\'' + v + '\')">×</button></span>');
+      });
+      parts.push('<button type="button" class="chip clear" onclick="clearAllFilters()">Clear all</button>');
+      var has = document.querySelectorAll('[data-group].on').length > 0;
+      bar.innerHTML = has ? parts.join('') : '<span class="lab">Active:</span> <span style="color:var(--muted)">None</span> <button type="button" class="chip clear" onclick="clearAllFilters()">Clear all</button>';
+    }
+
+    function onTopicCheck(input) {
+      showToast((input.checked ? 'Added' : 'Removed') + ' topic: ' + input.dataset.topic + ' (AND)');
+    }
+    function onSourceCheck(input) {
+      showToast((input.checked ? 'Added' : 'Removed') + ' source: ' + input.dataset.src + ' (AND)');
+    }
+
+    (function init() {
+      var start = 'browse';
+      try { start = localStorage.getItem(SCREEN_KEY) || 'browse'; } catch (e) {}
+      var ok = false;
+      document.querySelectorAll('.step-btn').forEach(function (b) {
+        if (b.dataset.screen === start) ok = true;
+      });
+      if (!ok) start = 'browse';
+      showScreen(start);
+    })();
+  </script>
+</body>
+</html>

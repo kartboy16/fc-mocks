@@ -32,6 +32,22 @@
     }
     .cta:hover { filter: brightness(1.05); }
     .cta small { display: block; font-weight: 500; opacity: 0.9; font-size: 0.8rem; margin-top: 4px; }
+    .cta-fc {
+      display: block; background: linear-gradient(135deg, #1e5bb8, #2b7de9); color: #fff !important; text-decoration: none;
+      text-align: center; padding: 20px 24px; border-radius: 14px; font-weight: 700;
+      font-size: 1.1rem; margin-bottom: 12px; box-shadow: 0 6px 20px rgba(43,125,233,0.4);
+      border: 2px solid #1e5bb8;
+    }
+    .cta-fc:hover { filter: brightness(1.06); }
+    .cta-fc .eyebrow { display: block; font-size: 0.7rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; opacity: 0.9; margin-bottom: 6px; }
+    .cta-fc small { display: block; font-weight: 500; opacity: 0.92; font-size: 0.8rem; margin-top: 6px; }
+    .cta-secondary {
+      display: block; background: #fff; color: var(--blue) !important; text-decoration: none;
+      text-align: center; padding: 12px 20px; border-radius: 10px; font-weight: 600;
+      font-size: 0.88rem; margin-bottom: 28px; border: 1px solid var(--border);
+    }
+    .cta-secondary:hover { border-color: var(--blue); background: var(--mint); }
+    .cta-secondary small { display: block; font-weight: 500; color: var(--muted); font-size: 0.75rem; margin-top: 3px; }
     .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 14px; }
     .card {
       background: var(--card); border: 1px solid var(--border); border-radius: 12px;
@@ -88,9 +104,14 @@
   </header>
 
   <div class="wrap">
-    <a class="cta" href="directions/a/index.html">
-      Open Direction A (recommended)
-      <small>First-class Source field + Master Categories (topics) · two independent filter facets · AND logic</small>
+    <a class="cta-fc" href="directions/a-fc/index.html">
+      <span class="eyebrow">Primary deliverable · Advisor browse first</span>
+      Direction A · FC look
+      <small>Hi-fi of dual-facet A inside real financialcontent.ca chrome — advisor browse primary + admin labeling. Not a new direction letter.</small>
+    </a>
+    <a class="cta-secondary" href="directions/a/index.html">
+      Abstract Direction A (comparison wire)
+      <small>Same contract · Source × Topic AND · lower-fidelity chrome</small>
     </a>
     <p style="text-align:center;margin:-18px 0 24px;font-size:0.8rem;color:var(--muted)">
       <a href="build-contract.html">Provisional build contract</a> ·
@@ -118,7 +139,10 @@
     </div>
 
     <div class="playground">
-      <strong>Playground note:</strong> Track is <strong>Idea / playground</strong>. Mocks are clickable HTML only — no live publish, no full ontology rewrite, no historical backfill in v1. Audience called out per screen: <strong>admin</strong> (labels) + <strong>advisor</strong> (browse/filter). Desktop-first (~1280); mobile noted briefly.
+      <strong>Playground note:</strong> Track is <strong>Idea / playground</strong>. Mocks are clickable HTML only — no live publish, no full ontology rewrite, no historical backfill in v1. Audiences: <strong>both</strong> — <strong>advisor browse primary</strong> + <strong>admin labeling</strong> (Angelina ask). Desktop-first (~1280); mobile noted briefly.
+    </div>
+    <div class="playground" style="background:#e8f5e9;border-color:#a7d7b5">
+      <strong>a-fc = hi-fi of Direction A</strong> (not a fifth direction). Same dual-facet contract as abstract A: Source × Topic AND · Manage Sources + Manage Categories · Advisor-only visibility flag. Ships real FC library chrome for stakeholder review. Abstract A/B/C/D stay for comparison.
     </div>
 
     <div class="constraint">
@@ -143,10 +167,15 @@
 
     <h2>Directions</h2>
     <div class="grid">
-      <a class="card recd" href="directions/a/index.html">
-        <span class="tag rec-tag">RECOMMEND</span>
+      <a class="card recd" href="directions/a-fc/index.html" style="grid-column:1/-1;border-width:2px">
+        <span class="tag rec-tag">PRIMARY · FC LOOK</span>
+        <h3>A · FC look — Dual-facet in real FC chrome</h3>
+        <p>Higher-fidelity clickable HTML of Direction A inside financialcontent.ca advisor library UI. Advisor browse first (Source + Topic chips, Topics drawer, cards with Source badge + Advisor-only lock). Admin: Manage Sources, Manage Categories, post edit. Same axes as abstract A — not a new letter.</p>
+      </a>
+      <a class="card" href="directions/a/index.html">
+        <span class="tag">ABSTRACT</span>
         <h3>A — Dual-facet filters</h3>
-        <p>First-class Source × Topic chips (AND). Logo chips echo Advisorstream Sources without becoming a sidebar. Callout maps their Sources/Publishers/Topics → our two facets. Date/Saved later. Life Events = open product Q (not required for A).</p>
+        <p>First-class Source × Topic chips (AND). Logo chips echo Advisorstream Sources without becoming a sidebar. Callout maps their Sources/Publishers/Topics → our two facets. Date/Saved later. Life Events = open product Q (not required for A). Prefer <strong>a-fc</strong> for FC-fidelity review.</p>
       </a>
       <a class="card" href="directions/b/index.html">
         <span class="tag">ALT</span>
