@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Direction A — Named footers library + picker · #279</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #f4f8fc; --card: #fff; --ink: #1e2a4a; --muted: #5b6572;
+      --blue: #2b7de9; --blue-dark: #1e5bb8; --border: #d4e4f2; --mint: #e6f1fb;
+      --ok: #047857; --ok-bg: #e8f5e9; --warn: #9a3412; --warn-bg: #fff7ed;
+      --danger: #b91c1c; --danger-bg: #fef2f2;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: Inter, system-ui, sans-serif; background: var(--bg); color: var(--ink); font-size: 13px; line-height: 1.45; }
+    a { color: var(--blue); }
+    .thesis {
+      background: linear-gradient(135deg, #1e2a4a, #2b7de9); color: #fff; padding: 16px 24px;
+    }
+    .thesis .rec {
+      display: inline-block; background: #fff; color: var(--blue); font-size: 0.68rem;
+      font-weight: 700; padding: 3px 10px; border-radius: 999px; margin-bottom: 8px;
+    }
+    .thesis h1 { font-size: 1.05rem; margin-bottom: 4px; }
+    .thesis p { opacity: 0.9; font-size: 0.8rem; max-width: 920px; }
+    .nav {
+      padding: 8px 24px; font-size: 0.75rem; background: #fafafa;
+      border-bottom: 1px solid var(--border); display: flex; gap: 12px; flex-wrap: wrap; align-items: center;
+    }
+    .nav a { color: var(--blue); text-decoration: none; font-weight: 500; }
+    .nav .sep { color: #c0c8d4; }
+    .nav .on { font-weight: 700; color: var(--ink); }
+    .app { display: flex; min-height: calc(100vh - 110px); }
+    .rail {
+      width: 52px; background: #1e2a4a; flex-shrink: 0;
+      display: flex; flex-direction: column; align-items: center; padding: 12px 0; gap: 8px;
+    }
+    .rail .ri {
+      width: 32px; height: 32px; border-radius: 8px; background: rgba(255,255,255,0.08);
+      color: rgba(255,255,255,0.7); font-size: 0.6rem; font-weight: 700;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .rail .ri.on { background: var(--blue); color: #fff; }
+    .main { flex: 1; min-width: 0; padding: 14px 18px 48px; }
+    .demo-bar {
+      display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-bottom: 12px;
+      padding: 10px 12px; background: #fff; border: 1px solid var(--border); border-radius: 10px;
+    }
+    .demo-bar .lbl { font-size: 0.65rem; font-weight: 700; text-transform: uppercase; color: var(--muted); margin-right: 4px; }
+    .demo-btn {
+      padding: 6px 12px; border: 1px solid var(--border); border-radius: 8px; background: #fff;
+      font-family: inherit; font-size: 0.75rem; font-weight: 600; color: var(--ink); cursor: pointer;
+    }
+    .demo-btn:hover, .demo-btn.on { border-color: var(--blue); color: var(--blue); background: var(--mint); }
+    .demo-note { flex: 1 1 200px; font-size: 0.72rem; color: var(--muted); min-width: 160px; }
+    .ac-strip {
+      margin-bottom: 12px; padding: 10px 12px; background: #eff6ff; border: 1px solid #bfdbfe;
+      border-radius: 10px; font-size: 0.75rem; color: #1e40af;
+    }
+    .page-head { margin-bottom: 14px; }
+    .page-head h2 { font-size: 1.25rem; font-weight: 700; }
+    .page-head .sub { color: var(--muted); font-size: 0.82rem; margin-top: 4px; max-width: 640px; }
+    .crumbs { font-size: 0.72rem; color: var(--muted); margin-bottom: 6px; }
+    .crumbs span { color: var(--ink); font-weight: 600; }
+    .panel {
+      background: var(--card); border: 1px solid var(--border); border-radius: 12px;
+      overflow: hidden; box-shadow: 0 1px 3px rgba(30,42,74,0.04);
+    }
+    .panel-hd {
+      display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap;
+      padding: 14px 16px; border-bottom: 1px solid var(--border); background: #fafbfd;
+    }
+    .panel-hd h3 { font-size: 0.95rem; }
+    .btn {
+      display: inline-flex; align-items: center; gap: 6px; padding: 8px 14px;
+      border: 1px solid var(--border); border-radius: 8px; background: #fff;
+      font-family: inherit; font-size: 0.82rem; font-weight: 600; color: var(--ink); cursor: pointer;
+    }
+    .btn:hover { border-color: var(--blue); color: var(--blue); }
+    .btn.primary { background: var(--blue); color: #fff; border-color: var(--blue); }
+    .btn.primary:hover { background: var(--blue-dark); color: #fff; }
+    .btn.ghost { background: transparent; }
+    .btn.danger { color: var(--danger); border-color: #fecaca; }
+    .btn.danger:hover { background: var(--danger-bg); }
+    .btn.lg { padding: 10px 18px; font-size: 0.9rem; }
+    .footer-list { list-style: none; }
+    .footer-row {
+      display: grid; grid-template-columns: 1fr auto; gap: 12px; align-items: center;
+      padding: 16px 18px; border-bottom: 1px solid #eef2f6;
+    }
+    .footer-row:last-child { border-bottom: none; }
+    .footer-row:hover { background: #f8fbfe; }
+    .ft-name { font-weight: 700; font-size: 0.95rem; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+    .badge {
+      display: inline-block; font-size: 0.65rem; font-weight: 700; padding: 2px 8px;
+      border-radius: 999px; background: var(--mint); color: var(--blue-dark);
+    }
+    .badge.default { background: var(--ok-bg); color: var(--ok); }
+    .ft-snip {
+      margin-top: 6px; font-size: 0.78rem; color: var(--muted); max-width: 520px;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .ft-actions { display: flex; gap: 6px; flex-wrap: wrap; }
+    .form { padding: 20px 18px; max-width: 640px; }
+    .field { margin-bottom: 16px; }
+    .field label { display: block; font-weight: 600; font-size: 0.82rem; margin-bottom: 6px; }
+    .field .hint { font-weight: 400; color: var(--muted); font-size: 0.72rem; }
+    .field input[type=text], .field textarea, .field select {
+      width: 100%; padding: 10px 12px; border: 1px solid var(--border); border-radius: 8px;
+      font-family: inherit; font-size: 0.9rem; color: var(--ink); background: #fff;
+    }
+    .field textarea { min-height: 140px; resize: vertical; line-height: 1.5; }
+    .field input:focus, .field textarea:focus, .field select:focus {
+      outline: none; border-color: var(--blue); box-shadow: 0 0 0 3px rgba(43,125,233,0.15);
+    }
+    .form-actions { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 8px; }
+    .compose-layout {
+      display: grid; grid-template-columns: 1fr 340px; gap: 14px; align-items: start;
+    }
+    @media (max-width: 960px) { .compose-layout { grid-template-columns: 1fr; } }
+    .compose-form { padding: 18px; }
+    .preview-card {
+      background: #fff; border: 1px solid var(--border); border-radius: 12px; overflow: hidden;
+      box-shadow: 0 1px 3px rgba(30,42,74,0.04);
+    }
+    .preview-hd {
+      padding: 10px 14px; background: #eef4fb; border-bottom: 1px solid var(--border);
+      font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; color: var(--muted);
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    .preview-body { padding: 16px; font-size: 0.85rem; }
+    .preview-body h4 { font-size: 1rem; margin-bottom: 8px; }
+    .preview-body p { color: var(--muted); margin-bottom: 10px; }
+    .email-footer-block {
+      margin-top: 16px; padding-top: 14px; border-top: 2px solid #e2e8f0;
+      font-size: 0.78rem; color: #4a5568; background: #fafbfd; margin-left: -16px; margin-right: -16px;
+      padding-left: 16px; padding-right: 16px; padding-bottom: 14px;
+    }
+    .email-footer-block .ft-label {
+      font-size: 0.65rem; font-weight: 700; text-transform: uppercase; color: var(--blue);
+      margin-bottom: 6px; letter-spacing: 0.04em;
+    }
+    .footer-picker {
+      background: var(--mint); border: 1px solid #bfdbfe; border-radius: 10px;
+      padding: 14px; margin: 16px 0;
+    }
+    .footer-picker label { font-weight: 700; font-size: 0.88rem; display: block; margin-bottom: 8px; }
+    .footer-picker select {
+      width: 100%; padding: 12px 14px; border: 2px solid var(--blue); border-radius: 8px;
+      font-family: inherit; font-size: 0.95rem; font-weight: 600; color: var(--ink); background: #fff;
+      cursor: pointer;
+    }
+    .footer-picker .snip {
+      margin-top: 10px; padding: 10px 12px; background: #fff; border: 1px solid var(--border);
+      border-radius: 8px; font-size: 0.78rem; color: var(--muted);
+    }
+    .callout {
+      padding: 14px 16px; border-radius: 10px; margin-bottom: 14px; font-size: 0.85rem;
+    }
+    .callout.info { background: #eff6ff; border: 1px solid #bfdbfe; color: #1e40af; }
+    .callout.ok { background: var(--ok-bg); border: 1px solid #a7d7b5; color: #065f46; }
+    .callout.warn { background: var(--warn-bg); border: 1px solid #fed7aa; color: var(--warn); }
+    .modal-backdrop {
+      position: fixed; inset: 0; background: rgba(30,42,74,0.45); display: flex;
+      align-items: center; justify-content: center; z-index: 50; padding: 20px;
+    }
+    .modal {
+      background: #fff; border-radius: 14px; max-width: 440px; width: 100%;
+      box-shadow: 0 20px 50px rgba(30,42,74,0.25); overflow: hidden;
+    }
+    .modal-hd { padding: 18px 20px 8px; font-size: 1.05rem; font-weight: 700; }
+    .modal-bd { padding: 8px 20px 18px; font-size: 0.88rem; color: var(--muted); }
+    .modal-bd strong { color: var(--ink); }
+    .modal-ft { padding: 12px 20px 18px; display: flex; gap: 8px; justify-content: flex-end; flex-wrap: wrap; }
+    .hidden { display: none !important; }
+    .screen { display: none; }
+    .screen.on { display: block; }
+    .approval-note {
+      margin-top: 12px; padding: 10px 12px; background: #fff8eb; border: 1px solid #f0d4a8;
+      border-radius: 8px; font-size: 0.75rem; color: #8a5a10;
+    }
+    .compose-actions { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 16px; }
+  </style>
+</head>
+<body>
+  <header class="thesis">
+    <span class="rec">RECOMMEND · Direction A</span>
+    <h1>Named footers library + picker</h1>
+    <p>Settings holds a list of named footers (like email signatures). Newsletter compose has a simple “Email footer” dropdown with a preview snippet. Default is marked. Covers AC-1–5 including legacy migrate and delete-safe past sends.</p>
+  </header>
+  <nav class="nav">
+    <a href="../../index.html">← #279 hub</a>
+    <span class="sep">·</span>
+    <span class="on">A · Library + picker</span>
+    <span class="sep">·</span>
+    <a href="../b/index.html">B</a>
+    <span class="sep">·</span>
+    <a href="../c/index.html">C</a>
+    <span class="sep">·</span>
+    <a href="../../build-contract.html">Build contract</a>
+  </nav>
+
+  <div class="app">
+    <aside class="rail" aria-hidden="true">
+      <div class="ri">FC</div>
+      <div class="ri">Lib</div>
+      <div class="ri on" id="rail-mark">Set</div>
+      <div class="ri">NL</div>
+    </aside>
+    <div class="main">
+      <div class="demo-bar">
+        <span class="lbl">Demo steps</span>
+        <button type="button" class="demo-btn on" data-step="manage">1 · Manage footers</button>
+        <button type="button" class="demo-btn" data-step="edit">2 · Edit footer</button>
+        <button type="button" class="demo-btn" data-step="compose">3 · Newsletter compose</button>
+        <button type="button" class="demo-btn" data-step="migrate">4 · Legacy migrate</button>
+        <button type="button" class="demo-btn" data-step="delete">5 · Delete confirm</button>
+        <span class="demo-note" id="demo-note">AC-1: list of named footers with Default badge, Edit / Set default / Delete, Add footer.</span>
+      </div>
+      <div class="ac-strip" id="ac-strip"><strong>AC-1</strong> · Create and keep two or more named footers in Settings.</div>
+
+      <!-- SCREEN 1: Manage -->
+      <section class="screen on" id="screen-manage">
+        <div class="crumbs">Settings → <span>Email footers</span></div>
+        <div class="page-head">
+          <h2>Email footers</h2>
+          <p class="sub">Save more than one footer for newsletters. Pick which one when you write an email newsletter. Plain names help everyone on the team find the right one.</p>
+        </div>
+        <div class="panel">
+          <div class="panel-hd">
+            <h3>Your saved footers</h3>
+            <button type="button" class="btn primary lg" data-goto="edit">+ Add footer</button>
+          </div>
+          <ul class="footer-list">
+            <li class="footer-row">
+              <div>
+                <div class="ft-name">Standard <span class="badge default">Default</span></div>
+                <div class="ft-snip">Your Name · Firm LLP · Securities offered through… · Unsubscribe</div>
+              </div>
+              <div class="ft-actions">
+                <button type="button" class="btn" data-goto="edit">Edit</button>
+                <button type="button" class="btn ghost" disabled title="Already default">Default</button>
+                <button type="button" class="btn danger" disabled title="Make another default first">Delete</button>
+              </div>
+            </li>
+            <li class="footer-row">
+              <div>
+                <div class="ft-name">Compliance-heavy</div>
+                <div class="ft-snip">Long disclosure · insurance &amp; securities notices · privacy link · Unsubscribe</div>
+              </div>
+              <div class="ft-actions">
+                <button type="button" class="btn" data-goto="edit">Edit</button>
+                <button type="button" class="btn">Set default</button>
+                <button type="button" class="btn danger" data-goto="delete">Delete</button>
+              </div>
+            </li>
+            <li class="footer-row">
+              <div>
+                <div class="ft-name">Short seasonal</div>
+                <div class="ft-snip">Firm name · Office phone · Unsubscribe only</div>
+              </div>
+              <div class="ft-actions">
+                <button type="button" class="btn" data-goto="edit">Edit</button>
+                <button type="button" class="btn">Set default</button>
+                <button type="button" class="btn danger" data-goto="delete">Delete</button>
+              </div>
+            </li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- SCREEN 2: Edit -->
+      <section class="screen" id="screen-edit">
+        <div class="crumbs">Settings → Email footers → <span>Edit</span></div>
+        <div class="page-head">
+          <h2>Edit footer</h2>
+          <p class="sub">Give it a clear name people will recognize. The body is the same HTML/content editor you use today.</p>
+        </div>
+        <div class="panel">
+          <div class="form">
+            <div class="field">
+              <label>Footer name <span class="hint">Shown in the newsletter dropdown</span></label>
+              <input type="text" value="Compliance-heavy" />
+            </div>
+            <div class="field">
+              <label>Footer content <span class="hint">Same editor as today’s single footer</span></label>
+              <textarea>Your Name · Firm LLP
+Securities offered through Partner Dealer.
+Insurance products offered through Firm Insurance Agency.
+This email is for informational purposes only and is not advice.
+Privacy policy · Unsubscribe</textarea>
+            </div>
+            <div class="form-actions">
+              <button type="button" class="btn primary lg" data-goto="manage">Save footer</button>
+              <button type="button" class="btn" data-goto="manage">Cancel</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SCREEN 3: Compose -->
+      <section class="screen" id="screen-compose">
+        <div class="crumbs">Newsletters → <span>Compose email newsletter</span></div>
+        <div class="page-head">
+          <h2>Compose email newsletter</h2>
+          <p class="sub">Choose which saved footer goes on this send. If you don’t pick one, the Default is used.</p>
+        </div>
+        <div class="compose-layout">
+          <div class="panel">
+            <div class="compose-form">
+              <div class="field">
+                <label>Subject</label>
+                <input type="text" value="April market update for clients" />
+              </div>
+              <div class="field">
+                <label>Message</label>
+                <textarea style="min-height:100px">Hello {{first_name}},
+
+Here is this month’s quick look at markets and planning ideas…</textarea>
+              </div>
+              <div class="footer-picker">
+                <label for="ft-select">Email footer</label>
+                <select id="ft-select">
+                  <option value="standard" selected>Standard (Default)</option>
+                  <option value="compliance">Compliance-heavy</option>
+                  <option value="seasonal">Short seasonal</option>
+                </select>
+                <div class="snip" id="ft-snip">Preview: Your Name · Firm LLP · Securities offered through… · Unsubscribe</div>
+              </div>
+              <div class="compose-actions">
+                <button type="button" class="btn primary lg">Schedule / Send for approval</button>
+                <button type="button" class="btn">Save draft</button>
+              </div>
+              <div class="approval-note">
+                <strong>Approval path (AC-4):</strong> When approval is required, the chosen footer is what reviewers see in preview and what goes out on send. Open Q: if someone edits the footer after submit, does approval re-check?
+              </div>
+            </div>
+          </div>
+          <div class="preview-card">
+            <div class="preview-hd">
+              <span>Email preview</span>
+              <span id="prev-ft-name" style="text-transform:none;font-weight:600;color:var(--blue)">Footer: Standard</span>
+            </div>
+            <div class="preview-body">
+              <h4>April market update for clients</h4>
+              <p>Hello Jordan,</p>
+              <p>Here is this month’s quick look at markets and planning ideas. Reach out anytime if you’d like to talk.</p>
+              <div class="email-footer-block">
+                <div class="ft-label">Chosen footer (bottom of email)</div>
+                <div id="prev-ft-html">Your Name · Firm LLP<br>Securities offered through… · Unsubscribe</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SCREEN 4: Migrate -->
+      <section class="screen" id="screen-migrate">
+        <div class="crumbs">Settings → <span>Email footers</span> · first visit after upgrade</div>
+        <div class="page-head">
+          <h2>Email footers</h2>
+          <p class="sub">Your existing footer moved over automatically. Nothing to redo.</p>
+        </div>
+        <div class="callout ok">
+          <strong>You’re all set.</strong> Your existing footer is now called <strong>Standard</strong> and is marked <strong>Default</strong>. You can add more footers anytime, or rename this one.
+        </div>
+        <div class="panel">
+          <div class="panel-hd">
+            <h3>Your saved footers</h3>
+            <button type="button" class="btn primary" data-goto="edit">+ Add footer</button>
+          </div>
+          <ul class="footer-list">
+            <li class="footer-row">
+              <div>
+                <div class="ft-name">Standard <span class="badge default">Default</span> <span class="badge">Migrated</span></div>
+                <div class="ft-snip">Same content as your previous single email footer — unchanged for newsletters already using it.</div>
+              </div>
+              <div class="ft-actions">
+                <button type="button" class="btn" data-goto="edit">Edit / Rename</button>
+              </div>
+            </li>
+          </ul>
+        </div>
+        <div class="callout info" style="margin-top:14px">
+          <strong>AC-2:</strong> Legacy single footer → named default. No breakage for past or in-flight newsletters.
+        </div>
+      </section>
+
+      <!-- SCREEN 5: Delete confirm -->
+      <section class="screen" id="screen-delete">
+        <div class="crumbs">Settings → Email footers → <span>Delete</span></div>
+        <div class="page-head">
+          <h2>Email footers</h2>
+          <p class="sub">Deleting hides a footer from new picks. Past newsletters keep what they already sent.</p>
+        </div>
+        <div class="panel" style="opacity:0.55;pointer-events:none">
+          <div class="panel-hd"><h3>Your saved footers</h3></div>
+          <ul class="footer-list">
+            <li class="footer-row"><div><div class="ft-name">Standard <span class="badge default">Default</span></div></div></li>
+            <li class="footer-row" style="background:#fef2f2"><div><div class="ft-name">Compliance-heavy</div></div></li>
+          </ul>
+        </div>
+        <div class="modal-backdrop" id="delete-modal">
+          <div class="modal" role="dialog" aria-labelledby="del-title">
+            <div class="modal-hd" id="del-title">Delete “Compliance-heavy”?</div>
+            <div class="modal-bd">
+              <p style="margin-bottom:10px"><strong>Past newsletters keep the footer they already sent.</strong></p>
+              <p>New newsletters won’t offer this footer. This does not change emails that already went out (or are waiting with a snapshot).</p>
+            </div>
+            <div class="modal-ft">
+              <button type="button" class="btn" data-goto="manage">Keep footer</button>
+              <button type="button" class="btn danger primary" style="background:var(--danger);border-color:var(--danger);color:#fff" data-goto="manage">Delete footer</button>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      var notes = {
+        manage: { ac: '<strong>AC-1</strong> · Create and keep two or more named footers in Settings.', note: 'List of named footers with Default badge, Edit / Set default / Delete, Add footer.' },
+        edit: { ac: '<strong>AC-1</strong> · Name + HTML/content as today’s footer editor.', note: 'Simple mock of today’s editor. Rename anytime without affecting past sends (snapshot-at-send).' },
+        compose: { ac: '<strong>AC-3 + AC-4</strong> · Choose footer on compose; preview + send/approval use the choice.', note: 'Dropdown defaults to Default. Live preview strip shows chosen footer at bottom of email.' },
+        migrate: { ac: '<strong>AC-2</strong> · Legacy single footer migrates as named Default — no breakage.', note: 'First visit after upgrade callout. Existing content preserved as “Standard” (Default).' },
+        delete: { ac: '<strong>AC-5</strong> · Delete non-default safely; recommend snapshot-at-send.', note: 'Confirm: past newsletters keep sent footer HTML; new picks hide this footer.' }
+      };
+      var snips = {
+        standard: { name: 'Standard', html: 'Your Name · Firm LLP<br>Securities offered through… · Unsubscribe', snip: 'Preview: Your Name · Firm LLP · Securities offered through… · Unsubscribe' },
+        compliance: { name: 'Compliance-heavy', html: 'Long disclosure · insurance &amp; securities notices<br>Privacy policy · Unsubscribe', snip: 'Preview: Long disclosure · insurance &amp; securities notices · privacy · Unsubscribe' },
+        seasonal: { name: 'Short seasonal', html: 'Firm name · Office phone<br>Unsubscribe', snip: 'Preview: Firm name · Office phone · Unsubscribe only' }
+      };
+      var rail = document.getElementById('rail-mark');
+      function show(step) {
+        document.querySelectorAll('.screen').forEach(function (el) { el.classList.remove('on'); });
+        document.querySelectorAll('.demo-btn').forEach(function (b) {
+          b.classList.toggle('on', b.getAttribute('data-step') === step);
+        });
+        var scr = document.getElementById('screen-' + step);
+        if (scr) scr.classList.add('on');
+        var meta = notes[step] || notes.manage;
+        document.getElementById('ac-strip').innerHTML = meta.ac;
+        document.getElementById('demo-note').textContent = meta.note;
+        rail.textContent = (step === 'compose') ? 'NL' : 'Set';
+        rail.classList.add('on');
+      }
+      document.querySelectorAll('.demo-btn').forEach(function (btn) {
+        btn.addEventListener('click', function () { show(btn.getAttribute('data-step')); });
+      });
+      document.querySelectorAll('[data-goto]').forEach(function (btn) {
+        btn.addEventListener('click', function () { show(btn.getAttribute('data-goto')); });
+      });
+      var sel = document.getElementById('ft-select');
+      if (sel) {
+        sel.addEventListener('change', function () {
+          var d = snips[sel.value] || snips.standard;
+          document.getElementById('ft-snip').textContent = d.snip;
+          document.getElementById('prev-ft-name').textContent = 'Footer: ' + d.name;
+          document.getElementById('prev-ft-html').innerHTML = d.html;
+        });
+      }
+    })();
+  </script>
+</body>
+</html>

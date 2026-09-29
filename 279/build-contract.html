@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Build contract · #279 Multi email footers</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    body { font-family: Inter, system-ui, sans-serif; max-width: 760px; margin: 40px auto; padding: 0 24px 80px; color: #1e2a4a; line-height: 1.55; }
+    h1 { font-size: 22px; } h2 { font-size: 16px; margin-top: 28px; } h3 { font-size: 14px; margin-top: 20px; }
+    p, li { font-size: 14px; color: #3a4558; }
+    .warn { background: #fff7ed; color: #9a3412; padding: 12px 14px; border-radius: 8px; font-size: 13px; margin-bottom: 16px; }
+    .rule { background: #eff6ff; color: #1e40af; padding: 12px 14px; border-radius: 8px; font-size: 13px; margin-bottom: 16px; }
+    .ok { background: #e8f5e9; color: #1a7f4c; padding: 12px 14px; border-radius: 8px; font-size: 13px; margin-bottom: 16px; }
+    code { background: #eef2f6; padding: 1px 6px; border-radius: 4px; font-size: 12px; }
+    a { color: #2b7de9; } table { width: 100%; border-collapse: collapse; font-size: 13px; margin: 12px 0; }
+    th, td { border: 1px solid #d4e4f2; padding: 8px 10px; text-align: left; vertical-align: top; } th { background: #eef4fb; }
+    ul { padding-left: 1.2em; } .checklist { list-style: none; padding-left: 0; }
+    .checklist li { margin: 5px 0; }
+  </style>
+</head>
+<body>
+  <p class="warn"><strong>PROVISIONAL</strong> — Recommend Direction A. Not locked. Do <strong>not</strong> mark agent-ready until Alex/Angelina pick a direction and attach the Pages mock URL.</p>
+  <p class="ok"><strong>Recommend:</strong> Direction A — Named footers library + picker (Settings list + compose dropdown).</p>
+  <p class="rule"><strong>AC-5 stance:</strong> Snapshot footer HTML at send/schedule so past campaigns keep the footer they used. Ownership (firm vs advisor) left open.</p>
+
+  <h1>Build contract · Multi email footers (#279)</h1>
+  <p>Markdown: <a href="build-contract.md">build-contract.md</a> · Hub: <a href="index.html">index.html</a> · Mock: <a href="directions/a/">Direction A</a></p>
+
+  <h2>One-liner</h2>
+  <p>Let advisors/firms save <strong>two or more named email footers</strong> and <strong>choose which one</strong> when composing or scheduling an email newsletter. Migrate the legacy single footer to a named Default. Snapshot footer HTML at send so past campaigns stay intact when a footer is later edited or deleted.</p>
+
+  <h2>Recommended UI (Direction A)</h2>
+  <ul>
+    <li><strong>Settings → Email footers:</strong> list of named footers; Default badge; Edit / Set default / Delete; Add footer.</li>
+    <li><strong>Edit footer:</strong> name + HTML/body (same editor model as today’s single footer).</li>
+    <li><strong>Newsletter compose / schedule:</strong> Email footer dropdown (Default pre-selected); live preview strip shows chosen footer.</li>
+    <li><strong>Legacy migrate callout:</strong> “Your existing footer is now called Standard (default).”</li>
+    <li><strong>Delete confirm:</strong> Past newsletters keep the footer they already sent; new newsletters won’t offer this footer.</li>
+  </ul>
+
+  <h2>Acceptance criteria</h2>
+  <ul class="checklist">
+    <li>☐ <strong>AC-1:</strong> Create/keep ≥2 distinct footers (name/label + HTML/content as today’s footer model).</li>
+    <li>☐ <strong>AC-2:</strong> Legacy single footer → migrate as default named footer; no breakage.</li>
+    <li>☐ <strong>AC-3:</strong> On compose/schedule email newsletter, choose which saved footer (clear default if none picked).</li>
+    <li>☐ <strong>AC-4:</strong> Chosen footer in preview + send (approval path if applicable).</li>
+    <li>☐ <strong>AC-5:</strong> Edit/rename/delete non-default without breaking past campaigns — <strong>recommend snapshot-at-send</strong>.</li>
+  </ul>
+
+  <h2>Build recommendations (provisional)</h2>
+  <table>
+    <thead><tr><th>Topic</th><th>Provisional stance</th></tr></thead>
+    <tbody>
+      <tr><td>Past campaigns (AC-5)</td><td><strong>Snapshot footer HTML at send/schedule</strong> (and at approval submit if that creates the immutable payload). Delete hides from new picks with confirm.</td></tr>
+      <tr><td>Legacy migrate (AC-2)</td><td>Existing single footer → named <strong>Standard</strong> (or keep current label) marked <strong>Default</strong>.</td></tr>
+      <tr><td>Ownership</td><td><strong>LEFT OPEN</strong> — firm-shared vs per-advisor.</td></tr>
+      <tr><td>Default delete</td><td><strong>LEFT OPEN</strong> — who can delete Default; must always have ≥1?</td></tr>
+      <tr><td>Approval re-check</td><td><strong>LEFT OPEN</strong> — re-check if footer edited after submit?</td></tr>
+    </tbody>
+  </table>
+
+  <h2>Screens / states (Direction A)</h2>
+  <table>
+    <thead><tr><th>Screen</th><th>Purpose</th></tr></thead>
+    <tbody>
+      <tr><td>Manage footers</td><td>AC-1 list + Default + actions</td></tr>
+      <tr><td>Edit footer</td><td>Name + content editor</td></tr>
+      <tr><td>Newsletter compose</td><td>AC-3 picker + AC-4 preview / approval note</td></tr>
+      <tr><td>Legacy migrate callout</td><td>AC-2 first-visit</td></tr>
+      <tr><td>Delete confirm</td><td>AC-5 safe delete copy</td></tr>
+    </tbody>
+  </table>
+
+  <h2>In scope</h2>
+  <ul>
+    <li>Multi named email footers + picker on email newsletter compose/schedule</li>
+    <li>Legacy migrate to Default</li>
+    <li>Snapshot-at-send (recommended) for past-campaign safety</li>
+    <li>Delete/rename/edit non-default with confirm</li>
+  </ul>
+
+  <h2>Out of scope</h2>
+  <ul>
+    <li>Per-recipient dynamic footers</li>
+    <li>Redesigning the entire email composer</li>
+    <li>Social or website footers</li>
+  </ul>
+
+  <h2>Open product questions</h2>
+  <ol>
+    <li>Firm-shared footers vs per-advisor footers?</li>
+    <li>Who can delete Default? Must always have ≥1?</li>
+    <li>Snapshot-at-send vs live-reference for past campaigns? (<strong>Recommend snapshot.</strong>)</li>
+    <li>Does approval queue re-check footer if edited after submit?</li>
+  </ol>
+
+  <h2>Alternatives (not recommended)</h2>
+  <ul>
+    <li><strong>B — Inline on compose:</strong> Save/manage from compose; weaker firm governance.</li>
+    <li><strong>C — Default + override only:</strong> Minimal UI; weaker when footers need equal weight.</li>
+  </ul>
+
+  <h2>Reference</h2>
+  <p><a href="index.html">Hub</a> · <a href="directions/a/">Direction A</a> · <a href="directions/b/">B</a> · <a href="directions/c/">C</a> · <a href="https://github.com/kartboy16/content-library/issues/279">Issue #279</a> · Reporter: Alana Read</p>
+</body>
+</html>

@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>FC — #279 Multi email footers</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #f4f8fc; --card: #fff; --ink: #1e2a4a; --muted: #5b6572;
+      --blue: #2b7de9; --border: #d4e4f2; --mint: #e6f1fb;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: Inter, system-ui, sans-serif; background: var(--bg); color: var(--ink); line-height: 1.55; }
+    .hero {
+      background: linear-gradient(135deg, #1e2a4a 0%, #2b7de9 100%);
+      color: #fff; padding: 40px 24px 36px;
+    }
+    .hero-inner { max-width: 880px; margin: 0 auto; }
+    .hero .eyebrow { font-size: 0.75rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; opacity: 0.85; margin-bottom: 10px; }
+    .hero h1 { font-size: 1.75rem; margin-bottom: 10px; }
+    .hero p { opacity: 0.92; max-width: 720px; font-size: 0.95rem; }
+    .rec {
+      display: inline-block; margin-top: 18px; background: #e8f5e9; color: #065f46;
+      font-weight: 700; font-size: 0.8rem; padding: 8px 14px; border-radius: 999px;
+    }
+    .wrap { max-width: 880px; margin: 0 auto; padding: 28px 24px 72px; }
+    .cta {
+      display: block; background: var(--blue); color: #fff !important; text-decoration: none;
+      text-align: center; padding: 16px 24px; border-radius: 12px; font-weight: 700;
+      font-size: 1rem; margin-bottom: 28px; box-shadow: 0 4px 16px rgba(43,125,233,0.35);
+    }
+    .cta:hover { filter: brightness(1.05); }
+    .cta small { display: block; font-weight: 500; opacity: 0.9; font-size: 0.8rem; margin-top: 4px; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 14px; }
+    .card {
+      background: var(--card); border: 1px solid var(--border); border-radius: 12px;
+      padding: 18px; text-decoration: none; color: inherit; display: block;
+      transition: border-color 0.15s, box-shadow 0.15s;
+    }
+    .card:hover { border-color: var(--blue); box-shadow: 0 4px 16px rgba(30,42,74,0.08); }
+    .card.recd { border-color: #2b7de9; box-shadow: 0 4px 16px rgba(43,125,233,0.12); }
+    .card h3 { font-size: 0.95rem; margin-bottom: 6px; color: var(--blue); }
+    .card p { font-size: 0.8rem; color: var(--muted); }
+    .card .tag {
+      display: inline-block; font-size: 0.65rem; font-weight: 700; background: var(--mint);
+      color: var(--blue); padding: 2px 8px; border-radius: 999px; margin-bottom: 8px;
+    }
+    .card .tag.rec-tag { background: var(--blue); color: #fff; }
+    h2 { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--muted); margin: 28px 0 12px; }
+    .problem {
+      margin: 0 0 20px; padding: 14px 16px; background: #fff8eb; border: 1px solid #f0d4a8;
+      border-radius: 10px; font-size: 0.85rem; color: #8a5a10;
+    }
+    .problem strong { color: #6b4408; }
+    .ac {
+      margin: 0 0 20px; padding: 14px 16px; background: #eff6ff; border: 1px solid #bfdbfe;
+      border-radius: 10px; font-size: 0.85rem; color: #1e40af;
+    }
+    .ac strong { color: #1e3a8a; }
+    .ac ul { margin: 8px 0 0; padding-left: 1.2rem; }
+    .ac li { margin-bottom: 4px; }
+    .oos {
+      margin: 0 0 20px; padding: 14px 16px; background: #fef2f2; border: 1px solid #fecaca;
+      border-radius: 10px; font-size: 0.85rem; color: #991b1b;
+    }
+    .oos ul { margin: 8px 0 0; padding-left: 1.2rem; }
+    .oq {
+      margin: 0 0 20px; padding: 14px 16px; background: #fff; border: 1px solid var(--border);
+      border-radius: 10px; font-size: 0.85rem;
+    }
+    .oq strong { display: block; margin-bottom: 8px; color: var(--ink); }
+    .oq ol { padding-left: 1.2rem; color: var(--muted); }
+    .oq li { margin-bottom: 6px; }
+    .oq .open { color: #b45309; font-weight: 600; font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.04em; }
+    .oq .hint { color: #065f46; font-weight: 600; }
+    .note {
+      margin: 16px 0 0; padding: 12px 14px; background: #eef4fb; border: 1px solid var(--border);
+      border-radius: 10px; font-size: 0.85rem; color: var(--ink);
+    }
+    .meta { margin-top: 32px; font-size: 0.8rem; color: var(--muted); }
+    .meta a { color: var(--blue); }
+    code { background: #eef2f6; padding: 0.1em 0.35em; border-radius: 4px; font-size: 0.85em; }
+  </style>
+</head>
+<body>
+  <header class="hero">
+    <div class="hero-inner">
+      <div class="eyebrow">FinancialContent · content-library #279 · Designer mocks</div>
+      <h1>Allow 2+ email footers and choose which one for newsletters</h1>
+      <p>Alana Read wants to save <strong>two or more email footers</strong> and <strong>pick which one</strong> when composing or scheduling an email newsletter. Today there’s effectively a single footer. Audience: advisors 50s–60s and less tech-savvy assistants — plain words, big controls.</p>
+      <span class="rec">Recommend · Direction A — Named footers library + picker</span>
+    </div>
+  </header>
+
+  <div class="wrap">
+    <a class="cta" href="directions/a/index.html">
+      Open Direction A (recommended)
+      <small>Manage footers · Edit · Newsletter picker + preview · Legacy migrate · Delete confirm</small>
+    </a>
+    <p style="text-align:center;margin:-18px 0 24px;font-size:0.8rem;color:var(--muted)">
+      <a href="build-contract.html">Provisional build contract</a> ·
+      <a href="build-contract.md">Markdown</a>
+    </p>
+
+    <div class="problem">
+      <strong>Problem:</strong> Firms often need more than one email footer (e.g. “Standard” vs “Compliance-heavy”) and must choose which applies to a newsletter. A single shared footer forces awkward workarounds. We need a simple place to keep named footers and a clear picker on compose — without redesigning the whole email composer.
+    </div>
+
+    <div class="ac">
+      <strong>Acceptance criteria (cover in mocks)</strong>
+      <ul>
+        <li><strong>AC-1:</strong> Create/keep ≥2 distinct footers (name/label + HTML/content as today).</li>
+        <li><strong>AC-2:</strong> Legacy single footer → migrate as default named footer; no breakage.</li>
+        <li><strong>AC-3:</strong> On compose/schedule email newsletter, choose which saved footer (clear default if none picked).</li>
+        <li><strong>AC-4:</strong> Chosen footer in preview + send (note approval path if shown).</li>
+        <li><strong>AC-5:</strong> Edit/rename/delete non-default without breaking past campaigns — recommend <em>snapshot-at-send</em>.</li>
+      </ul>
+    </div>
+
+    <div class="oos">
+      <strong>Out of scope</strong>
+      <ul>
+        <li>Per-recipient dynamic footers</li>
+        <li>Redesigning the whole email composer</li>
+        <li>Social or website footers</li>
+      </ul>
+    </div>
+
+    <div class="oq">
+      <span class="open">Open product questions — do not invent locked answers</span>
+      <strong>Resolve before agent-ready</strong>
+      <ol>
+        <li>Firm-shared footers vs per-advisor footers?</li>
+        <li>Who can delete Default? Must always have ≥1 footer?</li>
+        <li>Snapshot-at-send vs live-reference for past campaigns? <span class="hint">Recommend snapshot.</span></li>
+        <li>Does the approval queue re-check the footer if it is edited after submit?</li>
+      </ol>
+    </div>
+
+    <div class="note">
+      <strong>Track:</strong> Basic enhancement → staging after mock approved. Designer-first. Do <em>not</em> mark agent-ready until Alex/Angelina pick a direction and attach this Pages URL to the issue.
+    </div>
+
+    <h2>Directions</h2>
+    <div class="grid">
+      <a class="card recd" href="directions/a/index.html">
+        <span class="tag rec-tag">RECOMMEND</span>
+        <h3>A — Named footers library + picker</h3>
+        <p>Settings holds a list of named footers (like email signatures). Newsletter compose has an “Email footer” dropdown with preview snippet; Default marked. Best for firm governance + clear mental model.</p>
+      </a>
+      <a class="card" href="directions/b/index.html">
+        <span class="tag">ALT</span>
+        <h3>B — Footer templates inline on compose</h3>
+        <p>Create/save footers from the newsletter screen (“Save as footer…”), plus a compact manage link. Good for power users; weaker for firm-wide governance.</p>
+      </a>
+      <a class="card" href="directions/c/index.html">
+        <span class="tag">ALT</span>
+        <h3>C — Firm default + per-newsletter override</h3>
+        <p>One Default always applied; compose only shows Override → pick another. Minimal UI change; weaker when Standard vs Compliance need equal weight.</p>
+      </a>
+    </div>
+
+    <h2>Provisional build contract (recommend A)</h2>
+    <div class="note" style="margin-top:0">
+      Snapshot footer HTML at send/schedule (AC-5). Migrate legacy single footer → named “Standard” (or current label) as Default. Firm vs advisor ownership left open as product Q. Full text: <a href="build-contract.html">build-contract.html</a>.
+    </div>
+
+    <div class="meta">
+      <p>Issue: <a href="https://github.com/kartboy16/content-library/issues/279">content-library #279</a> · Reporter: Alana Read</p>
+      <p>Repo: <a href="https://github.com/kartboy16/fc-mocks">kartboy16/fc-mocks</a> · path <code>/279/</code></p>
+      <p>Live: <a href="https://kartboy16.github.io/fc-mocks/279/">kartboy16.github.io/fc-mocks/279/</a></p>
+    </div>
+  </div>
+</body>
+</html>

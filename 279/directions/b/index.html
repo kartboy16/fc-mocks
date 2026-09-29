@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Direction B — Footer templates inline on compose · #279</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #f4f8fc; --card: #fff; --ink: #1e2a4a; --muted: #5b6572;
+      --blue: #2b7de9; --blue-dark: #1e5bb8; --border: #d4e4f2; --mint: #e6f1fb;
+      --ok: #047857; --ok-bg: #e8f5e9;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: Inter, system-ui, sans-serif; background: var(--bg); color: var(--ink); font-size: 13px; line-height: 1.45; }
+    a { color: var(--blue); }
+    .thesis {
+      background: linear-gradient(135deg, #1e2a4a, #2b7de9); color: #fff; padding: 16px 24px;
+    }
+    .thesis .rec {
+      display: inline-block; background: rgba(255,255,255,0.2); color: #fff; font-size: 0.68rem;
+      font-weight: 700; padding: 3px 10px; border-radius: 999px; margin-bottom: 8px;
+    }
+    .thesis h1 { font-size: 1.05rem; margin-bottom: 4px; }
+    .thesis p { opacity: 0.9; font-size: 0.8rem; max-width: 920px; }
+    .nav {
+      padding: 8px 24px; font-size: 0.75rem; background: #fafafa;
+      border-bottom: 1px solid var(--border); display: flex; gap: 12px; flex-wrap: wrap; align-items: center;
+    }
+    .nav a { color: var(--blue); text-decoration: none; font-weight: 500; }
+    .nav .sep { color: #c0c8d4; }
+    .nav .on { font-weight: 700; color: var(--ink); }
+    .app { display: flex; min-height: calc(100vh - 110px); }
+    .rail {
+      width: 52px; background: #1e2a4a; flex-shrink: 0;
+      display: flex; flex-direction: column; align-items: center; padding: 12px 0; gap: 8px;
+    }
+    .rail .ri {
+      width: 32px; height: 32px; border-radius: 8px; background: rgba(255,255,255,0.08);
+      color: rgba(255,255,255,0.7); font-size: 0.6rem; font-weight: 700;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .rail .ri.on { background: var(--blue); color: #fff; }
+    .main { flex: 1; min-width: 0; padding: 14px 18px 48px; }
+    .demo-bar {
+      display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-bottom: 12px;
+      padding: 10px 12px; background: #fff; border: 1px solid var(--border); border-radius: 10px;
+    }
+    .demo-bar .lbl { font-size: 0.65rem; font-weight: 700; text-transform: uppercase; color: var(--muted); margin-right: 4px; }
+    .demo-btn {
+      padding: 6px 12px; border: 1px solid var(--border); border-radius: 8px; background: #fff;
+      font-family: inherit; font-size: 0.75rem; font-weight: 600; color: var(--ink); cursor: pointer;
+    }
+    .demo-btn:hover, .demo-btn.on { border-color: var(--blue); color: var(--blue); background: var(--mint); }
+    .demo-note { flex: 1 1 200px; font-size: 0.72rem; color: var(--muted); }
+    .tradeoff {
+      margin-bottom: 12px; padding: 10px 12px; background: #fff7ed; border: 1px solid #fed7aa;
+      border-radius: 10px; font-size: 0.75rem; color: #9a3412;
+    }
+    .page-head { margin-bottom: 14px; }
+    .page-head h2 { font-size: 1.25rem; font-weight: 700; }
+    .page-head .sub { color: var(--muted); font-size: 0.82rem; margin-top: 4px; }
+    .crumbs { font-size: 0.72rem; color: var(--muted); margin-bottom: 6px; }
+    .crumbs span { color: var(--ink); font-weight: 600; }
+    .panel {
+      background: var(--card); border: 1px solid var(--border); border-radius: 12px;
+      overflow: hidden; box-shadow: 0 1px 3px rgba(30,42,74,0.04);
+    }
+    .panel-hd {
+      display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap;
+      padding: 14px 16px; border-bottom: 1px solid var(--border); background: #fafbfd;
+    }
+    .panel-hd h3 { font-size: 0.95rem; }
+    .btn {
+      display: inline-flex; align-items: center; gap: 6px; padding: 8px 14px;
+      border: 1px solid var(--border); border-radius: 8px; background: #fff;
+      font-family: inherit; font-size: 0.82rem; font-weight: 600; color: var(--ink); cursor: pointer;
+    }
+    .btn:hover { border-color: var(--blue); color: var(--blue); }
+    .btn.primary { background: var(--blue); color: #fff; border-color: var(--blue); }
+    .btn.primary:hover { background: var(--blue-dark); color: #fff; }
+    .btn.lg { padding: 10px 18px; font-size: 0.9rem; }
+    .compose-layout { display: grid; grid-template-columns: 1fr 320px; gap: 14px; align-items: start; }
+    @media (max-width: 960px) { .compose-layout { grid-template-columns: 1fr; } }
+    .compose-form { padding: 18px; }
+    .field { margin-bottom: 14px; }
+    .field label { display: block; font-weight: 600; font-size: 0.82rem; margin-bottom: 6px; }
+    .field input, .field textarea, .field select {
+      width: 100%; padding: 10px 12px; border: 1px solid var(--border); border-radius: 8px;
+      font-family: inherit; font-size: 0.9rem; color: var(--ink); background: #fff;
+    }
+    .field textarea { min-height: 90px; resize: vertical; }
+    .footer-block {
+      background: var(--mint); border: 1px solid #bfdbfe; border-radius: 10px; padding: 14px; margin: 12px 0;
+    }
+    .footer-block label { font-weight: 700; font-size: 0.88rem; display: block; margin-bottom: 8px; }
+    .footer-block select {
+      width: 100%; padding: 12px 14px; border: 2px solid var(--blue); border-radius: 8px;
+      font-family: inherit; font-size: 0.95rem; font-weight: 600; margin-bottom: 10px;
+    }
+    .footer-row-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+    .preview-card { background: #fff; border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
+    .preview-hd {
+      padding: 10px 14px; background: #eef4fb; border-bottom: 1px solid var(--border);
+      font-size: 0.72rem; font-weight: 700; text-transform: uppercase; color: var(--muted);
+    }
+    .preview-body { padding: 16px; font-size: 0.85rem; }
+    .preview-body p { color: var(--muted); margin: 8px 0; }
+    .email-ft {
+      margin-top: 14px; padding-top: 12px; border-top: 2px solid #e2e8f0;
+      font-size: 0.78rem; color: #4a5568;
+    }
+    .email-ft .lbl { font-size: 0.65rem; font-weight: 700; text-transform: uppercase; color: var(--blue); margin-bottom: 4px; }
+    .footer-list { list-style: none; }
+    .footer-row {
+      display: flex; justify-content: space-between; gap: 12px; align-items: center;
+      padding: 14px 16px; border-bottom: 1px solid #eef2f6;
+    }
+    .footer-row:last-child { border-bottom: none; }
+    .ft-name { font-weight: 700; font-size: 0.9rem; }
+    .badge {
+      display: inline-block; font-size: 0.65rem; font-weight: 700; padding: 2px 8px;
+      border-radius: 999px; background: var(--ok-bg); color: var(--ok); margin-left: 6px;
+    }
+    .ft-snip { font-size: 0.75rem; color: var(--muted); margin-top: 4px; }
+    .modal-backdrop {
+      position: fixed; inset: 0; background: rgba(30,42,74,0.45); display: flex;
+      align-items: center; justify-content: center; z-index: 50; padding: 20px;
+    }
+    .modal {
+      background: #fff; border-radius: 14px; max-width: 420px; width: 100%;
+      box-shadow: 0 20px 50px rgba(30,42,74,0.25); overflow: hidden;
+    }
+    .modal-hd { padding: 18px 20px 8px; font-size: 1.05rem; font-weight: 700; }
+    .modal-bd { padding: 8px 20px 12px; font-size: 0.88rem; color: var(--muted); }
+    .modal-ft { padding: 8px 20px 18px; display: flex; gap: 8px; justify-content: flex-end; }
+    .screen { display: none; }
+    .screen.on { display: block; }
+    .hidden { display: none !important; }
+    .compose-actions { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px; }
+  </style>
+</head>
+<body>
+  <header class="thesis">
+    <span class="rec">ALT · Direction B</span>
+    <h1>Footer templates inline on compose</h1>
+    <p>Less settings friction: create and save footers from the newsletter compose screen (“Save as footer…”), with a compact manage link. Good for people who only think about footers at send time; weaker for firm-wide governance.</p>
+  </header>
+  <nav class="nav">
+    <a href="../../index.html">← #279 hub</a>
+    <span class="sep">·</span>
+    <a href="../a/index.html">A (recommend)</a>
+    <span class="sep">·</span>
+    <span class="on">B · Inline on compose</span>
+    <span class="sep">·</span>
+    <a href="../c/index.html">C</a>
+  </nav>
+
+  <div class="app">
+    <aside class="rail" aria-hidden="true">
+      <div class="ri">FC</div>
+      <div class="ri">Lib</div>
+      <div class="ri">Set</div>
+      <div class="ri on">NL</div>
+    </aside>
+    <div class="main">
+      <div class="demo-bar">
+        <span class="lbl">Demo steps</span>
+        <button type="button" class="demo-btn on" data-step="compose">1 · Compose + save</button>
+        <button type="button" class="demo-btn" data-step="save">2 · Save as footer…</button>
+        <button type="button" class="demo-btn" data-step="manage">3 · Light manage list</button>
+        <span class="demo-note" id="demo-note">Primary surface is compose. Pick a footer, or save the current one for next time.</span>
+      </div>
+      <div class="tradeoff"><strong>Tradeoff vs A:</strong> Faster for power users at send time; harder for assistants who expect a Settings library and for firms that want governed defaults.</div>
+
+      <section class="screen on" id="screen-compose">
+        <div class="crumbs">Newsletters → <span>Compose email newsletter</span></div>
+        <div class="page-head">
+          <h2>Compose email newsletter</h2>
+          <p class="sub">Pick a saved footer here — or save what you’re using so it’s ready next time.</p>
+        </div>
+        <div class="compose-layout">
+          <div class="panel">
+            <div class="compose-form">
+              <div class="field">
+                <label>Subject</label>
+                <input type="text" value="Client newsletter — May" />
+              </div>
+              <div class="field">
+                <label>Message</label>
+                <textarea>Hello {{first_name}},
+
+A few planning notes for the month ahead…</textarea>
+              </div>
+              <div class="footer-block">
+                <label for="b-ft">Email footer</label>
+                <select id="b-ft">
+                  <option selected>Standard (Default)</option>
+                  <option>Compliance-heavy</option>
+                </select>
+                <div class="footer-row-actions">
+                  <button type="button" class="btn primary" data-goto="save">Save as footer…</button>
+                  <button type="button" class="btn" data-goto="manage">Manage footers</button>
+                </div>
+              </div>
+              <div class="compose-actions">
+                <button type="button" class="btn primary lg">Schedule / Send for approval</button>
+                <button type="button" class="btn">Save draft</button>
+              </div>
+            </div>
+          </div>
+          <div class="preview-card">
+            <div class="preview-hd">Email preview</div>
+            <div class="preview-body">
+              <strong>Client newsletter — May</strong>
+              <p>Hello Jordan,</p>
+              <p>A few planning notes for the month ahead…</p>
+              <div class="email-ft">
+                <div class="lbl">Footer on this send</div>
+                Your Name · Firm LLP · Unsubscribe
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="screen" id="screen-save">
+        <div class="crumbs">Newsletters → Compose → <span>Save as footer</span></div>
+        <div class="page-head">
+          <h2>Compose email newsletter</h2>
+          <p class="sub">Name this footer so you can pick it on the next newsletter.</p>
+        </div>
+        <div class="panel" style="opacity:0.5;pointer-events:none;min-height:180px"></div>
+        <div class="modal-backdrop">
+          <div class="modal" role="dialog">
+            <div class="modal-hd">Save as footer</div>
+            <div class="modal-bd">
+              <div class="field">
+                <label style="font-weight:600;font-size:0.82rem;display:block;margin-bottom:6px;color:var(--ink)">Name</label>
+                <input type="text" value="Compliance-heavy" style="width:100%;padding:10px 12px;border:1px solid var(--border);border-radius:8px;font-family:inherit;font-size:0.9rem" />
+              </div>
+              <p style="margin-top:10px">We’ll keep the footer content from this newsletter so you can reuse it.</p>
+            </div>
+            <div class="modal-ft">
+              <button type="button" class="btn" data-goto="compose">Cancel</button>
+              <button type="button" class="btn primary" data-goto="compose">Save footer</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="screen" id="screen-manage">
+        <div class="crumbs">Settings → <span>Email footers</span> · light list</div>
+        <div class="page-head">
+          <h2>Email footers</h2>
+          <p class="sub">Compact list reached from compose. Same AC-1 list of named footers; less emphasis on Settings as the home.</p>
+        </div>
+        <div class="panel">
+          <div class="panel-hd">
+            <h3>Saved footers</h3>
+            <button type="button" class="btn" data-goto="compose">← Back to compose</button>
+          </div>
+          <ul class="footer-list">
+            <li class="footer-row">
+              <div>
+                <div class="ft-name">Standard <span class="badge">Default</span></div>
+                <div class="ft-snip">Your Name · Firm LLP · Unsubscribe</div>
+              </div>
+              <button type="button" class="btn">Edit</button>
+            </li>
+            <li class="footer-row">
+              <div>
+                <div class="ft-name">Compliance-heavy</div>
+                <div class="ft-snip">Long disclosure · privacy · Unsubscribe</div>
+              </div>
+              <button type="button" class="btn">Edit</button>
+            </li>
+          </ul>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      var notes = {
+        compose: 'Primary surface is compose. Pick a footer, or save the current one for next time.',
+        save: '“Save as footer…” names the current footer HTML for reuse (AC-1 create path from compose).',
+        manage: 'Light Settings list via “Manage footers” link — not the primary mental model.'
+      };
+      function show(step) {
+        document.querySelectorAll('.screen').forEach(function (el) { el.classList.remove('on'); });
+        document.querySelectorAll('.demo-btn').forEach(function (b) {
+          b.classList.toggle('on', b.getAttribute('data-step') === step);
+        });
+        var scr = document.getElementById('screen-' + step);
+        if (scr) scr.classList.add('on');
+        document.getElementById('demo-note').textContent = notes[step] || notes.compose;
+      }
+      document.querySelectorAll('.demo-btn').forEach(function (btn) {
+        btn.addEventListener('click', function () { show(btn.getAttribute('data-step')); });
+      });
+      document.querySelectorAll('[data-goto]').forEach(function (btn) {
+        btn.addEventListener('click', function () { show(btn.getAttribute('data-goto')); });
+      });
+    })();
+  </script>
+</body>
+</html>
