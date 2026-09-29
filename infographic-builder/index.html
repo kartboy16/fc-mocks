@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>FC — Infographic builder (in-house)</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #f4f8fc; --card: #fff; --ink: #1e2a4a; --muted: #5b6572;
+      --blue: #2b7de9; --border: #d4e4f2; --mint: #e6f1fb;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: Inter, system-ui, sans-serif; background: var(--bg); color: var(--ink); line-height: 1.55; }
+    .hero {
+      background: linear-gradient(135deg, #1e2a4a 0%, #2b7de9 100%);
+      color: #fff; padding: 40px 24px 36px;
+    }
+    .hero-inner { max-width: 880px; margin: 0 auto; }
+    .hero .eyebrow { font-size: 0.75rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; opacity: 0.85; margin-bottom: 10px; }
+    .hero h1 { font-size: 1.75rem; margin-bottom: 10px; }
+    .hero p { opacity: 0.92; max-width: 720px; font-size: 0.95rem; }
+    .rec {
+      display: inline-block; margin-top: 18px; background: #e8f5e9; color: #065f46;
+      font-weight: 700; font-size: 0.8rem; padding: 8px 14px; border-radius: 999px;
+    }
+    .wrap { max-width: 880px; margin: 0 auto; padding: 28px 24px 72px; }
+    .cta {
+      display: block; background: var(--blue); color: #fff !important; text-decoration: none;
+      text-align: center; padding: 16px 24px; border-radius: 12px; font-weight: 700;
+      font-size: 1rem; margin-bottom: 28px; box-shadow: 0 4px 16px rgba(43,125,233,0.35);
+    }
+    .cta:hover { filter: brightness(1.05); }
+    .cta small { display: block; font-weight: 500; opacity: 0.9; font-size: 0.8rem; margin-top: 4px; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 14px; }
+    .card {
+      background: var(--card); border: 1px solid var(--border); border-radius: 12px;
+      padding: 18px; text-decoration: none; color: inherit; display: block;
+      transition: border-color 0.15s, box-shadow 0.15s;
+    }
+    .card:hover { border-color: var(--blue); box-shadow: 0 4px 16px rgba(30,42,74,0.08); }
+    .card.recd { border-color: #2b7de9; box-shadow: 0 4px 16px rgba(43,125,233,0.12); }
+    .card h3 { font-size: 0.95rem; margin-bottom: 6px; color: var(--blue); }
+    .card p { font-size: 0.8rem; color: var(--muted); }
+    .card .tag {
+      display: inline-block; font-size: 0.65rem; font-weight: 700; background: var(--mint);
+      color: var(--blue); padding: 2px 8px; border-radius: 999px; margin-bottom: 8px;
+    }
+    .card .tag.rec-tag { background: var(--blue); color: #fff; }
+    .card .tag.weak { background: #fef2f2; color: #991b1b; }
+    h2 { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--muted); margin: 28px 0 12px; }
+    .problem {
+      margin: 0 0 20px; padding: 14px 16px; background: #fff8eb; border: 1px solid #f0d4a8;
+      border-radius: 10px; font-size: 0.85rem; color: #8a5a10;
+    }
+    .problem strong { color: #6b4408; }
+    .arch {
+      margin: 0 0 20px; padding: 16px 18px; background: #eff6ff; border: 1px solid #bfdbfe;
+      border-radius: 12px; font-size: 0.88rem; color: #1e40af;
+    }
+    .arch strong { color: #1e3a8a; display: block; margin-bottom: 8px; font-size: 0.95rem; }
+    .arch ul { margin: 8px 0 0; padding-left: 1.2rem; }
+    .arch li { margin-bottom: 6px; }
+    .arch .why { margin-top: 10px; padding-top: 10px; border-top: 1px solid #bfdbfe; font-size: 0.82rem; color: #1e3a8a; }
+    .oos {
+      margin: 0 0 20px; padding: 14px 16px; background: #fef2f2; border: 1px solid #fecaca;
+      border-radius: 10px; font-size: 0.85rem; color: #991b1b;
+    }
+    .oos ul { margin: 8px 0 0; padding-left: 1.2rem; }
+    .oq {
+      margin: 0 0 20px; padding: 14px 16px; background: #fff; border: 1px solid var(--border);
+      border-radius: 10px; font-size: 0.85rem;
+    }
+    .oq strong { display: block; margin-bottom: 8px; color: var(--ink); }
+    .oq ol { padding-left: 1.2rem; color: var(--muted); }
+    .oq li { margin-bottom: 6px; }
+    .oq .open { color: #b45309; font-weight: 600; font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.04em; }
+    .note {
+      margin: 16px 0 0; padding: 12px 14px; background: #eef4fb; border: 1px solid var(--border);
+      border-radius: 10px; font-size: 0.85rem; color: var(--ink);
+    }
+    .meta { margin-top: 32px; font-size: 0.8rem; color: var(--muted); }
+    .meta a { color: var(--blue); }
+    code { background: #eef2f6; padding: 0.1em 0.35em; border-radius: 4px; font-size: 0.85em; }
+  </style>
+</head>
+<body>
+  <header class="hero">
+    <div class="hero-inner">
+      <div class="eyebrow">FinancialContent · Designer mocks · No issue # yet</div>
+      <h1>Infographics without Canva — in-house builder</h1>
+      <p>Today advisors upload Canva JPEGs and get a logo/contact stamp only — no real colour or font theming on the asset. Ask: automate brand customization (especially firms keeping FC after an agency site move). Audience: Canadian advisors — plain words, compliance-friendly.</p>
+      <span class="rec">Recommend · Direction A — In-house template builder in FC</span>
+    </div>
+  </header>
+
+  <div class="wrap">
+    <a class="cta" href="directions/a/index.html">
+      Open Direction A (recommended)
+      <small>Library entry → Pick template → Fill content → Brand kit live preview → Save / Insert email</small>
+    </a>
+    <p style="text-align:center;margin:-18px 0 24px;font-size:0.8rem;color:var(--muted)">
+      <a href="build-contract.html">Provisional build contract</a> ·
+      <a href="build-contract.md">Markdown</a>
+    </p>
+
+    <div class="problem">
+      <strong>Problem:</strong> Infographics today are Canva JPEGs uploaded into FC, then stamped with logo/contact. There is no real per-advisor colour or font theming on the finished asset. Firms that keep FC after moving their agency site still want branded social/email graphics without another design tool login.
+    </div>
+
+    <div class="arch">
+      <strong>Architecture recommendation (30-second read)</strong>
+      <ul>
+        <li><strong>Builder lives in-house in FC</strong> (content-library Meteor/React) as a first-class <em>Create Infographic</em> flow next to library / email.</li>
+        <li>Brand kit already lives in <strong>Settings &amp; Branding</strong> — publish lands in the library; insert into email via existing <em>Insert infographic</em>.</li>
+        <li><strong>Template-driven generate</strong> (HTML/SVG layouts → PNG). Do <em>not</em> recolour finished Canva JPEGs.</li>
+        <li>A separate design tool is wrong for this ICP: another login, no brand sync, harder compliance/review.</li>
+        <li>Canva stays an <strong>optional escape hatch</strong> for one-offs — not the default path.</li>
+      </ul>
+      <p class="why">Soft Dev confirms feasibility later. This mock is the <strong>design recommendation first</strong>.</p>
+    </div>
+
+    <div class="oos">
+      <strong>Non-goals (v1)</strong>
+      <ul>
+        <li>Full Canva competitor / freeform design canvas</li>
+        <li>White-label the whole FC app</li>
+        <li>Recolouring finished JPEG uploads as the primary path</li>
+      </ul>
+    </div>
+
+    <div class="oq">
+      <span class="open">Open product questions — do not invent locked answers</span>
+      <strong>Resolve before agent-ready</strong>
+      <ol>
+        <li>Brand colours/fonts: new fields under Settings &amp; Branding, or only inside the builder?</li>
+        <li>Who authors templates — FC admin only, or firm-level custom templates later?</li>
+        <li>Output sizes: square vs story vs email widths?</li>
+        <li>Does the generated PNG go through compliance approval like other library posts?</li>
+      </ol>
+    </div>
+
+    <div class="note">
+      <strong>Track:</strong> Designer-first recommendation. Do <em>not</em> mark agent-ready; do not wake Software developer. Scout note: today’s Settings &amp; Branding has logo/contact; <strong>colours/fonts are NEW</strong> (no hex/font theme found).
+    </div>
+
+    <h2>Directions</h2>
+    <div class="grid">
+      <a class="card recd" href="directions/a/index.html">
+        <span class="tag rec-tag">RECOMMEND</span>
+        <h3>A — In-house template builder</h3>
+        <p>Create Infographic inside FC: pick template, fill content, apply brand kit (live preview), save to library / insert into email. Template → PNG generate.</p>
+      </a>
+      <a class="card" href="directions/b/index.html">
+        <span class="tag weak">NOT RECOMMENDED</span>
+        <h3>B — Canva-first + brand stamp</h3>
+        <p>Status quo+: upload Canva JPEG, stamp logo/contact. No real colour/font theming. Weak for agencies keeping FC.</p>
+      </a>
+      <a class="card" href="directions/c/index.html">
+        <span class="tag">ALT</span>
+        <h3>C — External “FC Studio”</h3>
+        <p>Separate micro-app syncing brand kit via API. Extra login friction; not recommend for this ICP.</p>
+      </a>
+    </div>
+
+    <h2>Provisional build contract (recommend A)</h2>
+    <div class="note" style="margin-top:0">
+      Templates as HTML/SVG layouts → rasterize PNG. Brand kit: logo, primary, secondary, font pair, contact footer. Map logo/contact to existing Settings; <strong>colours/fonts are NEW</strong>. Treat like other library assets for approval. Full text: <a href="build-contract.html">build-contract.html</a>.
+    </div>
+
+    <div class="meta">
+      <p>No GitHub issue number yet · path <code>/infographic-builder/</code></p>
+      <p>Repo: <a href="https://github.com/kartboy16/fc-mocks">kartboy16/fc-mocks</a></p>
+      <p>Live: <a href="https://kartboy16.github.io/fc-mocks/infographic-builder/">kartboy16.github.io/fc-mocks/infographic-builder/</a></p>
+    </div>
+  </div>
+</body>
+</html>

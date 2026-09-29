@@ -1,0 +1,731 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Direction A — In-house infographic builder · FC</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #f4f8fc; --card: #fff; --ink: #1e2a4a; --muted: #5b6572;
+      --blue: #2b7de9; --blue-dark: #1e5bb8; --border: #d4e4f2; --mint: #e6f1fb;
+      --ok: #047857; --ok-bg: #e8f5e9; --warn: #9a3412; --warn-bg: #fff7ed;
+      --danger: #b91c1c; --danger-bg: #fef2f2;
+      --brand-primary: #1e2a4a;
+      --brand-secondary: #2b7de9;
+      --brand-font: Inter, system-ui, sans-serif;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: Inter, system-ui, sans-serif; background: var(--bg); color: var(--ink); font-size: 13px; line-height: 1.45; }
+    a { color: var(--blue); }
+    .thesis {
+      background: linear-gradient(135deg, #1e2a4a, #2b7de9); color: #fff; padding: 16px 24px;
+    }
+    .thesis .rec {
+      display: inline-block; background: #fff; color: var(--blue); font-size: 0.68rem;
+      font-weight: 700; padding: 3px 10px; border-radius: 999px; margin-bottom: 8px;
+    }
+    .thesis h1 { font-size: 1.05rem; margin-bottom: 4px; }
+    .thesis p { opacity: 0.9; font-size: 0.8rem; max-width: 920px; }
+    .nav {
+      padding: 8px 24px; font-size: 0.75rem; background: #fafafa;
+      border-bottom: 1px solid var(--border); display: flex; gap: 12px; flex-wrap: wrap; align-items: center;
+    }
+    .nav a { color: var(--blue); text-decoration: none; font-weight: 500; }
+    .nav .sep { color: #c0c8d4; }
+    .nav .on { font-weight: 700; color: var(--ink); }
+    .app { display: flex; min-height: calc(100vh - 110px); }
+    .rail {
+      width: 52px; background: #1e2a4a; flex-shrink: 0;
+      display: flex; flex-direction: column; align-items: center; padding: 12px 0; gap: 8px;
+    }
+    .rail .ri {
+      width: 32px; height: 32px; border-radius: 8px; background: rgba(255,255,255,0.08);
+      color: rgba(255,255,255,0.7); font-size: 0.55rem; font-weight: 700;
+      display: flex; align-items: center; justify-content: center; text-align: center; line-height: 1.1;
+    }
+    .rail .ri.on { background: var(--blue); color: #fff; }
+    .main { flex: 1; min-width: 0; padding: 14px 18px 48px; }
+    .chips {
+      display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 14px;
+      padding: 10px 12px; background: #fff; border: 1px solid var(--border); border-radius: 10px;
+    }
+    .chip {
+      padding: 7px 12px; border: 1px solid var(--border); border-radius: 999px; background: #fff;
+      font-family: inherit; font-size: 0.72rem; font-weight: 600; color: var(--ink); cursor: pointer;
+    }
+    .chip:hover { border-color: var(--blue); color: var(--blue); }
+    .chip.on { background: var(--blue); color: #fff; border-color: var(--blue); }
+    .chip .n { display: inline-block; width: 16px; height: 16px; line-height: 16px; text-align: center;
+      border-radius: 50%; background: rgba(0,0,0,0.08); font-size: 0.65rem; margin-right: 4px; }
+    .chip.on .n { background: rgba(255,255,255,0.25); }
+    .demo-note { font-size: 0.72rem; color: var(--muted); margin-bottom: 12px; }
+    .screen { display: none; }
+    .screen.on { display: block; }
+    .page-head { margin-bottom: 14px; }
+    .page-head h2 { font-size: 1.2rem; font-weight: 700; }
+    .page-head .sub { color: var(--muted); font-size: 0.82rem; margin-top: 4px; max-width: 640px; }
+    .crumbs { font-size: 0.72rem; color: var(--muted); margin-bottom: 6px; }
+    .crumbs span { color: var(--ink); font-weight: 600; }
+    .panel {
+      background: var(--card); border: 1px solid var(--border); border-radius: 12px;
+      overflow: hidden; box-shadow: 0 1px 3px rgba(30,42,74,0.04);
+    }
+    .panel-hd {
+      display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap;
+      padding: 14px 16px; border-bottom: 1px solid var(--border); background: #fafbfd;
+    }
+    .panel-hd h3 { font-size: 0.95rem; }
+    .btn {
+      display: inline-flex; align-items: center; gap: 6px; padding: 8px 14px;
+      border: 1px solid var(--border); border-radius: 8px; background: #fff;
+      font-family: inherit; font-size: 0.82rem; font-weight: 600; color: var(--ink); cursor: pointer;
+    }
+    .btn:hover { border-color: var(--blue); color: var(--blue); }
+    .btn.primary { background: var(--blue); color: #fff; border-color: var(--blue); }
+    .btn.primary:hover { background: var(--blue-dark); color: #fff; }
+    .btn.ghost { background: transparent; }
+    .btn.lg { padding: 10px 18px; font-size: 0.9rem; }
+    .tabs { display: flex; gap: 0; border-bottom: 1px solid var(--border); padding: 0 12px; background: #fff; }
+    .tab {
+      padding: 12px 16px; font-size: 0.82rem; font-weight: 600; color: var(--muted);
+      border-bottom: 2px solid transparent; cursor: pointer; background: none; border-top: none; border-left: none; border-right: none; font-family: inherit;
+    }
+    .tab.on { color: var(--blue); border-bottom-color: var(--blue); }
+    .lib-grid {
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 12px; padding: 16px;
+    }
+    .lib-card {
+      border: 1px solid var(--border); border-radius: 10px; overflow: hidden; background: #fff; cursor: pointer;
+      transition: border-color 0.15s, box-shadow 0.15s;
+    }
+    .lib-card:hover { border-color: var(--blue); box-shadow: 0 4px 12px rgba(43,125,233,0.12); }
+    .lib-card .thumb {
+      height: 110px; background: linear-gradient(135deg, #1e2a4a, #2b7de9);
+      display: flex; align-items: center; justify-content: center; color: #fff; font-weight: 700; font-size: 0.85rem;
+    }
+    .lib-card .meta { padding: 10px 12px; }
+    .lib-card .meta strong { display: block; font-size: 0.82rem; }
+    .lib-card .meta span { font-size: 0.7rem; color: var(--muted); }
+    .create-menu {
+      position: relative; display: inline-block;
+    }
+    .create-drop {
+      position: absolute; top: calc(100% + 6px); right: 0; min-width: 200px;
+      background: #fff; border: 1px solid var(--border); border-radius: 10px;
+      box-shadow: 0 8px 24px rgba(30,42,74,0.12); z-index: 20; display: none;
+    }
+    .create-drop.open { display: block; }
+    .create-drop button {
+      display: block; width: 100%; text-align: left; padding: 10px 14px;
+      border: none; background: none; font-family: inherit; font-size: 0.82rem; font-weight: 600;
+      color: var(--ink); cursor: pointer;
+    }
+    .create-drop button:hover { background: var(--mint); color: var(--blue); }
+    .create-drop button .hint { display: block; font-weight: 400; font-size: 0.7rem; color: var(--muted); margin-top: 2px; }
+    .tpl-grid {
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 16px; padding: 16px;
+    }
+    .tpl-pick {
+      border: 2px solid var(--border); border-radius: 12px; overflow: hidden; cursor: pointer;
+      background: #fff; transition: border-color 0.15s, box-shadow 0.15s; text-align: left; padding: 0; font-family: inherit; color: inherit;
+    }
+    .tpl-pick:hover, .tpl-pick.selected { border-color: var(--blue); box-shadow: 0 4px 16px rgba(43,125,233,0.15); }
+    .tpl-pick .label { padding: 10px 12px; border-top: 1px solid var(--border); background: #fafbfd; }
+    .tpl-pick .label strong { font-size: 0.85rem; display: block; }
+    .tpl-pick .label span { font-size: 0.72rem; color: var(--muted); }
+    /* Asset previews — look like finished FC infographics */
+    .asset {
+      width: 100%; aspect-ratio: 1 / 1; display: flex; flex-direction: column;
+      font-family: var(--brand-font); overflow: hidden; position: relative;
+    }
+    .asset-stat {
+      background: var(--brand-primary); color: #fff; padding: 28px 24px 20px;
+      justify-content: space-between;
+    }
+    .asset-stat .eyebrow { font-size: 0.7rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; opacity: 0.75; }
+    .asset-stat .num { font-size: 3.4rem; font-weight: 700; line-height: 1; margin: 12px 0 8px; color: #fff; }
+    .asset-stat .claim { font-size: 1rem; font-weight: 600; line-height: 1.3; max-width: 90%; }
+    .asset-stat .accent-bar { height: 4px; width: 48px; background: var(--brand-secondary); border-radius: 2px; margin: 14px 0; }
+    .asset-stat .foot {
+      display: flex; align-items: center; justify-content: space-between; gap: 8px;
+      margin-top: auto; padding-top: 12px; border-top: 1px solid rgba(255,255,255,0.15);
+      font-size: 0.65rem; opacity: 0.85;
+    }
+    .asset-stat .logo-slot {
+      width: 36px; height: 36px; border-radius: 8px; background: rgba(255,255,255,0.15);
+      display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.65rem;
+    }
+    .asset-tips {
+      background: #fff; border-top: 6px solid var(--brand-secondary); padding: 22px 20px 16px;
+      color: var(--ink);
+    }
+    .asset-tips .ttl { font-size: 1.05rem; font-weight: 700; color: var(--brand-primary); margin-bottom: 14px; line-height: 1.25; }
+    .asset-tips .tip {
+      display: flex; gap: 10px; margin-bottom: 10px; font-size: 0.78rem; color: #3a4558;
+    }
+    .asset-tips .tip .dot {
+      flex-shrink: 0; width: 22px; height: 22px; border-radius: 50%;
+      background: var(--brand-secondary); color: #fff; font-size: 0.65rem; font-weight: 700;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .asset-tips .foot {
+      margin-top: auto; padding-top: 12px; border-top: 1px solid #eef2f6;
+      display: flex; justify-content: space-between; align-items: center;
+      font-size: 0.62rem; color: var(--muted);
+    }
+    .asset-tips .logo-slot {
+      width: 32px; height: 32px; border-radius: 6px; background: var(--brand-primary); color: #fff;
+      display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.6rem;
+    }
+    .asset-quote {
+      background: #f8fafc; padding: 24px 22px 18px; color: var(--ink);
+      border-left: 6px solid var(--brand-secondary);
+    }
+    .asset-quote .qmark { font-size: 2.2rem; color: var(--brand-secondary); line-height: 1; font-weight: 700; opacity: 0.5; }
+    .asset-quote .quote { font-size: 1.05rem; font-weight: 600; color: var(--brand-primary); line-height: 1.35; margin: 8px 0 14px; }
+    .asset-quote .attr { font-size: 0.75rem; color: var(--muted); font-weight: 500; }
+    .asset-quote .attr strong { color: var(--brand-primary); }
+    .asset-quote .foot {
+      margin-top: auto; padding-top: 14px; border-top: 1px solid #e2e8f0;
+      font-size: 0.62rem; color: var(--muted); line-height: 1.4;
+    }
+    .asset-quote .foot .name { font-weight: 700; color: var(--brand-primary); font-size: 0.72rem; }
+    .split {
+      display: grid; grid-template-columns: 1fr 340px; gap: 14px; align-items: start;
+    }
+    @media (max-width: 900px) { .split { grid-template-columns: 1fr; } }
+    .form { padding: 18px; }
+    .field { margin-bottom: 14px; }
+    .field label { display: block; font-weight: 600; font-size: 0.82rem; margin-bottom: 6px; }
+    .field .hint { font-weight: 400; color: var(--muted); font-size: 0.72rem; }
+    .field input[type=text], .field input[type=color], .field textarea, .field select {
+      width: 100%; padding: 10px 12px; border: 1px solid var(--border); border-radius: 8px;
+      font-family: inherit; font-size: 0.88rem; color: var(--ink); background: #fff;
+    }
+    .field textarea { min-height: 72px; resize: vertical; line-height: 1.5; }
+    .field input:focus, .field textarea:focus, .field select:focus {
+      outline: none; border-color: var(--blue); box-shadow: 0 0 0 3px rgba(43,125,233,0.15);
+    }
+    .color-row { display: flex; gap: 10px; align-items: center; }
+    .color-row input[type=color] { width: 44px; height: 40px; padding: 2px; cursor: pointer; }
+    .color-row input[type=text] { flex: 1; }
+    .preview-wrap {
+      background: #fff; border: 1px solid var(--border); border-radius: 12px; overflow: hidden;
+      position: sticky; top: 12px;
+    }
+    .preview-hd {
+      padding: 10px 14px; background: #eef4fb; border-bottom: 1px solid var(--border);
+      font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; color: var(--muted);
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    .preview-body { padding: 16px; background: #e8eef5; }
+    .preview-body .asset { max-width: 300px; margin: 0 auto; box-shadow: 0 8px 24px rgba(30,42,74,0.15); border-radius: 4px; }
+    .empty {
+      padding: 40px 24px; text-align: center; background: #fff; border: 1px dashed #f0d4a8;
+      border-radius: 12px; background: #fffbeb;
+    }
+    .empty h3 { font-size: 1rem; margin-bottom: 8px; color: #92400e; }
+    .empty p { font-size: 0.85rem; color: #a16207; max-width: 420px; margin: 0 auto 16px; }
+    .export-grid {
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 12px; padding: 16px;
+    }
+    .export-card {
+      border: 1px solid var(--border); border-radius: 12px; padding: 18px; background: #fff;
+    }
+    .export-card h4 { font-size: 0.9rem; margin-bottom: 6px; }
+    .export-card p { font-size: 0.75rem; color: var(--muted); margin-bottom: 12px; }
+    .toast {
+      display: none; position: fixed; bottom: 24px; right: 24px; background: var(--ok); color: #fff;
+      padding: 12px 18px; border-radius: 10px; font-weight: 600; font-size: 0.85rem;
+      box-shadow: 0 8px 24px rgba(4,120,87,0.3); z-index: 50;
+    }
+    .toast.show { display: block; }
+    .form-actions { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 8px; }
+    .callout {
+      margin: 0 0 14px; padding: 10px 12px; background: #eff6ff; border: 1px solid #bfdbfe;
+      border-radius: 10px; font-size: 0.75rem; color: #1e40af;
+    }
+    .badge {
+      display: inline-block; font-size: 0.65rem; font-weight: 700; padding: 2px 8px;
+      border-radius: 999px; background: var(--mint); color: var(--blue-dark);
+    }
+    .badge.new { background: #fef3c7; color: #92400e; }
+  </style>
+</head>
+<body>
+  <header class="thesis">
+    <span class="rec">RECOMMEND · Direction A</span>
+    <h1>In-house template builder — Create Infographic inside FC</h1>
+    <p>Click through the steps. Brand kit updates the live preview. Templates are FC-native (not Canva-generic). Sample copy is educational, non-advice tone for Canadian advisors.</p>
+  </header>
+  <nav class="nav">
+    <a href="../../index.html">← Hub</a>
+    <span class="sep">·</span>
+    <span class="on">A — In-house builder</span>
+    <span class="sep">·</span>
+    <a href="../b/index.html">B</a>
+    <span class="sep">·</span>
+    <a href="../c/index.html">C</a>
+    <span class="sep">·</span>
+    <a href="../../build-contract.html">Build contract</a>
+  </nav>
+
+  <div class="app">
+    <aside class="rail" aria-hidden="true">
+      <div class="ri">Home</div>
+      <div class="ri on">Lib</div>
+      <div class="ri">Email</div>
+      <div class="ri">Social</div>
+      <div class="ri">Set</div>
+    </aside>
+    <div class="main">
+      <div class="chips" role="tablist" aria-label="Builder steps">
+        <button type="button" class="chip on" data-step="1"><span class="n">1</span> Library entry</button>
+        <button type="button" class="chip" data-step="2"><span class="n">2</span> Pick template</button>
+        <button type="button" class="chip" data-step="3"><span class="n">3</span> Fill content</button>
+        <button type="button" class="chip" data-step="4"><span class="n">4</span> Brand kit</button>
+        <button type="button" class="chip" data-step="5"><span class="n">5</span> Export / publish</button>
+        <button type="button" class="chip" data-step="6"><span class="n">6</span> Missing brand</button>
+      </div>
+      <p class="demo-note">Mock only — Soft Dev confirms feasibility later. Colours/fonts below Settings &amp; Branding are <strong>NEW</strong> (logo/contact already ship).</p>
+
+      <!-- STEP 1: Library entry -->
+      <section class="screen on" id="step-1">
+        <div class="crumbs">Content library → <span>Infographics</span></div>
+        <div class="page-head">
+          <h2>Infographics</h2>
+          <p class="sub">Create branded graphics inside FC — no Canva required. Save to library or insert into email.</p>
+        </div>
+        <div class="panel">
+          <div class="panel-hd">
+            <h3>Your infographics</h3>
+            <div class="create-menu">
+              <button type="button" class="btn primary" id="createBtn">+ Create ▾</button>
+              <div class="create-drop" id="createDrop">
+                <button type="button" data-goto="2">
+                  Infographic
+                  <span class="hint">Pick a template · apply your brand</span>
+                </button>
+                <button type="button" style="opacity:0.5;cursor:default" disabled>
+                  Upload image
+                  <span class="hint">Canva JPEG / one-off (escape hatch)</span>
+                </button>
+              </div>
+            </div>
+          </div>
+          <div class="tabs">
+            <button type="button" class="tab">All library</button>
+            <button type="button" class="tab on">Infographics</button>
+            <button type="button" class="tab">Posts</button>
+          </div>
+          <div class="lib-grid">
+            <div class="lib-card" data-goto="2" role="button" tabindex="0">
+              <div class="thumb">+ New</div>
+              <div class="meta"><strong>Create infographic</strong><span>Template builder</span></div>
+            </div>
+            <div class="lib-card">
+              <div class="thumb" style="background:linear-gradient(135deg,#0f766e,#14b8a6);font-size:0.75rem">RRSP tip · saved</div>
+              <div class="meta"><strong>Contribution room</strong><span>Saved Mar 12 · PNG</span></div>
+            </div>
+            <div class="lib-card">
+              <div class="thumb" style="background:linear-gradient(135deg,#1e3a5f,#3b82f6);font-size:0.75rem">Cash flow</div>
+              <div class="meta"><strong>3 cash-flow habits</strong><span>Inserted in email</span></div>
+            </div>
+          </div>
+        </div>
+        <div class="callout" style="margin-top:14px">Entry point: <strong>Create → Infographic</strong> (or Infographics tab) sits next to library / email — same FC chrome, same brand kit.</div>
+      </section>
+
+      <!-- STEP 2: Pick template -->
+      <section class="screen" id="step-2">
+        <div class="crumbs">Create Infographic → <span>Pick template</span></div>
+        <div class="page-head">
+          <h2>Choose a template</h2>
+          <p class="sub">FC-native layouts designed for financialcontent.ca — not generic Canva packs. Click one to continue.</p>
+        </div>
+        <div class="panel">
+          <div class="panel-hd"><h3>Templates</h3><span class="badge">3 starter templates</span></div>
+          <div class="tpl-grid">
+            <button type="button" class="tpl-pick" data-tpl="stat" data-goto="3">
+              <div class="asset asset-stat" style="aspect-ratio:4/3;min-height:200px">
+                <div class="eyebrow">By the numbers</div>
+                <div class="num">68%</div>
+                <div class="accent-bar"></div>
+                <div class="claim">of Canadians say they could use a clearer plan for retirement cash flow.</div>
+                <div class="foot">
+                  <span>Educational only · Not advice</span>
+                  <div class="logo-slot">FC</div>
+                </div>
+              </div>
+              <div class="label"><strong>Stat card</strong><span>Big number + short claim + logo</span></div>
+            </button>
+            <button type="button" class="tpl-pick" data-tpl="tips" data-goto="3">
+              <div class="asset asset-tips" style="aspect-ratio:4/3;min-height:200px">
+                <div class="ttl">3 simple RRSP habits before March 1</div>
+                <div class="tip"><div class="dot">1</div><div>Check your contribution room on CRA My Account.</div></div>
+                <div class="tip"><div class="dot">2</div><div>Set a weekly transfer you can stick with.</div></div>
+                <div class="tip"><div class="dot">3</div><div>Review beneficiaries when life changes.</div></div>
+                <div class="foot"><span>North Shore Wealth · Sample</span><div class="logo-slot">NS</div></div>
+              </div>
+              <div class="label"><strong>Tips list</strong><span>3–5 tips with brand accent</span></div>
+            </button>
+            <button type="button" class="tpl-pick" data-tpl="quote" data-goto="3">
+              <div class="asset asset-quote" style="aspect-ratio:4/3;min-height:200px">
+                <div class="qmark">“</div>
+                <div class="quote">A written cash-flow plan turns “we should save more” into a number you can actually keep.</div>
+                <div class="attr">— <strong>Insight</strong> · Retirement planning series</div>
+                <div class="foot">
+                  <div class="name">Jordan Lee, CFP®</div>
+                  604-555-0142 · jordan@example.ca<br />
+                  For information only. Not personalized advice.
+                </div>
+              </div>
+              <div class="label"><strong>Quote / insight</strong><span>Pull-quote + attribution + contact footer</span></div>
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- STEP 3: Fill content -->
+      <section class="screen" id="step-3">
+        <div class="crumbs">Create Infographic → <span>Fill content</span></div>
+        <div class="page-head">
+          <h2>Fill in your content</h2>
+          <p class="sub">Plain fields — rewrite the sample copy. Keep a non-advice tone for Canadian audiences.</p>
+        </div>
+        <div class="split">
+          <div class="panel">
+            <div class="panel-hd"><h3>Content</h3><span class="badge" id="tplBadge">Stat card</span></div>
+            <div class="form" id="contentForm">
+              <!-- filled by JS based on template -->
+            </div>
+            <div class="form" style="padding-top:0">
+              <div class="form-actions">
+                <button type="button" class="btn" data-goto="2">← Templates</button>
+                <button type="button" class="btn primary" data-goto="4">Next: Brand kit →</button>
+              </div>
+            </div>
+          </div>
+          <div class="preview-wrap">
+            <div class="preview-hd"><span>Live preview</span><span>Square · 1080</span></div>
+            <div class="preview-body" id="preview3"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- STEP 4: Brand kit -->
+      <section class="screen" id="step-4">
+        <div class="crumbs">Create Infographic → <span>Brand kit</span></div>
+        <div class="page-head">
+          <h2>Apply your brand kit</h2>
+          <p class="sub">Pulls from Settings &amp; Branding where possible. <span class="badge new">NEW</span> Primary / secondary colour + font pair (scout: not in Settings today).</p>
+        </div>
+        <div class="split">
+          <div class="panel">
+            <div class="panel-hd"><h3>Brand kit</h3><button type="button" class="btn ghost" data-goto="6">Simulate missing brand</button></div>
+            <div class="form">
+              <div class="field">
+                <label>Primary colour <span class="hint">headings / backgrounds</span></label>
+                <div class="color-row">
+                  <input type="color" id="cPrimary" value="#1e2a4a" />
+                  <input type="text" id="cPrimaryHex" value="#1e2a4a" />
+                </div>
+              </div>
+              <div class="field">
+                <label>Secondary colour <span class="hint">accents / numbers</span></label>
+                <div class="color-row">
+                  <input type="color" id="cSecondary" value="#2b7de9" />
+                  <input type="text" id="cSecondaryHex" value="#2b7de9" />
+                </div>
+              </div>
+              <div class="field">
+                <label>Font pair</label>
+                <select id="cFont">
+                  <option value="Inter, system-ui, sans-serif" selected>Inter / system (default)</option>
+                  <option value="Georgia, 'Times New Roman', serif">Georgia / serif</option>
+                  <option value="'Helvetica Neue', Helvetica, Arial, sans-serif">Helvetica / Arial</option>
+                </select>
+              </div>
+              <div class="field">
+                <label>Logo <span class="hint">from Settings &amp; Branding</span></label>
+                <input type="text" id="cLogo" value="NS" maxlength="3" />
+              </div>
+              <div class="field">
+                <label>Contact footer</label>
+                <input type="text" id="cName" value="Jordan Lee, CFP®" style="margin-bottom:8px" />
+                <input type="text" id="cPhone" value="604-555-0142 · jordan@example.ca" style="margin-bottom:8px" />
+                <textarea id="cDisc" rows="2">For information only. Not personalized advice. North Shore Wealth Inc.</textarea>
+              </div>
+              <div class="form-actions">
+                <button type="button" class="btn" data-goto="3">← Content</button>
+                <button type="button" class="btn primary" data-goto="5">Next: Export →</button>
+              </div>
+            </div>
+          </div>
+          <div class="preview-wrap">
+            <div class="preview-hd"><span>Live preview</span><span id="previewLive">Updating…</span></div>
+            <div class="preview-body" id="preview4"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- STEP 5: Export -->
+      <section class="screen" id="step-5">
+        <div class="crumbs">Create Infographic → <span>Export / publish</span></div>
+        <div class="page-head">
+          <h2>Save &amp; share</h2>
+          <p class="sub">Publish lands in the library. Insert uses the existing “Insert infographic” path in email.</p>
+        </div>
+        <div class="split">
+          <div class="panel">
+            <div class="panel-hd"><h3>Actions</h3></div>
+            <div class="export-grid">
+              <div class="export-card">
+                <h4>Save to library</h4>
+                <p>Stores the generated PNG with your brand applied. Available for social and reuse.</p>
+                <button type="button" class="btn primary" id="btnSave">Save to library</button>
+              </div>
+              <div class="export-card">
+                <h4>Insert into email</h4>
+                <p>Opens compose and inserts via existing Insert infographic control.</p>
+                <button type="button" class="btn primary" id="btnInsert">Insert into email</button>
+              </div>
+              <div class="export-card">
+                <h4>Download PNG</h4>
+                <p>Optional stub for one-off social posts outside FC.</p>
+                <button type="button" class="btn" id="btnDl">Download PNG (stub)</button>
+              </div>
+            </div>
+            <div class="callout" style="margin:0 16px 16px">Approval / compliance: treat like other library assets (open product Q — does PNG go through the same queue as posts?).</div>
+            <div class="form" style="padding-top:0">
+              <div class="form-actions">
+                <button type="button" class="btn" data-goto="4">← Brand kit</button>
+                <button type="button" class="btn ghost" data-goto="1">Back to library</button>
+              </div>
+            </div>
+          </div>
+          <div class="preview-wrap">
+            <div class="preview-hd"><span>Final preview</span><span>Ready</span></div>
+            <div class="preview-body" id="preview5"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- STEP 6: Missing brand empty state -->
+      <section class="screen" id="step-6">
+        <div class="crumbs">Create Infographic → <span>Brand kit</span></div>
+        <div class="page-head">
+          <h2>Brand kit needed</h2>
+          <p class="sub">Empty state when logo / colours are missing from Settings &amp; Branding.</p>
+        </div>
+        <div class="empty">
+          <h3>Add your company logo &amp; colours</h3>
+          <p>Infographics use your brand kit so every graphic matches. Add a logo and primary colour under Settings &amp; Branding, then come back here.</p>
+          <button type="button" class="btn primary lg">Go to Settings &amp; Branding</button>
+          <div style="margin-top:14px">
+            <button type="button" class="btn ghost" data-goto="4">Use sample brand (demo) →</button>
+          </div>
+        </div>
+        <div class="callout" style="margin-top:14px">Maps to existing Settings &amp; Branding for logo/contact. <strong>Colours + fonts are NEW fields</strong> — call out in build contract.</div>
+      </section>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script>
+    (function () {
+      var state = {
+        tpl: 'stat',
+        content: {
+          stat: {
+            eyebrow: 'By the numbers',
+            num: '68%',
+            claim: 'of Canadians say they could use a clearer plan for retirement cash flow.'
+          },
+          tips: {
+            title: '3 simple RRSP habits before March 1',
+            tip1: 'Check your contribution room on CRA My Account.',
+            tip2: 'Set a weekly transfer you can stick with.',
+            tip3: 'Review beneficiaries when life changes.',
+            tip4: '',
+            tip5: ''
+          },
+          quote: {
+            quote: 'A written cash-flow plan turns “we should save more” into a number you can actually keep.',
+            attr: 'Insight · Retirement planning series'
+          }
+        },
+        brand: {
+          primary: '#1e2a4a',
+          secondary: '#2b7de9',
+          font: 'Inter, system-ui, sans-serif',
+          logo: 'NS',
+          name: 'Jordan Lee, CFP®',
+          phone: '604-555-0142 · jordan@example.ca',
+          disc: 'For information only. Not personalized advice. North Shore Wealth Inc.'
+        }
+      };
+
+      function $(sel) { return document.querySelector(sel); }
+      function $all(sel) { return Array.prototype.slice.call(document.querySelectorAll(sel)); }
+
+      function goStep(n) {
+        $all('.screen').forEach(function (s) { s.classList.remove('on'); });
+        $all('.chip').forEach(function (c) {
+          c.classList.toggle('on', c.getAttribute('data-step') === String(n));
+        });
+        var el = document.getElementById('step-' + n);
+        if (el) el.classList.add('on');
+        if (n === 3) { renderContentForm(); renderPreviews(); }
+        if (n === 4 || n === 5) renderPreviews();
+        window.scrollTo(0, 0);
+      }
+
+      $all('.chip').forEach(function (c) {
+        c.addEventListener('click', function () { goStep(c.getAttribute('data-step')); });
+      });
+      $all('[data-goto]').forEach(function (el) {
+        el.addEventListener('click', function (e) {
+          if (el.getAttribute('data-tpl')) {
+            state.tpl = el.getAttribute('data-tpl');
+            $all('.tpl-pick').forEach(function (p) { p.classList.remove('selected'); });
+            el.classList.add('selected');
+          }
+          goStep(el.getAttribute('data-goto'));
+        });
+      });
+
+      var createBtn = $('#createBtn');
+      var createDrop = $('#createDrop');
+      if (createBtn) {
+        createBtn.addEventListener('click', function (e) {
+          e.stopPropagation();
+          createDrop.classList.toggle('open');
+        });
+        document.addEventListener('click', function () { createDrop.classList.remove('open'); });
+      }
+
+      function renderContentForm() {
+        var box = $('#contentForm');
+        var badge = $('#tplBadge');
+        var c = state.content[state.tpl];
+        if (state.tpl === 'stat') {
+          badge.textContent = 'Stat card';
+          box.innerHTML =
+            '<div class="field"><label>Eyebrow</label><input type="text" data-k="eyebrow" value="' + esc(c.eyebrow) + '" /></div>' +
+            '<div class="field"><label>Big number / stat</label><input type="text" data-k="num" value="' + esc(c.num) + '" /></div>' +
+            '<div class="field"><label>Claim <span class="hint">short, educational</span></label><textarea data-k="claim" rows="3">' + esc(c.claim) + '</textarea></div>';
+        } else if (state.tpl === 'tips') {
+          badge.textContent = 'Tips list';
+          box.innerHTML =
+            '<div class="field"><label>Headline</label><input type="text" data-k="title" value="' + esc(c.title) + '" /></div>' +
+            '<div class="field"><label>Tip 1</label><input type="text" data-k="tip1" value="' + esc(c.tip1) + '" /></div>' +
+            '<div class="field"><label>Tip 2</label><input type="text" data-k="tip2" value="' + esc(c.tip2) + '" /></div>' +
+            '<div class="field"><label>Tip 3</label><input type="text" data-k="tip3" value="' + esc(c.tip3) + '" /></div>' +
+            '<div class="field"><label>Tip 4 <span class="hint">optional</span></label><input type="text" data-k="tip4" value="' + esc(c.tip4) + '" /></div>' +
+            '<div class="field"><label>Tip 5 <span class="hint">optional</span></label><input type="text" data-k="tip5" value="' + esc(c.tip5) + '" /></div>';
+        } else {
+          badge.textContent = 'Quote / insight';
+          box.innerHTML =
+            '<div class="field"><label>Pull-quote</label><textarea data-k="quote" rows="4">' + esc(c.quote) + '</textarea></div>' +
+            '<div class="field"><label>Attribution</label><input type="text" data-k="attr" value="' + esc(c.attr) + '" /></div>';
+        }
+        box.querySelectorAll('[data-k]').forEach(function (inp) {
+          inp.addEventListener('input', function () {
+            state.content[state.tpl][inp.getAttribute('data-k')] = inp.value;
+            renderPreviews();
+          });
+        });
+      }
+
+      function esc(s) {
+        return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+      }
+
+      function assetHTML() {
+        var b = state.brand;
+        var style = '--brand-primary:' + b.primary + ';--brand-secondary:' + b.secondary + ';--brand-font:' + b.font + ';font-family:' + b.font;
+        if (state.tpl === 'stat') {
+          var c = state.content.stat;
+          return '<div class="asset asset-stat" style="' + style + '">' +
+            '<div class="eyebrow">' + esc(c.eyebrow) + '</div>' +
+            '<div class="num" style="color:' + b.secondary + '">' + esc(c.num) + '</div>' +
+            '<div class="accent-bar"></div>' +
+            '<div class="claim">' + esc(c.claim) + '</div>' +
+            '<div class="foot"><span>Educational only · Not advice</span><div class="logo-slot">' + esc(b.logo) + '</div></div>' +
+            '</div>';
+        }
+        if (state.tpl === 'tips') {
+          var t = state.content.tips;
+          var tips = [t.tip1, t.tip2, t.tip3, t.tip4, t.tip5].filter(Boolean);
+          var tipsHtml = tips.map(function (txt, i) {
+            return '<div class="tip"><div class="dot">' + (i + 1) + '</div><div>' + esc(txt) + '</div></div>';
+          }).join('');
+          return '<div class="asset asset-tips" style="' + style + '">' +
+            '<div class="ttl">' + esc(t.title) + '</div>' + tipsHtml +
+            '<div class="foot"><span>' + esc(b.name) + '</span><div class="logo-slot">' + esc(b.logo) + '</div></div>' +
+            '</div>';
+        }
+        var q = state.content.quote;
+        return '<div class="asset asset-quote" style="' + style + '">' +
+          '<div class="qmark">“</div>' +
+          '<div class="quote">' + esc(q.quote) + '</div>' +
+          '<div class="attr">— <strong>' + esc(q.attr) + '</strong></div>' +
+          '<div class="foot"><div class="name">' + esc(b.name) + '</div>' + esc(b.phone) + '<br />' + esc(b.disc) + '</div>' +
+          '</div>';
+      }
+
+      function renderPreviews() {
+        var html = assetHTML();
+        ['preview3', 'preview4', 'preview5'].forEach(function (id) {
+          var el = document.getElementById(id);
+          if (el) el.innerHTML = html;
+        });
+        var live = $('#previewLive');
+        if (live) live.textContent = 'Live';
+      }
+
+      function syncBrandFromUI() {
+        state.brand.primary = $('#cPrimary').value;
+        state.brand.secondary = $('#cSecondary').value;
+        state.brand.font = $('#cFont').value;
+        state.brand.logo = $('#cLogo').value || 'FC';
+        state.brand.name = $('#cName').value;
+        state.brand.phone = $('#cPhone').value;
+        state.brand.disc = $('#cDisc').value;
+        $('#cPrimaryHex').value = state.brand.primary;
+        $('#cSecondaryHex').value = state.brand.secondary;
+        renderPreviews();
+      }
+
+      ['cPrimary', 'cSecondary', 'cFont', 'cLogo', 'cName', 'cPhone', 'cDisc'].forEach(function (id) {
+        var el = document.getElementById(id);
+        if (el) el.addEventListener('input', syncBrandFromUI);
+      });
+      $('#cPrimaryHex').addEventListener('change', function () {
+        var v = this.value.trim();
+        if (/^#[0-9a-fA-F]{6}$/.test(v)) { $('#cPrimary').value = v; syncBrandFromUI(); }
+      });
+      $('#cSecondaryHex').addEventListener('change', function () {
+        var v = this.value.trim();
+        if (/^#[0-9a-fA-F]{6}$/.test(v)) { $('#cSecondary').value = v; syncBrandFromUI(); }
+      });
+
+      function toast(msg) {
+        var t = $('#toast');
+        t.textContent = msg;
+        t.classList.add('show');
+        setTimeout(function () { t.classList.remove('show'); }, 2200);
+      }
+      $('#btnSave').addEventListener('click', function () { toast('Saved to library (mock)'); });
+      $('#btnInsert').addEventListener('click', function () { toast('Would open email · Insert infographic (mock)'); });
+      $('#btnDl').addEventListener('click', function () { toast('Download PNG stub — rasterize HTML/SVG → PNG'); });
+
+      renderContentForm();
+      renderPreviews();
+    })();
+  </script>
+</body>
+</html>

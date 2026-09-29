@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Direction C — External FC Studio · FC</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #f4f8fc; --card: #fff; --ink: #1e2a4a; --muted: #5b6572;
+      --blue: #2b7de9; --border: #d4e4f2;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: Inter, system-ui, sans-serif; background: var(--bg); color: var(--ink); font-size: 13px; line-height: 1.45; }
+    a { color: var(--blue); }
+    .thesis {
+      background: linear-gradient(135deg, #1e2a4a, #475569); color: #fff; padding: 16px 24px;
+    }
+    .thesis .rec {
+      display: inline-block; background: rgba(255,255,255,0.2); color: #fff; font-size: 0.68rem;
+      font-weight: 700; padding: 3px 10px; border-radius: 999px; margin-bottom: 8px;
+    }
+    .thesis h1 { font-size: 1.05rem; margin-bottom: 4px; }
+    .thesis p { opacity: 0.9; font-size: 0.8rem; max-width: 920px; }
+    .nav {
+      padding: 8px 24px; font-size: 0.75rem; background: #fafafa;
+      border-bottom: 1px solid var(--border); display: flex; gap: 12px; flex-wrap: wrap; align-items: center;
+    }
+    .nav a { color: var(--blue); text-decoration: none; font-weight: 500; }
+    .nav .sep { color: #c0c8d4; }
+    .nav .on { font-weight: 700; color: var(--ink); }
+    .wrap { max-width: 720px; margin: 0 auto; padding: 24px 18px 64px; }
+    .panel {
+      background: var(--card); border: 1px solid var(--border); border-radius: 12px;
+      padding: 24px 20px; box-shadow: 0 1px 3px rgba(30,42,74,0.04);
+    }
+    .panel h2 { font-size: 1.1rem; margin-bottom: 8px; }
+    .panel p { font-size: 0.85rem; color: var(--muted); margin-bottom: 14px; }
+    .flow {
+      display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin: 16px 0;
+      font-size: 0.78rem; font-weight: 600;
+    }
+    .flow span {
+      background: #eef4fb; border: 1px solid var(--border); padding: 8px 12px; border-radius: 8px;
+    }
+    .flow .arrow { color: var(--muted); background: none; border: none; padding: 0; }
+    .note {
+      margin-top: 16px; padding: 14px 16px; background: #fff7ed; border: 1px solid #f0d4a8;
+      border-radius: 10px; font-size: 0.85rem; color: #9a3412;
+    }
+    .note ul { margin: 8px 0 0; padding-left: 1.2rem; }
+    .badge {
+      display: inline-block; font-size: 0.65rem; font-weight: 700; padding: 2px 8px;
+      border-radius: 999px; background: #eef4fb; color: #1e5bb8; margin-bottom: 10px;
+    }
+  </style>
+</head>
+<body>
+  <header class="thesis">
+    <span class="rec">ALT · Not recommend · Direction C</span>
+    <h1>External “FC Studio” micro-app</h1>
+    <p>Separate design tool that syncs brand kit via API. Possible technically — wrong default for advisors 50s–60s and assistants who already live in FC.</p>
+  </header>
+  <nav class="nav">
+    <a href="../../index.html">← Hub</a>
+    <span class="sep">·</span>
+    <a href="../a/index.html">A</a>
+    <span class="sep">·</span>
+    <a href="../b/index.html">B</a>
+    <span class="sep">·</span>
+    <span class="on">C — FC Studio</span>
+  </nav>
+
+  <div class="wrap">
+    <div class="panel">
+      <span class="badge">Separate product surface</span>
+      <h2>studio.financialcontent.ca (concept)</h2>
+      <p>Advisors leave FC, open a micro-app, design from templates, push PNG back to the library via API brand sync.</p>
+      <div class="flow">
+        <span>FC library</span>
+        <span class="arrow">→</span>
+        <span>Log into FC Studio</span>
+        <span class="arrow">→</span>
+        <span>API brand kit</span>
+        <span class="arrow">→</span>
+        <span>Export PNG → library</span>
+      </div>
+      <div class="note">
+        <strong>Why not recommend</strong>
+        <ul>
+          <li>Another login / context switch for a less tech-savvy ICP.</li>
+          <li>Brand sync via API still lags “it just uses Settings &amp; Branding.”</li>
+          <li>Compliance/review spans two apps instead of one library queue.</li>
+          <li>Same generate (HTML/SVG → PNG) can live in-house without the friction — see Direction A.</li>
+        </ul>
+        <p style="margin-top:10px"><a href="../a/index.html">→ Prefer Direction A (in-house builder)</a></p>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

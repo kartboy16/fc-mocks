@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Direction B — Canva-first + brand stamp · FC</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #f4f8fc; --card: #fff; --ink: #1e2a4a; --muted: #5b6572;
+      --blue: #2b7de9; --border: #d4e4f2;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: Inter, system-ui, sans-serif; background: var(--bg); color: var(--ink); font-size: 13px; line-height: 1.45; }
+    a { color: var(--blue); }
+    .thesis {
+      background: linear-gradient(135deg, #7f1d1d, #b91c1c); color: #fff; padding: 16px 24px;
+    }
+    .thesis .rec {
+      display: inline-block; background: #fff; color: #b91c1c; font-size: 0.68rem;
+      font-weight: 700; padding: 3px 10px; border-radius: 999px; margin-bottom: 8px;
+    }
+    .thesis h1 { font-size: 1.05rem; margin-bottom: 4px; }
+    .thesis p { opacity: 0.9; font-size: 0.8rem; max-width: 920px; }
+    .nav {
+      padding: 8px 24px; font-size: 0.75rem; background: #fafafa;
+      border-bottom: 1px solid var(--border); display: flex; gap: 12px; flex-wrap: wrap; align-items: center;
+    }
+    .nav a { color: var(--blue); text-decoration: none; font-weight: 500; }
+    .nav .sep { color: #c0c8d4; }
+    .nav .on { font-weight: 700; color: var(--ink); }
+    .wrap { max-width: 720px; margin: 0 auto; padding: 24px 18px 64px; }
+    .panel {
+      background: var(--card); border: 1px solid var(--border); border-radius: 12px;
+      overflow: hidden; box-shadow: 0 1px 3px rgba(30,42,74,0.04);
+    }
+    .panel-hd {
+      padding: 14px 16px; border-bottom: 1px solid var(--border); background: #fafbfd;
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    .panel-hd h3 { font-size: 0.95rem; }
+    .body { padding: 20px 18px; }
+    .upload {
+      border: 2px dashed #d4e4f2; border-radius: 12px; padding: 36px 20px; text-align: center;
+      background: #f8fbfe; margin-bottom: 16px;
+    }
+    .upload strong { display: block; font-size: 0.95rem; margin-bottom: 6px; }
+    .upload span { font-size: 0.78rem; color: var(--muted); }
+    .stamp {
+      display: flex; gap: 12px; align-items: center; padding: 12px 14px;
+      background: #eef4fb; border: 1px solid var(--border); border-radius: 10px; margin-bottom: 16px;
+    }
+    .stamp .logo {
+      width: 40px; height: 40px; border-radius: 8px; background: #1e2a4a; color: #fff;
+      display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.7rem;
+    }
+    .stamp .txt { font-size: 0.78rem; color: var(--muted); }
+    .stamp .txt strong { color: var(--ink); display: block; }
+    .btn {
+      display: inline-flex; padding: 8px 14px; border: 1px solid var(--border); border-radius: 8px;
+      background: #fff; font-family: inherit; font-size: 0.82rem; font-weight: 600; color: var(--ink); cursor: pointer;
+    }
+    .btn.primary { background: var(--blue); color: #fff; border-color: var(--blue); }
+    .why {
+      margin-top: 18px; padding: 14px 16px; background: #fef2f2; border: 1px solid #fecaca;
+      border-radius: 10px; font-size: 0.85rem; color: #991b1b;
+    }
+    .why ul { margin: 8px 0 0; padding-left: 1.2rem; }
+    .why li { margin-bottom: 4px; }
+    .badge {
+      display: inline-block; font-size: 0.65rem; font-weight: 700; padding: 2px 8px;
+      border-radius: 999px; background: #fef2f2; color: #991b1b;
+    }
+  </style>
+</head>
+<body>
+  <header class="thesis">
+    <span class="rec">NOT RECOMMENDED · Direction B</span>
+    <h1>Canva-first with brand stamp only (status quo+)</h1>
+    <p>Upload a Canva JPEG → stamp logo/contact. No real colour or font theming on the asset. Shown for contrast only.</p>
+  </header>
+  <nav class="nav">
+    <a href="../../index.html">← Hub</a>
+    <span class="sep">·</span>
+    <a href="../a/index.html">A</a>
+    <span class="sep">·</span>
+    <span class="on">B — Canva stamp</span>
+    <span class="sep">·</span>
+    <a href="../c/index.html">C</a>
+  </nav>
+
+  <div class="wrap">
+    <div class="panel">
+      <div class="panel-hd">
+        <h3>Upload infographic</h3>
+        <span class="badge">Status quo+</span>
+      </div>
+      <div class="body">
+        <div class="upload">
+          <strong>Drop a Canva JPEG / PNG</strong>
+          <span>Design happens outside FC · then upload here</span>
+          <div style="margin-top:14px"><button type="button" class="btn primary">Choose file</button></div>
+        </div>
+        <div class="stamp">
+          <div class="logo">NS</div>
+          <div class="txt">
+            <strong>Brand stamp applied</strong>
+            Logo + contact footer overlaid. Colours/fonts inside the JPEG stay whatever Canva used.
+          </div>
+        </div>
+        <button type="button" class="btn primary">Save to library</button>
+      </div>
+    </div>
+
+    <div class="why">
+      <strong>Why weaker for this ICP</strong>
+      <ul>
+        <li>No per-advisor colour/font theming on the finished asset — only a stamp.</li>
+        <li>Agencies keeping FC after a site move still juggle Canva + FC logins.</li>
+        <li>Harder compliance review (design lives outside the library until upload).</li>
+        <li>Does not solve “automate brand customization.” Keep Canva as an optional one-off escape hatch only.</li>
+      </ul>
+      <p style="margin-top:10px"><a href="../a/index.html">→ Prefer Direction A (in-house builder)</a></p>
+    </div>
+  </div>
+</body>
+</html>
