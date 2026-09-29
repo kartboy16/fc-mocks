@@ -241,6 +241,31 @@
     }
     @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
 
+    .ref-strip {
+      margin: 10px 20px 0; padding: 10px 14px; background: #eef4fb;
+      border: 1px solid var(--border); border-radius: 10px; font-size: 0.75rem; color: var(--ink);
+    }
+    .ref-strip strong { color: var(--blue-dark); }
+    .chip.logo {
+      display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px 4px 5px;
+    }
+    .av {
+      width: 18px; height: 18px; border-radius: 4px; display: inline-flex;
+      align-items: center; justify-content: center; font-size: 0.52rem; font-weight: 800;
+      color: #fff; flex-shrink: 0; letter-spacing: -0.02em;
+    }
+    .av.ftt { background: #059669; }
+    .av.fsb { background: #b45309; }
+    .av.ppi { background: #7c3aed; }
+    .av.gw { background: #64748b; }
+    .av.fecbc { background: #d97706; }
+    .av.carrier { background: #1e2a4a; }
+    .av.media { background: #0f172a; border-radius: 3px; }
+    .hub .hub-logo {
+      width: 36px; height: 36px; border-radius: 8px; display: flex; align-items: center;
+      justify-content: center; font-size: 0.7rem; font-weight: 800; color: #fff; margin-bottom: 10px;
+    }
+
   </style>
 </head>
 <body>
@@ -252,7 +277,7 @@
   <nav class="nav">
     <a href="../../index.html">← Hub #261</a>
     <span class="sep">·</span>
-    <a href="../a/index.html">Dir A Dual-facet</a> <span class="sep">·</span> <span class="on">Dir B Grouped cats</span> <span class="sep">·</span> <a href="../c/index.html">Dir C Source hubs</a>
+    <a href="../a/index.html">Dir A Dual-facet</a> <span class="sep">·</span> <span class="on">Dir B Grouped cats</span> <span class="sep">·</span> <a href="../c/index.html">Dir C Source hubs</a> <span class="sep">·</span> <a href="../d/index.html">Dir D Sidebar</a>
     <span class="sep">·</span>
     <a href="../../build-contract.html">Contract</a>
     <span class="sep">·</span>
@@ -272,6 +297,12 @@
   </div>
   <div class="gap-note">
     <strong>Not Advisor Categories (#209):</strong> #209 = advisor affiliation (AdvisorSource). This playground = <em>content</em> Source + topic/product taxonomy. Do not reopen #209. Separate from #260 My Media.
+  </div>
+  <div class="ref-strip">
+    <strong>Advisorstream reference:</strong>
+    Their sidebar splits <em>Sources</em> (partners/creators) vs <em>Publishers</em> (media brands). Direction B echoes that as
+    two sections under the Source group, still mapped to one content Source concept. Topics stay a separate section.
+    Date / Saved Searches later. Recommend remains <strong>Direction A</strong> for clearer Source ≠ Topic schema.
   </div>
 
   <div class="app">
@@ -295,12 +326,19 @@
             <p class="sub">One filter UI with <strong>sectioned chips</strong> — Source group vs Topic group. Same Master Categories store; sections prevent Source×Topic matrix explosion.</p>
           </div>
           <div class="facet-row" style="background:#fff;border:1px solid var(--border);border-radius:12px;padding:12px 14px">
-            <div class="section-label">Source group</div>
+            <div class="section-label">Source group · Sources <span style="font-weight:500;text-transform:none;letter-spacing:0">(partners / creators · Advisorstream echo)</span></div>
             <div class="chips">
-              <button type="button" class="chip on" data-group="source" onclick="toggleChip(this,'source')">FTT</button>
-              <button type="button" class="chip" data-group="source" onclick="toggleChip(this,'source')">FECBC</button>
-              <button type="button" class="chip on" data-group="source" onclick="toggleChip(this,'source')">Manulife</button>
-              <button type="button" class="chip" data-group="source" onclick="toggleChip(this,'source')">Sun Life</button>
+              <button type="button" class="chip logo on" data-group="source" onclick="toggleChip(this,'source')"><span class="av ftt">FT</span>FTT</button>
+              <button type="button" class="chip logo" data-group="source" onclick="toggleChip(this,'source')"><span class="av fsb">FS</span>FSB</button>
+              <button type="button" class="chip logo" data-group="source" onclick="toggleChip(this,'source')"><span class="av ppi">PP</span>PPI</button>
+              <button type="button" class="chip logo" data-group="source" onclick="toggleChip(this,'source')"><span class="av gw">Gw</span>Ghostwritten</button>
+              <button type="button" class="chip logo" data-group="source" onclick="toggleChip(this,'source')"><span class="av fecbc">FE</span>FECBC</button>
+            </div>
+            <div class="section-label">Source group · Publishers / carriers <span style="font-weight:500;text-transform:none;letter-spacing:0">(still content Source in the model)</span></div>
+            <div class="chips">
+              <button type="button" class="chip logo on" data-group="source" onclick="toggleChip(this,'source')"><span class="av carrier">M</span>Manulife</button>
+              <button type="button" class="chip logo" data-group="source" onclick="toggleChip(this,'source')"><span class="av carrier">S</span>Sun Life</button>
+              <button type="button" class="chip logo" data-group="source" onclick="toggleChip(this,'source')"><span class="av media">WS</span>WSJ-style</button>
               <button type="button" class="chip" data-group="source" onclick="toggleChip(this,'source')">Other</button>
             </div>
             <div class="section-label">Topic group</div>

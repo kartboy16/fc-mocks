@@ -37,7 +37,15 @@ Until lock:
 - **Post edit:** Source select + category multi-select + **Visibility: Advisor-only** flag (recommended over stuffing into topics)
 - **Non-goals:** Full ontology rewrite (**NG-1**); historical backfill in v1 (**NG-2**, flag follow-up); live publish during playground (**NG-3**); #209 AdvisorSource changes (**NG-4**); #260 My Media (**NG-5**)
 
-Directions B (grouped Master Categories) and C (Source hubs + All-sources escape) remain comparison mocks.
+Directions B (grouped), C (Source hubs), and D (sidebar browse synthesizing Advisorstream + HeyAdvisor) remain comparison mocks.
+
+### Competitor refs + product choice (2026-09-29)
+
+- **Advisorstream:** Sources · Publishers · Topics · Date/Saved → map Sources+Publishers to **Source**; Topics to Master Categories; Date/Saved optional later.
+- **HeyAdvisor Library:** Life Events (radio) · Topics (multi) · Sharing · Type; no Source facet; active chips + Life Event tags on cards. Type/Sharing = optional follow-ups.
+- **Product choice before agent-ready (do not invent a lock):**
+  1. **Recommend v1:** Source + Topic only (Direction A).
+  2. **Optional:** Source + Topic + Life Events if HeyAdvisor-style browse is desired (D explores; not locked).
 
 ## States
 
@@ -70,6 +78,7 @@ Directions B (grouped Master Categories) and C (Source hubs + All-sources escape
 - Changes to Advisor Categories / AdvisorSource (#209)  
 - My Media Library (#260)  
 - Auto-merge to main / marking `agent-ready` from mock work  
+- Locking Life Events / Type / Sharing as v1 without product decision  
 
 ## Desktop vs mobile
 
@@ -96,6 +105,7 @@ Historical posts without Source / topics are **out of v1**. Track a follow-up on
 
 - Hub: https://kartboy16.github.io/fc-mocks/261/  
 - Direction A: https://kartboy16.github.io/fc-mocks/261/directions/a/  
+- Direction D: https://kartboy16.github.io/fc-mocks/261/directions/d/  
 - Directions brief: [directions-brief.md](directions-brief.md)  
 - Issue: https://github.com/kartboy16/content-library/issues/261  
 - Related: #209 (do not confuse) · #240 · #243/#244 · #260 (separate)

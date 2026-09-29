@@ -34,9 +34,25 @@ Do **not** invent locked answers. Surface on hub + every direction.
 
 ---
 
+
+---
+
+## Competitor references (2026-09-29 · Angelina)
+
+| Ref | Pattern | Mapping to #261 |
+|---|---|---|
+| **Advisorstream** | Sidebar: Most Popular · Favorites · **Sources** (partner logos) · **Publishers** (media brands) · **Topics** (long alpha mix) · Date · Saved Searches | Sources + Publishers → our **Source** facet; Topics → Master Categories; Date/Saved = **optional later** |
+| **HeyAdvisor Library** | Filter by: **Life Events** (radio/single) · **Topics** (multi checkboxes) · Sharing Options · Type; active chips + Clear all; Life Event colored tags on cards; **no Source facet** | Life Events = optional third axis; Topics ↔ Master Categories; Type / Sharing = **optional follow-ups** |
+
+### Product choice before agent-ready *(do not invent a lock)*
+
+1. **Recommend for v1:** **Source + Topic only** — Direction A dual-facet. Matches Angelina ask; clearest model.
+2. **Optional:** **Source + Topic + Life Events** if product wants HeyAdvisor-style browse (Life Events radio as third axis). Direction D synthesizes both competitor sidebars for comparison only.
+
+---
 ## Direction A — Dual-facet filters *(recommend)*
 
-**Thesis:** First-class **Source** field (carrier / FTT / FECBC / Other) separate from **Master Categories** (topic/product). Advisor library browse: two independent filter facets (Source chips + Topic chips) — **AND** logic, no combinatorial mega-list. Admin: **Manage Sources** (simple CRUD, mirror Manage Categories density) + keep Manage Categories for topics. Post edit: Source select + category multi-select. Advisor-only / group-benefits = show both options; recommend a **Visibility: Advisor-only** flag separate from topic.
+**Thesis:** First-class **Source** field separate from **Master Categories** (topics). Dual-facet chips AND. Logo/avatar chips can echo Advisorstream Sources without becoming a sidebar. Callout: their Sources · Publishers · Topics map to our two facets so cross-source topic search stays easy; Date/Saved later. Life Events (HeyAdvisor) = open product Q — not required on A. Admin Manage Sources + Manage Categories; Visibility: Advisor-only flag recommended.
 
 **Screens:** Advisor browse (populated) · Filter empty · Post edit (Source + topics + flag) · Manage Sources · Manage Categories · Advisor-only gated/labeled · #209 distinction callout
 
@@ -46,7 +62,7 @@ Do **not** invent locked answers. Surface on hub + every direction.
 
 ## Direction B — Source as Master Category group
 
-**Thesis:** Reuse Master Categories with **grouped namespaces** (Source group vs Topic group) — one admin list with type column, one filter UI with **sectioned chips**. Less new schema; risk of mixing concepts. Filters avoid explosion via sections, not a Source×Topic matrix.
+**Thesis:** Reuse Master Categories with **grouped namespaces**. Echo Advisorstream **Sources vs Publishers** as two sections under Source group (still one content Source concept). Topics section separate. Sectioned chips — not a Source×Topic matrix. Less new schema; risk of mixing concepts.
 
 **Screens:** Same must-haves; admin is one grouped Categories list; filters show Source section + Topic section
 
@@ -56,7 +72,7 @@ Do **not** invent locked answers. Surface on hub + every direction.
 
 ## Direction C — Browse by Source hubs
 
-**Thesis:** Library home shows **Source hubs** (FTT / FECBC / Carriers…) then topic chips **inside** a hub. Admin still has Source + Categories. Strong for “whose content is this?”; weaker for cross-source topic search — include an **“All sources”** + topic filter escape hatch.
+**Thesis:** Library home = **Source hubs** with logo tiles (Advisorstream Sources familiarity). Topic chips inside a hub. **All sources** + topic escape hatch. Browse-first like their sidebar; still weaker cross-source search than A — recommend stays A.
 
 **Screens:** Same must-haves; hub home is the hero; escape hatch for cross-source topic search
 
@@ -64,6 +80,16 @@ Do **not** invent locked answers. Surface on hub + every direction.
 
 ---
 
+
+## Direction D — Sidebar browse *(alt · familiarity)*
+
+**Thesis:** Advisorstream-inspired left rail **plus** HeyAdvisor Life Events (radio) + Topics (multi). **Keeps Source** section (HeyAdvisor has none) so D synthesizes both. Date / Saved / Type / Sharing = muted “Coming later”. Main pane: filtered cards with Life Event colored tags + active-filter chips (AND) so dual-facet isn’t abandoned. Under the hood still Source × Topic (+ optional Life Event).
+
+**Screens:** Browse (sidebar) · Empty filter · Post edit · Manage Sources · #209 callout (thin stubs; don’t rebuild every admin screen)
+
+**Tradeoff:** Highest competitor familiarity. Heavier chrome; Life Events as third axis is an open product choice. **Recommend stays A** for v1 Source+Topic clarity.
+
+---
 ## Before → after (plain words)
 
 | Today | After (any direction, once locked) |
@@ -88,4 +114,4 @@ Do **not** invent locked answers. Surface on hub + every direction.
 
 ## Recommendation
 
-**Ship Direction A as working default** for playground demos until Alex/Angelina lock. Keep B (grouped categories) and C (source hubs) as comparison. Flag backfill as follow-up. Do not confuse with #209 or #260.
+**Ship Direction A as working default** (Source + Topic) until Alex/Angelina lock. Keep B / C / D as comparison — D for Advisorstream + HeyAdvisor sidebar familiarity and the optional Life Events axis. Flag backfill, Type, Sharing, Date/Saved as follow-ups. Do not confuse with #209 or #260. **Not agent-ready.**

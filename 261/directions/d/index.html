@@ -1,0 +1,834 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Direction D — Sidebar browse · #261</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #f4f8fc; --card: #fff; --ink: #1e2a4a; --muted: #5b6572;
+      --blue: #2b7de9; --blue-dark: #1e5bb8; --border: #d4e4f2; --mint: #e6f1fb;
+      --ok: #047857; --ok-bg: #e8f5e9; --warn: #b45309; --warn-bg: #fff8eb; --warn-border: #f0d4a8;
+      --err: #b91c1c; --err-bg: #fef2f2; --err-border: #fecaca;
+      --side: #ffffff; --side-w: 240px;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: Inter, system-ui, sans-serif; background: var(--bg); color: var(--ink); font-size: 13px; line-height: 1.45; }
+    a { color: var(--blue); }
+    .thesis {
+      background: linear-gradient(135deg, #1e2a4a, #2b7de9); color: #fff; padding: 16px 24px;
+    }
+    .thesis .alt {
+      display: inline-block; background: rgba(255,255,255,0.2); color: #fff; font-size: 0.68rem;
+      font-weight: 700; padding: 3px 10px; border-radius: 999px; margin-bottom: 8px;
+    }
+    .thesis h1 { font-size: 1.05rem; margin-bottom: 4px; }
+    .thesis p { opacity: 0.9; font-size: 0.8rem; max-width: 960px; }
+    .nav {
+      padding: 8px 24px; font-size: 0.75rem; background: #fafafa;
+      border-bottom: 1px solid var(--border); display: flex; gap: 12px; flex-wrap: wrap; align-items: center;
+    }
+    .nav a { color: var(--blue); text-decoration: none; font-weight: 500; }
+    .nav .sep { color: #c0c8d4; }
+    .nav .on { font-weight: 700; color: var(--ink); }
+    .steps {
+      display: flex; gap: 6px; flex-wrap: wrap; padding: 10px 24px; background: #fff;
+      border-bottom: 1px solid var(--border); align-items: center;
+    }
+    .step-btn {
+      border: 1px solid var(--border); background: #fff; color: var(--ink);
+      font-family: inherit; font-size: 0.7rem; font-weight: 600; padding: 6px 10px;
+      border-radius: 999px; cursor: pointer;
+    }
+    .step-btn:hover { border-color: var(--blue); color: var(--blue); background: var(--mint); }
+    .step-btn.on { background: var(--blue); color: #fff; border-color: var(--blue); }
+    .oq-bar {
+      margin: 12px 20px 0; padding: 10px 14px; background: var(--warn-bg); border: 1px solid var(--warn-border);
+      border-radius: 10px; font-size: 0.75rem; color: #8a5a10;
+    }
+    .oq-bar strong { color: #6b4408; }
+    .gap-note {
+      margin: 10px 20px 0; padding: 10px 14px; background: #fef2f2; border: 1px solid var(--err-border);
+      border-radius: 10px; font-size: 0.75rem; color: #991b1b;
+    }
+    .ref-strip {
+      margin: 10px 20px 0; padding: 10px 14px; background: #eef4fb;
+      border: 1px solid var(--border); border-radius: 10px; font-size: 0.75rem; color: var(--ink);
+    }
+    .ref-strip strong { color: var(--blue-dark); }
+    .app { display: flex; min-height: calc(100vh - 260px); margin-top: 12px; }
+    .rail {
+      width: 52px; background: #1e2a4a; flex-shrink: 0;
+      display: flex; flex-direction: column; align-items: center; padding: 12px 0; gap: 8px;
+    }
+    .rail .ri {
+      width: 32px; height: 32px; border-radius: 8px; background: rgba(255,255,255,0.08);
+      color: rgba(255,255,255,0.7); font-size: 0.55rem; font-weight: 700;
+      display: flex; align-items: center; justify-content: center; cursor: default;
+    }
+    .rail .ri.on { background: var(--blue); color: #fff; }
+    .main { flex: 1; min-width: 0; display: flex; flex-direction: column; background: var(--bg); }
+    .topbar {
+      display: flex; align-items: center; justify-content: space-between; gap: 12px;
+      padding: 10px 18px; background: #fff; border-bottom: 1px solid var(--border);
+    }
+    .topbar .brand { font-weight: 700; font-size: 0.9rem; }
+    .topbar .who { font-size: 0.75rem; color: var(--muted); }
+    .aud {
+      display: inline-block; font-size: 0.65rem; font-weight: 700; padding: 2px 8px; border-radius: 999px;
+      background: var(--mint); color: var(--blue-dark); margin-left: 8px;
+    }
+    .aud.admin { background: #f3e8ff; color: #6b21a8; }
+    .content { padding: 18px 20px 64px; max-width: 1100px; position: relative; }
+    .screen { display: none; }
+    .screen.on { display: block; }
+    .page-head h2 { font-size: 1.2rem; font-weight: 700; }
+    .page-head .sub { color: var(--muted); font-size: 0.8rem; margin-top: 4px; max-width: 720px; }
+
+    /* Sidebar browse layout */
+    .browse-layout { display: flex; gap: 16px; margin-top: 14px; align-items: flex-start; }
+    .side {
+      width: var(--side-w); flex-shrink: 0; background: var(--side);
+      border: 1px solid var(--border); border-radius: 12px; padding: 10px 0 14px;
+      max-height: calc(100vh - 280px); overflow-y: auto; position: sticky; top: 8px;
+    }
+    .side-item {
+      display: flex; align-items: center; gap: 8px; width: 100%;
+      border: none; background: transparent; font-family: inherit; font-size: 0.78rem;
+      color: var(--ink); padding: 7px 14px; cursor: pointer; text-align: left;
+    }
+    .side-item:hover { background: var(--mint); color: var(--blue-dark); }
+    .side-item.on { color: var(--blue); font-weight: 700; background: #e8f1fc; }
+    .side-item .ico { width: 16px; text-align: center; opacity: 0.7; font-size: 0.75rem; }
+    .side-sec {
+      display: flex; align-items: center; justify-content: space-between;
+      width: 100%; border: none; background: transparent; font-family: inherit;
+      font-size: 0.72rem; font-weight: 700; color: var(--blue); padding: 10px 14px 6px;
+      cursor: pointer; text-align: left; letter-spacing: 0.01em;
+    }
+    .side-sec .chev { font-size: 0.65rem; opacity: 0.8; transition: transform 0.15s; }
+    .side-sec.collapsed .chev { transform: rotate(180deg); }
+    .side-sec.muted { color: #94a3b8; cursor: default; }
+    .side-body { padding: 0 0 4px; }
+    .side-body.collapsed { display: none; }
+    .side-row {
+      display: flex; align-items: center; gap: 8px; width: 100%;
+      border: none; background: transparent; font-family: inherit; font-size: 0.76rem;
+      color: var(--ink); padding: 5px 14px 5px 16px; cursor: pointer; text-align: left;
+    }
+    .side-row:hover { background: var(--mint); }
+    .side-row.on { color: var(--blue); font-weight: 700; background: #e8f1fc; }
+    .side-row.disabled { color: #94a3b8; cursor: not-allowed; opacity: 0.75; }
+    .side-row.disabled:hover { background: transparent; }
+    .av {
+      width: 20px; height: 20px; border-radius: 4px; display: inline-flex;
+      align-items: center; justify-content: center; font-size: 0.52rem; font-weight: 800;
+      color: #fff; flex-shrink: 0; letter-spacing: -0.02em;
+    }
+    .av.ftt { background: #059669; }
+    .av.fsb { background: #b45309; }
+    .av.ppi { background: #7c3aed; }
+    .av.gw { background: #64748b; }
+    .av.fecbc { background: #d97706; }
+    .av.carrier { background: #1e2a4a; }
+    .av.media { background: #0f172a; border-radius: 3px; }
+    .coming {
+      font-size: 0.62rem; font-weight: 700; color: #94a3b8; background: #f1f5f9;
+      padding: 1px 6px; border-radius: 999px; margin-left: auto;
+    }
+    .note-curate {
+      padding: 6px 14px 8px; font-size: 0.65rem; color: var(--muted); line-height: 1.35;
+    }
+    .main-pane { flex: 1; min-width: 0; }
+    .chips { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+    .chip {
+      border: 1px solid var(--border); background: #fff; color: var(--ink);
+      font-family: inherit; font-size: 0.72rem; font-weight: 600; padding: 5px 10px;
+      border-radius: 999px; cursor: pointer;
+    }
+    .chip:hover { border-color: var(--blue); color: var(--blue); background: var(--mint); }
+    .chip.on { background: var(--blue); color: #fff; border-color: var(--blue); }
+    .chip.sec.on { background: #1e2a4a; border-color: #1e2a4a; }
+    .chip.clear { border-style: dashed; color: var(--muted); }
+    .active-bar {
+      display: flex; flex-wrap: wrap; gap: 6px; align-items: center; margin-top: 10px;
+      padding: 8px 10px; background: #fff; border: 1px solid var(--border); border-radius: 10px;
+      font-size: 0.72rem;
+    }
+    .active-bar .lab { color: var(--muted); font-weight: 600; margin-right: 4px; }
+    .pill {
+      display: inline-flex; align-items: center; gap: 4px;
+      background: var(--mint); color: var(--blue-dark); font-weight: 600;
+      padding: 3px 8px; border-radius: 999px; border: 1px solid var(--border);
+    }
+    .pill .x { cursor: pointer; font-weight: 700; opacity: 0.7; }
+    .grid-posts {
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 12px; margin-top: 14px;
+    }
+    .pcard {
+      background: #fff; border: 1px solid var(--border); border-radius: 12px; overflow: hidden;
+      display: flex; flex-direction: column;
+    }
+    .pcard .ph {
+      height: 90px; background: linear-gradient(135deg,#bfdbfe,#60a5fa);
+      display: flex; align-items: flex-end; padding: 8px; gap: 4px; flex-wrap: wrap;
+    }
+    .pcard .ph.alt { background: linear-gradient(135deg,#c4b5fd,#818cf8); }
+    .pcard .ph.ftt { background: linear-gradient(135deg,#6ee7b7,#34d399); }
+    .pcard .ph.fecbc { background: linear-gradient(135deg,#fcd34d,#f59e0b); }
+    .pcard .body { padding: 12px; flex: 1; }
+    .pcard h4 { font-size: 0.85rem; margin-bottom: 4px; }
+    .pcard .meta { font-size: 0.7rem; color: var(--muted); }
+    .badge {
+      display: inline-block; font-size: 0.62rem; font-weight: 700; padding: 2px 7px;
+      border-radius: 999px; background: rgba(255,255,255,0.92); color: var(--ink);
+    }
+    .badge.src { background: #1e2a4a; color: #fff; }
+    .badge.topic { background: var(--mint); color: var(--blue-dark); border: 1px solid var(--border); }
+    .badge.lock { background: #fef3c7; color: #92400e; }
+    .tag-row { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 8px; }
+    .empty {
+      margin-top: 24px; padding: 36px 20px; text-align: center; background: #fff;
+      border: 1px dashed var(--border); border-radius: 12px;
+    }
+    .empty h3 { font-size: 0.95rem; margin-bottom: 6px; }
+    .empty p { color: var(--muted); font-size: 0.8rem; margin-bottom: 14px; }
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+      padding: 9px 14px; border-radius: 8px; font-family: inherit; font-size: 0.8rem;
+      font-weight: 600; cursor: pointer; border: 1px solid transparent; text-decoration: none;
+    }
+    .btn-primary { background: var(--blue); color: #fff; }
+    .btn-primary:hover { filter: brightness(1.05); }
+    .btn-secondary { background: #fff; color: var(--ink); border-color: var(--border); }
+    .btn-secondary:hover { border-color: var(--blue); color: var(--blue); background: var(--mint); }
+    .btn-ghost { background: transparent; color: var(--blue); border: none; }
+    .form-card {
+      margin-top: 14px; background: #fff; border: 1px solid var(--border); border-radius: 12px; padding: 16px 18px;
+      max-width: 640px;
+    }
+    .field { margin-bottom: 14px; }
+    .field label { display: block; font-size: 0.72rem; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.03em; margin-bottom: 6px; }
+    .field input, .field select {
+      width: 100%; border: 1px solid var(--border); border-radius: 8px; padding: 8px 10px;
+      font-family: inherit; font-size: 0.85rem; color: var(--ink); background: #fff;
+    }
+    .msel { display: flex; flex-wrap: wrap; gap: 6px; }
+    .toggle {
+      display: flex; align-items: center; gap: 10px; padding: 10px 12px;
+      background: var(--bg); border: 1px solid var(--border); border-radius: 10px;
+    }
+    .toggle .sw {
+      width: 36px; height: 20px; border-radius: 999px; background: #c0c8d4; position: relative; flex-shrink: 0;
+    }
+    .toggle .sw.on { background: var(--blue); }
+    .toggle .sw::after {
+      content: ""; position: absolute; top: 2px; left: 2px; width: 16px; height: 16px;
+      border-radius: 50%; background: #fff;
+    }
+    .toggle .sw.on::after { left: 18px; }
+    .table-wrap {
+      margin-top: 14px; background: #fff; border: 1px solid var(--border); border-radius: 12px; overflow: hidden;
+    }
+    table.admin { width: 100%; border-collapse: collapse; font-size: 0.8rem; }
+    table.admin th {
+      text-align: left; padding: 10px 12px; background: #eef4fb; color: var(--muted);
+      font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.04em; border-bottom: 1px solid var(--border);
+    }
+    table.admin td { padding: 10px 12px; border-bottom: 1px solid var(--border); vertical-align: middle; }
+    .toolbar { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-top: 14px; flex-wrap: wrap; }
+    .banner {
+      display: flex; gap: 10px; align-items: flex-start; margin-top: 14px; padding: 12px 14px;
+      border-radius: 10px; font-size: 0.78rem;
+    }
+    .banner.warn { background: var(--warn-bg); border: 1px solid var(--warn-border); color: #8a5a10; }
+    .banner.ok { background: var(--ok-bg); border: 1px solid #a7d7b5; color: #065f46; }
+    .banner.err { background: var(--err-bg); border: 1px solid var(--err-border); color: #991b1b; }
+    .banner.info { background: #eef4fb; border: 1px solid var(--border); color: var(--ink); }
+    .locked-card { position: relative; opacity: 0.92; }
+    .locked-card::after {
+      content: "Advisor-only"; position: absolute; top: 8px; right: 8px;
+      background: #fef3c7; color: #92400e; font-size: 0.62rem; font-weight: 700;
+      padding: 2px 7px; border-radius: 999px;
+    }
+    .toast {
+      position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(80px);
+      background: #1e2a4a; color: #fff; padding: 10px 16px; border-radius: 999px;
+      font-size: 0.8rem; font-weight: 600; opacity: 0; transition: all 0.2s; z-index: 50;
+    }
+    .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+    .mobile-note {
+      margin-top: 28px; padding: 10px 12px; background: #eef4fb; border: 1px solid var(--border);
+      border-radius: 8px; font-size: 0.72rem; color: var(--muted);
+    }
+    .model-note {
+      margin-top: 10px; padding: 8px 10px; background: #f8fafc; border: 1px dashed var(--border);
+      border-radius: 8px; font-size: 0.7rem; color: var(--muted);
+    }
+
+    .side-row.radio::before, .side-row.check::before {
+      content: ""; width: 14px; height: 14px; border: 1.5px solid #94a3b8; flex-shrink: 0;
+      background: #fff; margin-right: 2px;
+    }
+    .side-row.radio::before { border-radius: 50%; }
+    .side-row.check::before { border-radius: 3px; }
+    .side-row.radio.on::before {
+      border-color: var(--blue); background: radial-gradient(circle, var(--blue) 45%, #fff 48%);
+    }
+    .side-row.check.on::before {
+      border-color: var(--blue); background: var(--blue);
+      box-shadow: inset 0 0 0 2px #fff;
+    }
+    .badge.le {
+      border: none; color: #1e2a4a; font-weight: 700;
+    }
+    .badge.le-legacy { background: #fce7f3; color: #9d174d; }
+    .badge.le-biz { background: #ffedd5; color: #9a3412; }
+    .badge.le-retire { background: #dcfce7; color: #166534; }
+    .badge.le-invest { background: #ede9fe; color: #5b21b6; }
+    .badge.le-career { background: #ecfccb; color: #3f6212; }
+    .badge.le-aging { background: #ffedd5; color: #c2410c; }
+    .badge.le-family { background: #e0f2fe; color: #075985; }
+    .badge.le-home { background: #fef9c3; color: #854d0e; }
+  </style>
+</head>
+<body>
+  <header class="thesis">
+    <span class="alt">ALT · browse-first familiarity</span>
+    <h1>Direction D — Sidebar browse</h1>
+    <p>Synthesizes <strong>Advisorstream</strong> (Sources · Publishers · Topics) + <strong>HeyAdvisor</strong> (Life Events radio · Topics multi · Type/Sharing later). Source section kept (HeyAdvisor has none). Under the hood: facets + active chips AND. <strong>Recommend stays Direction A</strong> (Source × Topic). Life Events = optional third axis — product choice before agent-ready.</p>
+  </header>
+  <nav class="nav">
+    <a href="../../index.html">← Hub #261</a>
+    <span class="sep">·</span>
+    <a href="../a/index.html">Dir A Dual-facet</a> <span class="sep">·</span> <a href="../b/index.html">Dir B Grouped cats</a> <span class="sep">·</span> <a href="../c/index.html">Dir C Source hubs</a> <span class="sep">·</span> <span class="on">Dir D Sidebar</span>
+    <span class="sep">·</span>
+    <a href="../../build-contract.html">Contract</a>
+    <span class="sep">·</span>
+    <a href="../../directions-brief.md">Brief</a>
+  </nav>
+  <div class="steps">
+    <button type="button" class="step-btn on" data-screen="browse">1 · Browse (sidebar)</button>
+    <button type="button" class="step-btn" data-screen="empty">2 · Empty filter</button>
+    <button type="button" class="step-btn" data-screen="edit">3 · Post edit</button>
+    <button type="button" class="step-btn" data-screen="sources">4 · Manage Sources</button>
+    <button type="button" class="step-btn" data-screen="not209">5 · Not #209 callout</button>
+  </div>
+  <div class="oq-bar">
+    <strong>Open Qs (all directions):</strong> Source list enum vs admin CRUD? · Advisor-only = flag vs category? · Firm admin vs FC admin for Sources? · Backfill historical posts? (follow-up, not v1)
+  </div>
+  <div class="gap-note">
+    <strong>Not Advisor Categories (#209):</strong> #209 = advisor affiliation (AdvisorSource). This playground = <em>content</em> Source + topic/product taxonomy. Do not reopen #209. Separate from #260 My Media.
+  </div>
+  <div class="ref-strip">
+    <strong>Competitor refs (2026-09-29 · Angelina):</strong>
+    <em>Advisorstream</em> — Sources · Publishers · Topics · Date/Saved (later). 
+    <em>HeyAdvisor Library</em> — Life Events (radio/single) · Topics (multi checkboxes) · Sharing Options · Type; active chips + Clear all; Life Event colored tags on cards; <strong>no Source facet</strong>.
+    Direction D keeps <strong>Source</strong> (Advisorstream) <em>and</em> shows Life Events + Topics (HeyAdvisor) so product can compare. Type / Sharing muted “later”. Dual-facet chips stay.
+  </div>
+
+  <div class="app">
+    <aside class="rail" aria-hidden="true">
+      <div class="ri">FC</div>
+      <div class="ri on" id="railLib">LIB</div>
+      <div class="ri">POST</div>
+      <div class="ri">ADM</div>
+      <div class="ri">SET</div>
+    </aside>
+    <div class="main">
+      <div class="topbar">
+        <div class="brand">FinancialContent <span class="who" id="whoLabel">Audience: Advisor · sidebar browse</span></div>
+        <div class="who">Idea / playground · #261 · Dir D</div>
+      </div>
+      <div class="content">
+
+        <div class="screen on" id="s-browse">
+          <div class="page-head">
+            <h2>Content library <span class="aud">Advisor</span></h2>
+            <p class="sub">Left rail synthesizes both competitors. <strong>Source</strong> (Advisorstream) + <strong>Life Events</strong> radio (HeyAdvisor) + <strong>Topics</strong> multi. Active chips reflect selections (AND). Type / Sharing / Date muted later. Recommend remains A (Source×Topic) unless product wants Life Events as a third axis.</p>
+          </div>
+
+          <div class="browse-layout">
+            <aside class="side" aria-label="Browse sidebar">
+              <button type="button" class="side-item" onclick="pickQuick(this,'popular')">
+                <span class="ico">⚡</span> Most Popular
+              </button>
+              <button type="button" class="side-item" onclick="pickQuick(this,'favorites')">
+                <span class="ico">☆</span> Favorites
+              </button>
+
+              <button type="button" class="side-sec" data-sec="sources" onclick="toggleSec(this)">
+                Sources <span class="chev">▴</span>
+              </button>
+              <div class="side-body" id="sec-sources">
+                <button type="button" class="side-row on" data-kind="source" data-val="FTT" onclick="pickSide(this)">
+                  <span class="av ftt">FT</span> FTT
+                </button>
+                <button type="button" class="side-row" data-kind="source" data-val="FSB" onclick="pickSide(this)">
+                  <span class="av fsb">FS</span> FSB
+                </button>
+                <button type="button" class="side-row" data-kind="source" data-val="PPI" onclick="pickSide(this)">
+                  <span class="av ppi">PP</span> PPI
+                </button>
+                <button type="button" class="side-row" data-kind="source" data-val="Ghostwritten" onclick="pickSide(this)">
+                  <span class="av gw">Gw</span> Ghostwritten
+                </button>
+                <button type="button" class="side-row" data-kind="source" data-val="FECBC" onclick="pickSide(this)">
+                  <span class="av fecbc">FE</span> FECBC
+                </button>
+                <button type="button" class="side-row" data-kind="source" data-val="Carriers" onclick="pickSide(this)">
+                  <span class="av carrier">+</span> Carrier partners…
+                </button>
+              </div>
+
+              <button type="button" class="side-sec" data-sec="pubs" onclick="toggleSec(this)">
+                Publishers <span class="chev">▴</span>
+              </button>
+              <div class="side-body" id="sec-pubs">
+                <div class="note-curate">Shown for Advisorstream familiarity — both map to content <strong>Source</strong> in the model.</div>
+                <button type="button" class="side-row" data-kind="source" data-val="Barron's" onclick="pickSide(this)">
+                  <span class="av media">B</span> Barron’s
+                </button>
+                <button type="button" class="side-row" data-kind="source" data-val="Bloomberg" onclick="pickSide(this)">
+                  <span class="av media">Bl</span> Bloomberg
+                </button>
+                <button type="button" class="side-row" data-kind="source" data-val="Globe" onclick="pickSide(this)">
+                  <span class="av media">GM</span> Globe and Mail
+                </button>
+                <button type="button" class="side-row" data-kind="source" data-val="WSJ" onclick="pickSide(this)">
+                  <span class="av media">WS</span> Wall Street Journal
+                </button>
+              </div>
+
+              <button type="button" class="side-sec" data-sec="life" onclick="toggleSec(this)">
+                Life Events <span class="chev">▴</span>
+              </button>
+              <div class="side-body" id="sec-life">
+                <div class="note-curate">HeyAdvisor pattern — <strong>radio / single-select</strong>. Optional third axis (open product Q). Not in Advisorstream.</div>
+                <button type="button" class="side-row radio" data-kind="life" data-val="Aging Parents" onclick="pickLife(this)">Aging Parents</button>
+                <button type="button" class="side-row radio" data-kind="life" data-val="Buying a Home" onclick="pickLife(this)">Buying a Home</button>
+                <button type="button" class="side-row radio" data-kind="life" data-val="Divorce" onclick="pickLife(this)">Divorce</button>
+                <button type="button" class="side-row radio" data-kind="life" data-val="Having a Baby" onclick="pickLife(this)">Having a Baby</button>
+                <button type="button" class="side-row radio" data-kind="life" data-val="Leaving a Legacy" onclick="pickLife(this)">Leaving a Legacy</button>
+                <button type="button" class="side-row radio" data-kind="life" data-val="Managing Your Career" onclick="pickLife(this)">Managing Your Career</button>
+                <button type="button" class="side-row radio" data-kind="life" data-val="Starting to Invest" onclick="pickLife(this)">Starting to Invest</button>
+                <button type="button" class="side-row radio" data-kind="life" data-val="Owning a Business" onclick="pickLife(this)">Owning a Business</button>
+                <button type="button" class="side-row radio on" data-kind="life" data-val="Planning for Retirement" onclick="pickLife(this)">Planning for Retirement</button>
+                <button type="button" class="side-row radio" data-kind="life" data-val="Raising a Family" onclick="pickLife(this)">Raising a Family</button>
+                <button type="button" class="side-row radio" data-kind="life" data-val="Getting Married" onclick="pickLife(this)">Getting Married</button>
+              </div>
+
+              <button type="button" class="side-sec" data-sec="topics" onclick="toggleSec(this)">
+                Topics <span class="chev">▴</span>
+              </button>
+              <div class="side-body" id="sec-topics">
+                <div class="note-curate">HeyAdvisor = multi checkboxes; Advisorstream = flat list. We use <strong>multi</strong> → Master Categories. Curated FC subset.</div>
+                <button type="button" class="side-row check on" data-kind="topic" data-val="Estate Planning" onclick="pickTopic(this)">Estate Planning</button>
+                <button type="button" class="side-row check" data-kind="topic" data-val="Group Benefits" onclick="pickTopic(this)">Group Benefits</button>
+                <button type="button" class="side-row check on" data-kind="topic" data-val="Insurance" onclick="pickTopic(this)">Insurance</button>
+                <button type="button" class="side-row check" data-kind="topic" data-val="Investing" onclick="pickTopic(this)">Investing</button>
+                <button type="button" class="side-row check" data-kind="topic" data-val="Tax Planning" onclick="pickTopic(this)">Tax Planning</button>
+                <button type="button" class="side-row check" data-kind="topic" data-val="Business Planning" onclick="pickTopic(this)">Business Planning</button>
+                <button type="button" class="side-row check" data-kind="topic" data-val="Personal Finance" onclick="pickTopic(this)">Personal Finance</button>
+                <button type="button" class="side-row check" data-kind="topic" data-val="Family" onclick="pickTopic(this)">Family</button>
+                <button type="button" class="side-row check" data-kind="topic" data-val="Retirement" onclick="pickTopic(this)">Retirement</button>
+                <button type="button" class="side-row check" data-kind="topic" data-val="RRSP" onclick="pickTopic(this)">RRSP</button>
+                <button type="button" class="side-row check" data-kind="topic" data-val="TFSA" onclick="pickTopic(this)">TFSA</button>
+              </div>
+
+              <button type="button" class="side-sec muted collapsed" data-sec="type" onclick="toggleSec(this)">
+                Type <span class="coming">Coming later</span> <span class="chev">▴</span>
+              </button>
+              <div class="side-body collapsed" id="sec-type">
+                <div class="note-curate">HeyAdvisor Type (Explainer Video · Infographic · Quick Insight) — optional follow-up, not v1.</div>
+                <button type="button" class="side-row disabled" disabled>Explainer Video</button>
+                <button type="button" class="side-row disabled" disabled>Full-Sized Infographic</button>
+                <button type="button" class="side-row disabled" disabled>Quick Insight</button>
+              </div>
+
+              <button type="button" class="side-sec muted collapsed" data-sec="sharing" onclick="toggleSec(this)">
+                Sharing Options <span class="coming">Coming later</span> <span class="chev">▴</span>
+              </button>
+              <div class="side-body collapsed" id="sec-sharing">
+                <div class="note-curate">HeyAdvisor Sharing (Share Link · Download · Embed) — optional follow-up, not v1.</div>
+                <button type="button" class="side-row disabled" disabled>Share Link</button>
+                <button type="button" class="side-row disabled" disabled>Download</button>
+                <button type="button" class="side-row disabled" disabled>Embed</button>
+              </div>
+
+              <button type="button" class="side-sec muted" data-sec="date" onclick="toggleSec(this)">
+                Date <span class="coming">Coming later</span> <span class="chev">▴</span>
+              </button>
+              <div class="side-body" id="sec-date">
+                <div class="note-curate">Advisorstream Date — optional later.</div>
+                <button type="button" class="side-row disabled" disabled>Past Month</button>
+                <button type="button" class="side-row disabled" disabled>Past Six Months</button>
+                <button type="button" class="side-row disabled" disabled>Past Year</button>
+                <button type="button" class="side-row disabled" disabled>Past Five Years</button>
+              </div>
+
+              <button type="button" class="side-sec muted collapsed" data-sec="saved" onclick="toggleSec(this)">
+                Saved Searches <span class="coming">Coming later</span> <span class="chev">▴</span>
+              </button>
+              <div class="side-body collapsed" id="sec-saved">
+                <div class="note-curate">Advisorstream Saved Searches — stub, optional later.</div>
+              </div>
+            </aside>
+
+            <div class="main-pane">
+              <div class="active-bar" id="activeBar">
+                <span class="lab">Active filters:</span>
+                <span class="pill">Source: FTT <span class="x">×</span></span>
+                <span class="pill">Life Event: Planning for Retirement <span class="x">×</span></span>
+                <span class="pill">Topic: Estate Planning <span class="x">×</span></span>
+                <span class="pill">Topic: Insurance <span class="x">×</span></span>
+                <button type="button" class="chip clear" onclick="clearAll()">Clear all</button>
+              </div>
+              <div class="chips" style="margin-top:10px">
+                <span style="font-size:0.68rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:0.04em;margin-right:4px">Facets under the hood:</span>
+                <button type="button" class="chip on" id="chip-src">Source: FTT</button>
+                <button type="button" class="chip on" id="chip-life">Life: Planning for Retirement</button>
+                <button type="button" class="chip sec on" id="chip-topic">Topics: 2</button>
+              </div>
+
+              <div class="grid-posts" id="postGrid">
+                <article class="pcard" data-src="FTT" data-life="Planning for Retirement" data-topics="Insurance,Investing">
+                  <div class="ph ftt"><span class="badge src">FTT</span></div>
+                  <div class="body">
+                    <h4>Market update: Q3 outlook</h4>
+                    <div class="meta">Financial Tech Tools · Updated Sep 12</div>
+                    <div class="tag-row">
+                      <span class="badge le le-retire">Planning for Retirement</span>
+                      <span class="badge topic">Investing</span>
+                      <span class="badge topic">Insurance</span>
+                    </div>
+                  </div>
+                </article>
+                <article class="pcard" data-src="FTT" data-life="Planning for Retirement" data-topics="Estate Planning,Insurance">
+                  <div class="ph ftt"><span class="badge src">FTT</span></div>
+                  <div class="body">
+                    <h4>Retirement income strategies</h4>
+                    <div class="meta">Financial Tech Tools</div>
+                    <div class="tag-row">
+                      <span class="badge le le-retire">Planning for Retirement</span>
+                      <span class="badge topic">Estate Planning</span>
+                    </div>
+                  </div>
+                </article>
+                <article class="pcard" data-src="Carriers" data-life="Owning a Business" data-topics="Group Benefits">
+                  <div class="ph"><span class="badge src">Manulife</span></div>
+                  <div class="body">
+                    <h4>Group benefits enrollment tips</h4>
+                    <div class="meta">Carrier · Manulife</div>
+                    <div class="tag-row">
+                      <span class="badge le le-biz">Owning a Business</span>
+                      <span class="badge topic">Group Benefits</span>
+                    </div>
+                  </div>
+                </article>
+                <article class="pcard" data-src="PPI" data-life="Leaving a Legacy" data-topics="Estate Planning,Insurance">
+                  <div class="ph"><span class="badge src">PPI</span></div>
+                  <div class="body">
+                    <h4>Inter vivos trusts explainer</h4>
+                    <div class="meta">PPI partner</div>
+                    <div class="tag-row">
+                      <span class="badge le le-legacy">Leaving a Legacy</span>
+                      <span class="badge topic">Estate Planning</span>
+                    </div>
+                  </div>
+                </article>
+                <article class="pcard locked-card" data-src="Carriers" data-life="Managing Your Career" data-topics="Insurance">
+                  <div class="ph alt"><span class="badge src">Sun Life</span></div>
+                  <div class="body">
+                    <h4>Advisor-only sell sheet: Disability</h4>
+                    <div class="meta">Carrier · Sun Life</div>
+                    <div class="tag-row">
+                      <span class="badge le le-career">Managing Your Career</span>
+                      <span class="badge topic">Insurance</span>
+                      <span class="badge lock">Advisor-only</span>
+                    </div>
+                  </div>
+                </article>
+                <article class="pcard" data-src="FECBC" data-life="Aging Parents" data-topics="Estate Planning">
+                  <div class="ph fecbc"><span class="badge src">FECBC</span></div>
+                  <div class="body">
+                    <h4>Aging parents: conversation starters</h4>
+                    <div class="meta">FECBC</div>
+                    <div class="tag-row">
+                      <span class="badge le le-aging">Aging Parents</span>
+                      <span class="badge topic">Estate Planning</span>
+                    </div>
+                  </div>
+                </article>
+              </div>
+
+              <div class="banner ok">
+                <div><strong>Model:</strong> Sidebar is browse chrome. Sources + Publishers → <strong>Source</strong>; Topics (multi) → Master Categories; Life Events (radio) → optional third axis (HeyAdvisor). Active chips keep AND visible. Type / Sharing / Date = later.</div>
+              </div>
+              <div class="banner warn">
+                <div><strong>Product choice (open):</strong> v1 axes = <em>Source + Topic only</em> (recommend, Direction A) vs <em>Source + Topic + Life Events</em> if HeyAdvisor-style browse wins. Do not invent a lock. Pick D chrome only if browse-first familiarity matters; recommend stays A.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="screen" id="s-empty">
+          <div class="page-head">
+            <h2>Content library <span class="aud">Advisor</span></h2>
+            <p class="sub">Empty filter — sidebar selection + dual-facet chips with no matches.</p>
+          </div>
+          <div class="active-bar">
+            <span class="lab">Active:</span>
+            <span class="pill">Source: FECBC</span>
+            <span class="pill">Topic: Disability</span>
+            <button type="button" class="chip clear" onclick="clearAll();showScreen('browse')">Clear all</button>
+          </div>
+          <div class="empty">
+            <h3>No content matches these filters</h3>
+            <p>Clear a sidebar selection, or switch to Direction A dual-facet chips for broader cross-source search.</p>
+            <button type="button" class="btn btn-primary" onclick="clearAll();showScreen('browse')">Clear filters</button>
+            <a class="btn btn-secondary" style="margin-left:8px" href="../a/index.html">Open Direction A</a>
+          </div>
+        </div>
+
+        <div class="screen" id="s-edit">
+          <div class="page-head">
+            <h2>Edit content <span class="aud admin">Admin</span></h2>
+            <p class="sub">Same as A — Source (single) + topics (multi) + Visibility: Advisor-only. Sidebar is advisor browse only; admin labeling unchanged.</p>
+          </div>
+          <div class="form-card">
+            <div class="field">
+              <label>Title</label>
+              <input value="Advisor-only sell sheet: Disability" />
+            </div>
+            <div class="field">
+              <label>Source <span style="font-weight:500;text-transform:none;letter-spacing:0">(single · Sources or Publishers in browse)</span></label>
+              <select>
+                <option>Select source…</option>
+                <option>Financial Tech Tools (FTT)</option>
+                <option>FSB</option>
+                <option>PPI</option>
+                <option>Ghostwritten</option>
+                <option selected>Sun Life (carrier)</option>
+                <option>Manulife (carrier)</option>
+                <option>FECBC</option>
+                <option>Other / media brand</option>
+              </select>
+            </div>
+            <div class="field">
+              <label>Topics / products</label>
+              <div class="msel">
+                <button type="button" class="chip on" onclick="this.classList.toggle('on')">Disability</button>
+                <button type="button" class="chip" onclick="this.classList.toggle('on')">Group benefits</button>
+                <button type="button" class="chip" onclick="this.classList.toggle('on')">Retirement</button>
+                <button type="button" class="chip" onclick="this.classList.toggle('on')">Life insurance</button>
+                <button type="button" class="chip" onclick="this.classList.toggle('on')">RRSP</button>
+              </div>
+            </div>
+            <div class="field">
+              <label>Visibility</label>
+              <div class="toggle" onclick="this.querySelector('.sw').classList.toggle('on');showToast('Visibility toggled (stub)')">
+                <div class="sw on"></div>
+                <div>
+                  <strong>Advisor-only</strong><br/>
+                  <span style="color:var(--muted);font-size:0.75rem">Hide from client-facing surfaces.</span>
+                </div>
+              </div>
+            </div>
+            <button type="button" class="btn btn-primary" onclick="showToast('Saved (stub)')">Save</button>
+          </div>
+          <div class="model-note">Thin stub — reuses Direction A post-edit pattern. Full admin screens not rebuilt from scratch for D.</div>
+        </div>
+
+        <div class="screen" id="s-sources">
+          <div class="page-head">
+            <h2>Manage Sources <span class="aud admin">Admin</span></h2>
+            <p class="sub">CRUD for content Sources. Subgroup (Sources vs Publishers) optional for browse chrome — both are content Source in the model.</p>
+          </div>
+          <div class="toolbar">
+            <button type="button" class="btn btn-primary" onclick="showToast('Add Source stub')">+ Add Source</button>
+            <span style="font-size:0.75rem;color:var(--muted)">Density mirrors Manage Categories</span>
+          </div>
+          <div class="table-wrap">
+            <table class="admin">
+              <thead><tr><th>Source</th><th>Browse group</th><th>Posts</th><th>Status</th><th></th></tr></thead>
+              <tbody>
+                <tr><td><strong>FTT</strong></td><td>Sources</td><td>128</td><td>Active</td><td><button class="btn btn-ghost">Edit</button></td></tr>
+                <tr><td><strong>FSB</strong></td><td>Sources</td><td>48</td><td>Active</td><td><button class="btn btn-ghost">Edit</button></td></tr>
+                <tr><td><strong>PPI</strong></td><td>Sources</td><td>36</td><td>Active</td><td><button class="btn btn-ghost">Edit</button></td></tr>
+                <tr><td><strong>Ghostwritten</strong></td><td>Sources</td><td>22</td><td>Active</td><td><button class="btn btn-ghost">Edit</button></td></tr>
+                <tr><td><strong>Manulife</strong></td><td>Sources · carrier</td><td>42</td><td>Active</td><td><button class="btn btn-ghost">Edit</button></td></tr>
+                <tr><td><strong>Bloomberg</strong></td><td>Publishers</td><td>14</td><td>Active</td><td><button class="btn btn-ghost">Edit</button></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="screen" id="s-not209">
+          <div class="page-head">
+            <h2>Not #209 <span class="aud">All</span></h2>
+            <p class="sub">Same distinction as other directions.</p>
+          </div>
+          <div class="banner err">
+            <div>
+              <strong>#209 Manage Advisor Categories / AdvisorSource (closed)</strong><br/>
+              About <em>advisor affiliation</em>.<br/><br/>
+              <strong>#261 (this playground)</strong><br/>
+              About <em>content</em> Source + topic. Direction D only changes browse chrome (sidebar) — not #209.
+            </div>
+          </div>
+          <div style="margin-top:14px;display:flex;gap:8px;flex-wrap:wrap">
+            <button type="button" class="btn btn-primary" onclick="showScreen('browse')">Back to browse</button>
+            <a class="btn btn-secondary" href="../../index.html">Hub #261</a>
+            <a class="btn btn-secondary" href="../a/index.html">Direction A (recommend)</a>
+          </div>
+        </div>
+
+        <p class="mobile-note"><strong>Mobile (brief):</strong> Sidebar likely becomes a drawer / bottom sheet. Dual-facet chips remain. Full mobile polish TBD after direction lock.</p>
+      </div>
+    </div>
+  </div>
+  <div class="toast" id="toast"></div>
+  <script>
+    const KEY = 'fc261-d-screen';
+    const WHO = {
+      browse: 'Audience: Advisor · sidebar browse',
+      empty: 'Audience: Advisor · empty filter',
+      edit: 'Audience: Admin · content / post edit',
+      sources: 'Audience: Admin · Manage Sources',
+      not209: 'Audience: All · distinction callout'
+    };
+    let state = { source: 'FTT', life: 'Planning for Retirement', topics: ['Estate Planning', 'Insurance'] };
+
+    function showToast(msg) {
+      const t = document.getElementById('toast');
+      t.textContent = msg; t.classList.add('show');
+      clearTimeout(window._tt); window._tt = setTimeout(() => t.classList.remove('show'), 2200);
+    }
+    function showScreen(id) {
+      document.querySelectorAll('.screen').forEach(s => s.classList.toggle('on', s.id === 's-' + id));
+      document.querySelectorAll('.step-btn').forEach(b => b.classList.toggle('on', b.dataset.screen === id));
+      const who = document.getElementById('whoLabel');
+      if (who) who.textContent = WHO[id] || '';
+      const rail = document.getElementById('railLib');
+      if (rail) {
+        document.querySelectorAll('.rail .ri').forEach(r => r.classList.remove('on'));
+        if (['sources','edit'].includes(id)) document.querySelectorAll('.rail .ri')[3].classList.add('on');
+        else rail.classList.add('on');
+      }
+      try { localStorage.setItem(KEY, id); } catch(e) {}
+    }
+    document.querySelectorAll('.step-btn').forEach(b => b.addEventListener('click', () => showScreen(b.dataset.screen)));
+
+    function toggleSec(btn) {
+      const id = 'sec-' + btn.dataset.sec;
+      const body = document.getElementById(id);
+      if (!body) return;
+      btn.classList.toggle('collapsed');
+      body.classList.toggle('collapsed');
+    }
+
+    function renderActive() {
+      const bar = document.getElementById('activeBar');
+      if (!bar) return;
+      let pills = '<span class="lab">Active filters:</span>';
+      if (state.source) pills += '<span class="pill">Source: ' + state.source + ' <span class="x" onclick="clearKind(\'source\')">×</span></span>';
+      if (state.life) pills += '<span class="pill">Life Event: ' + state.life + ' <span class="x" onclick="clearKind(\'life\')">×</span></span>';
+      (state.topics || []).forEach(t => {
+        pills += '<span class="pill">Topic: ' + t + ' <span class="x" onclick="clearTopic(\'' + t.replace(/'/g, "\\'") + '\')">×</span></span>';
+      });
+      pills += '<button type="button" class="chip clear" onclick="clearAll()">Clear all</button>';
+      bar.innerHTML = pills;
+      const cs = document.getElementById('chip-src');
+      const cl = document.getElementById('chip-life');
+      const ct = document.getElementById('chip-topic');
+      if (cs) { cs.textContent = state.source ? ('Source: ' + state.source) : 'Source: any'; cs.classList.toggle('on', !!state.source); }
+      if (cl) { cl.textContent = state.life ? ('Life: ' + state.life) : 'Life: any'; cl.classList.toggle('on', !!state.life); }
+      if (ct) {
+        const n = (state.topics || []).length;
+        ct.textContent = n ? ('Topics: ' + n) : 'Topics: any';
+        ct.classList.toggle('on', n > 0);
+      }
+      filterCards();
+    }
+
+    function filterCards() {
+      document.querySelectorAll('#postGrid .pcard').forEach(c => {
+        const badgeSrc = (c.querySelector('.badge.src') || {}).textContent || '';
+        const srcMatch = !state.source || c.dataset.src === state.source || badgeSrc === state.source ||
+          (state.source === 'Carriers' && ['Manulife','Sun Life','Carriers'].includes(badgeSrc || c.dataset.src));
+        const lifeMatch = !state.life || c.dataset.life === state.life;
+        const cardTopics = (c.dataset.topics || '').split(',').map(s => s.trim()).filter(Boolean);
+        const topicMatch = !(state.topics || []).length || state.topics.some(t => cardTopics.includes(t));
+        const show = srcMatch && lifeMatch && topicMatch;
+        c.style.display = show ? '' : 'none';
+      });
+    }
+
+    function pickSide(el) {
+      const kind = el.dataset.kind;
+      const val = el.dataset.val;
+      if (kind === 'topic') { pickTopic(el); return; }
+      if (kind === 'life') { pickLife(el); return; }
+      document.querySelectorAll('.side-row[data-kind="source"]').forEach(r => r.classList.remove('on'));
+      el.classList.add('on');
+      document.querySelectorAll('.side-item').forEach(i => i.classList.remove('on'));
+      state.source = val;
+      renderActive();
+      showToast('Source = ' + val + ' (AND)');
+    }
+    function pickLife(el) {
+      document.querySelectorAll('.side-row[data-kind="life"]').forEach(r => r.classList.remove('on'));
+      el.classList.add('on');
+      state.life = el.dataset.val;
+      renderActive();
+      showToast('Life Event = ' + state.life + ' (single-select)');
+    }
+    function pickTopic(el) {
+      el.classList.toggle('on');
+      state.topics = [...document.querySelectorAll('.side-row[data-kind="topic"].on')].map(r => r.dataset.val);
+      renderActive();
+      showToast('Topics updated (multi · AND with other facets)');
+    }
+    function pickQuick(el, which) {
+      document.querySelectorAll('.side-item').forEach(i => i.classList.remove('on'));
+      el.classList.add('on');
+      showToast(which === 'popular' ? 'Most Popular (stub)' : 'Favorites (stub)');
+    }
+    function clearKind(kind) {
+      if (kind === 'topics' || kind === 'topic') {
+        state.topics = [];
+        document.querySelectorAll('.side-row[data-kind="topic"]').forEach(r => r.classList.remove('on'));
+      } else {
+        state[kind] = null;
+        document.querySelectorAll('.side-row[data-kind="'+kind+'"]').forEach(r => r.classList.remove('on'));
+      }
+      renderActive();
+      showToast('Cleared ' + kind);
+    }
+    function clearTopic(t) {
+      state.topics = (state.topics || []).filter(x => x !== t);
+      document.querySelectorAll('.side-row[data-kind="topic"]').forEach(r => {
+        if (r.dataset.val === t) r.classList.remove('on');
+      });
+      renderActive();
+    }
+    function clearAll() {
+      state = { source: null, life: null, topics: [] };
+      document.querySelectorAll('.side-row').forEach(r => r.classList.remove('on'));
+      document.querySelectorAll('.side-item').forEach(i => i.classList.remove('on'));
+      renderActive();
+      showToast('All filters cleared');
+    }
+
+    (function init() {
+      let start = 'browse';
+      try { start = localStorage.getItem(KEY) || 'browse'; } catch(e) {}
+      if (![...document.querySelectorAll('.step-btn')].some(b => b.dataset.screen === start)) start = 'browse';
+      showScreen(start);
+      renderActive();
+    })();
+  </script>
+</body>
+</html>
