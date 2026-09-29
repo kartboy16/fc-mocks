@@ -21,22 +21,22 @@
 </head>
 <body>
   <p class="warn"><strong>PROVISIONAL</strong> — Recommend Direction A. Not locked. Do <strong>not</strong> mark agent-ready until Alex/Angelina pick a direction and attach the Pages mock URL.</p>
-  <p class="ok"><strong>Recommend:</strong> Direction A — Named footers library + picker (Settings list + compose dropdown).</p>
-  <p class="rule"><strong>AC-5 stance:</strong> Snapshot footer HTML at send/schedule so past campaigns keep the footer they used. Ownership (firm vs advisor) left open.</p>
+  <p class="ok"><strong>Recommend:</strong> Direction A — Named footers library + picker (Headers &amp; Footers list + Create New Campaign Footer preview dropdown).</p>
+  <p class="rule"><strong>AC-5 stance:</strong> Snapshot footer HTML at send/schedule so past campaigns / compliance PDFs keep the footer they used. Ownership (firm vs advisor) left open. CASL address + unsubscribe stay under Mailing &amp; compliance.</p>
 
   <h1>Build contract · Multi email footers (#279)</h1>
   <p>Markdown: <a href="build-contract.md">build-contract.md</a> · Hub: <a href="index.html">index.html</a> · Mock: <a href="directions/a/">Direction A</a></p>
 
   <h2>One-liner</h2>
-  <p>Let advisors/firms save <strong>two or more named email footers</strong> and <strong>choose which one</strong> when composing or scheduling an email newsletter. Migrate the legacy single footer to a named Default. Snapshot footer HTML at send so past campaigns stay intact when a footer is later edited or deleted.</p>
+  <p>Let advisors/firms save <strong>two or more named email footers</strong> under <strong>Headers &amp; Footers</strong> and <strong>choose which one</strong> on <strong>Create New Campaign</strong> (dropdown above existing Footer preview + Edit). Migrate the legacy single footer to a named Default. Snapshot footer HTML at send so past campaigns / compliance PDFs stay intact. CASL mailing address + unsubscribe remain under Mailing &amp; compliance.</p>
 
   <h2>Recommended UI (Direction A)</h2>
   <ul>
-    <li><strong>Settings → Email footers:</strong> list of named footers; Default badge; Edit / Set default / Delete; Add footer.</li>
-    <li><strong>Edit footer:</strong> name + HTML/body (same editor model as today’s single footer).</li>
-    <li><strong>Newsletter compose / schedule:</strong> Email footer dropdown (Default pre-selected); live preview strip shows chosen footer.</li>
+    <li><strong>Email Marketing → Settings → Headers &amp; Footers → Footers:</strong> named list; Default badge; Edit / Set default / Delete; Add footer. (Header unchanged.)</li>
+    <li><strong>Edit footer:</strong> name + Simple/Advanced body (same rich HTML editor; Import from legacy editor).</li>
+    <li><strong>Create New Campaign:</strong> named-footer dropdown above existing Footer preview + Edit (Default pre-selected).</li>
     <li><strong>Legacy migrate callout:</strong> “Your existing footer is now called Standard (default).”</li>
-    <li><strong>Delete confirm:</strong> Past newsletters keep the footer they already sent; new newsletters won’t offer this footer.</li>
+    <li><strong>Delete confirm:</strong> Past campaigns keep the footer they already sent; new campaigns won’t offer this footer.</li>
   </ul>
 
   <h2>Acceptance criteria</h2>
@@ -64,9 +64,9 @@
   <table>
     <thead><tr><th>Screen</th><th>Purpose</th></tr></thead>
     <tbody>
-      <tr><td>Manage footers</td><td>AC-1 list + Default + actions</td></tr>
-      <tr><td>Edit footer</td><td>Name + content editor</td></tr>
-      <tr><td>Newsletter compose</td><td>AC-3 picker + AC-4 preview / approval note</td></tr>
+      <tr><td>Headers &amp; Footers (Footers list)</td><td>AC-1 list + Default + actions</td></tr>
+      <tr><td>Edit footer</td><td>Name + Simple/Advanced editor</td></tr>
+      <tr><td>Create New Campaign</td><td>AC-3 picker above Footer preview + Edit; AC-4 approval note</td></tr>
       <tr><td>Legacy migrate callout</td><td>AC-2 first-visit</td></tr>
       <tr><td>Delete confirm</td><td>AC-5 safe delete copy</td></tr>
     </tbody>
@@ -74,7 +74,7 @@
 
   <h2>In scope</h2>
   <ul>
-    <li>Multi named email footers + picker on email newsletter compose/schedule</li>
+    <li>Multi named email footers under Headers &amp; Footers + picker on Create New Campaign (Footer preview)</li>
     <li>Legacy migrate to Default</li>
     <li>Snapshot-at-send (recommended) for past-campaign safety</li>
     <li>Delete/rename/edit non-default with confirm</li>
@@ -83,7 +83,7 @@
   <h2>Out of scope</h2>
   <ul>
     <li>Per-recipient dynamic footers</li>
-    <li>Redesigning the entire email composer</li>
+    <li>Redesigning the entire Create New Campaign composer / Headers section</li>
     <li>Social or website footers</li>
   </ul>
 
@@ -100,6 +100,9 @@
     <li><strong>B — Inline on compose:</strong> Save/manage from compose; weaker firm governance.</li>
     <li><strong>C — Default + override only:</strong> Minimal UI; weaker when footers need equal weight.</li>
   </ul>
+
+  <h2>Scout path (live app · 2026-09-29)</h2>
+  <p>Settings &amp; Branding → Mailing &amp; compliance → Open Email Campaign settings → Email Marketing → Settings → Headers &amp; Footers. Compose: Email Campaigns → Create New Campaign → Footer preview + Edit. Compliance PDF = same HTML as sent (header, body, footer).</p>
 
   <h2>Reference</h2>
   <p><a href="index.html">Hub</a> · <a href="directions/a/">Direction A</a> · <a href="directions/b/">B</a> · <a href="directions/c/">C</a> · <a href="https://github.com/kartboy16/content-library/issues/279">Issue #279</a> · Reporter: Alana Read</p>

@@ -187,7 +187,7 @@
   <header class="thesis">
     <span class="rec">RECOMMEND · Direction A</span>
     <h1>Named footers library + picker</h1>
-    <p>Settings holds a list of named footers (like email signatures). Newsletter compose has a simple “Email footer” dropdown with a preview snippet. Default is marked. Covers AC-1–5 including legacy migrate and delete-safe past sends.</p>
+    <p>Today’s single footer lives under <strong>Email Marketing → Settings → Headers &amp; Footers</strong> (reached via Settings &amp; Branding → Mailing &amp; compliance → Open Email Campaign settings). This direction turns Footers into a <strong>named list</strong> and adds a picker on <strong>Create New Campaign</strong> above the existing <strong>Footer preview</strong> + Edit. Covers AC-1–5.</p>
   </header>
   <nav class="nav">
     <a href="../../index.html">← #279 hub</a>
@@ -211,32 +211,36 @@
     <div class="main">
       <div class="demo-bar">
         <span class="lbl">Demo steps</span>
-        <button type="button" class="demo-btn on" data-step="manage">1 · Manage footers</button>
+        <button type="button" class="demo-btn on" data-step="manage">1 · Headers &amp; Footers</button>
         <button type="button" class="demo-btn" data-step="edit">2 · Edit footer</button>
-        <button type="button" class="demo-btn" data-step="compose">3 · Newsletter compose</button>
+        <button type="button" class="demo-btn" data-step="compose">3 · Create New Campaign</button>
         <button type="button" class="demo-btn" data-step="migrate">4 · Legacy migrate</button>
         <button type="button" class="demo-btn" data-step="delete">5 · Delete confirm</button>
-        <span class="demo-note" id="demo-note">AC-1: list of named footers with Default badge, Edit / Set default / Delete, Add footer.</span>
+        <span class="demo-note" id="demo-note">AC-1: Headers &amp; Footers becomes a named footers list (Default badge, Edit / Set default / Delete, Add footer).</span>
       </div>
-      <div class="ac-strip" id="ac-strip"><strong>AC-1</strong> · Create and keep two or more named footers in Settings.</div>
+      <div class="ac-strip" id="ac-strip"><strong>AC-1</strong> · Create and keep two or more named footers under Headers &amp; Footers.</div>
 
       <!-- SCREEN 1: Manage -->
       <section class="screen on" id="screen-manage">
-        <div class="crumbs">Settings → <span>Email footers</span></div>
+        <div class="crumbs">Settings &amp; Branding → Mailing &amp; compliance → Open Email Campaign settings → Email Marketing → Settings → <span>Headers &amp; Footers</span></div>
         <div class="page-head">
-          <h2>Email footers</h2>
-          <p class="sub">Save more than one footer for newsletters. Pick which one when you write an email newsletter. Plain names help everyone on the team find the right one.</p>
+          <h2>Headers &amp; Footers</h2>
+          <p class="sub">Optional header and footers are added to email campaigns. Save <strong>more than one named footer</strong> and choose which one when you create a campaign. CASL mailing address and unsubscribe stay under Mailing &amp; compliance (auto-added if missing) — separate from these HTML footers.</p>
+        </div>
+        <div class="panel" style="margin-bottom:14px;padding:14px 16px">
+          <div style="font-weight:700;font-size:0.9rem;margin-bottom:4px">Header</div>
+          <div style="font-size:0.78rem;color:var(--muted)">Unchanged in this mock — still one optional header (Simple / Advanced) as today.</div>
         </div>
         <div class="panel">
           <div class="panel-hd">
-            <h3>Your saved footers</h3>
+            <h3>Footers <span class="badge" style="margin-left:6px">NEW · named list</span></h3>
             <button type="button" class="btn primary lg" data-goto="edit">+ Add footer</button>
           </div>
           <ul class="footer-list">
             <li class="footer-row">
               <div>
                 <div class="ft-name">Standard <span class="badge default">Default</span></div>
-                <div class="ft-snip">Your Name · Firm LLP · Securities offered through… · Unsubscribe</div>
+                <div class="ft-snip">Your existing Advanced footer HTML — webinar / “Book a Call” block · used when no other footer is picked</div>
               </div>
               <div class="ft-actions">
                 <button type="button" class="btn" data-goto="edit">Edit</button>
@@ -247,7 +251,7 @@
             <li class="footer-row">
               <div>
                 <div class="ft-name">Compliance-heavy</div>
-                <div class="ft-snip">Long disclosure · insurance &amp; securities notices · privacy link · Unsubscribe</div>
+                <div class="ft-snip">Long disclosure · insurance &amp; securities notices · privacy link</div>
               </div>
               <div class="ft-actions">
                 <button type="button" class="btn" data-goto="edit">Edit</button>
@@ -258,7 +262,7 @@
             <li class="footer-row">
               <div>
                 <div class="ft-name">Short seasonal</div>
-                <div class="ft-snip">Firm name · Office phone · Unsubscribe only</div>
+                <div class="ft-snip">Firm name + short message only</div>
               </div>
               <div class="ft-actions">
                 <button type="button" class="btn" data-goto="edit">Edit</button>
@@ -268,28 +272,36 @@
             </li>
           </ul>
         </div>
+        <div class="callout info" style="margin-top:14px">
+          <strong>Path today:</strong> <code style="background:#eef2f6;padding:1px 6px;border-radius:4px">settings?tab=mailing</code> → Open Email Campaign settings → Headers &amp; Footers. Compliance PDF download = same HTML as sent (header, body, footer).
+        </div>
       </section>
 
       <!-- SCREEN 2: Edit -->
       <section class="screen" id="screen-edit">
-        <div class="crumbs">Settings → Email footers → <span>Edit</span></div>
+        <div class="crumbs">Email Marketing → Settings → Headers &amp; Footers → <span>Edit footer</span></div>
         <div class="page-head">
           <h2>Edit footer</h2>
-          <p class="sub">Give it a clear name people will recognize. The body is the same HTML/content editor you use today.</p>
+          <p class="sub">Give it a clear name for the campaign picker. Content uses the same Simple / Advanced editor as today’s single footer (Advanced = rich HTML).</p>
         </div>
         <div class="panel">
           <div class="form">
             <div class="field">
-              <label>Footer name <span class="hint">Shown in the newsletter dropdown</span></label>
+              <label>Footer name <span class="hint">Shown in Create New Campaign → Footer preview</span></label>
               <input type="text" value="Compliance-heavy" />
             </div>
             <div class="field">
-              <label>Footer content <span class="hint">Same editor as today’s single footer</span></label>
-              <textarea>Your Name · Firm LLP
-Securities offered through Partner Dealer.
-Insurance products offered through Firm Insurance Agency.
-This email is for informational purposes only and is not advice.
-Privacy policy · Unsubscribe</textarea>
+              <label>Editor mode</label>
+              <div style="display:flex;gap:0;margin-bottom:8px">
+                <button type="button" class="btn" style="border-radius:8px 0 0 8px">Simple</button>
+                <button type="button" class="btn primary" style="border-radius:0 8px 8px 0">Advanced</button>
+                <span style="align-self:center;margin-left:12px;font-size:0.72rem;color:var(--muted)">Import from legacy editor</span>
+              </div>
+              <label style="margin-top:8px">Footer content <span class="hint">Same rich HTML editor as today</span></label>
+              <textarea>Long disclosure · insurance &amp; securities notices
+Privacy policy
+
+(CASL mailing address + unsubscribe are added by the campaign if missing — configured under Mailing &amp; compliance.)</textarea>
             </div>
             <div class="form-actions">
               <button type="button" class="btn primary lg" data-goto="manage">Save footer</button>
@@ -301,54 +313,71 @@ Privacy policy · Unsubscribe</textarea>
 
       <!-- SCREEN 3: Compose -->
       <section class="screen" id="screen-compose">
-        <div class="crumbs">Newsletters → <span>Compose email newsletter</span></div>
+        <div class="crumbs">Email Campaigns → Campaigns → <span>Create New Campaign</span></div>
         <div class="page-head">
-          <h2>Compose email newsletter</h2>
-          <p class="sub">Choose which saved footer goes on this send. If you don’t pick one, the Default is used.</p>
+          <h2>Create New Campaign</h2>
+          <p class="sub">Choose which saved footer appears below. If you don’t pick one, the Default is used. Unsubscribe is still auto-added if missing; CASL mailing address stays under Mailing &amp; compliance.</p>
         </div>
         <div class="compose-layout">
           <div class="panel">
             <div class="compose-form">
               <div class="field">
-                <label>Subject</label>
+                <label>Campaign Name *</label>
+                <input type="text" value="April market update" />
+              </div>
+              <div class="field">
+                <label>Subject *</label>
                 <input type="text" value="April market update for clients" />
               </div>
               <div class="field">
-                <label>Message</label>
+                <label>Email Content</label>
                 <textarea style="min-height:100px">Hello {{first_name}},
 
-Here is this month’s quick look at markets and planning ideas…</textarea>
+Here is this month’s quick look at markets and planning ideas…
+
+Use {unsubscribe_url} for unsubscribe link. An unsubscribe footer is auto-added if not included.</textarea>
               </div>
-              <div class="footer-picker">
-                <label for="ft-select">Email footer</label>
+
+              <div class="footer-picker" style="background:#f8fbfe;border:1px solid var(--border)">
+                <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:10px">
+                  <label for="ft-select" style="margin:0">Footer preview</label>
+                  <button type="button" class="btn" data-goto="edit" style="color:var(--blue);border-color:#bfdbfe">✎ Edit</button>
+                </div>
+                <label for="ft-select" style="font-weight:600;font-size:0.8rem;color:var(--muted);margin-bottom:6px">Which footer for this campaign?</label>
                 <select id="ft-select">
                   <option value="standard" selected>Standard (Default)</option>
                   <option value="compliance">Compliance-heavy</option>
                   <option value="seasonal">Short seasonal</option>
                 </select>
-                <div class="snip" id="ft-snip">Preview: Your Name · Firm LLP · Securities offered through… · Unsubscribe</div>
+                <div class="snip" id="ft-snip" style="margin-top:12px">Your Name · Firm LLP · webinar / Book a Call block (migrated Advanced footer)</div>
+                <div style="margin-top:8px;font-size:0.7rem;color:var(--muted)">Compliance PDF download uses the same HTML as sent (header, body, chosen footer).</div>
+              </div>
+
+              <div style="display:flex;gap:16px;flex-wrap:wrap;margin:12px 0;font-size:0.82rem">
+                <label style="display:flex;gap:6px;align-items:center"><input type="checkbox" /> Send copy to compliance?</label>
+                <label style="display:flex;gap:6px;align-items:center"><input type="checkbox" checked /> Send approval email</label>
               </div>
               <div class="compose-actions">
-                <button type="button" class="btn primary lg">Schedule / Send for approval</button>
-                <button type="button" class="btn">Save draft</button>
+                <button type="button" class="btn">Cancel</button>
+                <button type="button" class="btn primary lg">Create</button>
               </div>
               <div class="approval-note">
-                <strong>Approval path (AC-4):</strong> When approval is required, the chosen footer is what reviewers see in preview and what goes out on send. Open Q: if someone edits the footer after submit, does approval re-check?
+                <strong>Approval path (AC-4):</strong> When “Send approval email” is on, reviewers see this Footer preview (chosen named footer). Open Q: if someone edits that footer after submit, does approval re-check?
               </div>
             </div>
           </div>
           <div class="preview-card">
             <div class="preview-hd">
-              <span>Email preview</span>
+              <span>Campaign preview</span>
               <span id="prev-ft-name" style="text-transform:none;font-weight:600;color:var(--blue)">Footer: Standard</span>
             </div>
             <div class="preview-body">
               <h4>April market update for clients</h4>
               <p>Hello Jordan,</p>
-              <p>Here is this month’s quick look at markets and planning ideas. Reach out anytime if you’d like to talk.</p>
+              <p>Here is this month’s quick look at markets and planning ideas.</p>
               <div class="email-footer-block">
-                <div class="ft-label">Chosen footer (bottom of email)</div>
-                <div id="prev-ft-html">Your Name · Firm LLP<br>Securities offered through… · Unsubscribe</div>
+                <div class="ft-label">Footer preview (chosen footer)</div>
+                <div id="prev-ft-html">Your Name · Firm LLP<br>webinar / Book a Call block · Unsubscribe auto-added if missing</div>
               </div>
             </div>
           </div>
@@ -357,24 +386,24 @@ Here is this month’s quick look at markets and planning ideas…</textarea>
 
       <!-- SCREEN 4: Migrate -->
       <section class="screen" id="screen-migrate">
-        <div class="crumbs">Settings → <span>Email footers</span> · first visit after upgrade</div>
+        <div class="crumbs">Email Marketing → Settings → <span>Headers &amp; Footers</span> · first visit after upgrade</div>
         <div class="page-head">
-          <h2>Email footers</h2>
-          <p class="sub">Your existing footer moved over automatically. Nothing to redo.</p>
+          <h2>Headers &amp; Footers</h2>
+          <p class="sub">Your existing single footer moved over automatically. Nothing to redo.</p>
         </div>
         <div class="callout ok">
-          <strong>You’re all set.</strong> Your existing footer is now called <strong>Standard</strong> and is marked <strong>Default</strong>. You can add more footers anytime, or rename this one.
+          <strong>You’re all set.</strong> Your existing Advanced footer is now called <strong>Standard</strong> and is marked <strong>Default</strong>. Create New Campaign still shows Footer preview — now with a named-footer dropdown. You can add more footers anytime, or rename this one.
         </div>
         <div class="panel">
           <div class="panel-hd">
-            <h3>Your saved footers</h3>
+            <h3>Footers</h3>
             <button type="button" class="btn primary" data-goto="edit">+ Add footer</button>
           </div>
           <ul class="footer-list">
             <li class="footer-row">
               <div>
                 <div class="ft-name">Standard <span class="badge default">Default</span> <span class="badge">Migrated</span></div>
-                <div class="ft-snip">Same content as your previous single email footer — unchanged for newsletters already using it.</div>
+                <div class="ft-snip">Same Advanced HTML as your previous single footer — unchanged for campaigns already using it.</div>
               </div>
               <div class="ft-actions">
                 <button type="button" class="btn" data-goto="edit">Edit / Rename</button>
@@ -383,19 +412,19 @@ Here is this month’s quick look at markets and planning ideas…</textarea>
           </ul>
         </div>
         <div class="callout info" style="margin-top:14px">
-          <strong>AC-2:</strong> Legacy single footer → named default. No breakage for past or in-flight newsletters.
+          <strong>AC-2:</strong> Legacy single footer under Headers &amp; Footers → named Default. No breakage for past or in-flight campaigns. Header section unchanged.
         </div>
       </section>
 
       <!-- SCREEN 5: Delete confirm -->
       <section class="screen" id="screen-delete">
-        <div class="crumbs">Settings → Email footers → <span>Delete</span></div>
+        <div class="crumbs">Email Marketing → Settings → Headers &amp; Footers → <span>Delete</span></div>
         <div class="page-head">
-          <h2>Email footers</h2>
-          <p class="sub">Deleting hides a footer from new picks. Past newsletters keep what they already sent.</p>
+          <h2>Headers &amp; Footers</h2>
+          <p class="sub">Deleting hides a footer from new campaign picks. Past campaigns keep what they already sent (compliance PDF stays the same HTML).</p>
         </div>
         <div class="panel" style="opacity:0.55;pointer-events:none">
-          <div class="panel-hd"><h3>Your saved footers</h3></div>
+          <div class="panel-hd"><h3>Footers</h3></div>
           <ul class="footer-list">
             <li class="footer-row"><div><div class="ft-name">Standard <span class="badge default">Default</span></div></div></li>
             <li class="footer-row" style="background:#fef2f2"><div><div class="ft-name">Compliance-heavy</div></div></li>
@@ -405,8 +434,8 @@ Here is this month’s quick look at markets and planning ideas…</textarea>
           <div class="modal" role="dialog" aria-labelledby="del-title">
             <div class="modal-hd" id="del-title">Delete “Compliance-heavy”?</div>
             <div class="modal-bd">
-              <p style="margin-bottom:10px"><strong>Past newsletters keep the footer they already sent.</strong></p>
-              <p>New newsletters won’t offer this footer. This does not change emails that already went out (or are waiting with a snapshot).</p>
+              <p style="margin-bottom:10px"><strong>Past campaigns keep the footer they already sent.</strong></p>
+              <p>New campaigns won’t offer this footer in Footer preview. Compliance PDFs for past sends stay the same HTML (header, body, footer).</p>
             </div>
             <div class="modal-ft">
               <button type="button" class="btn" data-goto="manage">Keep footer</button>
@@ -421,14 +450,14 @@ Here is this month’s quick look at markets and planning ideas…</textarea>
   <script>
     (function () {
       var notes = {
-        manage: { ac: '<strong>AC-1</strong> · Create and keep two or more named footers in Settings.', note: 'List of named footers with Default badge, Edit / Set default / Delete, Add footer.' },
-        edit: { ac: '<strong>AC-1</strong> · Name + HTML/content as today’s footer editor.', note: 'Simple mock of today’s editor. Rename anytime without affecting past sends (snapshot-at-send).' },
-        compose: { ac: '<strong>AC-3 + AC-4</strong> · Choose footer on compose; preview + send/approval use the choice.', note: 'Dropdown defaults to Default. Live preview strip shows chosen footer at bottom of email.' },
-        migrate: { ac: '<strong>AC-2</strong> · Legacy single footer migrates as named Default — no breakage.', note: 'First visit after upgrade callout. Existing content preserved as “Standard” (Default).' },
-        delete: { ac: '<strong>AC-5</strong> · Delete non-default safely; recommend snapshot-at-send.', note: 'Confirm: past newsletters keep sent footer HTML; new picks hide this footer.' }
+        manage: { ac: '<strong>AC-1</strong> · Create and keep two or more named footers under Headers &amp; Footers.', note: 'Headers &amp; Footers → Footers becomes a named list (Default, Edit / Set default / Delete, Add). Header unchanged.' },
+        edit: { ac: '<strong>AC-1</strong> · Name + Simple/Advanced HTML as today’s footer editor.', note: 'Same Simple/Advanced + Import from legacy editor. Rename without affecting past sends (snapshot-at-send).' },
+        compose: { ac: '<strong>AC-3 + AC-4</strong> · Named-footer dropdown on Create New Campaign above Footer preview + Edit.', note: 'Dropdown defaults to Default. Footer preview + Edit remain; approval / Create use the chosen footer.' },
+        migrate: { ac: '<strong>AC-2</strong> · Legacy single footer migrates as named Default — no breakage.', note: 'First visit after upgrade. Existing Advanced footer → “Standard” (Default).' },
+        delete: { ac: '<strong>AC-5</strong> · Delete non-default safely; recommend snapshot-at-send.', note: 'Confirm: past campaigns keep sent footer HTML (compliance PDF unchanged); new picks hide this footer.' }
       };
       var snips = {
-        standard: { name: 'Standard', html: 'Your Name · Firm LLP<br>Securities offered through… · Unsubscribe', snip: 'Preview: Your Name · Firm LLP · Securities offered through… · Unsubscribe' },
+        standard: { name: 'Standard', html: 'Your Name · Firm LLP<br>webinar / Book a Call block · Unsubscribe auto-added if missing', snip: 'Your Name · Firm LLP · webinar / Book a Call block (migrated Advanced footer)' },
         compliance: { name: 'Compliance-heavy', html: 'Long disclosure · insurance &amp; securities notices<br>Privacy policy · Unsubscribe', snip: 'Preview: Long disclosure · insurance &amp; securities notices · privacy · Unsubscribe' },
         seasonal: { name: 'Short seasonal', html: 'Firm name · Office phone<br>Unsubscribe', snip: 'Preview: Firm name · Office phone · Unsubscribe only' }
       };

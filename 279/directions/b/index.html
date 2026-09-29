@@ -144,7 +144,7 @@
   <header class="thesis">
     <span class="rec">ALT · Direction B</span>
     <h1>Footer templates inline on compose</h1>
-    <p>Less settings friction: create and save footers from the newsletter compose screen (“Save as footer…”), with a compact manage link. Good for people who only think about footers at send time; weaker for firm-wide governance.</p>
+    <p>Less settings friction: create and save footers from <strong>Create New Campaign</strong> (“Save as footer…”), with a compact link to Headers &amp; Footers. Good for people who only think about footers at send time; weaker for firm-wide governance.</p>
   </header>
   <nav class="nav">
     <a href="../../index.html">← #279 hub</a>
@@ -174,10 +174,10 @@
       <div class="tradeoff"><strong>Tradeoff vs A:</strong> Faster for power users at send time; harder for assistants who expect a Settings library and for firms that want governed defaults.</div>
 
       <section class="screen on" id="screen-compose">
-        <div class="crumbs">Newsletters → <span>Compose email newsletter</span></div>
+        <div class="crumbs">Email Campaigns → <span>Create New Campaign</span></div>
         <div class="page-head">
-          <h2>Compose email newsletter</h2>
-          <p class="sub">Pick a saved footer here — or save what you’re using so it’s ready next time.</p>
+          <h2>Create New Campaign</h2>
+          <p class="sub">Footer preview gains a picker — or save what you’re using so it’s ready next time.</p>
         </div>
         <div class="compose-layout">
           <div class="panel">
@@ -193,18 +193,18 @@
 A few planning notes for the month ahead…</textarea>
               </div>
               <div class="footer-block">
-                <label for="b-ft">Email footer</label>
+                <label for="b-ft">Footer preview · which footer?</label>
                 <select id="b-ft">
                   <option selected>Standard (Default)</option>
                   <option>Compliance-heavy</option>
                 </select>
                 <div class="footer-row-actions">
                   <button type="button" class="btn primary" data-goto="save">Save as footer…</button>
-                  <button type="button" class="btn" data-goto="manage">Manage footers</button>
+                  <button type="button" class="btn" data-goto="manage">Headers &amp; Footers</button>
                 </div>
               </div>
               <div class="compose-actions">
-                <button type="button" class="btn primary lg">Schedule / Send for approval</button>
+                <button type="button" class="btn primary lg">Create</button>
                 <button type="button" class="btn">Save draft</button>
               </div>
             </div>
@@ -225,9 +225,9 @@ A few planning notes for the month ahead…</textarea>
       </section>
 
       <section class="screen" id="screen-save">
-        <div class="crumbs">Newsletters → Compose → <span>Save as footer</span></div>
+        <div class="crumbs">Email Campaigns → Create New Campaign → <span>Save as footer</span></div>
         <div class="page-head">
-          <h2>Compose email newsletter</h2>
+          <h2>Create New Campaign</h2>
           <p class="sub">Name this footer so you can pick it on the next newsletter.</p>
         </div>
         <div class="panel" style="opacity:0.5;pointer-events:none;min-height:180px"></div>
@@ -239,7 +239,7 @@ A few planning notes for the month ahead…</textarea>
                 <label style="font-weight:600;font-size:0.82rem;display:block;margin-bottom:6px;color:var(--ink)">Name</label>
                 <input type="text" value="Compliance-heavy" style="width:100%;padding:10px 12px;border:1px solid var(--border);border-radius:8px;font-family:inherit;font-size:0.9rem" />
               </div>
-              <p style="margin-top:10px">We’ll keep the footer content from this newsletter so you can reuse it.</p>
+              <p style="margin-top:10px">We’ll keep the footer content from this campaign so you can reuse it.</p>
             </div>
             <div class="modal-ft">
               <button type="button" class="btn" data-goto="compose">Cancel</button>
@@ -250,15 +250,15 @@ A few planning notes for the month ahead…</textarea>
       </section>
 
       <section class="screen" id="screen-manage">
-        <div class="crumbs">Settings → <span>Email footers</span> · light list</div>
+        <div class="crumbs">Email Marketing → Settings → <span>Headers &amp; Footers</span> · light list</div>
         <div class="page-head">
-          <h2>Email footers</h2>
-          <p class="sub">Compact list reached from compose. Same AC-1 list of named footers; less emphasis on Settings as the home.</p>
+          <h2>Headers &amp; Footers</h2>
+          <p class="sub">Compact list reached from Create New Campaign. Same AC-1 named footers under Headers &amp; Footers; less emphasis on Settings as the home.</p>
         </div>
         <div class="panel">
           <div class="panel-hd">
             <h3>Saved footers</h3>
-            <button type="button" class="btn" data-goto="compose">← Back to compose</button>
+            <button type="button" class="btn" data-goto="compose">← Back to Create New Campaign</button>
           </div>
           <ul class="footer-list">
             <li class="footer-row">
@@ -286,7 +286,7 @@ A few planning notes for the month ahead…</textarea>
       var notes = {
         compose: 'Primary surface is compose. Pick a footer, or save the current one for next time.',
         save: '“Save as footer…” names the current footer HTML for reuse (AC-1 create path from compose).',
-        manage: 'Light Settings list via “Manage footers” link — not the primary mental model.'
+        manage: 'Light Settings list via “Headers &amp; Footers” link — not the primary mental model.'
       };
       function show(step) {
         document.querySelectorAll('.screen').forEach(function (el) { el.classList.remove('on'); });

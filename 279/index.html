@@ -88,7 +88,7 @@
     <div class="hero-inner">
       <div class="eyebrow">FinancialContent · content-library #279 · Designer mocks</div>
       <h1>Allow 2+ email footers and choose which one for newsletters</h1>
-      <p>Alana Read wants to save <strong>two or more email footers</strong> and <strong>pick which one</strong> when composing or scheduling an email newsletter. Today there’s effectively a single footer. Audience: advisors 50s–60s and less tech-savvy assistants — plain words, big controls.</p>
+      <p>Alana Read wants to save <strong>two or more email footers</strong> and <strong>pick which one</strong> per campaign. Today: one global footer under <strong>Headers &amp; Footers</strong> (Simple/Advanced). Compose shows <strong>Footer preview</strong> + Edit only — no picker. Audience: advisors 50s–60s and less tech-savvy assistants — plain words, big controls.</p>
       <span class="rec">Recommend · Direction A — Named footers library + picker</span>
     </div>
   </header>
@@ -104,7 +104,7 @@
     </p>
 
     <div class="problem">
-      <strong>Problem:</strong> Firms often need more than one email footer (e.g. “Standard” vs “Compliance-heavy”) and must choose which applies to a newsletter. A single shared footer forces awkward workarounds. We need a simple place to keep named footers and a clear picker on compose — without redesigning the whole email composer.
+      <strong>Problem:</strong> Firms often need more than one email footer (e.g. “Standard” vs “Compliance-heavy”) and must choose which applies to a campaign. Today Headers &amp; Footers has one global footer; Create New Campaign only shows Footer preview + Edit. We need a named list in that same place and a picker above Footer preview — without redesigning the whole campaign composer. CASL mailing address / unsubscribe stay separate under Mailing &amp; compliance.
     </div>
 
     <div class="ac">
@@ -141,18 +141,21 @@
     <div class="note">
       <strong>Track:</strong> Basic enhancement → staging after mock approved. Designer-first. Do <em>not</em> mark agent-ready until Alex/Angelina pick a direction and attach this Pages URL to the issue.
     </div>
+    <div class="note">
+      <strong>Scout-aligned nav (live app):</strong> Settings &amp; Branding → Mailing &amp; compliance → Open Email Campaign settings → Email Marketing → Settings → <em>Headers &amp; Footers</em>. Compose: Email Campaigns → Create New Campaign → <em>Footer preview</em> + Edit. Unsubscribe auto-added if absent; CASL address under Mailing &amp; compliance.
+    </div>
 
     <h2>Directions</h2>
     <div class="grid">
       <a class="card recd" href="directions/a/index.html">
         <span class="tag rec-tag">RECOMMEND</span>
         <h3>A — Named footers library + picker</h3>
-        <p>Settings holds a list of named footers (like email signatures). Newsletter compose has an “Email footer” dropdown with preview snippet; Default marked. Best for firm governance + clear mental model.</p>
+        <p>Headers &amp; Footers becomes a named footers list (like email signatures). Create New Campaign gains a footer dropdown above existing Footer preview + Edit; Default marked. Best for firm governance + clear mental model.</p>
       </a>
       <a class="card" href="directions/b/index.html">
         <span class="tag">ALT</span>
         <h3>B — Footer templates inline on compose</h3>
-        <p>Create/save footers from the newsletter screen (“Save as footer…”), plus a compact manage link. Good for power users; weaker for firm-wide governance.</p>
+        <p>Create/save footers from Create New Campaign (“Save as footer…”), plus a compact link back to Headers &amp; Footers. Good for power users; weaker for firm-wide governance.</p>
       </a>
       <a class="card" href="directions/c/index.html">
         <span class="tag">ALT</span>
@@ -163,7 +166,7 @@
 
     <h2>Provisional build contract (recommend A)</h2>
     <div class="note" style="margin-top:0">
-      Snapshot footer HTML at send/schedule (AC-5). Migrate legacy single footer → named “Standard” (or current label) as Default. Firm vs advisor ownership left open as product Q. Full text: <a href="build-contract.html">build-contract.html</a>.
+      Snapshot footer HTML at send/schedule (AC-5) so compliance PDF stays same HTML as sent. Migrate legacy single Headers &amp; Footers footer → named “Standard” as Default. Firm vs advisor ownership left open. Full text: <a href="build-contract.html">build-contract.html</a>.
     </div>
 
     <div class="meta">

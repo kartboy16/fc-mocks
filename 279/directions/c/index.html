@@ -127,7 +127,7 @@
   <header class="thesis">
     <span class="rec">ALT · Direction C</span>
     <h1>Firm default + per-newsletter override</h1>
-    <p>Firm has one Default footer always applied. Compose only shows an Override control to pick another. Minimal UI change — weaker when “Standard” and “Compliance-heavy” need equal weight without thinking about defaults.</p>
+    <p>Firm has one Default footer always applied under Headers &amp; Footers. <strong>Create New Campaign</strong> only shows Override above Footer preview to pick another. Minimal UI change — weaker when footers need equal weight.</p>
   </header>
   <nav class="nav">
     <a href="../../index.html">← #279 hub</a>
@@ -149,18 +149,18 @@
     <div class="main">
       <div class="demo-bar">
         <span class="lbl">Demo steps</span>
-        <button type="button" class="demo-btn on" data-step="settings">1 · Settings (default + others)</button>
-        <button type="button" class="demo-btn" data-step="compose">2 · Compose (default on)</button>
+        <button type="button" class="demo-btn on" data-step="settings">1 · Headers &amp; Footers</button>
+        <button type="button" class="demo-btn" data-step="compose">2 · Create campaign (default on)</button>
         <button type="button" class="demo-btn" data-step="override">3 · Override → pick another</button>
         <span class="demo-note" id="demo-note">Default is always on. Other footers exist mainly as override options.</span>
       </div>
       <div class="tradeoff"><strong>Tradeoff vs A:</strong> Smallest compose change. Makes “equal” footers feel second-class because everything is framed as Default vs exception.</div>
 
       <section class="screen on" id="screen-settings">
-        <div class="crumbs">Settings → <span>Email footers</span></div>
+        <div class="crumbs">Email Marketing → Settings → <span>Headers &amp; Footers</span></div>
         <div class="page-head">
-          <h2>Email footers</h2>
-          <p class="sub">One firm Default is always used unless a newsletter overrides it.</p>
+          <h2>Headers &amp; Footers</h2>
+          <p class="sub">One firm Default is always used unless a campaign overrides it.</p>
         </div>
         <div class="panel">
           <div class="panel-hd">
@@ -171,14 +171,14 @@
             <li class="footer-row">
               <div>
                 <div class="ft-name">Standard <span class="badge">Firm default</span></div>
-                <div class="ft-snip">Applied automatically to every email newsletter unless overridden</div>
+                <div class="ft-snip">Applied automatically to every campaign unless overridden</div>
               </div>
               <button type="button" class="btn">Edit</button>
             </li>
             <li class="footer-row">
               <div>
                 <div class="ft-name">Compliance-heavy <span class="badge alt">Override option</span></div>
-                <div class="ft-snip">Available when someone turns on Override on compose</div>
+                <div class="ft-snip">Available when someone turns on Override on Create New Campaign</div>
               </div>
               <div style="display:flex;gap:6px">
                 <button type="button" class="btn">Set as default</button>
@@ -188,7 +188,7 @@
             <li class="footer-row">
               <div>
                 <div class="ft-name">Short seasonal <span class="badge alt">Override option</span></div>
-                <div class="ft-snip">Available when someone turns on Override on compose</div>
+                <div class="ft-snip">Available when someone turns on Override on Create New Campaign</div>
               </div>
               <div style="display:flex;gap:6px">
                 <button type="button" class="btn">Set as default</button>
@@ -200,10 +200,10 @@
       </section>
 
       <section class="screen" id="screen-compose">
-        <div class="crumbs">Newsletters → <span>Compose</span></div>
+        <div class="crumbs">Email Campaigns → <span>Create New Campaign</span></div>
         <div class="page-head">
-          <h2>Compose email newsletter</h2>
-          <p class="sub">Default footer is already applied. Only change it if this send needs something else.</p>
+          <h2>Create New Campaign</h2>
+          <p class="sub">Default footer is already applied in Footer preview. Only change it if this campaign needs something else.</p>
         </div>
         <div class="panel">
           <div class="compose-form">
@@ -224,17 +224,17 @@
               Your Name · Firm LLP · Securities offered through… · Unsubscribe
             </div>
             <div class="compose-actions">
-              <button type="button" class="btn primary lg">Schedule / Send for approval</button>
+              <button type="button" class="btn primary lg">Create</button>
             </div>
           </div>
         </div>
       </section>
 
       <section class="screen" id="screen-override">
-        <div class="crumbs">Newsletters → Compose → <span>Override footer</span></div>
+        <div class="crumbs">Email Campaigns → Create New Campaign → <span>Override footer</span></div>
         <div class="page-head">
-          <h2>Compose email newsletter</h2>
-          <p class="sub">Use a different saved footer for this newsletter only.</p>
+          <h2>Create New Campaign</h2>
+          <p class="sub">Use a different saved footer for this campaign only.</p>
         </div>
         <div class="panel">
           <div class="compose-form">
@@ -248,7 +248,7 @@
             <div class="override-box">
               <label>
                 <input type="checkbox" checked id="ov-check" />
-                Override firm default for this newsletter
+                Override firm default for this campaign
               </label>
               <select id="ov-select">
                 <option>Compliance-heavy</option>
@@ -260,7 +260,7 @@
               Long disclosure · insurance &amp; securities notices · Privacy · Unsubscribe
             </div>
             <div class="compose-actions">
-              <button type="button" class="btn primary lg">Schedule / Send for approval</button>
+              <button type="button" class="btn primary lg">Create</button>
               <button type="button" class="btn" data-goto="compose">Clear override</button>
             </div>
           </div>
