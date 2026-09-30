@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Direction C — Make infographic from post · #288</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --fc-blue: #2b7de9; --fc-blue-dark: #1e5bb8; --fc-hero: #7eb3ef;
+      --rail-bg: #eef2f6; --rail-active: #d6e6fa;
+      --ink: #1a2332; --muted: #6b7280; --border: #d8e0ea;
+      --bg: #ffffff; --page: #f7f9fc; --mint: #e6f1fb;
+      --ftt-teal: #0d7377; --ftt-teal-2: #14919b; --ftt-deep: #0e4d52;
+      --ok: #047857; --ok-bg: #e8f5e9;
+      --card-grad: linear-gradient(160deg, #0d7377 0%, #14919b 40%, #2d6a4f 100%);
+      --card-grad-2: linear-gradient(160deg, #0e7490 0%, #0f766e 50%, #166534 100%);
+      --card-grad-3: linear-gradient(160deg, #115e59 0%, #0f766e 45%, #3f6212 100%);
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: Inter, system-ui, sans-serif; background: var(--page); color: var(--ink);
+      font-size: 13px; line-height: 1.45; min-width: 1100px;
+    }
+    a { color: var(--fc-blue); }
+    button { font-family: inherit; cursor: pointer; }
+    .idea-banner {
+      background: linear-gradient(90deg, #1e2a4a, #2b7de9);
+      color: #fff; padding: 8px 16px; font-size: 0.72rem;
+      display: flex; flex-wrap: wrap; gap: 8px 16px; align-items: center; justify-content: space-between;
+    }
+    .idea-banner a { color: #fff; text-decoration: underline; }
+    .idea-banner .links { display: flex; gap: 12px; flex-wrap: wrap; }
+    .alt-pill {
+      display: inline-block; background: var(--mint); color: var(--fc-blue);
+      font-weight: 700; font-size: 0.68rem; padding: 3px 10px; border-radius: 999px;
+    }
+    .steps {
+      display: flex; gap: 6px; flex-wrap: wrap; padding: 8px 16px;
+      background: #fff; border-bottom: 1px solid var(--border); align-items: center;
+    }
+    .steps .lab { font-size: 0.68rem; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.04em; margin-right: 4px; }
+    .step-btn {
+      border: 1px solid var(--border); background: #fff; color: var(--ink);
+      font-size: 0.75rem; font-weight: 600; padding: 6px 12px; border-radius: 999px;
+    }
+    .step-btn:hover { border-color: var(--fc-blue); color: var(--fc-blue); background: var(--mint); }
+    .step-btn.on { background: var(--fc-blue); color: #fff; border-color: var(--fc-blue); }
+    .shell { display: flex; min-height: calc(100vh - 78px); }
+    .rail {
+      width: 88px; background: var(--rail-bg); flex-shrink: 0;
+      display: flex; flex-direction: column; align-items: center;
+      padding: 12px 6px 16px; border-right: 1px solid #e2e8f0;
+    }
+    .rail-logo { text-align: center; margin-bottom: 18px; }
+    .rail-logo .mark {
+      width: 28px; height: 28px; border-radius: 6px; background: var(--fc-blue); color: #fff;
+      display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 0.7rem; margin: 0 auto 4px;
+    }
+    .rail-logo .name { font-size: 0.52rem; font-weight: 700; color: #1e3a5f; line-height: 1.15; }
+    .rail-nav { display: flex; flex-direction: column; gap: 4px; width: 100%; flex: 1; }
+    .rail-item {
+      display: flex; flex-direction: column; align-items: center; gap: 3px;
+      padding: 10px 4px; border-radius: 10px; color: #4b5563; font-size: 0.58rem; font-weight: 600;
+      border: none; background: transparent; width: 100%; position: relative;
+    }
+    .rail-item svg { width: 22px; height: 22px; stroke: currentColor; fill: none; stroke-width: 1.6; }
+    .rail-item.on { background: var(--rail-active); color: var(--fc-blue); }
+    .rail-item.on::before {
+      content: ""; position: absolute; left: -6px; top: 8px; bottom: 8px; width: 3px;
+      background: var(--fc-blue); border-radius: 0 3px 3px 0;
+    }
+    .rail-profile { margin-top: auto; text-align: center; }
+    .rail-avatar {
+      width: 36px; height: 36px; border-radius: 50%; background: var(--fc-blue); color: #fff;
+      font-weight: 700; font-size: 0.75rem; display: flex; align-items: center; justify-content: center; margin: 0 auto 4px;
+    }
+    .rail-profile span { font-size: 0.58rem; font-weight: 600; color: #4b5563; }
+    .main { flex: 1; min-width: 0; background: var(--bg); }
+    .pane { padding: 28px 36px 64px; }
+    .screen { display: none; }
+    .screen.on { display: block; }
+    .hero-title {
+      text-align: center; font-size: 1.85rem; font-weight: 400;
+      color: var(--fc-hero); margin-bottom: 18px; letter-spacing: -0.01em;
+    }
+    .search-wrap { max-width: 640px; margin: 0 auto 20px; position: relative; }
+    .search-wrap input {
+      width: 100%; border: 1px solid #cfd8e3; border-radius: 999px;
+      padding: 12px 18px 12px 44px; font-size: 0.9rem; font-family: inherit; outline: none; background: #fff;
+    }
+    .search-wrap .mag { position: absolute; left: 16px; top: 50%; transform: translateY(-50%); color: var(--fc-blue); width: 18px; height: 18px; }
+    .pills { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin-bottom: 22px; }
+    .pill {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 8px 14px; border-radius: 999px; font-size: 0.78rem; font-weight: 600;
+      border: 1.5px solid var(--fc-blue); background: #fff; color: var(--fc-blue);
+    }
+    .pill.on { background: var(--fc-blue); color: #fff; }
+    .subhead { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-bottom: 14px; }
+    .subhead h2 { font-size: 1.15rem; font-weight: 700; color: #1e3a5f; }
+    .thesis {
+      margin-bottom: 16px; padding: 12px 14px; background: #fff8eb; border: 1px solid #f0d4a8;
+      border-radius: 10px; font-size: 0.82rem; color: #8a5a10; max-width: 900px;
+    }
+    .grid-posts {
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 16px;
+    }
+    .pcard {
+      border: 1px solid var(--border); border-radius: 12px; overflow: hidden; background: #fff;
+      box-shadow: 0 1px 3px rgba(30,42,74,0.04);
+    }
+    .pcard.featured { border-color: var(--fc-blue); box-shadow: 0 4px 16px rgba(43,125,233,0.15); }
+    .ph {
+      height: 120px; background: var(--card-grad); color: #fff; padding: 14px;
+      display: flex; flex-direction: column; justify-content: space-between; position: relative;
+    }
+    .ph.g2 { background: var(--card-grad-2); }
+    .ph.g3 { background: var(--card-grad-3); }
+    .src-badge {
+      display: inline-block; font-size: 0.65rem; font-weight: 700; background: rgba(0,0,0,0.25);
+      padding: 3px 8px; border-radius: 6px; width: fit-content;
+    }
+    .ph-meta { font-size: 0.65rem; opacity: 0.85; }
+    .body { padding: 14px; }
+    .body h4 { font-size: 0.95rem; font-weight: 700; color: #1e3a5f; margin-bottom: 8px; line-height: 1.3; }
+    .tag-row { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 12px; }
+    .badge-topic, .badge-type {
+      font-size: 0.65rem; font-weight: 700; padding: 2px 8px; border-radius: 999px;
+      background: var(--mint); color: var(--fc-blue);
+    }
+    .badge-type { background: #ecfdf5; color: #047857; }
+    .btn-make {
+      width: 100%; padding: 10px 12px; border: none; border-radius: 8px;
+      background: var(--fc-blue); color: #fff; font-weight: 700; font-size: 0.85rem;
+    }
+    .btn-make:hover { background: var(--fc-blue-dark); }
+    .btn-make.ghost {
+      background: #fff; color: var(--fc-blue); border: 1px solid var(--fc-blue);
+    }
+    .page-title { font-size: 1.75rem; font-weight: 700; color: #1e3a5f; margin-bottom: 8px; }
+    .page-sub { font-size: 1rem; color: var(--muted); margin-bottom: 24px; max-width: 560px; }
+    .page-kicker { font-size: 0.72rem; font-weight: 600; color: var(--muted); margin-bottom: 6px; }
+    .page-kicker span { color: var(--fc-blue); }
+    .gen-wrap { text-align: center; padding: 48px 24px; }
+    .gen-orb {
+      width: 72px; height: 72px; border-radius: 50%; margin: 0 auto 24px;
+      background: linear-gradient(135deg, var(--ftt-teal), var(--fc-blue));
+      display: flex; align-items: center; justify-content: center;
+      animation: pulse 1.6s ease-in-out infinite;
+    }
+    .gen-orb svg { width: 32px; height: 32px; stroke: #fff; fill: none; stroke-width: 2; }
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(43,125,233,0.35); }
+      50% { transform: scale(1.05); box-shadow: 0 0 0 16px rgba(43,125,233,0); }
+    }
+    .gen-wrap h2 { font-size: 1.5rem; font-weight: 700; color: #1e3a5f; margin-bottom: 8px; }
+    .gen-wrap .sub { font-size: 1rem; color: var(--muted); margin-bottom: 12px; }
+    .source-chip {
+      display: inline-block; background: var(--mint); color: var(--fc-blue);
+      font-size: 0.82rem; font-weight: 600; padding: 6px 12px; border-radius: 999px; margin-bottom: 20px;
+    }
+    .result-layout { display: grid; grid-template-columns: 1fr 300px; gap: 24px; align-items: start; max-width: 900px; }
+    @media (max-width: 980px) { .result-layout { grid-template-columns: 1fr; } }
+    .infographic {
+      width: 100%; max-width: 480px; aspect-ratio: 1 / 1; border-radius: 8px; overflow: hidden;
+      box-shadow: 0 12px 40px rgba(14,77,82,0.25);
+      background: linear-gradient(165deg, var(--ftt-deep) 0%, var(--ftt-teal) 42%, var(--ftt-teal-2) 100%);
+      color: #fff; display: flex; flex-direction: column; padding: 28px 26px 20px; position: relative;
+    }
+    .infographic::before {
+      content: ""; position: absolute; right: -40px; top: -40px; width: 160px; height: 160px;
+      border-radius: 50%; background: rgba(255,255,255,0.06);
+    }
+    .ig-logo { display: flex; align-items: center; gap: 10px; position: relative; z-index: 1; }
+    .ig-logo .mark {
+      width: 40px; height: 40px; border-radius: 10px; background: #fff; color: var(--ftt-teal);
+      font-weight: 800; font-size: 0.72rem; display: flex; align-items: center; justify-content: center;
+    }
+    .ig-logo .name { font-size: 0.78rem; font-weight: 700; line-height: 1.2; }
+    .ig-logo .url { font-size: 0.62rem; opacity: 0.8; }
+    .ig-eyebrow { margin-top: 28px; font-size: 0.72rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; opacity: 0.85; position: relative; z-index: 1; }
+    .ig-headline { margin-top: 8px; font-size: 1.65rem; font-weight: 800; line-height: 1.2; max-width: 92%; position: relative; z-index: 1; }
+    .ig-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 22px; position: relative; z-index: 1; }
+    .ig-stat { background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.18); border-radius: 12px; padding: 14px 12px; }
+    .ig-stat .num { font-size: 1.85rem; font-weight: 800; line-height: 1; }
+    .ig-stat .lbl { font-size: 0.72rem; margin-top: 6px; opacity: 0.9; font-weight: 500; }
+    .ig-tips { margin-top: 18px; position: relative; z-index: 1; }
+    .ig-tip { display: flex; gap: 10px; margin-bottom: 8px; font-size: 0.82rem; font-weight: 500; }
+    .ig-tip .n {
+      flex-shrink: 0; width: 22px; height: 22px; border-radius: 50%; background: #fff; color: var(--ftt-teal);
+      font-size: 0.7rem; font-weight: 800; display: flex; align-items: center; justify-content: center;
+    }
+    .ig-foot { margin-top: auto; padding-top: 14px; border-top: 1px solid rgba(255,255,255,0.2); font-size: 0.62rem; opacity: 0.85; position: relative; z-index: 1; }
+    .side-panel {
+      background: #fff; border: 1px solid var(--border); border-radius: 14px; padding: 18px; position: sticky; top: 16px;
+    }
+    .side-panel h3 { font-size: 0.95rem; font-weight: 700; margin-bottom: 6px; }
+    .side-panel .hint { font-size: 0.8rem; color: var(--muted); margin-bottom: 16px; }
+    .action-stack { display: flex; flex-direction: column; gap: 8px; }
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+      padding: 12px 20px; border-radius: 10px; border: 1px solid var(--border);
+      background: #fff; font-size: 0.95rem; font-weight: 700; color: var(--ink); width: 100%;
+    }
+    .btn:hover { border-color: var(--fc-blue); color: var(--fc-blue); }
+    .btn.primary { background: var(--fc-blue); color: #fff; border-color: var(--fc-blue); }
+    .btn.primary:hover { background: var(--fc-blue-dark); color: #fff; }
+    .btn.ghost { background: transparent; }
+    .greenlight {
+      margin-top: 16px; padding: 12px; background: var(--ok-bg); border: 1px solid #a7f3d0;
+      border-radius: 10px; font-size: 0.8rem; color: var(--ok);
+    }
+    .tweak-panel {
+      background: #fff; border: 1px solid var(--border); border-radius: 14px; padding: 20px; max-width: 520px;
+    }
+    .field { margin-bottom: 14px; }
+    .field label { display: block; font-weight: 700; font-size: 0.88rem; margin-bottom: 6px; }
+    .field input, .field textarea {
+      width: 100%; padding: 12px 14px; border: 1px solid var(--border); border-radius: 10px;
+      font-family: inherit; font-size: 0.95rem;
+    }
+    .toast {
+      display: none; position: fixed; bottom: 24px; right: 24px; background: var(--ok); color: #fff;
+      padding: 14px 20px; border-radius: 10px; font-weight: 700; font-size: 0.9rem; z-index: 50;
+    }
+    .toast.show { display: block; }
+  </style>
+</head>
+<body>
+  <div class="idea-banner">
+    <div><span class="alt-pill">ALT · Dir C</span> &nbsp; <strong>#288 From existing post</strong> — companion entry · Soft Dev hold · not agent-ready</div>
+    <div class="links">
+      <a href="../../index.html">Hub</a>
+      <a href="../a/index.html">Dir A (recommend)</a>
+      <a href="../b/index.html">Dir B</a>
+      <a href="../../build-contract.html">Contract</a>
+    </div>
+  </div>
+
+  <div class="steps">
+    <span class="lab">Steps</span>
+    <button type="button" class="step-btn on" id="chip-browse" onclick="go('browse')">1 · Library post</button>
+    <button type="button" class="step-btn" id="chip-generating" onclick="go('generating')">2 · Generating</button>
+    <button type="button" class="step-btn" id="chip-result" onclick="go('result')">3 · Result</button>
+    <button type="button" class="step-btn" id="chip-tweak" onclick="go('tweak')">Tweak copy</button>
+  </div>
+
+  <div class="shell">
+    <aside class="rail">
+      <div class="rail-logo">
+        <div class="mark">FC</div>
+        <div class="name">Financial<br/>Content</div>
+      </div>
+      <nav class="rail-nav">
+        <button type="button" class="rail-item on">
+          <svg viewBox="0 0 24 24"><path d="M4 10.5L12 4l8 6.5V20a1 1 0 0 1-1 1h-5v-6H10v6H5a1 1 0 0 1-1-1v-9.5z"/></svg>
+          Content
+        </button>
+        <button type="button" class="rail-item">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18"/></svg>
+          Website
+        </button>
+        <button type="button" class="rail-item">
+          <svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M7 15l2.5-3 2 2 3-4 2.5 5"/></svg>
+          Social
+        </button>
+        <button type="button" class="rail-item">
+          <svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="1.5"/><path d="M3.5 7l8.5 6 8.5-6"/></svg>
+          Email
+        </button>
+      </nav>
+      <div class="rail-profile">
+        <div class="rail-avatar">AH</div>
+        <span>Profile</span>
+      </div>
+    </aside>
+
+    <div class="main">
+      <div class="pane">
+
+        <div class="screen on" id="s-browse">
+          <h1 class="hero-title">What will you share today?</h1>
+          <div class="search-wrap">
+            <svg class="mag" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
+            <input type="search" placeholder="Search" aria-label="Search" />
+          </div>
+          <div class="pills">
+            <button type="button" class="pill on">All Content</button>
+            <button type="button" class="pill">Favorites</button>
+            <button type="button" class="pill">Topics</button>
+            <button type="button" class="pill">Sources</button>
+          </div>
+          <div class="thesis">
+            <strong>Alt to A:</strong> One CTA <em>Make infographic</em> on a library post (or compose). AI uses the post’s topic / title as the brief → auto result. Great companion entry (AC-5); not the primary Create Infographic surface when there’s no post yet.
+          </div>
+          <div class="subhead"><h2>All Content</h2></div>
+          <div class="grid-posts">
+            <article class="pcard featured">
+              <div class="ph">
+                <span class="src-badge">FTT</span>
+                <div class="ph-meta">Content library</div>
+              </div>
+              <div class="body">
+                <h4>RRSP contribution limits for 2026</h4>
+                <div class="tag-row">
+                  <span class="badge-topic">Retirement</span>
+                  <span class="badge-type">Article/blog</span>
+                </div>
+                <button type="button" class="btn-make" onclick="go('generating')">Make infographic</button>
+              </div>
+            </article>
+            <article class="pcard">
+              <div class="ph g2">
+                <span class="src-badge">FTT</span>
+                <div class="ph-meta">Content library</div>
+              </div>
+              <div class="body">
+                <h4>TFSA room explained simply</h4>
+                <div class="tag-row">
+                  <span class="badge-topic">Investments</span>
+                  <span class="badge-type">Social post</span>
+                </div>
+                <button type="button" class="btn-make ghost" onclick="go('generating')">Make infographic</button>
+              </div>
+            </article>
+            <article class="pcard">
+              <div class="ph g3">
+                <span class="src-badge">Sun Life</span>
+                <div class="ph-meta">Content library</div>
+              </div>
+              <div class="body">
+                <h4>Estate planning basics</h4>
+                <div class="tag-row">
+                  <span class="badge-topic">Estate planning</span>
+                  <span class="badge-type">Article/blog</span>
+                </div>
+                <button type="button" class="btn-make ghost" onclick="go('generating')">Make infographic</button>
+              </div>
+            </article>
+            <article class="pcard">
+              <div class="ph">
+                <span class="src-badge">Manulife</span>
+                <div class="ph-meta">Content library</div>
+              </div>
+              <div class="body">
+                <h4>Group benefits checklist</h4>
+                <div class="tag-row">
+                  <span class="badge-topic">Group benefits</span>
+                  <span class="badge-type">Checklist/guide</span>
+                </div>
+                <button type="button" class="btn-make ghost" onclick="go('generating')">Make infographic</button>
+              </div>
+            </article>
+          </div>
+        </div>
+
+        <div class="screen" id="s-generating">
+          <div class="gen-wrap">
+            <div class="gen-orb">
+              <svg viewBox="0 0 24 24"><path d="M12 3v3M12 18v3M3 12h3M18 12h3M5.6 5.6l2.1 2.1M16.3 16.3l2.1 2.1"/></svg>
+            </div>
+            <h2>Creating your infographic…</h2>
+            <p class="sub">Using this post as the brief — writing layout, applying your brand.</p>
+            <div class="source-chip">From: RRSP contribution limits for 2026</div>
+          </div>
+        </div>
+
+        <div class="screen" id="s-result">
+          <div class="page-kicker">From library post · <span>RRSP contribution limits for 2026</span></div>
+          <h1 class="page-title">Your infographic is ready</h1>
+          <p class="page-sub">One CTA → finished branded graphic. Same Use · Regenerate · Tweak as Direction A.</p>
+          <div class="result-layout">
+            <div>
+              <div class="infographic">
+                <div class="ig-logo">
+                  <div class="mark">FTT</div>
+                  <div>
+                    <div class="name">Financial Tech Tools</div>
+                    <div class="url">financialtechtools.ca</div>
+                  </div>
+                </div>
+                <div class="ig-eyebrow">Retirement · 2026</div>
+                <div class="ig-headline">RRSP contribution limits — what clients need to know</div>
+                <div class="ig-stats">
+                  <div class="ig-stat"><div class="num">$32,490</div><div class="lbl">2026 RRSP dollar limit</div></div>
+                  <div class="ig-stat"><div class="num">18%</div><div class="lbl">of prior-year earned income</div></div>
+                </div>
+                <div class="ig-tips">
+                  <div class="ig-tip"><span class="n">1</span><span>Check unused room on your Notice of Assessment.</span></div>
+                  <div class="ig-tip"><span class="n">2</span><span>Contribute early so growth has more time.</span></div>
+                  <div class="ig-tip"><span class="n">3</span><span>Ask before using RRSP room for a Home Buyers’ Plan.</span></div>
+                </div>
+                <div class="ig-foot">For illustration only. Contribution room varies. Talk to your advisor before acting. © Financial Tech Tools · Not advice.</div>
+              </div>
+            </div>
+            <aside class="side-panel">
+              <h3>What next?</h3>
+              <p class="hint">Same primary actions as Direction A.</p>
+              <div class="action-stack">
+                <button type="button" class="btn primary" onclick="toast('Saved to library · ready to share')">Use</button>
+                <button type="button" class="btn" onclick="go('generating')">Regenerate</button>
+                <button type="button" class="btn ghost" onclick="go('tweak')">Tweak copy</button>
+              </div>
+              <div class="greenlight">
+                <strong>✓ Ready for Greenlight</strong><br/>Optional — not a blocker.
+              </div>
+            </aside>
+          </div>
+        </div>
+
+        <div class="screen" id="s-tweak">
+          <div class="page-kicker">From library post · <span>Tweak copy</span></div>
+          <h1 class="page-title">Tweak the wording</h1>
+          <p class="page-sub">Text only — no visual editor. Same pattern as Direction A.</p>
+          <div class="tweak-panel">
+            <div class="field">
+              <label>Headline</label>
+              <input value="RRSP contribution limits — what clients need to know" />
+            </div>
+            <div class="field">
+              <label>Stat 1</label>
+              <input value="$32,490" />
+            </div>
+            <div class="field">
+              <label>Stat 2</label>
+              <input value="18%" />
+            </div>
+            <div class="field">
+              <label>Disclaimer</label>
+              <textarea>For illustration only. Contribution room varies. Talk to your advisor before acting. © Financial Tech Tools · Not advice.</textarea>
+            </div>
+            <div class="action-stack">
+              <button type="button" class="btn primary" onclick="toast('Copy updated · graphic redrawn'); go('result')">Apply &amp; redraw</button>
+              <button type="button" class="btn ghost" onclick="go('result')">Back to result</button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+  <div class="toast" id="toast"></div>
+
+  <script>
+    var genTimer = null;
+    function go(name) {
+      document.querySelectorAll('.screen').forEach(function(s){ s.classList.remove('on'); });
+      document.querySelectorAll('.step-btn').forEach(function(b){ b.classList.remove('on'); });
+      var map = { browse: 'chip-browse', generating: 'chip-generating', result: 'chip-result', tweak: 'chip-tweak' };
+      document.getElementById('s-' + name).classList.add('on');
+      document.getElementById(map[name]).classList.add('on');
+      if (name === 'generating') {
+        if (genTimer) clearTimeout(genTimer);
+        genTimer = setTimeout(function(){ go('result'); }, 1800);
+      }
+      window.scrollTo(0, 0);
+    }
+    function toast(msg) {
+      var t = document.getElementById('toast');
+      t.textContent = msg; t.classList.add('show');
+      setTimeout(function(){ t.classList.remove('show'); }, 2200);
+    }
+  </script>
+</body>
+</html>

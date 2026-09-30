@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Direction A — Zero-click AI infographic · #288</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --fc-blue: #2b7de9; --fc-blue-dark: #1e5bb8; --fc-hero: #7eb3ef;
+      --rail-bg: #eef2f6; --rail-active: #d6e6fa;
+      --ink: #1a2332; --muted: #6b7280; --border: #d8e0ea;
+      --bg: #ffffff; --page: #f7f9fc; --mint: #e6f1fb;
+      --ftt-teal: #0d7377; --ftt-teal-2: #14919b; --ftt-deep: #0e4d52;
+      --ok: #047857; --ok-bg: #e8f5e9;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: Inter, system-ui, -apple-system, sans-serif;
+      background: var(--page); color: var(--ink); font-size: 14px; line-height: 1.45;
+      min-width: 1100px;
+    }
+    a { color: var(--fc-blue); }
+    button { font-family: inherit; cursor: pointer; }
+    .idea-banner {
+      background: linear-gradient(90deg, #1e2a4a, #2b7de9);
+      color: #fff; padding: 8px 16px; font-size: 0.72rem;
+      display: flex; flex-wrap: wrap; gap: 8px 16px; align-items: center; justify-content: space-between;
+    }
+    .idea-banner strong { font-weight: 700; }
+    .idea-banner a { color: #fff; text-decoration: underline; opacity: 0.95; }
+    .idea-banner .links { display: flex; gap: 12px; flex-wrap: wrap; }
+    .rec-pill {
+      display: inline-block; background: #e8f5e9; color: #065f46;
+      font-weight: 700; font-size: 0.68rem; padding: 3px 10px; border-radius: 999px;
+    }
+    .steps {
+      display: flex; gap: 6px; flex-wrap: wrap; padding: 8px 16px;
+      background: #fff; border-bottom: 1px solid var(--border); align-items: center;
+    }
+    .steps .lab { font-size: 0.68rem; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.04em; margin-right: 4px; }
+    .step-btn {
+      border: 1px solid var(--border); background: #fff; color: var(--ink);
+      font-size: 0.75rem; font-weight: 600; padding: 6px 12px;
+      border-radius: 999px;
+    }
+    .step-btn:hover { border-color: var(--fc-blue); color: var(--fc-blue); background: var(--mint); }
+    .step-btn.on { background: var(--fc-blue); color: #fff; border-color: var(--fc-blue); }
+    .shell { display: flex; min-height: calc(100vh - 78px); }
+    .rail {
+      width: 88px; background: var(--rail-bg); flex-shrink: 0;
+      display: flex; flex-direction: column; align-items: center;
+      padding: 12px 6px 16px; border-right: 1px solid #e2e8f0;
+    }
+    .rail-logo {
+      display: flex; flex-direction: column; align-items: center; gap: 4px;
+      margin-bottom: 18px; text-align: center; padding: 0 2px;
+    }
+    .rail-logo .mark {
+      width: 28px; height: 28px; border-radius: 6px; background: var(--fc-blue); color: #fff;
+      display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 0.7rem;
+    }
+    .rail-logo .name { font-size: 0.52rem; font-weight: 700; color: #1e3a5f; line-height: 1.15; }
+    .rail-nav { display: flex; flex-direction: column; gap: 4px; width: 100%; flex: 1; }
+    .rail-item {
+      display: flex; flex-direction: column; align-items: center; gap: 3px;
+      padding: 10px 4px; border-radius: 10px; color: #4b5563; font-size: 0.58rem; font-weight: 600;
+      position: relative; border: none; background: transparent; width: 100%;
+    }
+    .rail-item svg { width: 22px; height: 22px; stroke: currentColor; fill: none; stroke-width: 1.6; }
+    .rail-item.on { background: var(--rail-active); color: var(--fc-blue); }
+    .rail-item.on::before {
+      content: ""; position: absolute; left: -6px; top: 8px; bottom: 8px; width: 3px;
+      background: var(--fc-blue); border-radius: 0 3px 3px 0;
+    }
+    .rail-profile { margin-top: auto; display: flex; flex-direction: column; align-items: center; gap: 4px; padding-top: 12px; }
+    .rail-avatar {
+      width: 36px; height: 36px; border-radius: 50%; background: var(--fc-blue);
+      color: #fff; font-weight: 700; font-size: 0.75rem;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .rail-profile span { font-size: 0.58rem; font-weight: 600; color: #4b5563; }
+    .main { flex: 1; min-width: 0; background: var(--bg); display: flex; flex-direction: column; }
+    .pane { flex: 1; overflow-y: auto; padding: 28px 40px 72px; max-width: 920px; }
+    .screen { display: none; }
+    .screen.on { display: block; }
+    .page-kicker { font-size: 0.72rem; font-weight: 600; color: var(--muted); margin-bottom: 6px; }
+    .page-kicker span { color: var(--fc-blue); }
+    .page-title { font-size: 1.75rem; font-weight: 700; color: #1e3a5f; margin-bottom: 8px; letter-spacing: -0.02em; }
+    .page-sub { font-size: 1rem; color: var(--muted); margin-bottom: 24px; max-width: 560px; line-height: 1.5; }
+    .prompt-card {
+      background: #fff; border: 1px solid var(--border); border-radius: 16px;
+      padding: 24px; box-shadow: 0 4px 20px rgba(30,42,74,0.06);
+    }
+    .prompt-card label { display: block; font-weight: 700; font-size: 1.05rem; margin-bottom: 10px; color: #1e3a5f; }
+    .prompt-card textarea {
+      width: 100%; min-height: 120px; padding: 16px 18px; border: 2px solid #cfd8e3;
+      border-radius: 12px; font-family: inherit; font-size: 1.05rem; color: var(--ink);
+      resize: vertical; line-height: 1.5;
+    }
+    .prompt-card textarea:focus {
+      outline: none; border-color: var(--fc-blue); box-shadow: 0 0 0 4px rgba(43,125,233,0.15);
+    }
+    .prompt-actions {
+      display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-top: 14px;
+    }
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+      padding: 12px 20px; border-radius: 10px; border: 1px solid var(--border);
+      background: #fff; font-size: 0.95rem; font-weight: 700; color: var(--ink);
+    }
+    .btn:hover { border-color: var(--fc-blue); color: var(--fc-blue); }
+    .btn.primary { background: var(--fc-blue); color: #fff; border-color: var(--fc-blue); font-size: 1.05rem; padding: 14px 28px; }
+    .btn.primary:hover { background: var(--fc-blue-dark); color: #fff; }
+    .btn.ghost { background: transparent; }
+    .btn.lg { padding: 14px 24px; font-size: 1rem; }
+    .btn svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 2; }
+    .suggest { margin-top: 22px; }
+    .suggest h3 { font-size: 0.8rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; color: var(--muted); margin-bottom: 10px; }
+    .suggest-row { display: flex; flex-wrap: wrap; gap: 8px; }
+    .sug {
+      border: 1px solid var(--border); background: #f8fafc; color: var(--ink);
+      font-size: 0.88rem; font-weight: 600; padding: 10px 14px; border-radius: 999px;
+    }
+    .sug:hover { border-color: var(--fc-blue); background: var(--mint); color: var(--fc-blue); }
+    .callout {
+      margin-top: 20px; padding: 12px 14px; background: #eff6ff; border: 1px solid #bfdbfe;
+      border-radius: 10px; font-size: 0.82rem; color: #1e40af;
+    }
+    .gen-wrap { text-align: center; padding: 48px 24px; }
+    .gen-orb {
+      width: 72px; height: 72px; border-radius: 50%; margin: 0 auto 24px;
+      background: linear-gradient(135deg, var(--ftt-teal), var(--fc-blue));
+      display: flex; align-items: center; justify-content: center;
+      animation: pulse 1.6s ease-in-out infinite;
+    }
+    .gen-orb svg { width: 32px; height: 32px; stroke: #fff; fill: none; stroke-width: 2; }
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(43,125,233,0.35); }
+      50% { transform: scale(1.05); box-shadow: 0 0 0 16px rgba(43,125,233,0); }
+    }
+    .gen-wrap h2 { font-size: 1.5rem; font-weight: 700; color: #1e3a5f; margin-bottom: 8px; }
+    .gen-wrap .sub { font-size: 1rem; color: var(--muted); margin-bottom: 28px; }
+    .gen-steps { max-width: 400px; margin: 0 auto; text-align: left; }
+    .gen-step {
+      display: flex; align-items: center; gap: 12px; padding: 12px 14px;
+      border-radius: 10px; margin-bottom: 8px; background: #f8fafc; border: 1px solid var(--border);
+      font-size: 0.95rem; font-weight: 600; color: var(--muted);
+    }
+    .gen-step.done { background: var(--ok-bg); border-color: #a7f3d0; color: var(--ok); }
+    .gen-step.active { background: var(--mint); border-color: #bfdbfe; color: var(--fc-blue); }
+    .gen-step .dot {
+      width: 22px; height: 22px; border-radius: 50%; border: 2px solid currentColor;
+      display: flex; align-items: center; justify-content: center; font-size: 0.7rem; flex-shrink: 0;
+    }
+    .gen-step.done .dot { background: var(--ok); border-color: var(--ok); color: #fff; }
+    .result-layout {
+      display: grid; grid-template-columns: 1fr 300px; gap: 24px; align-items: start;
+    }
+    @media (max-width: 980px) { .result-layout { grid-template-columns: 1fr; } }
+    .infographic {
+      width: 100%; max-width: 480px; margin: 0 auto; aspect-ratio: 1 / 1;
+      border-radius: 8px; overflow: hidden;
+      box-shadow: 0 12px 40px rgba(14,77,82,0.25);
+      background: linear-gradient(165deg, var(--ftt-deep) 0%, var(--ftt-teal) 42%, var(--ftt-teal-2) 100%);
+      color: #fff; display: flex; flex-direction: column; padding: 28px 26px 20px;
+      position: relative;
+    }
+    .infographic::before {
+      content: ""; position: absolute; right: -40px; top: -40px; width: 160px; height: 160px;
+      border-radius: 50%; background: rgba(255,255,255,0.06);
+    }
+    .infographic::after {
+      content: ""; position: absolute; left: -30px; bottom: 80px; width: 100px; height: 100px;
+      border-radius: 50%; background: rgba(255,255,255,0.05);
+    }
+    .ig-brand {
+      display: flex; align-items: center; justify-content: space-between; gap: 12px;
+      position: relative; z-index: 1;
+    }
+    .ig-logo {
+      display: flex; align-items: center; gap: 10px;
+    }
+    .ig-logo .mark {
+      width: 40px; height: 40px; border-radius: 10px; background: #fff;
+      color: var(--ftt-teal); font-weight: 800; font-size: 0.72rem;
+      display: flex; align-items: center; justify-content: center; letter-spacing: -0.02em;
+    }
+    .ig-logo .name { font-size: 0.78rem; font-weight: 700; line-height: 1.2; }
+    .ig-logo .url { font-size: 0.62rem; opacity: 0.8; font-weight: 500; }
+    .ig-eyebrow {
+      margin-top: 28px; font-size: 0.72rem; font-weight: 700; letter-spacing: 0.1em;
+      text-transform: uppercase; opacity: 0.85; position: relative; z-index: 1;
+    }
+    .ig-headline {
+      margin-top: 8px; font-size: 1.65rem; font-weight: 800; line-height: 1.2;
+      max-width: 92%; position: relative; z-index: 1;
+    }
+    .ig-stats {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 22px;
+      position: relative; z-index: 1;
+    }
+    .ig-stat {
+      background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.18);
+      border-radius: 12px; padding: 14px 12px;
+    }
+    .ig-stat .num { font-size: 1.85rem; font-weight: 800; line-height: 1; }
+    .ig-stat .lbl { font-size: 0.72rem; margin-top: 6px; opacity: 0.9; font-weight: 500; line-height: 1.3; }
+    .ig-tips { margin-top: 18px; position: relative; z-index: 1; }
+    .ig-tip {
+      display: flex; gap: 10px; align-items: flex-start; margin-bottom: 8px;
+      font-size: 0.82rem; font-weight: 500;
+    }
+    .ig-tip .n {
+      flex-shrink: 0; width: 22px; height: 22px; border-radius: 50%;
+      background: #fff; color: var(--ftt-teal); font-size: 0.7rem; font-weight: 800;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .ig-foot {
+      margin-top: auto; padding-top: 14px; border-top: 1px solid rgba(255,255,255,0.2);
+      font-size: 0.62rem; opacity: 0.85; line-height: 1.4; position: relative; z-index: 1;
+    }
+    .side-panel {
+      background: #fff; border: 1px solid var(--border); border-radius: 14px;
+      padding: 18px; position: sticky; top: 16px;
+    }
+    .side-panel h3 { font-size: 0.95rem; font-weight: 700; margin-bottom: 6px; }
+    .side-panel .hint { font-size: 0.8rem; color: var(--muted); margin-bottom: 16px; }
+    .action-stack { display: flex; flex-direction: column; gap: 8px; }
+    .action-stack .btn { width: 100%; justify-content: center; }
+    .greenlight {
+      margin-top: 16px; padding: 12px; background: var(--ok-bg); border: 1px solid #a7f3d0;
+      border-radius: 10px; font-size: 0.8rem; color: var(--ok);
+    }
+    .greenlight strong { display: block; margin-bottom: 2px; }
+    .tweak-panel {
+      background: #fff; border: 1px solid var(--border); border-radius: 14px; padding: 20px;
+      margin-top: 20px;
+    }
+    .tweak-panel h3 { font-size: 1.05rem; margin-bottom: 4px; }
+    .tweak-panel .hint { font-size: 0.82rem; color: var(--muted); margin-bottom: 16px; }
+    .field { margin-bottom: 14px; }
+    .field label { display: block; font-weight: 700; font-size: 0.88rem; margin-bottom: 6px; }
+    .field input, .field textarea {
+      width: 100%; padding: 12px 14px; border: 1px solid var(--border); border-radius: 10px;
+      font-family: inherit; font-size: 0.95rem; color: var(--ink);
+    }
+    .field textarea { min-height: 72px; resize: vertical; }
+    .field input:focus, .field textarea:focus {
+      outline: none; border-color: var(--fc-blue); box-shadow: 0 0 0 3px rgba(43,125,233,0.15);
+    }
+    .toast {
+      display: none; position: fixed; bottom: 24px; right: 24px; background: var(--ok); color: #fff;
+      padding: 14px 20px; border-radius: 10px; font-weight: 700; font-size: 0.9rem;
+      box-shadow: 0 8px 24px rgba(4,120,87,0.3); z-index: 50;
+    }
+    .toast.show { display: block; }
+    .no-model {
+      margin-top: 12px; font-size: 0.75rem; color: var(--muted); font-style: italic;
+    }
+  </style>
+</head>
+<body>
+  <div class="idea-banner">
+    <div><span class="rec-pill">RECOMMEND · Dir A</span> &nbsp; <strong>#288 Zero-click AI infographic</strong> — Soft Dev hold · enhancement · not agent-ready</div>
+    <div class="links">
+      <a href="../../index.html">Hub</a>
+      <a href="../b/index.html">Dir B</a>
+      <a href="../c/index.html">Dir C</a>
+      <a href="../../build-contract.html">Contract</a>
+      <a href="https://github.com/kartboy16/content-library/issues/288">Issue #288</a>
+    </div>
+  </div>
+
+  <div class="steps">
+    <span class="lab">Steps</span>
+    <button type="button" class="step-btn on" id="chip-prompt" onclick="go('prompt')">1 · Prompt</button>
+    <button type="button" class="step-btn" id="chip-generating" onclick="go('generating')">2 · Generating</button>
+    <button type="button" class="step-btn" id="chip-result" onclick="go('result')">3 · Result</button>
+    <button type="button" class="step-btn" id="chip-tweak" onclick="go('tweak')">Tweak copy</button>
+  </div>
+
+  <div class="shell">
+    <aside class="rail" aria-label="FC navigation">
+      <div class="rail-logo">
+        <div class="mark">FC</div>
+        <div class="name">Financial<br/>Content</div>
+      </div>
+      <nav class="rail-nav">
+        <button type="button" class="rail-item on" title="Content">
+          <svg viewBox="0 0 24 24"><path d="M4 10.5L12 4l8 6.5V20a1 1 0 0 1-1 1h-5v-6H10v6H5a1 1 0 0 1-1-1v-9.5z"/></svg>
+          Content
+        </button>
+        <button type="button" class="rail-item" title="Website">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3.5 3 14.5 0 18M12 3c-3 3.5-3 14.5 0 18"/></svg>
+          Website
+        </button>
+        <button type="button" class="rail-item" title="Social">
+          <svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M7 15l2.5-3 2 2 3-4 2.5 5"/></svg>
+          Social
+        </button>
+        <button type="button" class="rail-item" title="Email">
+          <svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="1.5"/><path d="M3.5 7l8.5 6 8.5-6"/></svg>
+          Email
+        </button>
+      </nav>
+      <div class="rail-profile">
+        <div class="rail-avatar">AH</div>
+        <span>Profile</span>
+      </div>
+    </aside>
+
+    <div class="main">
+      <div class="pane">
+
+        <!-- PROMPT -->
+        <div class="screen on" id="s-prompt">
+          <div class="page-kicker">Content Library · AI tools · <span>Create Infographic</span></div>
+          <h1 class="page-title">Create Infographic</h1>
+          <p class="page-sub">Tell us what you need. We’ll make a finished graphic with your firm brand — no templates to pick, no layers to drag.</p>
+
+          <div class="prompt-card">
+            <label for="prompt">What should this infographic cover?</label>
+            <textarea id="prompt" placeholder="Example: RRSP contribution limits for 2026 — show the dollar amounts and three tips for clients">RRSP contribution limits for 2026 — show the key dollar amounts and three simple tips clients can use</textarea>
+            <div class="prompt-actions">
+              <button type="button" class="btn primary" onclick="startGenerate()">
+                <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+                Create infographic
+              </button>
+              <button type="button" class="btn" onclick="toast('Voice capture (stub) — speak your idea')">
+                <svg viewBox="0 0 24 24"><path d="M12 3a3 3 0 0 1 3 3v6a3 3 0 0 1-6 0V6a3 3 0 0 1 3-3z"/><path d="M19 11a7 7 0 0 1-14 0M12 18v3"/></svg>
+                Speak instead
+              </button>
+            </div>
+            <p class="no-model">Your firm brand is applied automatically. No model or template pickers — that’s handled for you.</p>
+          </div>
+
+          <div class="suggest">
+            <h3>Or pick for me</h3>
+            <div class="suggest-row">
+              <button type="button" class="sug" onclick="pickForMe('RRSP contribution limits for 2026')">RRSP limits 2026</button>
+              <button type="button" class="sug" onclick="pickForMe('TFSA room explained simply for clients')">TFSA room explained</button>
+              <button type="button" class="sug" onclick="pickForMe('3 estate planning tips for business owners')">Estate tips · owners</button>
+              <button type="button" class="sug" onclick="pickForMe('Group benefits checklist for employees')">Group benefits checklist</button>
+            </div>
+          </div>
+
+          <div class="callout">
+            <strong>Zero structural clicks after intent.</strong> One prompt (or voice / Pick for me) → finished graphic. Replaces the old clicky template builder happy path.
+          </div>
+        </div>
+
+        <!-- GENERATING -->
+        <div class="screen" id="s-generating">
+          <div class="gen-wrap">
+            <div class="gen-orb">
+              <svg viewBox="0 0 24 24"><path d="M12 3v3M12 18v3M3 12h3M18 12h3M5.6 5.6l2.1 2.1M16.3 16.3l2.1 2.1M18.4 5.6l-2.1 2.1M7.7 16.3l-2.1 2.1"/></svg>
+            </div>
+            <h2>Creating your infographic…</h2>
+            <p class="sub">Hang tight — we’re writing the layout and applying your brand.</p>
+            <div class="gen-steps">
+              <div class="gen-step done" id="gs1"><span class="dot">✓</span> Writing layout…</div>
+              <div class="gen-step active" id="gs2"><span class="dot">2</span> Applying your brand…</div>
+              <div class="gen-step" id="gs3"><span class="dot">3</span> Rendering…</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- RESULT -->
+        <div class="screen" id="s-result">
+          <div class="page-kicker">Content Library · AI tools · <span>Create Infographic</span></div>
+          <h1 class="page-title">Your infographic is ready</h1>
+          <p class="page-sub">Financial Tech Tools brand applied. Use it as-is, regenerate, or tweak the wording only.</p>
+
+          <div class="result-layout">
+            <div>
+              <div class="infographic" id="infographic" aria-label="Finished branded infographic">
+                <div class="ig-brand">
+                  <div class="ig-logo">
+                    <div class="mark">FTT</div>
+                    <div>
+                      <div class="name">Financial Tech Tools</div>
+                      <div class="url">financialtechtools.ca</div>
+                    </div>
+                  </div>
+                </div>
+                <div class="ig-eyebrow">Retirement · 2026</div>
+                <div class="ig-headline" id="ig-headline">RRSP contribution limits — what clients need to know</div>
+                <div class="ig-stats">
+                  <div class="ig-stat">
+                    <div class="num" id="ig-stat1">$32,490</div>
+                    <div class="lbl" id="ig-stat1-lbl">2026 RRSP dollar limit</div>
+                  </div>
+                  <div class="ig-stat">
+                    <div class="num" id="ig-stat2">18%</div>
+                    <div class="lbl" id="ig-stat2-lbl">of prior-year earned income</div>
+                  </div>
+                </div>
+                <div class="ig-tips" id="ig-tips">
+                  <div class="ig-tip"><span class="n">1</span><span>Check unused room on your Notice of Assessment.</span></div>
+                  <div class="ig-tip"><span class="n">2</span><span>Contribute early so growth has more time.</span></div>
+                  <div class="ig-tip"><span class="n">3</span><span>Ask before using RRSP room for a Home Buyers’ Plan.</span></div>
+                </div>
+                <div class="ig-foot" id="ig-disclaimer">
+                  For illustration only. Contribution room varies. Talk to your advisor before acting. © Financial Tech Tools · Not advice.
+                </div>
+              </div>
+            </div>
+
+            <aside class="side-panel">
+              <h3>What next?</h3>
+              <p class="hint">Three plain choices. No visual editor — text tweaks only if you need them.</p>
+              <div class="action-stack">
+                <button type="button" class="btn primary lg" onclick="toast('Saved to library · ready to share')">Use</button>
+                <button type="button" class="btn lg" onclick="regen()">Regenerate</button>
+                <button type="button" class="btn ghost lg" onclick="go('tweak')">Tweak copy</button>
+              </div>
+              <div class="greenlight">
+                <strong>✓ Ready for Greenlight</strong>
+                Optional compliance review — not required to use this graphic.
+              </div>
+              <p class="no-model">Brand kit from Settings &amp; Branding applied automatically.</p>
+            </aside>
+          </div>
+        </div>
+
+        <!-- TWEAK -->
+        <div class="screen" id="s-tweak">
+          <div class="page-kicker">Content Library · AI tools · <span>Tweak copy</span></div>
+          <h1 class="page-title">Tweak the wording</h1>
+          <p class="page-sub">Change headlines, numbers, or the disclaimer. We’ll redraw the graphic — still no layers or canvas.</p>
+
+          <div class="result-layout">
+            <div>
+              <div class="infographic" aria-hidden="true">
+                <div class="ig-brand">
+                  <div class="ig-logo">
+                    <div class="mark">FTT</div>
+                    <div>
+                      <div class="name">Financial Tech Tools</div>
+                      <div class="url">financialtechtools.ca</div>
+                    </div>
+                  </div>
+                </div>
+                <div class="ig-eyebrow">Retirement · 2026</div>
+                <div class="ig-headline" id="tw-preview-h">RRSP contribution limits — what clients need to know</div>
+                <div class="ig-stats">
+                  <div class="ig-stat"><div class="num" id="tw-preview-n1">$32,490</div><div class="lbl">2026 RRSP dollar limit</div></div>
+                  <div class="ig-stat"><div class="num" id="tw-preview-n2">18%</div><div class="lbl">of prior-year earned income</div></div>
+                </div>
+                <div class="ig-tips">
+                  <div class="ig-tip"><span class="n">1</span><span id="tw-preview-t1">Check unused room on your Notice of Assessment.</span></div>
+                  <div class="ig-tip"><span class="n">2</span><span id="tw-preview-t2">Contribute early so growth has more time.</span></div>
+                  <div class="ig-tip"><span class="n">3</span><span id="tw-preview-t3">Ask before using RRSP room for a Home Buyers’ Plan.</span></div>
+                </div>
+                <div class="ig-foot" id="tw-preview-d">For illustration only. Contribution room varies. Talk to your advisor before acting. © Financial Tech Tools · Not advice.</div>
+              </div>
+            </div>
+            <div class="tweak-panel" style="margin-top:0;position:sticky;top:16px">
+              <h3>Text only</h3>
+              <p class="hint">No colours, logos, or layout editor — those stay on-brand.</p>
+              <div class="field">
+                <label for="tw-h">Headline</label>
+                <input id="tw-h" value="RRSP contribution limits — what clients need to know" oninput="liveTweak()" />
+              </div>
+              <div class="field">
+                <label for="tw-n1">Stat 1</label>
+                <input id="tw-n1" value="$32,490" oninput="liveTweak()" />
+              </div>
+              <div class="field">
+                <label for="tw-n2">Stat 2</label>
+                <input id="tw-n2" value="18%" oninput="liveTweak()" />
+              </div>
+              <div class="field">
+                <label for="tw-tips">Tips (one per line)</label>
+                <textarea id="tw-tips" oninput="liveTweak()">Check unused room on your Notice of Assessment.
+Contribute early so growth has more time.
+Ask before using RRSP room for a Home Buyers’ Plan.</textarea>
+              </div>
+              <div class="field">
+                <label for="tw-d">Disclaimer</label>
+                <textarea id="tw-d" oninput="liveTweak()">For illustration only. Contribution room varies. Talk to your advisor before acting. © Financial Tech Tools · Not advice.</textarea>
+              </div>
+              <div class="action-stack">
+                <button type="button" class="btn primary" onclick="applyTweak()">Apply &amp; redraw</button>
+                <button type="button" class="btn ghost" onclick="go('result')">Back to result</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script>
+    var genTimer = null;
+    function go(name) {
+      document.querySelectorAll('.screen').forEach(function(s){ s.classList.remove('on'); });
+      document.querySelectorAll('.step-btn').forEach(function(b){ b.classList.remove('on'); });
+      var map = { prompt: 'chip-prompt', generating: 'chip-generating', result: 'chip-result', tweak: 'chip-tweak' };
+      document.getElementById('s-' + name).classList.add('on');
+      document.getElementById(map[name]).classList.add('on');
+      if (name === 'generating') runGenerating();
+      window.scrollTo(0, 0);
+    }
+    function pickForMe(text) {
+      document.getElementById('prompt').value = text;
+      startGenerate();
+    }
+    function startGenerate() {
+      go('generating');
+    }
+    function runGenerating() {
+      if (genTimer) clearTimeout(genTimer);
+      var s1 = document.getElementById('gs1');
+      var s2 = document.getElementById('gs2');
+      var s3 = document.getElementById('gs3');
+      s1.className = 'gen-step done'; s1.querySelector('.dot').textContent = '✓';
+      s2.className = 'gen-step active'; s2.querySelector('.dot').textContent = '2';
+      s3.className = 'gen-step'; s3.querySelector('.dot').textContent = '3';
+      genTimer = setTimeout(function(){
+        s2.className = 'gen-step done'; s2.querySelector('.dot').textContent = '✓';
+        s3.className = 'gen-step active';
+        genTimer = setTimeout(function(){
+          s3.className = 'gen-step done'; s3.querySelector('.dot').textContent = '✓';
+          genTimer = setTimeout(function(){ go('result'); }, 500);
+        }, 900);
+      }, 1100);
+    }
+    function regen() {
+      toast('Regenerating with the same brief…');
+      go('generating');
+    }
+    function liveTweak() {
+      document.getElementById('tw-preview-h').textContent = document.getElementById('tw-h').value;
+      document.getElementById('tw-preview-n1').textContent = document.getElementById('tw-n1').value;
+      document.getElementById('tw-preview-n2').textContent = document.getElementById('tw-n2').value;
+      document.getElementById('tw-preview-d').textContent = document.getElementById('tw-d').value;
+      var lines = document.getElementById('tw-tips').value.split('\n').filter(Boolean);
+      if (lines[0]) document.getElementById('tw-preview-t1').textContent = lines[0];
+      if (lines[1]) document.getElementById('tw-preview-t2').textContent = lines[1];
+      if (lines[2]) document.getElementById('tw-preview-t3').textContent = lines[2];
+    }
+    function applyTweak() {
+      liveTweak();
+      document.getElementById('ig-headline').textContent = document.getElementById('tw-h').value;
+      document.getElementById('ig-stat1').textContent = document.getElementById('tw-n1').value;
+      document.getElementById('ig-stat2').textContent = document.getElementById('tw-n2').value;
+      document.getElementById('ig-disclaimer').textContent = document.getElementById('tw-d').value;
+      var lines = document.getElementById('tw-tips').value.split('\n').filter(Boolean);
+      var tips = document.getElementById('ig-tips').querySelectorAll('.ig-tip span:last-child');
+      if (lines[0] && tips[0]) tips[0].textContent = lines[0];
+      if (lines[1] && tips[1]) tips[1].textContent = lines[1];
+      if (lines[2] && tips[2]) tips[2].textContent = lines[2];
+      toast('Copy updated · graphic redrawn');
+      go('result');
+    }
+    function toast(msg) {
+      var t = document.getElementById('toast');
+      t.textContent = msg;
+      t.classList.add('show');
+      setTimeout(function(){ t.classList.remove('show'); }, 2400);
+    }
+  </script>
+</body>
+</html>

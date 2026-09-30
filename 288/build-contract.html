@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Build contract · #288 Zero-click AI infographic</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    body { font-family: Inter, system-ui, sans-serif; max-width: 760px; margin: 40px auto; padding: 0 24px 80px; color: #1e2a4a; line-height: 1.55; }
+    h1 { font-size: 22px; } h2 { font-size: 16px; margin-top: 28px; }
+    p, li { font-size: 14px; color: #3a4558; }
+    .warn { background: #fff7ed; color: #9a3412; padding: 12px 14px; border-radius: 8px; font-size: 13px; margin-bottom: 16px; }
+    .rule { background: #eff6ff; color: #1e40af; padding: 12px 14px; border-radius: 8px; font-size: 13px; margin-bottom: 16px; }
+    .ok { background: #e8f5e9; color: #1a7f4c; padding: 12px 14px; border-radius: 8px; font-size: 13px; margin-bottom: 16px; }
+    .hold { background: #fef3c7; color: #92400e; padding: 12px 14px; border-radius: 8px; font-size: 13px; margin-bottom: 16px; }
+    code { background: #eef2f6; padding: 1px 6px; border-radius: 4px; font-size: 12px; }
+    a { color: #2b7de9; } table { width: 100%; border-collapse: collapse; font-size: 13px; margin: 12px 0; }
+    th, td { border: 1px solid #d4e4f2; padding: 8px 10px; text-align: left; vertical-align: top; } th { background: #eef4fb; }
+    ul { padding-left: 1.2em; } .checklist { list-style: none; padding-left: 0; }
+    .checklist li { margin: 5px 0; }
+  </style>
+</head>
+<body>
+  <p class="warn"><strong>PROVISIONAL</strong> — Recommend Direction A. Not locked. Do <strong>not</strong> mark agent-ready until Alex (and Angelina if looping) lock a direction and attach the Pages mock URL.</p>
+  <p class="ok"><strong>Recommend:</strong> Direction A — Prompt / voice / Pick for me → Generating → finished branded infographic. Primary actions: Use · Regenerate · Tweak copy (text only).</p>
+  <p class="hold"><strong>Soft Dev hold · enhancement only · not agent-ready.</strong> Designer-first. Do not wake Software developer.</p>
+  <p class="rule"><strong>North star:</strong> NO CLICKS. Model choice (GPT Image 2 default / Nano Banana Pro alt) is product plumbing — never an advisor-facing picker. #288 replaces the clicky <a href="../infographic-builder/">/infographic-builder/</a> happy path.</p>
+
+  <h1>Build contract · Zero-click AI infographic (#288)</h1>
+  <p>Markdown: <a href="build-contract.md">build-contract.md</a> · Hub: <a href="index.html">index.html</a> · Brief: <a href="directions-brief.md">directions-brief.md</a> · Mock: <a href="directions/a/">Direction A</a></p>
+
+  <h2>One-liner</h2>
+  <p>Advisor expresses intent once (typed prompt, voice, or “Pick for me”). AI returns a <strong>finished firm-branded infographic</strong> in one shot. After: <strong>Use</strong>, <strong>Regenerate</strong>, <strong>Tweak copy</strong> (text-only). No canvas, layers, template wizard, or model picker.</p>
+
+  <h2>Recommended UI (Direction A)</h2>
+  <ul>
+    <li><strong>Entry:</strong> Content Library → AI tools / Create → Create Infographic (one surface).</li>
+    <li><strong>Step chips:</strong> Prompt · Generating · Result (optional Tweak copy).</li>
+    <li><strong>Prompt:</strong> large field + voice + Pick for me chips. No template grid.</li>
+    <li><strong>Generating:</strong> calm progress (“Writing layout… Applying your brand… Rendering…”).</li>
+    <li><strong>Result:</strong> branded graphic + Use · Regenerate · Tweak copy.</li>
+    <li><strong>Brand:</strong> firm kit auto-applied (mock: Financial Tech Tools / financialtechtools.ca).</li>
+    <li><strong>Compliance:</strong> optional “Ready for Greenlight” — not a blocker.</li>
+  </ul>
+
+  <h2>Acceptance criteria</h2>
+  <ul class="checklist">
+    <li>☐ <strong>AC-1:</strong> Intent → usable branded infographic with <strong>zero structural clicks</strong> (prompt / voice / one CTA only).</li>
+    <li>☐ <strong>AC-2:</strong> No drag-drop canvas, layer panel, or multi-step template wizard in the happy path.</li>
+    <li>☐ <strong>AC-3:</strong> Optional regenerate / text tweak only; model choice is product plumbing (not advisor-facing).</li>
+    <li>☐ <strong>AC-4:</strong> Clickable HTML mock on GitHub Pages (<code>fc-mocks/288/</code>) + short build contract.</li>
+    <li>☐ <strong>AC-5:</strong> Entry points from Content Library / AI tools / create-post called out.</li>
+  </ul>
+
+  <h2>Build recommendations (provisional)</h2>
+  <table>
+    <thead><tr><th>Topic</th><th>Provisional stance</th></tr></thead>
+    <tbody>
+      <tr><td>Happy path</td><td><strong>Direction A</strong> one-shot generate</td></tr>
+      <tr><td>Brand</td><td>Auto-apply firm brand kit</td></tr>
+      <tr><td>Tweak</td><td>Text-only; re-render after apply</td></tr>
+      <tr><td>Models</td><td>Product-side default/alt; <strong>no advisor picker</strong></td></tr>
+      <tr><td>Greenlight</td><td>Optional note — not a required step</td></tr>
+      <tr><td>Soft Dev</td><td><strong>HOLD</strong> until direction lock</td></tr>
+      <tr><td>Agent-ready</td><td><strong>DO NOT APPLY</strong></td></tr>
+    </tbody>
+  </table>
+
+  <h2>Screens / states (Direction A)</h2>
+  <table>
+    <thead><tr><th>Screen</th><th>Purpose</th></tr></thead>
+    <tbody>
+      <tr><td>Prompt</td><td>Intent (type / voice / Pick for me)</td></tr>
+      <tr><td>Generating</td><td>Calm progress + brand-aware copy</td></tr>
+      <tr><td>Result</td><td>Finished graphic + Use / Regenerate / Tweak copy</td></tr>
+      <tr><td>Tweak copy</td><td>Text-only panel → re-render</td></tr>
+    </tbody>
+  </table>
+
+  <h2>In scope</h2>
+  <ul>
+    <li>Zero-click AI generate happy path (Dir A)</li>
+    <li>Alt B (chat) and C (from post) for comparison</li>
+    <li>Brand applied on result; Greenlight note optional</li>
+    <li>Replace clicky builder as primary happy path</li>
+  </ul>
+
+  <h2>Out of scope / non-goals</h2>
+  <ul>
+    <li>NG-1: Shipping model API wiring in the mock</li>
+    <li>NG-2: Full HeyGen / video avatar (#55)</li>
+    <li>NG-3: Auto-merge / Soft Dev build until direction lock</li>
+    <li>Advisor-facing model picker</li>
+    <li>Canvas / layers / template wizard in happy path</li>
+  </ul>
+
+  <h2>Open product questions</h2>
+  <ol>
+    <li>Where does <strong>Use</strong> land by default — library draft, social compose, or email insert?</li>
+    <li>Is Greenlight always shown, firm-gated, or advisor-opt-in?</li>
+    <li>Voice input: browser speech vs later native?</li>
+    <li>Pick for me: firm calendar topics vs advisor history vs library trending?</li>
+  </ol>
+
+  <h2>Alternatives (not recommended as primary)</h2>
+  <ul>
+    <li><strong>B — Chat-threaded:</strong> Strong for iteration; weaker first-run clarity.</li>
+    <li><strong>C — From post CTA:</strong> Excellent companion entry; not the primary Create surface.</li>
+    <li><strong>Old clicky builder</strong> (<a href="../infographic-builder/">/infographic-builder/</a>): Contrast only — #288 replaces that happy path.</li>
+  </ul>
+
+  <p style="margin-top:32px;font-size:13px;color:#5b6572">Issue: <a href="https://github.com/kartboy16/content-library/issues/288">content-library #288</a> · Reporter: Alex Hung · Live: <a href="https://kartboy16.github.io/fc-mocks/288/">kartboy16.github.io/fc-mocks/288/</a></p>
+</body>
+</html>
