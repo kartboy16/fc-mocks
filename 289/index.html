@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>FC — #289 Pricing bullets: videos, calculators &amp; infographics</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #f4f8fc; --card: #fff; --ink: #1e2a4a; --muted: #5b6572;
+      --blue: #2b7de9; --border: #d4e4f2; --mint: #e6f1fb;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: Inter, system-ui, sans-serif; background: var(--bg); color: var(--ink); line-height: 1.55; }
+    .hero {
+      background: linear-gradient(135deg, #1e2a4a 0%, #2b7de9 100%);
+      color: #fff; padding: 40px 24px 36px;
+    }
+    .hero-inner { max-width: 880px; margin: 0 auto; }
+    .hero .eyebrow { font-size: 0.75rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; opacity: 0.85; margin-bottom: 10px; }
+    .hero h1 { font-size: 1.75rem; margin-bottom: 10px; }
+    .hero p { opacity: 0.92; max-width: 720px; font-size: 0.95rem; }
+    .rec {
+      display: inline-block; margin-top: 18px; background: #e8f5e9; color: #065f46;
+      font-weight: 700; font-size: 0.8rem; padding: 8px 14px; border-radius: 999px;
+    }
+    .wrap { max-width: 880px; margin: 0 auto; padding: 28px 24px 72px; }
+    .cta {
+      display: block; background: var(--blue); color: #fff !important; text-decoration: none;
+      text-align: center; padding: 16px 24px; border-radius: 12px; font-weight: 700;
+      font-size: 1rem; margin-bottom: 28px; box-shadow: 0 4px 16px rgba(43,125,233,0.35);
+    }
+    .cta:hover { filter: brightness(1.05); }
+    .cta small { display: block; font-weight: 500; opacity: 0.9; font-size: 0.8rem; margin-top: 4px; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 14px; }
+    .card {
+      background: var(--card); border: 1px solid var(--border); border-radius: 12px;
+      padding: 18px; text-decoration: none; color: inherit; display: block;
+      transition: border-color 0.15s, box-shadow 0.15s;
+    }
+    .card:hover { border-color: var(--blue); box-shadow: 0 4px 16px rgba(30,42,74,0.08); }
+    .card.recd { border-color: #2b7de9; box-shadow: 0 4px 16px rgba(43,125,233,0.12); }
+    .card h3 { font-size: 0.95rem; margin-bottom: 6px; color: var(--blue); }
+    .card p { font-size: 0.8rem; color: var(--muted); }
+    .card .tag {
+      display: inline-block; font-size: 0.65rem; font-weight: 700; background: var(--mint);
+      color: var(--blue); padding: 2px 8px; border-radius: 999px; margin-bottom: 8px;
+    }
+    .card .tag.rec-tag { background: var(--blue); color: #fff; }
+    h2 { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--muted); margin: 28px 0 12px; }
+    .problem {
+      margin: 0 0 20px; padding: 14px 16px; background: #fff8eb; border: 1px solid #f0d4a8;
+      border-radius: 10px; font-size: 0.85rem; color: #8a5a10;
+    }
+    .problem strong { color: #6b4408; }
+    .hold {
+      margin: 0 0 20px; padding: 14px 16px; background: #fef3c7; border: 1px solid #fcd34d;
+      border-radius: 10px; font-size: 0.85rem; color: #92400e;
+    }
+    .note {
+      margin: 16px 0 0; padding: 12px 14px; background: #eef4fb; border: 1px solid var(--border);
+      border-radius: 10px; font-size: 0.85rem; color: var(--ink);
+    }
+    .meta { margin-top: 32px; font-size: 0.8rem; color: var(--muted); }
+    .meta a { color: var(--blue); }
+    code { background: #eef2f6; padding: 0.1em 0.35em; border-radius: 4px; font-size: 0.85em; }
+    a { color: var(--blue); }
+  </style>
+</head>
+<body>
+  <header class="hero">
+    <div class="hero-inner">
+      <div class="eyebrow">FinancialContent · content-library #289 · Designer mocks</div>
+      <h1>Pricing bullets — name videos, calculators &amp; infographics</h1>
+      <p>Copy/UX mocks only for signup/pricing plan cards. Reuses <strong>#258 pricing-wording</strong> layout lock (Firm · Starter $79 CAD/mo, Intro ribbon, 30-day trial). Does <em>not</em> change Checkout code or reopen payer/trial questions.</p>
+      <span class="rec">Recommend · Direction A — Dedicated content-types bullet</span>
+    </div>
+  </header>
+
+  <div class="wrap">
+    <a class="cta" href="directions/a/index.html">
+      Open Direction A (recommended)
+      <small>Keep E2-style channel/library bullets + add “Videos, calculators &amp; infographics included”</small>
+    </a>
+    <p style="text-align:center;margin:-18px 0 24px;font-size:0.8rem;color:var(--muted)">
+      <a href="build-contract.md">Build contract (recommended bullet strings)</a>
+    </p>
+
+    <div class="problem">
+      <strong>Problem (Alex via CosB, 2026-09-30):</strong> Pricing feature bullets should <strong>explicitly name videos, calculators, and infographics</strong> — not only “library → website / social / email.” Advisors scanning Firm Starter should see those formats called out. Context issue <a href="https://github.com/kartboy16/content-library/issues/289">content-library #289</a> is paid Checkout hold-main; <strong>this pass is copy/UX mocks only</strong>, not Checkout code.
+    </div>
+
+    <div class="hold">
+      <strong>Soft Dev hold · not agent-ready.</strong> Mocks first; Software developer held until Alex/Ang pick a direction. Do <em>not</em> wake Soft Dev. Do <em>not</em> apply <code>agent-ready</code>. No Checkout / approval product-lock changes in this pass.
+    </div>
+
+    <div class="note">
+      <strong>Baseline:</strong> <a href="../258/pricing-wording/e2/">#258 pricing-wording E2</a> — Firm · Starter $79 CAD/mo, Intro pricing ribbon, 30-day trial, “One library → publish to website, email, and social” (no Mailchimp brand names). Visual language / layout locked; only feature-bullet treatment varies here.
+    </div>
+
+    <h2>Directions</h2>
+    <div class="grid">
+      <a class="card recd" href="directions/a/index.html">
+        <span class="tag rec-tag">RECOMMEND</span>
+        <h3>A — Dedicated content-types bullet</h3>
+        <p>Keep prior channel/library bullets. Add a clear line: “Videos, calculators &amp; infographics included.” Easiest scan; formats can’t be missed.</p>
+      </a>
+      <a class="card" href="directions/b/index.html">
+        <span class="tag">ALT</span>
+        <h3>B — Fold into the library bullet</h3>
+        <p>One richer library line naming formats inline. Fewer bullets; denser prose. Same card chrome.</p>
+      </a>
+      <a class="card" href="directions/c/index.html">
+        <span class="tag">ALT</span>
+        <h3>C — Content-type chips</h3>
+        <p>Same core bullets as A, plus a small type-chips row (Video · Calculator · Infographic · Article · Email · Social) as visual proof.</p>
+      </a>
+    </div>
+
+    <div class="meta">
+      <p>Issue: <a href="https://github.com/kartboy16/content-library/issues/289">kartboy16/content-library#289</a></p>
+      <p>Related: <a href="../258/pricing-wording/">#258 pricing-wording</a> · <a href="https://github.com/kartboy16/content-library/issues/258">#258</a></p>
+      <p>Live: <a href="https://kartboy16.github.io/fc-mocks/289/">https://kartboy16.github.io/fc-mocks/289/</a></p>
+      <p>Repo: <a href="https://github.com/kartboy16/fc-mocks">kartboy16/fc-mocks</a> · mocks only · no content-library app code</p>
+    </div>
+  </div>
+</body>
+</html>
