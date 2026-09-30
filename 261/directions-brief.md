@@ -60,14 +60,14 @@ Do **not** invent locked answers. Surface on hub + every direction.
 
 ### A · FC look (`directions/a-fc/`) — primary review surface
 
-**Not a new direction letter.** Higher-fidelity clickable HTML of **Direction A** inside real **financialcontent.ca** advisor library chrome (rail, hero, search, pills, teal card headers, Topics drawer).
+**Not a new direction letter.** Higher-fidelity clickable HTML of **Direction A** inside real **financialcontent.ca** advisor library chrome (rail, hero, search, pills, teal card headers, **drawer-only** Sources / Topics / Type filters — no gray facet chip rows above cards).
 
 | | |
 |---|---|
 | **Live** | https://kartboy16.github.io/fc-mocks/261/directions/a-fc/ |
 | **Audiences** | **Both** — **advisor browse primary** + **admin labeling** (Angelina) |
 | **Contract** | Source × Topic × Type AND · Manage Sources + Manage Categories (Topics) + Manage Types · Advisor-only visibility flag |
-| **Lock lists (Angelina review)** | Topics 7 · Sources FTT/FSB/Carriers · Type 7 values · **Manage Sources = 3 rows only** (14 carriers nest under Carriers, not table rows) · Advisor-only = flag · Soft Dev PASS · hold main · not agent-ready |
+| **Lock lists (Angelina review)** | Topics 7 · Sources FTT/FSB/Carriers · Type 7 values · **drawer-only filters** (pills → drawers; Active chips OK) · **Manage Sources = 3 rows only** (14 carriers nest under Carriers, not table rows) · Advisor-only = flag · Soft Dev PASS · hold main · not agent-ready |
 | **Abstract A** | Keep for comparison wire; prefer a-fc for FC-fidelity stakeholder review |
 
 ---
@@ -116,7 +116,7 @@ Do **not** invent locked answers. Surface on hub + every direction.
 ## Clickable in mocks
 
 - Direction step chips between the 7 must-have screens  
-- Source / topic filter chips toggle (AND) + clear  
+- Source / Topic / Type via **side drawers** (AND) + compact Active chips + clear — not above-grid facet rows  
 - Post edit Source select + multi-select topics + Visibility flag  
 - Admin CRUD stubs (Sources = 3 rows · Categories · Types)  
 - Advisor-only gated/labeled state  

@@ -12,7 +12,7 @@ Content library posts get a first-class **Source** (FTT / FSB / **Carriers** rol
 ## Acceptance criteria (refined)
 
 - **AC-1:** Content posts can be labeled with a **Source** (FTT · FSB · Carriers — Carriers is one Source; 14 carrier names are nested detail / browse sub-picks, not separate Manage Sources rows) independent of Topics and Type.
-- **AC-2:** Advisors can **browse/filter** by Source **and** Topic **and** Type with **independent facets** (AND logic); Carriers chip may expand to carrier sub-picks; empty filter state is clear; no combinatorial mega-list.
+- **AC-2:** Advisors can **browse/filter** by Source **and** Topic **and** Type with **independent facets** (AND logic) via **side drawers** (not above-card chip rows); Carriers nest under Sources drawer; empty filter state is clear; no combinatorial mega-list.
 - **AC-3:** Admins can **manage Sources** (exactly **3 rows**: FTT · FSB · Carriers; CRUD vs enum still open Q), **Manage Categories** (Topics), and **Manage Types**; density mirrors existing Manage Categories.
 - **AC-4:** Post / content **edit** assigns Source (single · FTT/FSB/or a Carrier under rollup) + Topics (multi · 7) + **Type** + **Advisor-only** visibility flag (recommended over stuffing into topics).
 - **AC-5:** Advisor-only / gated content has a clear **labeled or gated** advisor-facing state; hub and directions include a **“not Advisor Categories (#209)”** callout.
@@ -32,7 +32,7 @@ Do not invent locked answers in implementation until product confirms.
 Until lock:
 
 - **Schema:** First-class Source field + existing Master Categories (topics)
-- **Advisor browse:** Source chips + Topic chips, AND, active-filter chips pattern (#243/#244)
+- **Advisor browse:** Source / Topic / Type via **side drawers** (pills open drawers), AND, compact active-filter chips under search (#243/#244) — **no** gray facet chip rows above the card grid
 - **Admin:** Manage Sources (simple CRUD, mirror Manage Categories) + Manage Categories (topics)
 - **Post edit:** Source select + category multi-select + **Visibility: Advisor-only** flag (recommended over stuffing into topics)
 - **Non-goals:** Full ontology rewrite (**NG-1**); historical backfill in v1 (**NG-2**, flag follow-up); live publish during playground (**NG-3**); #209 AdvisorSource changes (**NG-4**); #260 My Media (**NG-5**)
@@ -90,7 +90,7 @@ Directions B (grouped), C (Source hubs), and D (sidebar browse synthesizing Advi
 
 | | |
 |---|---|
-| **Desktop** | Primary design target (~1280); dual chip facets, admin tables as mocked |
+| **Desktop** | Primary design target (~1280); drawer-only facets + Active chips, admin tables as mocked |
 | **Mobile** | Brief note only — facets likely collapse to sheets / stacked filters; full mobile polish TBD after direction lock |
 
 ## Primary files *(guessed — TBD until codebase confirmed)*
