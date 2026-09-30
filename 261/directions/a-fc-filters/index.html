@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Direction A · FC look — Polish · drawer-only · #261</title>
+  <title>Direction A · FC Filters hub — alternate drawer UX · #261</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <style>
     :root {
@@ -514,6 +514,57 @@
     .result-count {
       font-size: 0.75rem; color: var(--muted); font-weight: 600; margin: -6px 0 12px;
     }
+
+    /* Filters hub overlay */
+    .filters-backdrop {
+      display: none; position: fixed; inset: 0; background: rgba(15,23,42,0.28);
+      z-index: 40;
+    }
+    .filters-backdrop.open { display: block; }
+    .filters-sheet {
+      display: none; position: fixed; top: 0; right: 0; bottom: 0; width: 400px;
+      max-width: 92vw; background: #fff; z-index: 41;
+      box-shadow: -8px 0 32px rgba(30,42,74,0.18);
+      flex-direction: column;
+    }
+    .filters-sheet.open { display: flex; }
+    .filters-sheet .sheet-head {
+      display: flex; align-items: flex-start; justify-content: space-between;
+      padding: 18px 18px 8px; border-bottom: 1px solid var(--border);
+    }
+    .filters-sheet .sheet-head h2 { font-size: 1.1rem; color: #1e3a5f; font-weight: 700; }
+    .filters-sheet .sheet-head .sub { font-size: 0.72rem; color: var(--muted); margin-top: 4px; }
+    .filters-tabs {
+      display: flex; gap: 0; padding: 0 12px; border-bottom: 1px solid var(--border);
+      background: #f8fafc;
+    }
+    .filters-tabs button {
+      flex: 1; border: none; background: transparent; padding: 12px 8px;
+      font-size: 0.78rem; font-weight: 700; color: var(--muted); cursor: pointer;
+      border-bottom: 2px solid transparent; font-family: inherit;
+    }
+    .filters-tabs button.on { color: var(--fc-blue); border-bottom-color: var(--fc-blue); background: #fff; }
+    .filters-tabs .tab-badge {
+      display: inline-flex; min-width: 16px; height: 16px; padding: 0 4px; margin-left: 4px;
+      border-radius: 999px; font-size: 0.6rem; font-weight: 800; background: var(--fc-blue); color: #fff;
+      align-items: center; justify-content: center; vertical-align: middle;
+    }
+    .filters-tabs button:not(.on) .tab-badge { background: #94a3b8; }
+    .filters-pane { display: none; flex: 1; overflow-y: auto; padding: 12px 14px 16px; flex-direction: column; }
+    .filters-pane.on { display: flex; }
+    .filters-sheet .drawer-foot { border-top: 1px solid var(--border); }
+    .pill.filters-hub {
+      border-color: var(--fc-blue); background: #e8f1fc; color: var(--fc-blue-dark);
+    }
+    .pill.filters-hub.open, .pill.filters-hub.on {
+      background: var(--fc-blue); color: #fff; border-color: var(--fc-blue);
+      box-shadow: 0 2px 10px rgba(43,125,233,0.4);
+    }
+    .pill.filters-hub.open svg, .pill.filters-hub.on svg { stroke: #fff; }
+    .compare-note {
+      margin-top: 14px; padding: 10px 12px; background: #fff8eb; border: 1px solid #f0d4a8;
+      border-radius: 10px; font-size: 0.75rem; color: #8a5a10;
+    }
   </style>
 </head>
 <body>
@@ -521,24 +572,24 @@
   <div class="idea-banner">
     <div>
       <strong>Idea/playground · Soft Dev hold · not agent-ready</strong>
-      — Polish pass · drawer-only browse · taxonomy locked ·
+      — Alternate UX · one Filters hub (tabs) · taxonomy locked ·
       <a href="../../index.html">Hub #261</a> ·
       <a href="https://github.com/kartboy16/content-library/issues/261">Issue #261</a>
     </div>
     <div class="links">
       <a href="../../index.html">← Hub #261</a>
-      <a href="../a-fc-filters/index.html">Filters hub alt</a>
+      <a href="../a-fc/index.html">Primary a-fc (3 pills)</a>
       <a href="../a/index.html">Abstract A</a>
       <a href="../../build-contract.html">Contract</a>
     </div>
   </div>
 
-  <div class="lock-refresh">Polish pass · drawer-only · Topics 7 · Sources 3 · Type facet</div>
+  <div class="lock-refresh">Filters hub alt · drawer-only · Topics 7 · Sources 3 · Type facet · pick vs a-fc</div>
 
   <div class="steps">
     <span class="lab">Screens</span>
     <button type="button" class="step-btn on" data-screen="browse">1 · Advisor browse</button>
-    <button type="button" class="step-btn" data-screen="topics">2 · Topics drawer</button>
+    <button type="button" class="step-btn" data-screen="topics">2 · Filters sheet</button>
     <button type="button" class="step-btn" data-screen="empty">3 · Filter empty</button>
     <button type="button" class="step-btn" data-screen="gated">4 · Advisor-only</button>
     <button type="button" class="step-btn admin-chip" data-screen="edit">5 · Post edit</button>
@@ -582,106 +633,46 @@
 
     <div class="main">
       <div class="main-inner">
-        <aside class="drawer" id="topicsDrawer" aria-label="Topics">
-          <div class="drawer-head">
-            <div>
-              <span class="htitle">Topics</span>
-              <span class="hcount" id="topicsCount">1 selected</span>
-            </div>
-            <button type="button" class="drawer-close" onclick="closeDrawer()" aria-label="Close">×</button>
+        <!-- Hidden facet state hosts (synced by Filters sheet tabs) -->
+        <div id="facetHosts" style="position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden" aria-hidden="true">
+          <div id="topicsDrawer">
+            <label><input type="checkbox" data-topic="Life insurance" onchange="onTopicCheck(this)" /></label>
+            <label><input type="checkbox" data-topic="Living benefits" onchange="onTopicCheck(this)" /></label>
+            <label><input type="checkbox" data-topic="Group benefits" onchange="onTopicCheck(this)" /></label>
+            <label><input type="checkbox" data-topic="Investments" onchange="onTopicCheck(this)" /></label>
+            <label><input type="checkbox" data-topic="Retirement" checked onchange="onTopicCheck(this)" /></label>
+            <label><input type="checkbox" data-topic="Estate planning" onchange="onTopicCheck(this)" /></label>
+            <label><input type="checkbox" data-topic="Business owners" onchange="onTopicCheck(this)" /></label>
           </div>
-          <p class="drawer-helper">Show content about… Select one or more topics. AND with Source and Type.</p>
-          <div class="drawer-list">
-            <label class="drawer-item"><input type="checkbox" data-topic="Life insurance" onchange="onTopicCheck(this)" /> Life insurance</label>
-            <label class="drawer-item"><input type="checkbox" data-topic="Living benefits" onchange="onTopicCheck(this)" /> Living benefits</label>
-            <label class="drawer-item"><input type="checkbox" data-topic="Group benefits" onchange="onTopicCheck(this)" /> Group benefits</label>
-            <label class="drawer-item"><input type="checkbox" data-topic="Investments" onchange="onTopicCheck(this)" /> Investments</label>
-            <label class="drawer-item"><input type="checkbox" data-topic="Retirement" checked onchange="onTopicCheck(this)" /> Retirement</label>
-            <label class="drawer-item"><input type="checkbox" data-topic="Estate planning" onchange="onTopicCheck(this)" /> Estate planning</label>
-            <label class="drawer-item"><input type="checkbox" data-topic="Business owners" onchange="onTopicCheck(this)" /> Business owners</label>
-            <div class="drawer-sep"></div>
-            <div style="font-size:0.62rem;font-weight:700;text-transform:uppercase;letter-spacing:0.04em;color:var(--muted);padding:4px 6px;">Locked 7 · no audience · Tax/cash flow dropped</div>
+          <div id="sourcesDrawer">
+            <label><input type="checkbox" data-src="FTT" onchange="onSourceCheck(this)" /></label>
+            <label><input type="checkbox" data-src="FSB" onchange="onSourceCheck(this)" /></label>
+            <label><input type="checkbox" data-src="Carriers" onchange="onSourceCheck(this)" /></label>
+            <label><input type="checkbox" data-carrier="Manulife" onchange="onCarrierCheck(this)" /></label>
+            <label><input type="checkbox" data-carrier="Assumption Life" onchange="onCarrierCheck(this)" /></label>
+            <label><input type="checkbox" data-carrier="Equitable Life" onchange="onCarrierCheck(this)" /></label>
+            <label><input type="checkbox" data-carrier="iA Financial" onchange="onCarrierCheck(this)" /></label>
+            <label><input type="checkbox" data-carrier="Sun Life" onchange="onCarrierCheck(this)" /></label>
+            <label><input type="checkbox" data-carrier="BMO Insurance" onchange="onCarrierCheck(this)" /></label>
+            <label><input type="checkbox" data-carrier="Desjardins" onchange="onCarrierCheck(this)" /></label>
+            <label><input type="checkbox" data-carrier="Empire Life" onchange="onCarrierCheck(this)" /></label>
+            <label><input type="checkbox" data-carrier="Foresters Financial" onchange="onCarrierCheck(this)" /></label>
+            <label><input type="checkbox" data-carrier="Canada Life" onchange="onCarrierCheck(this)" /></label>
+            <label><input type="checkbox" data-carrier="RBC Insurance" onchange="onCarrierCheck(this)" /></label>
+            <label><input type="checkbox" data-carrier="Beneva" onchange="onCarrierCheck(this)" /></label>
+            <label><input type="checkbox" data-carrier="Co-operators Life" onchange="onCarrierCheck(this)" /></label>
+            <label><input type="checkbox" data-carrier="ivari" onchange="onCarrierCheck(this)" /></label>
           </div>
-          <div class="drawer-foot">
-            <button type="button" class="btn btn-secondary" onclick="clearFacet('topic')">Clear</button>
-            <button type="button" class="btn btn-primary" onclick="applyDrawer()">Apply</button>
+          <div id="typesDrawer">
+            <label><input type="checkbox" data-type="Article/blog" checked onchange="onTypeCheck(this)" /></label>
+            <label><input type="checkbox" data-type="Social post" onchange="onTypeCheck(this)" /></label>
+            <label><input type="checkbox" data-type="Email" onchange="onTypeCheck(this)" /></label>
+            <label><input type="checkbox" data-type="Infographic/visual" onchange="onTypeCheck(this)" /></label>
+            <label><input type="checkbox" data-type="Video/script" onchange="onTypeCheck(this)" /></label>
+            <label><input type="checkbox" data-type="Calculator/tool" onchange="onTypeCheck(this)" /></label>
+            <label><input type="checkbox" data-type="Checklist/guide" onchange="onTypeCheck(this)" /></label>
           </div>
-        </aside>
-
-        <aside class="drawer" id="sourcesDrawer" aria-label="Sources">
-          <div class="drawer-head">
-            <div>
-              <span class="htitle">Sources</span>
-              <span class="hcount" id="sourcesCount">0 selected</span>
-            </div>
-            <button type="button" class="drawer-close" onclick="closeDrawer()" aria-label="Close">×</button>
-          </div>
-          <p class="drawer-helper">Show content from… FTT, FSB, or Carriers (expand for carrier names).</p>
-          <div class="drawer-search">
-            <svg class="mag" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
-            <input type="search" placeholder="Search sources &amp; carriers…" aria-label="Search sources" oninput="filterDrawerList('sourcesDrawer', this.value)" />
-          </div>
-          <div class="drawer-list">
-            <label class="drawer-item" data-filter-text="financial tech tools ftt"><input type="checkbox" data-src="FTT" onchange="onSourceCheck(this)" /> <span class="av ftt">FT</span> Financial Tech Tools (FTT)</label>
-            <label class="drawer-item" data-filter-text="fsb"><input type="checkbox" data-src="FSB" onchange="onSourceCheck(this)" /> <span class="av fsb">FS</span> FSB</label>
-            <div class="drawer-item" data-filter-text="carriers" style="cursor:default">
-              <div class="carrier-parent">
-                <button type="button" class="expand" id="carrierExpandBtn" onclick="toggleCarriers()" aria-label="Expand carriers">▸</button>
-                <label style="display:flex;align-items:center;gap:8px;flex:1;cursor:pointer;margin:0">
-                  <input type="checkbox" data-src="Carriers" onchange="onSourceCheck(this)" />
-                  <span class="av carrier">+</span> Carriers
-                </label>
-              </div>
-            </div>
-            <div class="carrier-kids" id="carrierKids">
-              <div style="font-size:0.62rem;font-weight:700;text-transform:uppercase;letter-spacing:0.04em;color:var(--muted);padding:6px 8px 4px 28px;">14 carriers · excl. Assuris / NHC / dealers</div>
-              <label class="drawer-item nested" data-filter-text="manulife"><input type="checkbox" data-carrier="Manulife" onchange="onCarrierCheck(this)" /> Manulife</label>
-              <label class="drawer-item nested" data-filter-text="assumption life"><input type="checkbox" data-carrier="Assumption Life" onchange="onCarrierCheck(this)" /> Assumption Life</label>
-              <label class="drawer-item nested" data-filter-text="equitable life"><input type="checkbox" data-carrier="Equitable Life" onchange="onCarrierCheck(this)" /> Equitable Life</label>
-              <label class="drawer-item nested" data-filter-text="ia financial"><input type="checkbox" data-carrier="iA Financial" onchange="onCarrierCheck(this)" /> iA Financial</label>
-              <label class="drawer-item nested" data-filter-text="sun life"><input type="checkbox" data-carrier="Sun Life" onchange="onCarrierCheck(this)" /> Sun Life</label>
-              <label class="drawer-item nested" data-filter-text="bmo insurance"><input type="checkbox" data-carrier="BMO Insurance" onchange="onCarrierCheck(this)" /> BMO Insurance</label>
-              <label class="drawer-item nested" data-filter-text="desjardins"><input type="checkbox" data-carrier="Desjardins" onchange="onCarrierCheck(this)" /> Desjardins</label>
-              <label class="drawer-item nested" data-filter-text="empire life"><input type="checkbox" data-carrier="Empire Life" onchange="onCarrierCheck(this)" /> Empire Life</label>
-              <label class="drawer-item nested" data-filter-text="foresters financial"><input type="checkbox" data-carrier="Foresters Financial" onchange="onCarrierCheck(this)" /> Foresters Financial</label>
-              <label class="drawer-item nested" data-filter-text="canada life"><input type="checkbox" data-carrier="Canada Life" onchange="onCarrierCheck(this)" /> Canada Life</label>
-              <label class="drawer-item nested" data-filter-text="rbc insurance"><input type="checkbox" data-carrier="RBC Insurance" onchange="onCarrierCheck(this)" /> RBC Insurance</label>
-              <label class="drawer-item nested" data-filter-text="beneva"><input type="checkbox" data-carrier="Beneva" onchange="onCarrierCheck(this)" /> Beneva</label>
-              <label class="drawer-item nested" data-filter-text="co-operators life"><input type="checkbox" data-carrier="Co-operators Life" onchange="onCarrierCheck(this)" /> Co-operators Life</label>
-              <label class="drawer-item nested" data-filter-text="ivari"><input type="checkbox" data-carrier="ivari" onchange="onCarrierCheck(this)" /> ivari</label>
-            </div>
-          </div>
-          <div class="drawer-foot">
-            <button type="button" class="btn btn-secondary" onclick="clearFacet('source')">Clear</button>
-            <button type="button" class="btn btn-primary" onclick="applyDrawer()">Apply</button>
-          </div>
-        </aside>
-
-        <aside class="drawer" id="typesDrawer" aria-label="Types">
-          <div class="drawer-head">
-            <div>
-              <span class="htitle">Type</span>
-              <span class="hcount" id="typesCount">1 selected</span>
-            </div>
-            <button type="button" class="drawer-close" onclick="closeDrawer()" aria-label="Close">×</button>
-          </div>
-          <p class="drawer-helper">Show content typed as… 3rd facet — not folded into Topics.</p>
-          <div class="drawer-list">
-            <label class="drawer-item"><input type="checkbox" data-type="Article/blog" checked onchange="onTypeCheck(this)" /> Article/blog</label>
-            <label class="drawer-item"><input type="checkbox" data-type="Social post" onchange="onTypeCheck(this)" /> Social post</label>
-            <label class="drawer-item"><input type="checkbox" data-type="Email" onchange="onTypeCheck(this)" /> Email</label>
-            <label class="drawer-item"><input type="checkbox" data-type="Infographic/visual" onchange="onTypeCheck(this)" /> Infographic/visual</label>
-            <label class="drawer-item"><input type="checkbox" data-type="Video/script" onchange="onTypeCheck(this)" /> Video/script</label>
-            <label class="drawer-item"><input type="checkbox" data-type="Calculator/tool" onchange="onTypeCheck(this)" /> Calculator/tool</label>
-            <label class="drawer-item"><input type="checkbox" data-type="Checklist/guide" onchange="onTypeCheck(this)" /> Checklist/guide</label>
-            <div class="drawer-sep"></div>
-            <div style="font-size:0.62rem;font-weight:700;text-transform:uppercase;letter-spacing:0.04em;color:var(--muted);padding:4px 6px;">3rd facet · drawer-only · not folded into Topic</div>
-          </div>
-          <div class="drawer-foot">
-            <button type="button" class="btn btn-secondary" onclick="clearFacet('type')">Clear</button>
-            <button type="button" class="btn btn-primary" onclick="applyDrawer()">Apply</button>
-          </div>
-        </aside>
+        </div>
 
 
         <div class="pane">
@@ -705,17 +696,9 @@
                 <svg viewBox="0 0 24 24"><path d="M3 3l18 18M10.5 10.6a3 3 0 0 0 4 4"/></svg>
                 Hidden
               </button>
-              <button type="button" class="pill filter has-sel" id="pillTopics" onclick="openTopicsDrawer(this)">
-                <svg viewBox="0 0 24 24"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7z"/></svg>
-                Topics <span class="pill-badge" id="badgeTopics">1</span>
-              </button>
-              <button type="button" class="pill filter" id="pillSources" onclick="openSourcesDrawer(this)">
-                <svg viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h10"/><circle cx="19" cy="17" r="2.5"/></svg>
-                Sources <span class="pill-badge" id="badgeSources" style="display:none">0</span>
-              </button>
-              <button type="button" class="pill filter has-sel" id="pillTypes" onclick="openTypesDrawer(this)">
-                <svg viewBox="0 0 24 24"><rect x="4" y="4" width="7" height="7" rx="1"/><rect x="13" y="4" width="7" height="7" rx="1"/><rect x="4" y="13" width="7" height="7" rx="1"/><rect x="13" y="13" width="7" height="7" rx="1"/></svg>
-                Type <span class="pill-badge" id="badgeTypes">1</span>
+              <button type="button" class="pill filters-hub has-sel" id="pillFilters" onclick="openFiltersSheet()">
+                <svg viewBox="0 0 24 24"><path d="M4 6h16M7 12h10M10 18h4"/></svg>
+                Filters <span class="pill-badge" id="badgeFilters">2</span>
               </button>
               <button type="button" class="pill" onclick="setMainPill(this,'Compliance Approved')">
                 <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M8 12.5l2.5 2.5L16 9.5"/></svg>
@@ -889,10 +872,10 @@
             </div>
 
             <div class="banner ok" style="margin-top:16px">
-              <div><strong>AND logic · polish pass (drawer-only):</strong> Sources / Topics / Type pills open product-ready drawers (helper · counts · Apply / Clear). Results match selected facets via <strong>side drawers only</strong> — no gray SOURCE/TOPIC/TYPE strip above cards. Active filters row under search. Sources = FTT · FSB · Carriers. Topics = 7. Type = 3rd facet. Advisor-only = visibility flag.</div>
+              <div><strong>AND logic · Filters hub alt:</strong> One <em>Filters</em> control opens a right overlay with tabs (Sources | Topics | Type) + Apply / Clear. No above-cards strip. Active filters chips under search. Same locks as a-fc.</div>
             </div>
-            <p class="later-note">Compare optional <a href="../a-fc-filters/index.html">Filters hub variant</a> (one Filters control · tabbed sheet). Life Events = optional later.</p>
-            <p class="mobile-note"><strong>Audiences:</strong> Advisor browse primary · Soft Dev hold · not agent-ready · enhancement polish only (taxonomy unchanged). Desktop ~1280.</p>
+            <div class="compare-note"><strong>Angelina pick:</strong> Prefer three pills + three drawers? Use <a href="../a-fc/index.html">a-fc (primary)</a>. Prefer one Filters hub? Stay here. Soft Dev hold · not agent-ready.</div>
+            <p class="mobile-note"><strong>Admin screens</strong> (Manage Sources 3 rows, Categories, Types, post edit, Not #209) duplicated lightly here for standalone review — same as a-fc.</p>
           </div>
 
           <div class="screen" id="s-topics">
@@ -905,9 +888,7 @@
               <button type="button" class="pill" onclick="setMainPill(this,'All Content')"><svg viewBox="0 0 24 24"><path d="M4 10.5L12 4l8 6.5V20a1 1 0 0 1-1 1h-5v-6H10v6H5a1 1 0 0 1-1-1v-9.5z"/></svg>All Content</button>
               <button type="button" class="pill"><svg viewBox="0 0 24 24"><path d="M12 3.5l2.4 4.9 5.4.8-3.9 3.8.9 5.4L12 15.8"/></svg>Favorites</button>
               <button type="button" class="pill"><svg viewBox="0 0 24 24"><path d="M3 3l18 18"/></svg>Hidden</button>
-              <button type="button" class="pill filter open has-sel" onclick="openTopicsDrawer(this)"><svg viewBox="0 0 24 24"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7z"/></svg>Topics <span class="pill-badge">1</span></button>
-              <button type="button" class="pill filter" onclick="openSourcesDrawer(this)"><svg viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h10"/><circle cx="19" cy="17" r="2.5"/></svg>Sources</button>
-              <button type="button" class="pill filter has-sel" onclick="openTypesDrawer(this)"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="7" height="7" rx="1"/><rect x="13" y="4" width="7" height="7" rx="1"/><rect x="4" y="13" width="7" height="7" rx="1"/><rect x="13" y="13" width="7" height="7" rx="1"/></svg>Type <span class="pill-badge">1</span></button>
+              <button type="button" class="pill filters-hub open has-sel" onclick="openFiltersSheet('topics')"><svg viewBox="0 0 24 24"><path d="M4 6h16M7 12h10M10 18h4"/></svg>Filters <span class="pill-badge">2</span></button>
               <button type="button" class="pill"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M8 12.5l2.5 2.5L16 9.5"/></svg>Compliance Approved</button>
               <button type="button" class="pill"><svg viewBox="0 0 24 24"><path d="M12 3v3M12 18v3"/></svg>Pick for me</button>
             </div>
@@ -923,7 +904,7 @@
               <button type="button" class="chip clear" onclick="clearAllFilters()">Clear all</button>
             </div>
             <div class="banner info">
-              <div><strong>Topics drawer open</strong> — product-ready filter panel with helper copy, selected count, and Apply / Clear. Locked 7 topics. Sources / Type use the same drawer pattern. No gray SOURCE/TOPIC/TYPE strip above cards.</div>
+              <div><strong>Filters sheet open · Topics tab</strong> — one Filters control opens a right overlay with tabs: Sources | Topics | Type. Same taxonomy locks. Active chips stay under search. Compare with <a href="../a-fc/index.html">a-fc three-pill drawers</a>.</div>
             </div>
             <div class="grid-posts">
               <article class="pcard"><div class="ph"><span class="src-badge">FTT</span><div class="ph-meta">Content library</div></div><div class="body"><h4>Market update: Q3 outlook</h4><div class="tag-row"><span class="badge-topic">Retirement</span><span class="badge-type">Article/blog</span></div></div></article>
@@ -943,9 +924,7 @@
               <button type="button" class="pill on"><svg viewBox="0 0 24 24"><path d="M4 10.5L12 4l8 6.5V20a1 1 0 0 1-1 1h-5v-6H10v6H5a1 1 0 0 1-1-1v-9.5z"/></svg>All Content</button>
               <button type="button" class="pill"><svg viewBox="0 0 24 24"><path d="M12 3.5l2.4 4.9 5.4.8-3.9 3.8.9 5.4L12 15.8"/></svg>Favorites</button>
               <button type="button" class="pill"><svg viewBox="0 0 24 24"><path d="M3 3l18 18"/></svg>Hidden</button>
-              <button type="button" class="pill" onclick="openTopicsDrawer(this)"><svg viewBox="0 0 24 24"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7z"/></svg>Topics</button>
-              <button type="button" class="pill" onclick="openSourcesDrawer(this)"><svg viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h10"/><circle cx="19" cy="17" r="2.5"/></svg>Sources</button>
-              <button type="button" class="pill" onclick="openTypesDrawer(this)"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="7" height="7" rx="1"/><rect x="13" y="4" width="7" height="7" rx="1"/><rect x="4" y="13" width="7" height="7" rx="1"/><rect x="13" y="13" width="7" height="7" rx="1"/></svg>Type</button>
+              <button type="button" class="pill filters-hub has-sel" onclick="openFiltersSheet()"><svg viewBox="0 0 24 24"><path d="M4 6h16M7 12h10M10 18h4"/></svg>Filters <span class="pill-badge">2</span></button>
               <button type="button" class="pill"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/></svg>Compliance Approved</button>
               <button type="button" class="pill"><svg viewBox="0 0 24 24"><path d="M12 3v3"/></svg>Pick for me</button>
             </div>
@@ -982,9 +961,7 @@
               <button type="button" class="pill on"><svg viewBox="0 0 24 24"><path d="M4 10.5L12 4l8 6.5V20a1 1 0 0 1-1 1h-5v-6H10v6H5a1 1 0 0 1-1-1v-9.5z"/></svg>All Content</button>
               <button type="button" class="pill"><svg viewBox="0 0 24 24"><path d="M12 3.5l2.4 4.9 5.4.8-3.9 3.8.9 5.4L12 15.8"/></svg>Favorites</button>
               <button type="button" class="pill"><svg viewBox="0 0 24 24"><path d="M3 3l18 18"/></svg>Hidden</button>
-              <button type="button" class="pill" onclick="openTopicsDrawer(this)"><svg viewBox="0 0 24 24"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7z"/></svg>Topics</button>
-              <button type="button" class="pill" onclick="openSourcesDrawer(this)"><svg viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h10"/><circle cx="19" cy="17" r="2.5"/></svg>Sources</button>
-              <button type="button" class="pill" onclick="openTypesDrawer(this)"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="7" height="7" rx="1"/><rect x="13" y="4" width="7" height="7" rx="1"/><rect x="4" y="13" width="7" height="7" rx="1"/><rect x="13" y="13" width="7" height="7" rx="1"/></svg>Type</button>
+              <button type="button" class="pill filters-hub has-sel" onclick="openFiltersSheet()"><svg viewBox="0 0 24 24"><path d="M4 6h16M7 12h10M10 18h4"/></svg>Filters <span class="pill-badge">2</span></button>
               <button type="button" class="pill"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/></svg>Compliance Approved</button>
               <button type="button" class="pill"><svg viewBox="0 0 24 24"><path d="M12 3v3"/></svg>Pick for me</button>
             </div>
@@ -1264,12 +1241,93 @@
     </div>
   </div>
 
+
+  <div class="filters-backdrop" id="filtersBackdrop" onclick="closeFiltersSheet()"></div>
+  <div class="filters-sheet" id="filtersSheet" role="dialog" aria-label="Filters">
+    <div class="sheet-head">
+      <div>
+        <h2>Filters</h2>
+        <div class="sub">Source × Topic × Type · AND · Apply when ready</div>
+      </div>
+      <button type="button" class="drawer-close" onclick="closeFiltersSheet()" aria-label="Close">×</button>
+    </div>
+    <div class="filters-tabs">
+      <button type="button" class="on" data-tab="sources" onclick="switchFilterTab('sources')">Sources <span class="tab-badge" id="tabBadgeSources" style="display:none">0</span></button>
+      <button type="button" data-tab="topics" onclick="switchFilterTab('topics')">Topics <span class="tab-badge" id="tabBadgeTopics">1</span></button>
+      <button type="button" data-tab="types" onclick="switchFilterTab('types')">Type <span class="tab-badge" id="tabBadgeTypes">1</span></button>
+    </div>
+    <div class="filters-pane on" id="tab-sources">
+      <p class="drawer-helper" style="padding:0 0 10px">Show content from… Expand Carriers for nested names.</p>
+      <div class="drawer-search" style="margin:0 0 10px">
+        <svg class="mag" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
+        <input type="search" placeholder="Search sources &amp; carriers…" oninput="filterSheetList('tab-sources', this.value)" />
+      </div>
+      <div class="drawer-list" style="padding:0">
+        <label class="drawer-item" data-filter-text="financial tech tools ftt"><input type="checkbox" data-mirror="src:FTT" onchange="mirrorCheck(this,'src','FTT')" /> <span class="av ftt">FT</span> Financial Tech Tools (FTT)</label>
+        <label class="drawer-item" data-filter-text="fsb"><input type="checkbox" data-mirror="src:FSB" onchange="mirrorCheck(this,'src','FSB')" /> <span class="av fsb">FS</span> FSB</label>
+        <div class="drawer-item" data-filter-text="carriers" style="cursor:default">
+          <div class="carrier-parent">
+            <button type="button" class="expand" id="sheetCarrierBtn" onclick="toggleSheetCarriers()" aria-label="Expand">▸</button>
+            <label style="display:flex;align-items:center;gap:8px;flex:1;cursor:pointer;margin:0">
+              <input type="checkbox" data-mirror="src:Carriers" onchange="mirrorCheck(this,'src','Carriers')" />
+              <span class="av carrier">+</span> Carriers
+            </label>
+          </div>
+        </div>
+        <div class="carrier-kids" id="sheetCarrierKids">
+          <div style="font-size:0.62rem;font-weight:700;text-transform:uppercase;letter-spacing:0.04em;color:var(--muted);padding:6px 8px 4px 28px;">14 carriers</div>
+          <label class="drawer-item nested" data-filter-text="manulife"><input type="checkbox" data-mirror="carrier:Manulife" onchange="mirrorCheck(this,'carrier','Manulife')" /> Manulife</label>
+          <label class="drawer-item nested" data-filter-text="assumption life"><input type="checkbox" data-mirror="carrier:Assumption Life" onchange="mirrorCheck(this,'carrier','Assumption Life')" /> Assumption Life</label>
+          <label class="drawer-item nested" data-filter-text="equitable life"><input type="checkbox" data-mirror="carrier:Equitable Life" onchange="mirrorCheck(this,'carrier','Equitable Life')" /> Equitable Life</label>
+          <label class="drawer-item nested" data-filter-text="ia financial"><input type="checkbox" data-mirror="carrier:iA Financial" onchange="mirrorCheck(this,'carrier','iA Financial')" /> iA Financial</label>
+          <label class="drawer-item nested" data-filter-text="sun life"><input type="checkbox" data-mirror="carrier:Sun Life" onchange="mirrorCheck(this,'carrier','Sun Life')" /> Sun Life</label>
+          <label class="drawer-item nested" data-filter-text="bmo insurance"><input type="checkbox" data-mirror="carrier:BMO Insurance" onchange="mirrorCheck(this,'carrier','BMO Insurance')" /> BMO Insurance</label>
+          <label class="drawer-item nested" data-filter-text="desjardins"><input type="checkbox" data-mirror="carrier:Desjardins" onchange="mirrorCheck(this,'carrier','Desjardins')" /> Desjardins</label>
+          <label class="drawer-item nested" data-filter-text="empire life"><input type="checkbox" data-mirror="carrier:Empire Life" onchange="mirrorCheck(this,'carrier','Empire Life')" /> Empire Life</label>
+          <label class="drawer-item nested" data-filter-text="foresters financial"><input type="checkbox" data-mirror="carrier:Foresters Financial" onchange="mirrorCheck(this,'carrier','Foresters Financial')" /> Foresters Financial</label>
+          <label class="drawer-item nested" data-filter-text="canada life"><input type="checkbox" data-mirror="carrier:Canada Life" onchange="mirrorCheck(this,'carrier','Canada Life')" /> Canada Life</label>
+          <label class="drawer-item nested" data-filter-text="rbc insurance"><input type="checkbox" data-mirror="carrier:RBC Insurance" onchange="mirrorCheck(this,'carrier','RBC Insurance')" /> RBC Insurance</label>
+          <label class="drawer-item nested" data-filter-text="beneva"><input type="checkbox" data-mirror="carrier:Beneva" onchange="mirrorCheck(this,'carrier','Beneva')" /> Beneva</label>
+          <label class="drawer-item nested" data-filter-text="co-operators life"><input type="checkbox" data-mirror="carrier:Co-operators Life" onchange="mirrorCheck(this,'carrier','Co-operators Life')" /> Co-operators Life</label>
+          <label class="drawer-item nested" data-filter-text="ivari"><input type="checkbox" data-mirror="carrier:ivari" onchange="mirrorCheck(this,'carrier','ivari')" /> ivari</label>
+        </div>
+      </div>
+    </div>
+    <div class="filters-pane" id="tab-topics">
+      <p class="drawer-helper" style="padding:0 0 10px">Show content about… Locked 7 topics.</p>
+      <div class="drawer-list" style="padding:0">
+        <label class="drawer-item"><input type="checkbox" data-mirror="topic:Life insurance" onchange="mirrorCheck(this,'topic','Life insurance')" /> Life insurance</label>
+        <label class="drawer-item"><input type="checkbox" data-mirror="topic:Living benefits" onchange="mirrorCheck(this,'topic','Living benefits')" /> Living benefits</label>
+        <label class="drawer-item"><input type="checkbox" data-mirror="topic:Group benefits" onchange="mirrorCheck(this,'topic','Group benefits')" /> Group benefits</label>
+        <label class="drawer-item"><input type="checkbox" data-mirror="topic:Investments" onchange="mirrorCheck(this,'topic','Investments')" /> Investments</label>
+        <label class="drawer-item"><input type="checkbox" data-mirror="topic:Retirement" checked onchange="mirrorCheck(this,'topic','Retirement')" /> Retirement</label>
+        <label class="drawer-item"><input type="checkbox" data-mirror="topic:Estate planning" onchange="mirrorCheck(this,'topic','Estate planning')" /> Estate planning</label>
+        <label class="drawer-item"><input type="checkbox" data-mirror="topic:Business owners" onchange="mirrorCheck(this,'topic','Business owners')" /> Business owners</label>
+      </div>
+    </div>
+    <div class="filters-pane" id="tab-types">
+      <p class="drawer-helper" style="padding:0 0 10px">Show content typed as… 3rd facet.</p>
+      <div class="drawer-list" style="padding:0">
+        <label class="drawer-item"><input type="checkbox" data-mirror="type:Article/blog" checked onchange="mirrorCheck(this,'type','Article/blog')" /> Article/blog</label>
+        <label class="drawer-item"><input type="checkbox" data-mirror="type:Social post" onchange="mirrorCheck(this,'type','Social post')" /> Social post</label>
+        <label class="drawer-item"><input type="checkbox" data-mirror="type:Email" onchange="mirrorCheck(this,'type','Email')" /> Email</label>
+        <label class="drawer-item"><input type="checkbox" data-mirror="type:Infographic/visual" onchange="mirrorCheck(this,'type','Infographic/visual')" /> Infographic/visual</label>
+        <label class="drawer-item"><input type="checkbox" data-mirror="type:Video/script" onchange="mirrorCheck(this,'type','Video/script')" /> Video/script</label>
+        <label class="drawer-item"><input type="checkbox" data-mirror="type:Calculator/tool" onchange="mirrorCheck(this,'type','Calculator/tool')" /> Calculator/tool</label>
+        <label class="drawer-item"><input type="checkbox" data-mirror="type:Checklist/guide" onchange="mirrorCheck(this,'type','Checklist/guide')" /> Checklist/guide</label>
+      </div>
+    </div>
+    <div class="drawer-foot">
+      <button type="button" class="btn btn-secondary" onclick="clearAllFiltersSheet()">Clear all</button>
+      <button type="button" class="btn btn-primary" onclick="applyFiltersSheet()">Apply</button>
+    </div>
+  </div>
+
   <div class="toast" id="toast"></div>
 
   <script>
-    var SCREEN_KEY = 'fc261-afc-screen';
+    var SCREEN_KEY = 'fc261-afc-filters-screen';
     var toastTimer = null;
-    var openDrawerId = null;
 
     function showToast(msg) {
       var t = document.getElementById('toast');
@@ -1279,120 +1337,97 @@
       toastTimer = setTimeout(function () { t.classList.remove('show'); }, 2200);
     }
 
-    function closeDrawer() {
-      ['topicsDrawer','sourcesDrawer','typesDrawer'].forEach(function (id) {
-        var el = document.getElementById(id);
-        if (el) el.classList.remove('open');
-      });
-      openDrawerId = null;
-      document.querySelectorAll('.pill.filter').forEach(function (p) { p.classList.remove('open'); });
-      syncFilterPills();
+    function hostSel(kind, val) {
+      if (kind === 'src') return '#sourcesDrawer input[data-src="' + val + '"]';
+      if (kind === 'carrier') return '#sourcesDrawer input[data-carrier="' + val + '"]';
+      if (kind === 'topic') return '#topicsDrawer input[data-topic="' + val + '"]';
+      if (kind === 'type') return '#typesDrawer input[data-type="' + val + '"]';
+      return null;
     }
 
-    function markFilterPill(which) {
-      document.querySelectorAll('.pill.filter').forEach(function (p) { p.classList.remove('open'); });
-      var map = { topics: 'pillTopics', sources: 'pillSources', types: 'pillTypes' };
-      var id = map[which];
-      if (id) {
-        var el = document.getElementById(id);
-        if (el) el.classList.add('open');
+    function mirrorCheck(input, kind, val) {
+      var sel = hostSel(kind, val);
+      if (sel) document.querySelectorAll(sel).forEach(function (c) { c.checked = input.checked; });
+      if (kind === 'src' && val === 'Carriers' && input.checked) {
+        var kids = document.getElementById('sheetCarrierKids');
+        if (kids && !kids.classList.contains('open')) toggleSheetCarriers();
       }
-      // also mark in current screen's pills row by matching text
-      var screen = document.querySelector('.screen.on');
-      if (screen) {
-        screen.querySelectorAll('.pill.filter').forEach(function (p) {
-          var t = p.textContent.trim();
-          if ((which === 'topics' && t.indexOf('Topics') === 0) ||
-              (which === 'sources' && t.indexOf('Sources') === 0) ||
-              (which === 'types' && t.indexOf('Type') === 0)) {
-            p.classList.add('open');
-          }
-        });
-      }
-    }
-
-    function openTopicsDrawer(btn) {
-      closeDrawer();
-      document.getElementById('topicsDrawer').classList.add('open');
-      openDrawerId = 'topics';
-      if (btn) {
-        var row = btn.closest('.pills');
-        if (row) row.querySelectorAll('.pill').forEach(function (p) {
-          if (!p.classList.contains('filter')) p.classList.remove('on');
-        });
-      }
-      markFilterPill('topics');
-      updateDrawerCounts();
-      showToast('Topics drawer');
-    }
-
-    function openSourcesDrawer(btn) {
-      closeDrawer();
-      document.getElementById('sourcesDrawer').classList.add('open');
-      openDrawerId = 'sources';
-      if (btn) {
-        var row = btn.closest('.pills');
-        if (row) row.querySelectorAll('.pill').forEach(function (p) {
-          if (!p.classList.contains('filter')) p.classList.remove('on');
-        });
-      }
-      markFilterPill('sources');
-      updateDrawerCounts();
-      showToast('Sources drawer');
-    }
-
-    function openTypesDrawer(btn) {
-      closeDrawer();
-      document.getElementById('typesDrawer').classList.add('open');
-      openDrawerId = 'types';
-      if (btn) {
-        var row = btn.closest('.pills');
-        if (row) row.querySelectorAll('.pill').forEach(function (p) {
-          if (!p.classList.contains('filter')) p.classList.remove('on');
-        });
-      }
-      markFilterPill('types');
-      updateDrawerCounts();
-      showToast('Type drawer');
-    }
-
-    function applyDrawer() {
       syncActiveBar();
-      closeDrawer();
+      syncSheetFromHosts();
+      showToast((input.checked ? 'Added' : 'Removed') + ' ' + val);
+    }
+
+    function syncSheetFromHosts() {
+      document.querySelectorAll('#filtersSheet input[data-mirror]').forEach(function (inp) {
+        var parts = inp.dataset.mirror.split(':');
+        var kind = parts[0], val = parts.slice(1).join(':');
+        var sel = hostSel(kind, val);
+        if (!sel) return;
+        var host = document.querySelector(sel);
+        if (host) inp.checked = host.checked;
+      });
+      updateTabBadges();
+    }
+
+    function openFiltersSheet(tab) {
+      document.getElementById('filtersBackdrop').classList.add('open');
+      document.getElementById('filtersSheet').classList.add('open');
+      document.querySelectorAll('.pill.filters-hub').forEach(function (p) { p.classList.add('open'); });
+      syncSheetFromHosts();
+      switchFilterTab(tab || 'topics');
+      showToast('Filters sheet');
+    }
+
+    function closeFiltersSheet() {
+      document.getElementById('filtersBackdrop').classList.remove('open');
+      document.getElementById('filtersSheet').classList.remove('open');
+      document.querySelectorAll('.pill.filters-hub').forEach(function (p) { p.classList.remove('open'); });
+    }
+
+    function closeDrawer() { closeFiltersSheet(); }
+
+    function switchFilterTab(tab) {
+      document.querySelectorAll('.filters-tabs button').forEach(function (b) {
+        b.classList.toggle('on', b.dataset.tab === tab);
+      });
+      document.querySelectorAll('.filters-pane').forEach(function (p) {
+        p.classList.toggle('on', p.id === 'tab-' + tab);
+      });
+    }
+
+    function applyFiltersSheet() {
+      syncActiveBar();
+      closeFiltersSheet();
       showToast('Filters applied');
     }
 
-    function clearFacet(kind) {
-      if (kind === 'topic') {
-        document.querySelectorAll('#topicsDrawer input[type=checkbox]').forEach(function (c) { c.checked = false; });
-      } else if (kind === 'source') {
-        document.querySelectorAll('#sourcesDrawer input[type=checkbox]').forEach(function (c) { c.checked = false; });
-      } else if (kind === 'type') {
-        document.querySelectorAll('#typesDrawer input[type=checkbox]').forEach(function (c) { c.checked = false; });
-      }
-      updateDrawerCounts();
+    function clearAllFiltersSheet() {
+      document.querySelectorAll('#topicsDrawer input, #sourcesDrawer input, #typesDrawer input').forEach(function (c) {
+        c.checked = false;
+      });
+      syncSheetFromHosts();
       syncActiveBar();
-      showToast('Cleared ' + kind);
+      showToast('All filters cleared');
     }
 
-    function toggleCarriers() {
-      var kids = document.getElementById('carrierKids');
-      var btn = document.getElementById('carrierExpandBtn');
+    function toggleSheetCarriers() {
+      var kids = document.getElementById('sheetCarrierKids');
+      var btn = document.getElementById('sheetCarrierBtn');
       var open = kids.classList.toggle('open');
       btn.textContent = open ? '▾' : '▸';
     }
 
-    function filterDrawerList(drawerId, q) {
+    function filterSheetList(paneId, q) {
       q = (q || '').toLowerCase().trim();
-      var drawer = document.getElementById(drawerId);
-      if (!drawer) return;
-      drawer.querySelectorAll('[data-filter-text]').forEach(function (el) {
+      var pane = document.getElementById(paneId);
+      if (!pane) return;
+      pane.querySelectorAll('[data-filter-text]').forEach(function (el) {
         var hay = el.getAttribute('data-filter-text') || '';
         el.style.display = (!q || hay.indexOf(q) !== -1) ? '' : 'none';
       });
       if (q) {
-        var kids = document.getElementById('carrierKids');
-        if (kids) { kids.classList.add('open'); document.getElementById('carrierExpandBtn').textContent = '▾'; }
+        var kids = document.getElementById('sheetCarrierKids');
+        if (kids) { kids.classList.add('open'); document.getElementById('sheetCarrierBtn').textContent = '▾'; }
       }
     }
 
@@ -1403,12 +1438,8 @@
       document.querySelectorAll('.step-btn').forEach(function (b) {
         b.classList.toggle('on', b.dataset.screen === id);
       });
-      closeDrawer();
-      if (id === 'topics') {
-        document.getElementById('topicsDrawer').classList.add('open');
-        openDrawerId = 'topics';
-        markFilterPill('topics');
-      }
+      closeFiltersSheet();
+      if (id === 'topics') openFiltersSheet('topics');
       try { localStorage.setItem(SCREEN_KEY, id); } catch (e) {}
       window.scrollTo(0, 0);
     }
@@ -1420,32 +1451,23 @@
     function setMainPill(el, name) {
       var row = el.parentElement;
       row.querySelectorAll('.pill').forEach(function (p) {
-        if (!p.classList.contains('filter')) p.classList.remove('on');
+        if (!p.classList.contains('filters-hub')) p.classList.remove('on');
       });
-      if (!el.classList.contains('filter')) el.classList.add('on');
-      closeDrawer();
+      if (!el.classList.contains('filters-hub')) el.classList.add('on');
+      closeFiltersSheet();
       showToast(name + ' (stub)');
     }
 
     function clearAllFilters() {
-      document.querySelectorAll('#topicsDrawer input[type=checkbox], #sourcesDrawer input[type=checkbox], #typesDrawer input[type=checkbox]').forEach(function (c) {
-        c.checked = false;
-      });
-      syncActiveBar();
-      showToast('All filters cleared');
+      clearAllFiltersSheet();
       showScreen('browse');
     }
 
     function removeActive(group, val) {
-      var sel = {
-        source: '#sourcesDrawer input[data-src="' + val + '"]',
-        carrier: '#sourcesDrawer input[data-carrier="' + val + '"]',
-        topic: '#topicsDrawer input[data-topic="' + val + '"]',
-        type: '#typesDrawer input[data-type="' + val + '"]'
-      }[group];
-      if (sel) {
-        document.querySelectorAll(sel).forEach(function (c) { c.checked = false; });
-      }
+      var kind = { source: 'src', carrier: 'carrier', topic: 'topic', type: 'type' }[group];
+      var sel = hostSel(kind, val);
+      if (sel) document.querySelectorAll(sel).forEach(function (c) { c.checked = false; });
+      syncSheetFromHosts();
       syncActiveBar();
       showToast('Removed ' + val);
     }
@@ -1454,46 +1476,40 @@
       return document.querySelectorAll(sel + ':checked').length;
     }
 
-    function updateDrawerCounts() {
-      var tc = countChecked('#topicsDrawer input[data-topic]');
+    function updateTabBadges() {
       var sc = countChecked('#sourcesDrawer input[data-src]') + countChecked('#sourcesDrawer input[data-carrier]');
-      var yc = countChecked('#typesDrawer input[data-type]');
-      var te = document.getElementById('topicsCount');
-      var se = document.getElementById('sourcesCount');
-      var ye = document.getElementById('typesCount');
-      if (te) te.textContent = tc ? (tc + ' selected') : 'None selected';
-      if (se) se.textContent = sc ? (sc + ' selected') : 'None selected';
-      if (ye) ye.textContent = yc ? (yc + ' selected') : 'None selected';
-    }
-
-    function syncFilterPills() {
       var tc = countChecked('#topicsDrawer input[data-topic]');
-      var sc = countChecked('#sourcesDrawer input[data-src]') + countChecked('#sourcesDrawer input[data-carrier]');
       var yc = countChecked('#typesDrawer input[data-type]');
-      function setBadge(pillId, badgeId, n) {
-        var pill = document.getElementById(pillId);
-        var badge = document.getElementById(badgeId);
-        if (!pill || !badge) return;
-        if (n > 0) {
-          pill.classList.add('has-sel');
-          badge.style.display = '';
-          badge.textContent = String(n);
-        } else {
-          pill.classList.remove('has-sel');
-          badge.style.display = 'none';
-        }
+      function set(id, n) {
+        var el = document.getElementById(id);
+        if (!el) return;
+        if (n > 0) { el.style.display = ''; el.textContent = String(n); }
+        else el.style.display = 'none';
       }
-      setBadge('pillTopics', 'badgeTopics', tc);
-      setBadge('pillSources', 'badgeSources', sc);
-      setBadge('pillTypes', 'badgeTypes', yc);
+      set('tabBadgeSources', sc);
+      set('tabBadgeTopics', tc);
+      set('tabBadgeTypes', yc);
+      var total = sc + tc + yc;
+      var bf = document.getElementById('badgeFilters');
+      var pf = document.getElementById('pillFilters');
+      if (bf) {
+        if (total > 0) { bf.style.display = ''; bf.textContent = String(total); }
+        else bf.style.display = 'none';
+      }
+      if (pf) {
+        if (total > 0) pf.classList.add('has-sel'); else pf.classList.remove('has-sel');
+      }
+      document.querySelectorAll('.pill.filters-hub .pill-badge').forEach(function (b) {
+        if (total > 0) { b.style.display = ''; b.textContent = String(total); }
+        else b.style.display = 'none';
+      });
     }
 
     function syncActiveBar() {
       var bar = document.getElementById('activeBar');
       if (!bar) return;
       var parts = ['<span class="lab">Active filters</span>'];
-      var has = false;
-      var n = 0;
+      var has = false, n = 0;
       document.querySelectorAll('#sourcesDrawer input[data-src]:checked').forEach(function (c) {
         has = true; n++;
         var v = c.dataset.src;
@@ -1517,37 +1533,23 @@
       parts.push('<button type="button" class="chip clear" onclick="clearAllFilters()">Clear all</button>');
       bar.innerHTML = has
         ? parts.join('')
-        : '<span class="lab">Active filters</span> <span style="color:var(--muted)">None — use Sources / Topics / Type</span> <button type="button" class="chip clear" onclick="clearAllFilters()">Clear all</button>';
-      updateDrawerCounts();
-      syncFilterPills();
+        : '<span class="lab">Active filters</span> <span style="color:var(--muted)">None — open Filters</span> <button type="button" class="chip clear" onclick="clearAllFilters()">Clear all</button>';
+      updateTabBadges();
       var rc = document.getElementById('resultCount');
       if (rc) {
         if (!has) rc.textContent = 'Showing all 8 · no filters';
-        else if (n <= 2) rc.textContent = 'Showing filtered results · ' + n + ' active filter' + (n === 1 ? '' : 's');
-        else rc.textContent = 'Showing filtered results · ' + n + ' active filters';
+        else rc.textContent = 'Showing filtered results · ' + n + ' active filter' + (n === 1 ? '' : 's');
       }
     }
 
-    function onTopicCheck(input) {
-      syncActiveBar();
-      showToast((input.checked ? 'Added' : 'Removed') + ' topic: ' + input.dataset.topic);
-    }
-    function onSourceCheck(input) {
-      if (input.dataset.src === 'Carriers' && input.checked) {
-        var kids = document.getElementById('carrierKids');
-        if (kids && !kids.classList.contains('open')) toggleCarriers();
-      }
-      syncActiveBar();
-      showToast((input.checked ? 'Added' : 'Removed') + ' source: ' + input.dataset.src);
-    }
-    function onCarrierCheck(input) {
-      syncActiveBar();
-      showToast((input.checked ? 'Added' : 'Removed') + ' carrier: ' + input.dataset.carrier);
-    }
-    function onTypeCheck(input) {
-      syncActiveBar();
-      showToast((input.checked ? 'Added' : 'Removed') + ' type: ' + input.dataset.type);
-    }
+    // stubs kept for any leftover onclick attrs
+    function openTopicsDrawer() { openFiltersSheet('topics'); }
+    function openSourcesDrawer() { openFiltersSheet('sources'); }
+    function openTypesDrawer() { openFiltersSheet('types'); }
+    function onTopicCheck() { syncActiveBar(); }
+    function onSourceCheck() { syncActiveBar(); }
+    function onCarrierCheck() { syncActiveBar(); }
+    function onTypeCheck() { syncActiveBar(); }
 
     (function init() {
       var start = 'browse';
@@ -1558,6 +1560,7 @@
       });
       if (!ok) start = 'browse';
       showScreen(start);
+      syncSheetFromHosts();
       syncActiveBar();
     })();
   </script>

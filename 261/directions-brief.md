@@ -58,16 +58,18 @@ Do **not** invent locked answers. Surface on hub + every direction.
 
 **Tradeoff:** Clearest mental model (source ≠ topic). Slightly more schema/admin surface. Best default for browse + filter without Source×Topic explosion.
 
-### A · FC look (`directions/a-fc/`) — primary review surface
+### A · FC look (`directions/a-fc/`) — primary polish pass
 
-**Not a new direction letter.** Higher-fidelity clickable HTML of **Direction A** inside real **financialcontent.ca** advisor library chrome (rail, hero, search, pills, teal card headers, **drawer-only** Sources / Topics / Type filters — no gray facet chip rows above cards).
+**Not a new direction letter.** Higher-fidelity clickable HTML of **Direction A** inside real **financialcontent.ca** chrome. **Polish pass** (Angelina “mock it up more”): product-ready drawers (helper · counts · Apply/Clear · carrier search/expand), pill count badges, Active filters row — still **drawer-only** (no gray facet strip above cards). Taxonomy unchanged.
 
 | | |
 |---|---|
-| **Live** | https://kartboy16.github.io/fc-mocks/261/directions/a-fc/ |
+| **Live (primary)** | https://kartboy16.github.io/fc-mocks/261/directions/a-fc/ |
+| **Live (alt Filters hub)** | https://kartboy16.github.io/fc-mocks/261/directions/a-fc-filters/ |
 | **Audiences** | **Both** — **advisor browse primary** + **admin labeling** (Angelina) |
 | **Contract** | Source × Topic × Type AND · Manage Sources + Manage Categories (Topics) + Manage Types · Advisor-only visibility flag |
-| **Lock lists (Angelina review)** | Topics 7 · Sources FTT/FSB/Carriers · Type 7 values · **drawer-only filters** (pills → drawers; Active chips OK) · **Manage Sources = 3 rows only** (14 carriers nest under Carriers, not table rows) · Advisor-only = flag · Soft Dev PASS · hold main · not agent-ready |
+| **Lock lists** | Topics 7 · Sources FTT/FSB/Carriers · Type 7 · drawer-only · Manage Sources = 3 rows · Soft Dev hold · **not** agent-ready · enhancement only |
+| **Angelina pick** | **a-fc** = three pills + three drawers (recommend) · **a-fc-filters** = one Filters control + tabbed right sheet |
 | **Abstract A** | Keep for comparison wire; prefer a-fc for FC-fidelity stakeholder review |
 
 ---
@@ -126,4 +128,4 @@ Do **not** invent locked answers. Surface on hub + every direction.
 
 ## Recommendation
 
-**Ship Direction A · FC look** with refreshed lock lists for Angelina review (Source × Topic × Type). Soft Dev playground already PASS — hold main; do not wake Software; **not agent-ready.** Prefer **a-fc**; keep abstract A/B/C/D as comparison. Flag backfill, Sharing, Date/Saved, Life Events as follow-ups. Do not confuse with #209 or #260.
+**Ship Direction A · FC look polish (`a-fc`)** for Angelina review; offer **`a-fc-filters`** as alternate drawer UX. Soft Dev hold main; do not wake Software; **not agent-ready** · enhancement only (taxonomy locked). Prefer **a-fc**; keep abstract A/B/C/D as comparison. Do not confuse with #209 or #260.

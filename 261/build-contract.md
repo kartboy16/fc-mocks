@@ -41,7 +41,7 @@ Directions B (grouped), C (Source hubs), and D (sidebar browse synthesizing Advi
 
 ### A · FC look (hi-fi view — not a new direction)
 
-`directions/a-fc/` is an FC-fidelity view of **Direction A** for Angelina lock-list review. **Axes:** Source × Topic × Type AND · Manage Sources (**3 rows only**) + Manage Categories (Topics) + Manage Types · Advisor-only visibility flag. **Locked lists:** Topics (7) · Sources FTT/FSB/Carriers · Type (7) · Advisor-only = flag. Soft Dev playground PASS — hold main · not agent-ready. Audiences: **both**, advisor browse primary. Live: https://kartboy16.github.io/fc-mocks/261/directions/a-fc/
+`directions/a-fc/` is the **primary polish pass** of Direction A (drawer-only · product-ready drawers). `directions/a-fc-filters/` is an **alternate** one-Filters-hub UX for Angelina pick. **Axes unchanged:** Source × Topic × Type AND · Manage Sources (**3 rows only**) + Manage Categories + Manage Types · Advisor-only flag. Soft Dev hold · not agent-ready · enhancement only. Live: https://kartboy16.github.io/fc-mocks/261/directions/a-fc/ · https://kartboy16.github.io/fc-mocks/261/directions/a-fc-filters/ · hub https://kartboy16.github.io/fc-mocks/261/
 
 
 
