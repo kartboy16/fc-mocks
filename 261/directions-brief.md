@@ -42,7 +42,7 @@ Do **not** invent locked answers. Surface on hub + every direction.
 | Ref | Pattern | Mapping to #261 |
 |---|---|---|
 | **Advisorstream** | Sidebar: Most Popular · Favorites · **Sources** (partner logos) · **Publishers** (media brands) · **Topics** (long alpha mix) · Date · Saved Searches | Sources + Publishers → our **Source** facet; Topics → Master Categories; Date/Saved = **optional later** |
-| **HeyAdvisor Library** | Filter by: **Life Events** (radio/single) · **Topics** (multi checkboxes) · Sharing Options · Type; active chips + Clear all; Life Event colored tags on cards; **no Source facet** | Life Events = optional third axis; Topics ↔ Master Categories; Type / Sharing = **optional follow-ups** |
+| **HeyAdvisor Library** | Filter by: **Life Events** (radio/single) · **Topics** (multi checkboxes) · Sharing Options · Type; active chips + Clear all; Life Event colored tags on cards; **no Source facet** | Life Events = optional later; Topics ↔ Master Categories; **Type locked as 3rd facet** for a-fc review; Sharing = optional follow-up |
 
 ### Product choice before agent-ready *(do not invent a lock)*
 
@@ -67,7 +67,7 @@ Do **not** invent locked answers. Surface on hub + every direction.
 | **Live** | https://kartboy16.github.io/fc-mocks/261/directions/a-fc/ |
 | **Audiences** | **Both** — **advisor browse primary** + **admin labeling** (Angelina) |
 | **Contract** | Source × Topic × Type AND · Manage Sources + Manage Categories (Topics) + Manage Types · Advisor-only visibility flag |
-| **Lock lists (Angelina review)** | Topics 7 · Sources FTT/FSB/Carriers · Type 7 values · Advisor-only = flag · Soft Dev PASS · hold main · not agent-ready |
+| **Lock lists (Angelina review)** | Topics 7 · Sources FTT/FSB/Carriers · Type 7 values · **Manage Sources = 3 rows only** (14 carriers nest under Carriers, not table rows) · Advisor-only = flag · Soft Dev PASS · hold main · not agent-ready |
 | **Abstract A** | Keep for comparison wire; prefer a-fc for FC-fidelity stakeholder review |
 
 ---
@@ -107,7 +107,7 @@ Do **not** invent locked answers. Surface on hub + every direction.
 | Today | After (any direction, once locked) |
 |---|---|
 | Topics via Manage Categories; no first-class content Source facet | Posts labeled by Source + topic(s) |
-| Advisor browse hard to slice by carrier / FTT / FECBC | Independent Source + Topic filters (or hubs) |
+| Advisor browse hard to slice by carrier / FTT / partner | Independent Source + Topic + Type filters (or hubs); Sources locked FTT/FSB/Carriers |
 | #209 AdvisorSource easy to confuse with content source | Explicit “not #209” callout; content taxonomy only |
 | Advisor-only / group-benefits unclear as flag vs tag | Both options mocked; flag recommended in A |
 
@@ -118,7 +118,7 @@ Do **not** invent locked answers. Surface on hub + every direction.
 - Direction step chips between the 7 must-have screens  
 - Source / topic filter chips toggle (AND) + clear  
 - Post edit Source select + multi-select topics + Visibility flag  
-- Admin CRUD stubs (Sources / Categories)  
+- Admin CRUD stubs (Sources = 3 rows · Categories · Types)  
 - Advisor-only gated/labeled state  
 - #209 distinction callout  
 

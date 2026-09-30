@@ -7,14 +7,14 @@
 
 ## One-liner
 
-Content library posts get a first-class **Source** (carrier / FTT / FECBC / Other) **and** topic/product via **Master Categories**, with advisor **dual-facet filters** (AND, no Source×Topic mega-list), admin **Manage Sources** + Manage Categories, post edit Source + topics, and a recommended **Visibility: Advisor-only** flag — until product locks otherwise. **Not** #209 Advisor Categories. **Not** #260 My Media.
+Content library posts get a first-class **Source** (FTT / FSB / **Carriers** rollup) **and** topic/product via **Master Categories** (7 Topics) **and** **Type** (3rd facet), with advisor **triple-facet filters** (AND), admin **Manage Sources** (exactly 3 rows) + Manage Categories + Manage Types, post edit Source + topics + Type, and a recommended **Visibility: Advisor-only** flag. Dropped FECBC / PPI / Ghostwritten. **Not** #209 Advisor Categories. **Not** #260 My Media.
 
 ## Acceptance criteria (refined)
 
-- **AC-1:** Content posts can be labeled with a **Source** (carrier / Financial Tech Tools / FECBC / Other — exact list open Q) independent of topic Master Categories.
-- **AC-2:** Advisors can **browse/filter** the content library by Source **and** by topic/product with **independent facets** (AND logic); empty filter state is clear; no combinatorial Source×Topic mega-list.
-- **AC-3:** Admins can **manage Sources** (CRUD or fixed enum — open Q) and continue to **manage topic Categories**; density mirrors existing Manage Categories.
-- **AC-4:** Post / content **edit** assigns Source (single) + topics (multi) and surfaces **Advisor-only** (and group-benefits) as visibility flag **and/or** special category — mock shows both; recommend flag.
+- **AC-1:** Content posts can be labeled with a **Source** (FTT · FSB · Carriers — Carriers is one Source; 14 carrier names are nested detail / browse sub-picks, not separate Manage Sources rows) independent of Topics and Type.
+- **AC-2:** Advisors can **browse/filter** by Source **and** Topic **and** Type with **independent facets** (AND logic); Carriers chip may expand to carrier sub-picks; empty filter state is clear; no combinatorial mega-list.
+- **AC-3:** Admins can **manage Sources** (exactly **3 rows**: FTT · FSB · Carriers; CRUD vs enum still open Q), **Manage Categories** (Topics), and **Manage Types**; density mirrors existing Manage Categories.
+- **AC-4:** Post / content **edit** assigns Source (single · FTT/FSB/or a Carrier under rollup) + Topics (multi · 7) + **Type** + **Advisor-only** visibility flag (recommended over stuffing into topics).
 - **AC-5:** Advisor-only / gated content has a clear **labeled or gated** advisor-facing state; hub and directions include a **“not Advisor Categories (#209)”** callout.
 - **AC-6:** Clickable HTML mock on GitHub Pages (`fc-mocks/261/`) + this provisional contract before `agent-ready`.
 
@@ -41,7 +41,7 @@ Directions B (grouped), C (Source hubs), and D (sidebar browse synthesizing Advi
 
 ### A · FC look (hi-fi view — not a new direction)
 
-`directions/a-fc/` is an FC-fidelity view of **Direction A** for Angelina lock-list review. **Axes:** Source × Topic × Type AND · Manage Sources + Manage Categories (Topics) + Manage Types · Advisor-only visibility flag. **Locked lists:** Topics (7) · Sources FTT/FSB/Carriers · Type (7) · Advisor-only = flag. Soft Dev playground PASS — hold main · not agent-ready. Audiences: **both**, advisor browse primary. Live: https://kartboy16.github.io/fc-mocks/261/directions/a-fc/
+`directions/a-fc/` is an FC-fidelity view of **Direction A** for Angelina lock-list review. **Axes:** Source × Topic × Type AND · Manage Sources (**3 rows only**) + Manage Categories (Topics) + Manage Types · Advisor-only visibility flag. **Locked lists:** Topics (7) · Sources FTT/FSB/Carriers · Type (7) · Advisor-only = flag. Soft Dev playground PASS — hold main · not agent-ready. Audiences: **both**, advisor browse primary. Live: https://kartboy16.github.io/fc-mocks/261/directions/a-fc/
 
 
 
@@ -62,7 +62,7 @@ Directions B (grouped), C (Source hubs), and D (sidebar browse synthesizing Advi
 | Loading | Skeleton or spinner on library grid |
 | Error | Inline / toast load failure |
 | Post edit | Source + topics + advisor-only flag |
-| Manage Sources | List + add/edit/archive stubs |
+| Manage Sources | **3 rows only** (FTT · FSB · Carriers) + nested carrier note; add/edit/archive stubs |
 | Manage Categories | Existing topics admin + reuse callout |
 | Advisor-only gated/labeled | Badge and/or restricted browse state |
 | #209 callout | Explicit distinction on hub + directions |

@@ -378,6 +378,22 @@
       border-radius: 8px; font-size: 0.72rem; color: var(--muted);
     }
     .later-note { margin-top: 10px; font-size: 0.7rem; color: var(--muted); font-style: italic; }
+    .lock-refresh {
+      background: #0f766e; color: #ecfdf5; padding: 8px 16px; font-size: 0.78rem; font-weight: 700;
+      letter-spacing: 0.02em; text-align: center; border-bottom: 1px solid #0d9488;
+    }
+    .carrier-nested-note {
+      margin: 0; padding: 10px 14px 12px 28px; background: #f8fafc; border-top: 1px dashed var(--border);
+      font-size: 0.72rem; color: var(--muted); line-height: 1.45;
+    }
+    .carrier-nested-note strong { color: var(--ink); font-weight: 700; }
+    .carrier-nested-note summary {
+      cursor: pointer; font-weight: 700; color: var(--ink); list-style: none; display: flex; align-items: center; gap: 6px;
+    }
+    .carrier-nested-note summary::-webkit-details-marker { display: none; }
+    .carrier-nested-note summary::before { content: '▸'; color: var(--muted); font-size: 0.7rem; }
+    .carrier-nested-note[open] summary::before { content: '▾'; }
+    .carrier-nested-note .names { margin-top: 8px; color: var(--muted); }
   </style>
 </head>
 <body>
@@ -394,6 +410,8 @@
       <a href="../../directions-brief.md">Brief</a>
     </div>
   </div>
+
+  <div class="lock-refresh">Lock refreshed · 2026-09-29 · Topics 7 · Sources 3 · Type facet</div>
 
   <div class="steps">
     <span class="lab">Screens</span>
@@ -975,7 +993,7 @@
               <h2>Manage Sources</h2>
               <span class="admin-tag">Admin</span>
             </div>
-            <p class="admin-sub">Locked Sources (3): <strong>Financial Tech Tools (FTT)</strong> · <strong>FSB</strong> · <strong>Carriers</strong> rollup. Dropped FECBC, PPI, Ghostwritten. Carrier names from live postCategories (excl. Assuris, National Health Claim, dealers).</p>
+            <p class="admin-sub">Manage Sources table = <strong>exactly 3 rows</strong>: <strong>Financial Tech Tools (FTT)</strong> · <strong>FSB</strong> · <strong>Carriers</strong> rollup. The 14 carrier names nest under Carriers (detail/expand) — not table rows. Dropped FECBC, PPI, Ghostwritten.</p>
             <div class="info-banner">
               <div class="ico">i</div>
               <div><strong>Sources</strong> = where a post came from. Independent of Topics and Type. Do not confuse with AdvisorSource (#209).</div>
@@ -1000,26 +1018,16 @@
                 <tbody>
                   <tr><td><strong>Financial Tech Tools</strong><div class="slug">ftt</div></td><td><div class="type-pills"><span class="on">Partner</span></div></td><td>128</td><td><button type="button" class="tog on" onclick="this.classList.toggle('on')"></button></td><td><button type="button" class="btn btn-ghost btn-sm" onclick="showToast('Edit stub')">Edit</button></td></tr>
                   <tr><td><strong>FSB</strong><div class="slug">fsb</div></td><td><div class="type-pills"><span class="on">Partner</span></div></td><td>41</td><td><button type="button" class="tog on" onclick="this.classList.toggle('on')"></button></td><td><button type="button" class="btn btn-ghost btn-sm">Edit</button></td></tr>
-                  <tr><td><strong>Carriers</strong> <span style="font-size:0.68rem;color:var(--muted)">(rollup)</span><div class="slug">carriers</div></td><td><div class="type-pills"><span class="on">Carrier</span></div></td><td>307</td><td><button type="button" class="tog on" onclick="this.classList.toggle('on')"></button></td><td><button type="button" class="btn btn-ghost btn-sm">Edit</button></td></tr>
-                  <tr><td style="padding-left:28px"><strong>Manulife</strong><div class="slug">manulife</div></td><td><div class="type-pills"><span class="on">Carrier</span></div></td><td>42</td><td><button type="button" class="tog on" onclick="this.classList.toggle('on')"></button></td><td><button type="button" class="btn btn-ghost btn-sm">Edit</button></td></tr>
-                  <tr><td style="padding-left:28px"><strong>Assumption Life</strong><div class="slug">assumption-life</div></td><td><div class="type-pills"><span class="on">Carrier</span></div></td><td>18</td><td><button type="button" class="tog on" onclick="this.classList.toggle('on')"></button></td><td><button type="button" class="btn btn-ghost btn-sm">Edit</button></td></tr>
-                  <tr><td style="padding-left:28px"><strong>Equitable Life</strong><div class="slug">equitable-life</div></td><td><div class="type-pills"><span class="on">Carrier</span></div></td><td>15</td><td><button type="button" class="tog on" onclick="this.classList.toggle('on')"></button></td><td><button type="button" class="btn btn-ghost btn-sm">Edit</button></td></tr>
-                  <tr><td style="padding-left:28px"><strong>iA Financial</strong><div class="slug">ia-financial</div></td><td><div class="type-pills"><span class="on">Carrier</span></div></td><td>28</td><td><button type="button" class="tog on" onclick="this.classList.toggle('on')"></button></td><td><button type="button" class="btn btn-ghost btn-sm">Edit</button></td></tr>
-                  <tr><td style="padding-left:28px"><strong>Sun Life</strong><div class="slug">sun-life</div></td><td><div class="type-pills"><span class="on">Carrier</span></div></td><td>37</td><td><button type="button" class="tog on" onclick="this.classList.toggle('on')"></button></td><td><button type="button" class="btn btn-ghost btn-sm">Edit</button></td></tr>
-                  <tr><td style="padding-left:28px"><strong>BMO Insurance</strong><div class="slug">bmo-insurance</div></td><td><div class="type-pills"><span class="on">Carrier</span></div></td><td>12</td><td><button type="button" class="tog on" onclick="this.classList.toggle('on')"></button></td><td><button type="button" class="btn btn-ghost btn-sm">Edit</button></td></tr>
-                  <tr><td style="padding-left:28px"><strong>Desjardins</strong><div class="slug">desjardins</div></td><td><div class="type-pills"><span class="on">Carrier</span></div></td><td>21</td><td><button type="button" class="tog on" onclick="this.classList.toggle('on')"></button></td><td><button type="button" class="btn btn-ghost btn-sm">Edit</button></td></tr>
-                  <tr><td style="padding-left:28px"><strong>Empire Life</strong><div class="slug">empire-life</div></td><td><div class="type-pills"><span class="on">Carrier</span></div></td><td>14</td><td><button type="button" class="tog on" onclick="this.classList.toggle('on')"></button></td><td><button type="button" class="btn btn-ghost btn-sm">Edit</button></td></tr>
-                  <tr><td style="padding-left:28px"><strong>Foresters Financial</strong><div class="slug">foresters</div></td><td><div class="type-pills"><span class="on">Carrier</span></div></td><td>16</td><td><button type="button" class="tog on" onclick="this.classList.toggle('on')"></button></td><td><button type="button" class="btn btn-ghost btn-sm">Edit</button></td></tr>
-                  <tr><td style="padding-left:28px"><strong>Canada Life</strong><div class="slug">canada-life</div></td><td><div class="type-pills"><span class="on">Carrier</span></div></td><td>33</td><td><button type="button" class="tog on" onclick="this.classList.toggle('on')"></button></td><td><button type="button" class="btn btn-ghost btn-sm">Edit</button></td></tr>
-                  <tr><td style="padding-left:28px"><strong>RBC Insurance</strong><div class="slug">rbc-insurance</div></td><td><div class="type-pills"><span class="on">Carrier</span></div></td><td>19</td><td><button type="button" class="tog on" onclick="this.classList.toggle('on')"></button></td><td><button type="button" class="btn btn-ghost btn-sm">Edit</button></td></tr>
-                  <tr><td style="padding-left:28px"><strong>Beneva</strong><div class="slug">beneva</div></td><td><div class="type-pills"><span class="on">Carrier</span></div></td><td>11</td><td><button type="button" class="tog on" onclick="this.classList.toggle('on')"></button></td><td><button type="button" class="btn btn-ghost btn-sm">Edit</button></td></tr>
-                  <tr><td style="padding-left:28px"><strong>Co-operators Life</strong><div class="slug">co-operators-life</div></td><td><div class="type-pills"><span class="on">Carrier</span></div></td><td>24</td><td><button type="button" class="tog on" onclick="this.classList.toggle('on')"></button></td><td><button type="button" class="btn btn-ghost btn-sm">Edit</button></td></tr>
-                  <tr><td style="padding-left:28px"><strong>ivari</strong><div class="slug">ivari</div></td><td><div class="type-pills"><span class="on">Carrier</span></div></td><td>17</td><td><button type="button" class="tog on" onclick="this.classList.toggle('on')"></button></td><td><button type="button" class="btn btn-ghost btn-sm">Edit</button></td></tr>
+                  <tr><td><strong>Carriers</strong> <span style="font-size:0.68rem;color:var(--muted)">(rollup · 1 Source)</span><div class="slug">carriers</div></td><td><div class="type-pills"><span class="on">Carrier</span></div></td><td>307</td><td><button type="button" class="tog on" onclick="this.classList.toggle('on')"></button></td><td><button type="button" class="btn btn-ghost btn-sm">Edit</button></td></tr>
                 </tbody>
               </table>
             </div>
+            <details class="carrier-nested-note" open style="margin-top:0;border:1px solid var(--border);border-top:none;border-radius:0 0 10px 10px">
+              <summary>14 carriers nested under Carriers (not separate Manage Sources rows)</summary>
+              <div class="names">Manulife · Assumption Life · Equitable Life · iA Financial · Sun Life · BMO Insurance · Desjardins · Empire Life · Foresters Financial · Canada Life · RBC Insurance · Beneva · Co-operators Life · ivari <span style="display:block;margin-top:4px">(excl. Assuris, National Health Claim, dealers)</span></div>
+            </details>
             <div class="banner ok" style="margin-top:14px">
-              <div><strong>Lock:</strong> 3 top-level Sources. Carriers expand to 14 names. No FECBC / PPI / Ghostwritten in v1 lock.</div>
+              <div><strong>Lock:</strong> Manage Sources = <strong>3 rows only</strong> (FTT · FSB · Carriers). Browse may expand Carriers to 14 sub-picks; those names are not separate Source rows. No FECBC / PPI / Ghostwritten.</div>
             </div>
           </div>
 
