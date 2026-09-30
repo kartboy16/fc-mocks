@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>FC — #303 Email Campaigns · Insert from Content Library</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #f4f8fc; --card: #fff; --ink: #1e2a4a; --muted: #5b6572;
+      --blue: #2b7de9; --border: #d4e4f2; --mint: #e6f1fb;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: Inter, system-ui, sans-serif; background: var(--bg); color: var(--ink); line-height: 1.55; }
+    .hero {
+      background: linear-gradient(135deg, #1e2a4a 0%, #2b7de9 100%);
+      color: #fff; padding: 40px 24px 36px;
+    }
+    .hero-inner { max-width: 880px; margin: 0 auto; }
+    .hero .eyebrow { font-size: 0.75rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; opacity: 0.85; margin-bottom: 10px; }
+    .hero h1 { font-size: 1.75rem; margin-bottom: 10px; }
+    .hero p { opacity: 0.92; max-width: 720px; font-size: 0.95rem; }
+    .rec {
+      display: inline-block; margin-top: 18px; background: #e8f5e9; color: #065f46;
+      font-weight: 700; font-size: 0.8rem; padding: 8px 14px; border-radius: 999px;
+    }
+    .wrap { max-width: 880px; margin: 0 auto; padding: 28px 24px 72px; }
+    .cta {
+      display: block; background: var(--blue); color: #fff !important; text-decoration: none;
+      text-align: center; padding: 16px 24px; border-radius: 12px; font-weight: 700;
+      font-size: 1rem; margin-bottom: 28px; box-shadow: 0 4px 16px rgba(43,125,233,0.35);
+    }
+    .cta:hover { filter: brightness(1.05); }
+    .cta small { display: block; font-weight: 500; opacity: 0.9; font-size: 0.8rem; margin-top: 4px; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 14px; }
+    .card {
+      background: var(--card); border: 1px solid var(--border); border-radius: 12px;
+      padding: 18px; text-decoration: none; color: inherit; display: block;
+      transition: border-color 0.15s, box-shadow 0.15s;
+    }
+    .card:hover { border-color: var(--blue); box-shadow: 0 4px 16px rgba(30,42,74,0.08); }
+    .card.recd { border-color: #2b7de9; box-shadow: 0 4px 16px rgba(43,125,233,0.12); }
+    .card h3 { font-size: 0.95rem; margin-bottom: 6px; color: var(--blue); }
+    .card p { font-size: 0.8rem; color: var(--muted); }
+    .card .tag {
+      display: inline-block; font-size: 0.65rem; font-weight: 700; background: var(--mint);
+      color: var(--blue); padding: 2px 8px; border-radius: 999px; margin-bottom: 8px;
+    }
+    .card .tag.rec-tag { background: var(--blue); color: #fff; }
+    h2 { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--muted); margin: 28px 0 12px; }
+    .problem {
+      margin: 0 0 20px; padding: 14px 16px; background: #fff8eb; border: 1px solid #f0d4a8;
+      border-radius: 10px; font-size: 0.85rem; color: #8a5a10;
+    }
+    .problem strong { color: #6b4408; }
+    .hold {
+      margin: 0 0 20px; padding: 14px 16px; background: #fef3c7; border: 1px solid #fcd34d;
+      border-radius: 10px; font-size: 0.85rem; color: #92400e;
+    }
+    .ac {
+      margin: 0 0 20px; padding: 14px 16px; background: #eff6ff; border: 1px solid #bfdbfe;
+      border-radius: 10px; font-size: 0.85rem; color: #1e40af;
+    }
+    .ac strong { color: #1e3a8a; }
+    .ac ul { margin: 8px 0 0; padding-left: 1.2rem; }
+    .ac li { margin-bottom: 4px; }
+    .oos {
+      margin: 0 0 20px; padding: 14px 16px; background: #fef2f2; border: 1px solid #fecaca;
+      border-radius: 10px; font-size: 0.85rem; color: #991b1b;
+    }
+    .oos ul { margin: 8px 0 0; padding-left: 1.2rem; }
+    .note {
+      margin: 16px 0 0; padding: 12px 14px; background: #eef4fb; border: 1px solid var(--border);
+      border-radius: 10px; font-size: 0.85rem; color: var(--ink);
+    }
+    .meta { margin-top: 32px; font-size: 0.8rem; color: var(--muted); }
+    .meta a { color: var(--blue); }
+    code { background: #eef2f6; padding: 0.1em 0.35em; border-radius: 4px; font-size: 0.85em; }
+    a { color: var(--blue); }
+  </style>
+</head>
+<body>
+  <header class="hero">
+    <div class="hero-inner">
+      <div class="eyebrow">FinancialContent · content-library #303 · Designer mocks</div>
+      <h1>Email Campaigns — Insert posts from Content Library</h1>
+      <p>Advisors editing a campaign should <strong>browse/search Content Library posts</strong> they can access and <strong>insert</strong> selected post (or email-ready content) into the campaign body — not copy/paste by hand. Reporter: Angelina (#fc-bugs).</p>
+      <span class="rec">Recommend · Direction A — Modal picker from editor</span>
+    </div>
+  </header>
+
+  <div class="wrap">
+    <a class="cta" href="directions/a/index.html">
+      Open Direction A (recommended)
+      <small>Campaign editor · Insert from library modal · search/filters · preview · insert into body</small>
+    </a>
+    <p style="text-align:center;margin:-18px 0 24px;font-size:0.8rem;color:var(--muted)">
+      <a href="build-contract.html">Provisional build contract</a> ·
+      <a href="build-contract.md">Markdown</a> ·
+      <a href="directions-brief.md">Directions brief</a>
+    </p>
+
+    <div class="problem">
+      <strong>Problem:</strong> Advisors building email campaigns need Content Library posts they already have access to — without leaving the campaign and copy/pasting. Today there is no in-flow browse/search/insert. Goal: pick a post (prefer Type: Email) and drop email-ready body into the campaign canvas/blocks.
+    </div>
+
+    <div class="hold">
+      <strong>Soft Dev hold · Idea / playground · not agent-ready.</strong> Designer-first mocks only. Do <em>not</em> wake Soft Dev. Do <em>not</em> mark <code>agent-ready</code>. CosB will ask Alex + Angelina in Slack which direction to lock.
+    </div>
+
+    <div class="ac">
+      <strong>Acceptance criteria (draft — cover in mocks)</strong>
+      <ul>
+        <li>From Email Campaigns, advisor can browse/search Content Library posts they have access to.</li>
+        <li>Advisor can insert a selected post (or its email-ready content) into the campaign being edited (body/blocks, not just subject).</li>
+        <li>Clear empty / loading / error states when no posts available or insert fails.</li>
+        <li>Behavior respects existing content access / approval rules (show only usable posts; optional Compliance Approved / Advisor-only badges).</li>
+      </ul>
+    </div>
+
+    <div class="oos">
+      <strong>Out of scope (this pass)</strong>
+      <ul>
+        <li>New MAP admin surfaces or Content Library authoring changes</li>
+        <li>Marking agent-ready / waking Soft Dev</li>
+        <li>content-library app code (mocks-only on fc-mocks)</li>
+      </ul>
+    </div>
+
+    <div class="note">
+      <strong>Provisional product assumptions</strong> (call out in contract — not locked): Prefer filtering to Type: Email but allow other types with clear “Insert into email” using email-ready body when available. Access/approval badges are illustrative. Insert payload = email-ready HTML/block into campaign body.
+    </div>
+
+    <h2>Directions</h2>
+    <div class="grid">
+      <a class="card recd" href="directions/a/index.html">
+        <span class="tag rec-tag">RECOMMEND</span>
+        <h3>A — Modal picker from editor</h3>
+        <p>Stay in campaign edit. Toolbar “Insert from library” opens a centered modal: search + Topic/Type filters + cards → preview → Insert. Best focus + familiar picker pattern.</p>
+      </a>
+      <a class="card" href="directions/b/index.html">
+        <span class="tag">ALT</span>
+        <h3>B — Right drawer / side panel</h3>
+        <p>Same editor; persistent right drawer so advisors can browse while seeing the canvas. Strong for compare-while-compose; slightly more chrome.</p>
+      </a>
+      <a class="card" href="directions/c/index.html">
+        <span class="tag">ALT</span>
+        <h3>C — Library-first step</h3>
+        <p>From campaign list / “Add content”: choose From Content Library → full-page picker → return with content inserted. Closer to Library browse; leaves the editor mid-flow.</p>
+      </a>
+    </div>
+
+    <h2>Provisional build contract (recommend A)</h2>
+    <div class="note" style="margin-top:0">
+      Entry: Campaign edit → Insert from library. Insert into <strong>body/blocks</strong>. List only posts the advisor can use. Empty/loading/error required. Full text: <a href="build-contract.html">build-contract.html</a>.
+    </div>
+
+    <div class="meta">
+      <p>Issue: <a href="https://github.com/kartboy16/content-library/issues/303">content-library #303</a> · Reporter: Angelina Hung (#fc-bugs)</p>
+      <p>Repo: <a href="https://github.com/kartboy16/fc-mocks">kartboy16/fc-mocks</a> · path <code>/303/</code></p>
+      <p>Live: <a href="https://kartboy16.github.io/fc-mocks/303/">kartboy16.github.io/fc-mocks/303/</a></p>
+    </div>
+  </div>
+</body>
+</html>

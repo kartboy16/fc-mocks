@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Direction C — Library-first step · #303</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --fc-blue: #2b7de9; --fc-blue-dark: #1e5bb8;
+      --rail-bg: #eef2f6; --rail-active: #d6e6fa;
+      --ink: #1a2332; --muted: #6b7280; --border: #d8e0ea;
+      --bg: #ffffff; --page: #f7f9fc; --mint: #e6f1fb;
+      --ok: #047857; --ok-bg: #e8f5e9; --warn: #9a3412; --warn-bg: #fff7ed;
+      --danger: #b91c1c;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: Inter, system-ui, sans-serif; background: var(--page); color: var(--ink);
+      font-size: 13px; line-height: 1.45; min-width: 1100px;
+    }
+    a { color: var(--fc-blue); }
+    button { font-family: inherit; cursor: pointer; }
+    .idea-banner {
+      background: linear-gradient(90deg, #1e2a4a, #2b7de9);
+      color: #fff; padding: 8px 16px; font-size: 0.72rem;
+      display: flex; flex-wrap: wrap; gap: 8px 16px; align-items: center; justify-content: space-between;
+    }
+    .idea-banner a { color: #fff; text-decoration: underline; opacity: 0.95; }
+    .idea-banner .links { display: flex; gap: 12px; flex-wrap: wrap; }
+    .alt-pill {
+      display: inline-block; background: #e0e7ff; color: #3730a3;
+      font-weight: 700; font-size: 0.68rem; padding: 3px 10px; border-radius: 999px;
+    }
+    .steps {
+      display: flex; gap: 6px; flex-wrap: wrap; padding: 8px 16px;
+      background: #fff; border-bottom: 1px solid var(--border); align-items: center;
+    }
+    .steps .lab { font-size: 0.68rem; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.04em; margin-right: 4px; }
+    .step-btn {
+      border: 1px solid var(--border); background: #fff; color: var(--ink);
+      font-size: 0.75rem; font-weight: 600; padding: 6px 12px; border-radius: 999px;
+    }
+    .step-btn:hover { border-color: var(--fc-blue); color: var(--fc-blue); background: var(--mint); }
+    .step-btn.on { background: var(--fc-blue); color: #fff; border-color: var(--fc-blue); }
+    .shell { display: flex; min-height: calc(100vh - 78px); }
+    .rail {
+      width: 88px; background: var(--rail-bg); flex-shrink: 0;
+      display: flex; flex-direction: column; align-items: center;
+      padding: 12px 6px 16px; border-right: 1px solid #e2e8f0;
+    }
+    .rail-logo { display: flex; flex-direction: column; align-items: center; gap: 4px; margin-bottom: 18px; text-align: center; }
+    .rail-logo .mark {
+      width: 28px; height: 28px; border-radius: 6px; background: var(--fc-blue); color: #fff;
+      display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 0.7rem;
+    }
+    .rail-logo .name { font-size: 0.52rem; font-weight: 700; color: #1e3a5f; line-height: 1.15; }
+    .rail-nav { display: flex; flex-direction: column; gap: 4px; width: 100%; flex: 1; }
+    .rail-item {
+      display: flex; flex-direction: column; align-items: center; gap: 3px;
+      padding: 10px 4px; border-radius: 10px; color: #4b5563; font-size: 0.58rem; font-weight: 600;
+      position: relative; border: none; background: transparent; width: 100%;
+    }
+    .rail-item svg { width: 22px; height: 22px; stroke: currentColor; fill: none; stroke-width: 1.6; }
+    .rail-item.on { background: var(--rail-active); color: var(--fc-blue); }
+    .rail-item.on::before {
+      content: ""; position: absolute; left: -6px; top: 8px; bottom: 8px; width: 3px;
+      background: var(--fc-blue); border-radius: 0 3px 3px 0;
+    }
+    .rail-profile { margin-top: auto; display: flex; flex-direction: column; align-items: center; gap: 4px; padding-top: 12px; }
+    .rail-avatar {
+      width: 36px; height: 36px; border-radius: 50%; background: var(--fc-blue);
+      color: #fff; font-weight: 700; font-size: 0.75rem; display: flex; align-items: center; justify-content: center;
+    }
+    .rail-profile span { font-size: 0.58rem; font-weight: 600; color: #4b5563; }
+    .main { flex: 1; min-width: 0; background: var(--bg); display: flex; flex-direction: column; }
+    .topbar {
+      display: flex; align-items: center; justify-content: space-between; gap: 12px;
+      padding: 12px 20px; border-bottom: 1px solid var(--border); background: #fafbfd;
+    }
+    .topbar h1 { font-size: 1.15rem; font-weight: 700; color: #1e3a5f; }
+    .topbar .crumbs { font-size: 0.72rem; color: var(--muted); margin-bottom: 2px; }
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+      padding: 8px 14px; border-radius: 8px; border: 1px solid var(--border);
+      background: #fff; font-size: 0.82rem; font-weight: 600; color: var(--ink);
+    }
+    .btn:hover { border-color: var(--fc-blue); color: var(--fc-blue); }
+    .btn.primary { background: var(--fc-blue); color: #fff; border-color: var(--fc-blue); }
+    .btn.primary:hover { background: var(--fc-blue-dark); color: #fff; }
+    .btn.ghost { background: transparent; }
+    .btn:disabled { opacity: 0.45; cursor: not-allowed; }
+    .btn.lg { padding: 12px 20px; font-size: 0.95rem; }
+    .pane { padding: 18px 24px 56px; overflow-y: auto; flex: 1; }
+    .callout { margin-bottom: 14px; padding: 10px 12px; border-radius: 8px; font-size: 0.78rem; background: #eff6ff; border: 1px solid #bfdbfe; color: #1e40af; }
+    .screen { display: none; }
+    .screen.on { display: block; }
+    .camp-table { width: 100%; border-collapse: collapse; background: #fff; border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
+    .camp-table th, .camp-table td { text-align: left; padding: 12px 14px; border-bottom: 1px solid #eef2f6; font-size: 0.85rem; }
+    .camp-table th { background: #f8fafc; font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.04em; color: var(--muted); }
+    .camp-table tr:last-child td { border-bottom: none; }
+    .camp-table tr:hover td { background: #f8fbfe; }
+    .badge {
+      display: inline-block; font-size: 0.62rem; font-weight: 700; padding: 2px 8px;
+      border-radius: 999px; background: var(--mint); color: var(--fc-blue-dark);
+    }
+    .badge.ok { background: var(--ok-bg); color: var(--ok); }
+    .badge.warn { background: var(--warn-bg); color: var(--warn); }
+    .badge.type { background: #eef2f6; color: #475569; }
+    .badge.draft { background: #fff7ed; color: #9a3412; }
+    .chooser {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 14px; max-width: 720px; margin-top: 8px;
+    }
+    .choice {
+      border: 2px solid var(--border); border-radius: 14px; padding: 22px; text-align: left;
+      background: #fff; cursor: pointer; width: 100%;
+    }
+    .choice:hover, .choice.on { border-color: var(--fc-blue); box-shadow: 0 4px 16px rgba(43,125,233,0.12); }
+    .choice h3 { font-size: 1.05rem; color: #1e3a5f; margin-bottom: 6px; }
+    .choice p { font-size: 0.85rem; color: var(--muted); }
+    .choice .ico { font-size: 1.5rem; margin-bottom: 10px; }
+    .picker-layout { display: grid; grid-template-columns: 1fr 320px; gap: 16px; align-items: start; }
+    @media (max-width: 980px) { .picker-layout { grid-template-columns: 1fr; } }
+    .search-row { display: flex; gap: 8px; margin-bottom: 12px; }
+    .search-row input {
+      flex: 1; padding: 10px 12px; border: 1px solid var(--border); border-radius: 8px;
+      font-family: inherit; font-size: 0.9rem;
+    }
+    .chips { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 14px; align-items: center; }
+    .chips .lab { font-size: 0.68rem; font-weight: 700; color: var(--muted); text-transform: uppercase; }
+    .chip {
+      border: 1px solid var(--border); background: #fff; border-radius: 999px;
+      padding: 5px 11px; font-size: 0.72rem; font-weight: 600; color: #374151;
+    }
+    .chip.on { background: var(--fc-blue); color: #fff; border-color: var(--fc-blue); }
+    .post-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .post-card {
+      border: 1px solid var(--border); border-radius: 10px; padding: 12px; text-align: left;
+      background: #fff; cursor: pointer; width: 100%;
+    }
+    .post-card:hover { border-color: var(--fc-blue); }
+    .post-card.sel { border-color: var(--fc-blue); box-shadow: 0 0 0 2px rgba(43,125,233,0.2); background: var(--mint); }
+    .post-card h4 { font-size: 0.88rem; margin: 6px 0 4px; color: #1e3a5f; }
+    .post-card p { font-size: 0.75rem; color: var(--muted); }
+    .side-card {
+      background: #fff; border: 1px solid var(--border); border-radius: 12px; padding: 16px;
+      position: sticky; top: 12px;
+    }
+    .side-card h3 { font-size: 0.9rem; margin-bottom: 6px; }
+    .side-card .hint { font-size: 0.78rem; color: var(--muted); margin-bottom: 12px; }
+    .side-card .body { font-size: 0.82rem; color: #4b5563; margin-bottom: 14px; min-height: 60px; }
+    .state-box { text-align: center; padding: 48px 24px; color: var(--muted); background: #fff; border: 1px solid var(--border); border-radius: 12px; }
+    .state-box h3 { font-size: 1rem; color: #1e3a5f; margin-bottom: 6px; }
+    .state-box p { font-size: 0.85rem; margin-bottom: 14px; }
+    .spinner {
+      width: 36px; height: 36px; border: 3px solid #dbe7f5; border-top-color: var(--fc-blue);
+      border-radius: 50%; margin: 0 auto 16px; animation: spin 0.8s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .email-canvas {
+      border: 1px solid var(--border); border-radius: 12px; background: #fff;
+      min-height: 360px; padding: 24px 28px; margin-top: 12px;
+    }
+    .block {
+      border: 1px solid #a7d7b5; border-radius: 10px; padding: 16px; margin-bottom: 12px; background: #f0fdf4;
+    }
+    .block h3 { font-size: 1rem; color: #1e3a5f; margin: 6px 0; }
+    .block p { font-size: 0.88rem; color: #4b5563; margin-bottom: 8px; }
+    .block .src { font-size: 0.7rem; color: var(--muted); }
+    .toast {
+      position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
+      background: #1e2a4a; color: #fff; padding: 12px 18px; border-radius: 10px;
+      font-size: 0.85rem; font-weight: 600; z-index: 60; display: none;
+    }
+    .toast.on { display: block; }
+    .page-sub { font-size: 0.9rem; color: var(--muted); margin-bottom: 18px; max-width: 560px; }
+  </style>
+</head>
+<body>
+  <div class="idea-banner">
+    <div><span class="alt-pill">ALT · C</span> <strong style="margin-left:8px">#303 Library-first step</strong> · Idea track · Soft Dev hold · not agent-ready</div>
+    <div class="links">
+      <a href="../../index.html">← Hub</a>
+      <a href="../a/index.html">A (rec)</a>
+      <a href="../b/index.html">B</a>
+      <a href="../../build-contract.html">Contract</a>
+      <a href="https://github.com/kartboy16/content-library/issues/303">GH #303</a>
+    </div>
+  </div>
+
+  <div class="steps">
+    <span class="lab">Steps</span>
+    <button type="button" class="step-btn on" data-step="list" onclick="go('list')">1 · Campaign list</button>
+    <button type="button" class="step-btn" data-step="choose" onclick="go('choose')">2 · Add content</button>
+    <button type="button" class="step-btn" data-step="picker" onclick="go('picker')">3 · Full-page picker</button>
+    <button type="button" class="step-btn" data-step="loading" onclick="go('loading')">4 · Loading</button>
+    <button type="button" class="step-btn" data-step="empty" onclick="go('empty')">5 · Empty</button>
+    <button type="button" class="step-btn" data-step="error" onclick="go('error')">6 · Error</button>
+    <button type="button" class="step-btn" data-step="return" onclick="go('return')">7 · Return + inserted</button>
+  </div>
+
+  <div class="shell">
+    <aside class="rail">
+      <div class="rail-logo"><div class="mark">FC</div><div class="name">Financial Content</div></div>
+      <nav class="rail-nav">
+        <button type="button" class="rail-item"><svg viewBox="0 0 24 24"><path d="M3 11.5L12 4l9 7.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1v-8.5z"/></svg>Home</button>
+        <button type="button" class="rail-item" id="rail-lib"><svg viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>Library</button>
+        <button type="button" class="rail-item on" id="rail-email"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg>Email</button>
+        <button type="button" class="rail-item"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M8 12h8M12 8v8"/></svg>Social</button>
+      </nav>
+      <div class="rail-profile"><div class="rail-avatar">AH</div><span>Advisor</span></div>
+    </aside>
+
+    <div class="main">
+      <div class="topbar">
+        <div>
+          <div class="crumbs" id="crumbs">Email Campaigns</div>
+          <h1 id="page-title">Email Campaigns</h1>
+        </div>
+        <div id="top-actions">
+          <button type="button" class="btn primary" onclick="go('choose')">Create / add content</button>
+        </div>
+      </div>
+      <div class="pane">
+        <div class="callout" id="step-note">Step 1 — Campaign list. Entry via Create / Add content → From Content Library.</div>
+
+        <div class="screen on" id="sc-list">
+          <table class="camp-table">
+            <thead><tr><th>Campaign</th><th>Status</th><th>Updated</th><th></th></tr></thead>
+            <tbody>
+              <tr>
+                <td><strong>Q4 Market Update — Clients</strong></td>
+                <td><span class="badge draft">Draft</span></td>
+                <td>Today</td>
+                <td><button type="button" class="btn" onclick="go('choose')">Add content</button></td>
+              </tr>
+              <tr>
+                <td><strong>September newsletter</strong></td>
+                <td><span class="badge ok">Sent</span></td>
+                <td>Sep 12</td>
+                <td><button type="button" class="btn ghost" disabled>View</button></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="screen" id="sc-choose">
+          <p class="page-sub">How do you want to add content to <strong>Q4 Market Update — Clients</strong>?</p>
+          <div class="chooser">
+            <button type="button" class="choice on" onclick="go('picker')">
+              <div class="ico">📚</div>
+              <h3>From Content Library</h3>
+              <p>Browse posts you can access and insert email-ready content into this campaign.</p>
+            </button>
+            <button type="button" class="choice">
+              <div class="ico">✏️</div>
+              <h3>Write from scratch</h3>
+              <p>Open the campaign editor and compose blocks manually (today’s path).</p>
+            </button>
+          </div>
+          <p style="margin-top:16px"><button type="button" class="btn ghost" onclick="go('list')">← Back to campaigns</button></p>
+        </div>
+
+        <div class="screen" id="sc-picker">
+          <p class="page-sub">Full-page picker (closer to Content Library browse). Select a post, then return to the campaign with content inserted.</p>
+          <div id="picker-main"></div>
+        </div>
+
+        <div class="screen" id="sc-return">
+          <p class="page-sub">Returned to campaign edit — library content already in the body.</p>
+          <div class="field-like" style="margin-bottom:8px;font-weight:600;font-size:0.78rem">Subject</div>
+          <div style="padding:10px 12px;border:1px solid var(--border);border-radius:8px;margin-bottom:12px;background:#fff">Your Q4 market update from our team</div>
+          <div class="email-canvas">
+            <p style="margin-bottom:12px;color:#374151">Hi {{first_name}},</p>
+            <div class="block">
+              <div><span class="badge type">Email</span> <span class="badge ok">Compliance Approved</span> <span class="badge">From library</span></div>
+              <h3>Why diversification still matters in 2026</h3>
+              <p>Spreading risk across asset classes doesn’t eliminate volatility — but it can help you stay invested when headlines get loud. Three practical takeaways for clients.</p>
+              <div class="src">Inserted via library-first step · email-ready body</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="toast" id="toast">Returned to campaign with library content inserted</div>
+
+  <script>
+    var selected = null;
+    var POSTS = [
+      { id: 1, title: 'Why diversification still matters in 2026', type: 'Email', snip: 'Plain-language portfolio balance for client emails.', badge: 'ok', badgeLabel: 'Compliance Approved', body: 'Spreading risk across asset classes doesn’t eliminate volatility — but it can help you stay invested when headlines get loud.' },
+      { id: 2, title: 'RRSP checklist before deadline', type: 'Email', snip: 'Email-ready checklist for newsletters.', badge: 'ok', badgeLabel: 'Compliance Approved', body: 'Contribution room, payroll deductions, spousal options — short checklist.' },
+      { id: 3, title: 'Market volatility: what we tell clients', type: 'Article', snip: 'Long-form with email-ready excerpt.', badge: 'adv', badgeLabel: 'Advisor-only', body: 'Calm context for clients when markets swing — excerpt suitable for email.' },
+      { id: 4, title: 'Tax-loss harvesting in plain English', type: 'Email', snip: 'Year-end planning explainer.', badge: 'ok', badgeLabel: 'Compliance Approved', body: 'Tax-loss harvesting is a year-end tool — not a reason to abandon your plan.' }
+    ];
+
+    function showScreen(id) {
+      ['sc-list','sc-choose','sc-picker','sc-return'].forEach(function (s) {
+        document.getElementById(s).classList.toggle('on', s === id);
+      });
+    }
+
+    function go(step) {
+      document.querySelectorAll('.step-btn').forEach(function (b) {
+        b.classList.toggle('on', b.getAttribute('data-step') === step);
+      });
+      var note = document.getElementById('step-note');
+      var toast = document.getElementById('toast');
+      var title = document.getElementById('page-title');
+      var crumbs = document.getElementById('crumbs');
+      var actions = document.getElementById('top-actions');
+      toast.classList.remove('on');
+      selected = null;
+      document.getElementById('rail-email').classList.add('on');
+      document.getElementById('rail-lib').classList.remove('on');
+
+      if (step === 'list') {
+        showScreen('sc-list');
+        title.textContent = 'Email Campaigns';
+        crumbs.textContent = 'Email Campaigns';
+        actions.innerHTML = '<button type="button" class="btn primary" onclick="go(\'choose\')">Create / add content</button>';
+        note.innerHTML = 'Step 1 — Campaign list. Contrast vs stay-in-editor A/B: C starts outside the editor.';
+        return;
+      }
+      if (step === 'choose') {
+        showScreen('sc-choose');
+        title.textContent = 'Add content';
+        crumbs.innerHTML = 'Email Campaigns · <span style="color:var(--ink);font-weight:600">Add content</span>';
+        actions.innerHTML = '<button type="button" class="btn ghost" onclick="go(\'list\')">Cancel</button>';
+        note.innerHTML = 'Step 2 — Choose <strong>From Content Library</strong> (library-first path).';
+        return;
+      }
+      if (step === 'return') {
+        showScreen('sc-return');
+        title.textContent = 'Q4 Market Update — Clients';
+        crumbs.innerHTML = 'Email Campaigns · <span style="color:var(--ink);font-weight:600">Edit campaign</span>';
+        actions.innerHTML = '<button type="button" class="btn ghost">Save draft</button><button type="button" class="btn primary">Preview &amp; send</button>';
+        toast.classList.add('on');
+        note.innerHTML = 'Step 7 — Return to campaign with content inserted into body. Leaves editor mid-flow during pick (tradeoff vs A/B).';
+        return;
+      }
+
+      // picker states
+      showScreen('sc-picker');
+      title.textContent = 'Choose from Content Library';
+      crumbs.innerHTML = 'Email Campaigns · Add content · <span style="color:var(--ink);font-weight:600">Content Library</span>';
+      document.getElementById('rail-lib').classList.add('on');
+      document.getElementById('rail-email').classList.remove('on');
+      actions.innerHTML = '<button type="button" class="btn ghost" onclick="go(\'choose\')">← Back</button>';
+
+      if (step === 'picker') {
+        note.innerHTML = 'Step 3 — Full-page picker (Library-like browse). Prefer Type: Email; Insert returns to campaign.';
+        renderPicker('list');
+      } else if (step === 'loading') {
+        note.innerHTML = 'Step 4 — Loading accessible posts.';
+        renderPicker('loading');
+      } else if (step === 'empty') {
+        note.innerHTML = 'Step 5 — Empty: no accessible / matching posts.';
+        renderPicker('empty');
+      } else if (step === 'error') {
+        note.innerHTML = 'Step 6 — Error loading library.';
+        renderPicker('error');
+      }
+    }
+
+    function renderPicker(mode) {
+      var el = document.getElementById('picker-main');
+      if (mode === 'loading') {
+        el.innerHTML = '<div class="state-box"><div class="spinner"></div><h3>Loading posts you can use…</h3><p>Respecting content access / approval.</p></div>';
+        return;
+      }
+      if (mode === 'empty') {
+        el.innerHTML = '<div class="state-box"><h3>No posts available</h3><p>No Content Library posts match — or none are approved for email use.</p><button type="button" class="btn" onclick="go(\'picker\')">Clear filters</button></div>';
+        return;
+      }
+      if (mode === 'error') {
+        el.innerHTML = '<div class="state-box"><h3 style="color:var(--danger)">Couldn’t load Content Library</h3><p>Campaign unchanged.</p><button type="button" class="btn primary" onclick="go(\'picker\')">Try again</button></div>';
+        return;
+      }
+      var html = '<div class="picker-layout"><div>';
+      html += '<div class="search-row"><input type="search" placeholder="Search posts you can access…" /><button type="button" class="btn">Search</button></div>';
+      html += '<div class="chips"><span class="lab">Type</span><button type="button" class="chip on">Email</button><button type="button" class="chip">Article</button><button type="button" class="chip">Social</button><button type="button" class="chip">All</button>';
+      html += '<span class="lab">Topic</span><button type="button" class="chip on">All topics</button><button type="button" class="chip">Investing</button><button type="button" class="chip">Retirement</button></div>';
+      html += '<div class="post-grid">';
+      POSTS.forEach(function (p) {
+        var bclass = p.badge === 'ok' ? 'ok' : 'warn';
+        html += '<button type="button" class="post-card" data-id="' + p.id + '" onclick="selectPost(' + p.id + ')"><span class="badge type">' + p.type + '</span> <span class="badge ' + bclass + '">' + p.badgeLabel + '</span><h4>' + p.title + '</h4><p>' + p.snip + '</p></button>';
+      });
+      html += '</div></div><aside class="side-card"><h3>Preview</h3><div class="hint">Email-ready body inserts into campaign blocks</div><div class="body" id="preview-body">Select a post to preview.</div><button type="button" class="btn primary lg" style="width:100%" id="btn-insert" disabled onclick="go(\'return\')">Insert &amp; return to campaign</button></aside></div>';
+      el.innerHTML = html;
+    }
+
+    function selectPost(id) {
+      selected = POSTS.find(function (p) { return p.id === id; });
+      document.querySelectorAll('.post-card').forEach(function (c) {
+        c.classList.toggle('sel', Number(c.getAttribute('data-id')) === id);
+      });
+      var pb = document.getElementById('preview-body');
+      var btn = document.getElementById('btn-insert');
+      if (selected && pb && btn) {
+        pb.textContent = selected.body;
+        btn.disabled = false;
+      }
+    }
+
+    go('list');
+  </script>
+</body>
+</html>

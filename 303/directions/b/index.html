@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Direction B — Right drawer picker · #303</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --fc-blue: #2b7de9; --fc-blue-dark: #1e5bb8;
+      --rail-bg: #eef2f6; --rail-active: #d6e6fa;
+      --ink: #1a2332; --muted: #6b7280; --border: #d8e0ea;
+      --bg: #ffffff; --page: #f7f9fc; --mint: #e6f1fb;
+      --ok: #047857; --ok-bg: #e8f5e9; --warn: #9a3412; --warn-bg: #fff7ed;
+      --danger: #b91c1c;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: Inter, system-ui, sans-serif; background: var(--page); color: var(--ink);
+      font-size: 13px; line-height: 1.45; min-width: 1100px;
+    }
+    a { color: var(--fc-blue); }
+    button { font-family: inherit; cursor: pointer; }
+    .idea-banner {
+      background: linear-gradient(90deg, #1e2a4a, #2b7de9);
+      color: #fff; padding: 8px 16px; font-size: 0.72rem;
+      display: flex; flex-wrap: wrap; gap: 8px 16px; align-items: center; justify-content: space-between;
+    }
+    .idea-banner a { color: #fff; text-decoration: underline; opacity: 0.95; }
+    .idea-banner .links { display: flex; gap: 12px; flex-wrap: wrap; }
+    .alt-pill {
+      display: inline-block; background: #e0e7ff; color: #3730a3;
+      font-weight: 700; font-size: 0.68rem; padding: 3px 10px; border-radius: 999px;
+    }
+    .steps {
+      display: flex; gap: 6px; flex-wrap: wrap; padding: 8px 16px;
+      background: #fff; border-bottom: 1px solid var(--border); align-items: center;
+    }
+    .steps .lab { font-size: 0.68rem; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.04em; margin-right: 4px; }
+    .step-btn {
+      border: 1px solid var(--border); background: #fff; color: var(--ink);
+      font-size: 0.75rem; font-weight: 600; padding: 6px 12px; border-radius: 999px;
+    }
+    .step-btn:hover { border-color: var(--fc-blue); color: var(--fc-blue); background: var(--mint); }
+    .step-btn.on { background: var(--fc-blue); color: #fff; border-color: var(--fc-blue); }
+    .shell { display: flex; min-height: calc(100vh - 78px); }
+    .rail {
+      width: 88px; background: var(--rail-bg); flex-shrink: 0;
+      display: flex; flex-direction: column; align-items: center;
+      padding: 12px 6px 16px; border-right: 1px solid #e2e8f0;
+    }
+    .rail-logo { display: flex; flex-direction: column; align-items: center; gap: 4px; margin-bottom: 18px; text-align: center; }
+    .rail-logo .mark {
+      width: 28px; height: 28px; border-radius: 6px; background: var(--fc-blue); color: #fff;
+      display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 0.7rem;
+    }
+    .rail-logo .name { font-size: 0.52rem; font-weight: 700; color: #1e3a5f; line-height: 1.15; }
+    .rail-nav { display: flex; flex-direction: column; gap: 4px; width: 100%; flex: 1; }
+    .rail-item {
+      display: flex; flex-direction: column; align-items: center; gap: 3px;
+      padding: 10px 4px; border-radius: 10px; color: #4b5563; font-size: 0.58rem; font-weight: 600;
+      position: relative; border: none; background: transparent; width: 100%;
+    }
+    .rail-item svg { width: 22px; height: 22px; stroke: currentColor; fill: none; stroke-width: 1.6; }
+    .rail-item.on { background: var(--rail-active); color: var(--fc-blue); }
+    .rail-item.on::before {
+      content: ""; position: absolute; left: -6px; top: 8px; bottom: 8px; width: 3px;
+      background: var(--fc-blue); border-radius: 0 3px 3px 0;
+    }
+    .rail-profile { margin-top: auto; display: flex; flex-direction: column; align-items: center; gap: 4px; padding-top: 12px; }
+    .rail-avatar {
+      width: 36px; height: 36px; border-radius: 50%; background: var(--fc-blue);
+      color: #fff; font-weight: 700; font-size: 0.75rem; display: flex; align-items: center; justify-content: center;
+    }
+    .rail-profile span { font-size: 0.58rem; font-weight: 600; color: #4b5563; }
+    .main { flex: 1; min-width: 0; background: var(--bg); display: flex; flex-direction: column; position: relative; }
+    .topbar {
+      display: flex; align-items: center; justify-content: space-between; gap: 12px;
+      padding: 12px 20px; border-bottom: 1px solid var(--border); background: #fafbfd;
+    }
+    .topbar h1 { font-size: 1.05rem; font-weight: 700; color: #1e3a5f; }
+    .topbar .crumbs { font-size: 0.72rem; color: var(--muted); margin-bottom: 2px; }
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+      padding: 8px 14px; border-radius: 8px; border: 1px solid var(--border);
+      background: #fff; font-size: 0.82rem; font-weight: 600; color: var(--ink);
+    }
+    .btn:hover { border-color: var(--fc-blue); color: var(--fc-blue); }
+    .btn.primary { background: var(--fc-blue); color: #fff; border-color: var(--fc-blue); }
+    .btn.primary:hover { background: var(--fc-blue-dark); color: #fff; }
+    .btn.ghost { background: transparent; }
+    .btn:disabled { opacity: 0.45; cursor: not-allowed; }
+    .work { display: flex; flex: 1; min-height: 0; }
+    .canvas-wrap { flex: 1; padding: 18px 22px 48px; overflow-y: auto; min-width: 0; }
+    .field-row { margin-bottom: 14px; }
+    .field-row label { display: block; font-weight: 600; font-size: 0.78rem; margin-bottom: 6px; }
+    .field-row input {
+      width: 100%; padding: 10px 12px; border: 1px solid var(--border); border-radius: 8px;
+      font-family: inherit; font-size: 0.9rem;
+    }
+    .toolbar {
+      display: flex; flex-wrap: wrap; gap: 6px; padding: 10px 12px; background: #f8fafc;
+      border: 1px solid var(--border); border-bottom: none; border-radius: 10px 10px 0 0;
+    }
+    .toolbar .tb {
+      border: 1px solid var(--border); background: #fff; border-radius: 6px;
+      padding: 6px 10px; font-size: 0.72rem; font-weight: 600; color: #374151;
+    }
+    .toolbar .tb.hi { border-color: var(--fc-blue); background: var(--mint); color: var(--fc-blue); }
+    .email-canvas {
+      border: 1px solid var(--border); border-radius: 0 0 10px 10px; background: #fff;
+      min-height: 420px; padding: 24px 28px;
+    }
+    .email-canvas .greeting { font-size: 0.95rem; margin-bottom: 14px; color: #374151; }
+    .block {
+      border: 1px dashed #c5d4e8; border-radius: 10px; padding: 16px; margin-bottom: 12px; background: #fafbfd;
+    }
+    .block.placeholder { text-align: center; color: var(--muted); font-size: 0.85rem; padding: 28px; }
+    .block.inserted { border-style: solid; border-color: #a7d7b5; background: #f0fdf4; }
+    .block .blk-meta { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 8px; }
+    .block h3 { font-size: 1rem; color: #1e3a5f; margin-bottom: 6px; }
+    .block p { font-size: 0.88rem; color: #4b5563; margin-bottom: 8px; }
+    .block .src { font-size: 0.7rem; color: var(--muted); }
+    .badge {
+      display: inline-block; font-size: 0.62rem; font-weight: 700; padding: 2px 8px;
+      border-radius: 999px; background: var(--mint); color: var(--fc-blue-dark);
+    }
+    .badge.ok { background: var(--ok-bg); color: var(--ok); }
+    .badge.warn { background: var(--warn-bg); color: var(--warn); }
+    .badge.type { background: #eef2f6; color: #475569; }
+    .drawer {
+      width: 0; overflow: hidden; border-left: 0 solid var(--border); background: #fff;
+      transition: width 0.2s ease; display: flex; flex-direction: column; flex-shrink: 0;
+    }
+    .drawer.open { width: 380px; border-left-width: 1px; }
+    .drawer-hd {
+      padding: 14px 16px; border-bottom: 1px solid var(--border);
+      display: flex; justify-content: space-between; align-items: flex-start; gap: 8px;
+    }
+    .drawer-hd h2 { font-size: 0.95rem; font-weight: 700; color: #1e3a5f; }
+    .drawer-hd .sub { font-size: 0.7rem; color: var(--muted); margin-top: 2px; }
+    .drawer-bd { padding: 12px 14px; overflow-y: auto; flex: 1; }
+    .drawer-ft {
+      padding: 12px 14px; border-top: 1px solid var(--border); display: flex; gap: 8px;
+      justify-content: flex-end; background: #fafbfd;
+    }
+    .search-row { display: flex; gap: 6px; margin-bottom: 10px; }
+    .search-row input {
+      flex: 1; padding: 8px 10px; border: 1px solid var(--border); border-radius: 8px;
+      font-family: inherit; font-size: 0.82rem;
+    }
+    .chips { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 12px; align-items: center; }
+    .chips .lab { font-size: 0.62rem; font-weight: 700; color: var(--muted); text-transform: uppercase; }
+    .chip {
+      border: 1px solid var(--border); background: #fff; border-radius: 999px;
+      padding: 4px 9px; font-size: 0.68rem; font-weight: 600; color: #374151;
+    }
+    .chip.on { background: var(--fc-blue); color: #fff; border-color: var(--fc-blue); }
+    .post-card {
+      border: 1px solid var(--border); border-radius: 10px; padding: 10px; text-align: left;
+      background: #fff; cursor: pointer; width: 100%; margin-bottom: 8px;
+    }
+    .post-card:hover { border-color: var(--fc-blue); }
+    .post-card.sel { border-color: var(--fc-blue); box-shadow: 0 0 0 2px rgba(43,125,233,0.2); background: var(--mint); }
+    .post-card h4 { font-size: 0.82rem; margin: 5px 0 3px; color: #1e3a5f; }
+    .post-card p { font-size: 0.72rem; color: var(--muted); }
+    .preview-pane {
+      margin-top: 10px; padding: 10px; background: #f8fafc; border: 1px solid var(--border); border-radius: 8px;
+    }
+    .preview-pane h3 { font-size: 0.78rem; margin-bottom: 4px; }
+    .preview-pane .body { font-size: 0.75rem; color: #4b5563; }
+    .state-box { text-align: center; padding: 36px 12px; color: var(--muted); }
+    .state-box h3 { font-size: 0.92rem; color: #1e3a5f; margin-bottom: 6px; }
+    .state-box p { font-size: 0.8rem; margin-bottom: 12px; }
+    .spinner {
+      width: 32px; height: 32px; border: 3px solid #dbe7f5; border-top-color: var(--fc-blue);
+      border-radius: 50%; margin: 0 auto 14px; animation: spin 0.8s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .skel { height: 64px; border-radius: 8px; background: linear-gradient(90deg,#eef2f6,#f8fafc,#eef2f6); background-size: 200% 100%; animation: shimmer 1.2s infinite; margin-bottom: 8px; }
+    @keyframes shimmer { 0% { background-position: 100% 0; } 100% { background-position: -100% 0; } }
+    .callout { margin: 0 20px 12px; padding: 10px 12px; border-radius: 8px; font-size: 0.78rem; background: #eff6ff; border: 1px solid #bfdbfe; color: #1e40af; }
+    .toast {
+      position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
+      background: #1e2a4a; color: #fff; padding: 12px 18px; border-radius: 10px;
+      font-size: 0.85rem; font-weight: 600; z-index: 60; display: none;
+    }
+    .toast.on { display: block; }
+    .hidden { display: none !important; }
+  </style>
+</head>
+<body>
+  <div class="idea-banner">
+    <div><span class="alt-pill">ALT · B</span> <strong style="margin-left:8px">#303 Right drawer / side panel</strong> · Idea track · Soft Dev hold · not agent-ready</div>
+    <div class="links">
+      <a href="../../index.html">← Hub</a>
+      <a href="../a/index.html">A (rec)</a>
+      <a href="../c/index.html">C</a>
+      <a href="../../build-contract.html">Contract</a>
+      <a href="https://github.com/kartboy16/content-library/issues/303">GH #303</a>
+    </div>
+  </div>
+
+  <div class="steps">
+    <span class="lab">Steps</span>
+    <button type="button" class="step-btn on" data-step="idle" onclick="go('idle')">1 · Editor idle</button>
+    <button type="button" class="step-btn" data-step="picker" onclick="go('picker')">2 · Drawer open</button>
+    <button type="button" class="step-btn" data-step="loading" onclick="go('loading')">3 · Loading</button>
+    <button type="button" class="step-btn" data-step="empty" onclick="go('empty')">4 · Empty</button>
+    <button type="button" class="step-btn" data-step="error" onclick="go('error')">5 · Error</button>
+    <button type="button" class="step-btn" data-step="success" onclick="go('success')">6 · Inserted</button>
+  </div>
+
+  <div class="shell">
+    <aside class="rail">
+      <div class="rail-logo"><div class="mark">FC</div><div class="name">Financial Content</div></div>
+      <nav class="rail-nav">
+        <button type="button" class="rail-item"><svg viewBox="0 0 24 24"><path d="M3 11.5L12 4l9 7.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1v-8.5z"/></svg>Home</button>
+        <button type="button" class="rail-item"><svg viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>Library</button>
+        <button type="button" class="rail-item on"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg>Email</button>
+        <button type="button" class="rail-item"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M8 12h8M12 8v8"/></svg>Social</button>
+      </nav>
+      <div class="rail-profile"><div class="rail-avatar">AH</div><span>Advisor</span></div>
+    </aside>
+
+    <div class="main">
+      <div class="topbar">
+        <div>
+          <div class="crumbs">Email Campaigns · <span style="color:var(--ink);font-weight:600">Edit campaign</span></div>
+          <h1>Q4 Market Update — Clients</h1>
+        </div>
+        <div style="display:flex;gap:8px">
+          <button type="button" class="btn ghost">Save draft</button>
+          <button type="button" class="btn primary">Preview &amp; send</button>
+        </div>
+      </div>
+      <div class="callout" id="step-note">Step 1 — Idle. Drawer closed; canvas fully visible. Open via <strong>Insert from library</strong>.</div>
+
+      <div class="work">
+        <div class="canvas-wrap">
+          <div class="field-row"><label>Subject</label><input type="text" value="Your Q4 market update from our team" readonly /></div>
+          <div class="toolbar">
+            <button type="button" class="tb">Bold</button>
+            <button type="button" class="tb">Link</button>
+            <button type="button" class="tb hi" onclick="go('picker')">📚 Insert from library</button>
+            <button type="button" class="tb">Add block</button>
+          </div>
+          <div class="email-canvas">
+            <p class="greeting">Hi {{first_name}},</p>
+            <div class="block">
+              <h3>A quick note from your advisor</h3>
+              <p>Markets moved quickly this quarter. Here’s what we’re watching — and how it may affect your plan.</p>
+            </div>
+            <div class="block placeholder" id="empty-slot">Browse the library drawer while keeping this canvas in view</div>
+            <div class="block inserted hidden" id="inserted-block">
+              <div class="blk-meta">
+                <span class="badge type">Email</span>
+                <span class="badge ok">Compliance Approved</span>
+                <span class="badge">From library</span>
+              </div>
+              <h3>Why diversification still matters in 2026</h3>
+              <p>Spreading risk across asset classes doesn’t eliminate volatility — but it can help you stay invested when headlines get loud.</p>
+              <div class="src">Inserted from drawer · Type: Email · email-ready body</div>
+            </div>
+          </div>
+        </div>
+
+        <aside class="drawer" id="drawer">
+          <div class="drawer-hd">
+            <div>
+              <h2>Content Library</h2>
+              <div class="sub">Browse while you compose · insert into body</div>
+            </div>
+            <button type="button" class="btn ghost" onclick="go('idle')">×</button>
+          </div>
+          <div class="drawer-bd" id="drawer-body"></div>
+          <div class="drawer-ft" id="drawer-ft">
+            <button type="button" class="btn ghost" onclick="go('idle')">Close</button>
+            <button type="button" class="btn primary" id="btn-do-insert" onclick="doInsert()" disabled>Insert</button>
+          </div>
+        </aside>
+      </div>
+    </div>
+  </div>
+  <div class="toast" id="toast">Inserted into campaign body</div>
+
+  <script>
+    var selected = null;
+    var POSTS = [
+      { id: 1, title: 'Why diversification still matters in 2026', type: 'Email', snip: 'Three practical takeaways for client emails.', badge: 'ok', badgeLabel: 'Compliance Approved', body: 'Spreading risk across asset classes doesn’t eliminate volatility — but it can help you stay invested when headlines get loud.' },
+      { id: 2, title: 'RRSP checklist before deadline', type: 'Email', snip: 'Email-ready checklist for newsletters.', badge: 'ok', badgeLabel: 'Compliance Approved', body: 'Contribution room, payroll deductions, spousal options — short checklist for clients.' },
+      { id: 3, title: 'Market volatility: what we tell clients', type: 'Article', snip: 'Long-form; email-ready excerpt available.', badge: 'adv', badgeLabel: 'Advisor-only', body: 'When markets swing, clients want calm context. This excerpt is suitable for email.' }
+    ];
+
+    function go(step) {
+      document.querySelectorAll('.step-btn').forEach(function (b) {
+        b.classList.toggle('on', b.getAttribute('data-step') === step);
+      });
+      var drawer = document.getElementById('drawer');
+      var note = document.getElementById('step-note');
+      var toast = document.getElementById('toast');
+      var inserted = document.getElementById('inserted-block');
+      var emptySlot = document.getElementById('empty-slot');
+      toast.classList.remove('on');
+      selected = null;
+      document.getElementById('btn-do-insert').disabled = true;
+
+      if (step === 'idle') {
+        drawer.classList.remove('open');
+        inserted.classList.add('hidden');
+        emptySlot.classList.remove('hidden');
+        note.innerHTML = 'Step 1 — Idle. Drawer closed; canvas fully visible.';
+        return;
+      }
+      if (step === 'success') {
+        drawer.classList.remove('open');
+        emptySlot.classList.add('hidden');
+        inserted.classList.remove('hidden');
+        toast.classList.add('on');
+        note.innerHTML = 'Step 6 — Success: block on canvas. Drawer can reopen for another insert.';
+        return;
+      }
+
+      drawer.classList.add('open');
+      inserted.classList.add('hidden');
+      emptySlot.classList.remove('hidden');
+
+      if (step === 'picker') { note.innerHTML = 'Step 2 — Persistent right drawer: browse while seeing the email canvas.'; render('list'); }
+      else if (step === 'loading') { note.innerHTML = 'Step 3 — Loading in drawer.'; render('loading'); }
+      else if (step === 'empty') { note.innerHTML = 'Step 4 — Empty state in drawer.'; render('empty'); }
+      else if (step === 'error') { note.innerHTML = 'Step 5 — Error + retry in drawer.'; render('error'); }
+    }
+
+    function render(mode) {
+      var body = document.getElementById('drawer-body');
+      var ft = document.getElementById('drawer-ft');
+      ft.style.display = mode === 'list' ? 'flex' : 'none';
+      if (mode === 'loading') {
+        body.innerHTML = '<div class="state-box"><div class="spinner"></div><h3>Loading…</h3><div class="skel"></div><div class="skel"></div></div>';
+        return;
+      }
+      if (mode === 'empty') {
+        body.innerHTML = '<div class="state-box"><h3>No posts available</h3><p>No accessible posts match these filters.</p><button type="button" class="btn" onclick="go(\'picker\')">Clear filters</button></div>';
+        return;
+      }
+      if (mode === 'error') {
+        body.innerHTML = '<div class="state-box"><h3 style="color:var(--danger)">Couldn’t load library</h3><p>Draft unchanged.</p><button type="button" class="btn primary" onclick="go(\'picker\')">Try again</button></div>';
+        return;
+      }
+      var html = '<div class="search-row"><input type="search" placeholder="Search…" /><button type="button" class="btn">Go</button></div>';
+      html += '<div class="chips"><span class="lab">Type</span><button type="button" class="chip on">Email</button><button type="button" class="chip">Article</button><button type="button" class="chip">All</button>';
+      html += '<span class="lab">Topic</span><button type="button" class="chip on">All</button><button type="button" class="chip">Investing</button></div>';
+      POSTS.forEach(function (p) {
+        var bclass = p.badge === 'ok' ? 'ok' : 'warn';
+        html += '<button type="button" class="post-card" data-id="' + p.id + '" onclick="selectPost(' + p.id + ')"><span class="badge type">' + p.type + '</span> <span class="badge ' + bclass + '">' + p.badgeLabel + '</span><h4>' + p.title + '</h4><p>' + p.snip + '</p></button>';
+      });
+      html += '<div class="preview-pane hidden" id="preview"><h3>Email-ready preview</h3><div class="body" id="preview-body"></div></div>';
+      body.innerHTML = html;
+    }
+
+    function selectPost(id) {
+      selected = POSTS.find(function (p) { return p.id === id; });
+      document.querySelectorAll('.post-card').forEach(function (c) {
+        c.classList.toggle('sel', Number(c.getAttribute('data-id')) === id);
+      });
+      var prev = document.getElementById('preview');
+      var pb = document.getElementById('preview-body');
+      if (selected && prev && pb) {
+        prev.classList.remove('hidden');
+        pb.textContent = selected.body;
+        document.getElementById('btn-do-insert').disabled = false;
+      }
+    }
+    function doInsert() { if (selected) go('success'); }
+    go('idle');
+  </script>
+</body>
+</html>

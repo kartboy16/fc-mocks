@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Build contract · #303 Insert from Content Library</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    body { font-family: Inter, system-ui, sans-serif; max-width: 760px; margin: 40px auto; padding: 0 24px 80px; color: #1e2a4a; line-height: 1.55; }
+    h1 { font-size: 22px; } h2 { font-size: 16px; margin-top: 28px; }
+    p, li { font-size: 14px; color: #3a4558; }
+    .warn { background: #fff7ed; color: #9a3412; padding: 12px 14px; border-radius: 8px; font-size: 13px; margin-bottom: 16px; }
+    .rule { background: #eff6ff; color: #1e40af; padding: 12px 14px; border-radius: 8px; font-size: 13px; margin-bottom: 16px; }
+    .ok { background: #e8f5e9; color: #1a7f4c; padding: 12px 14px; border-radius: 8px; font-size: 13px; margin-bottom: 16px; }
+    .hold { background: #fef3c7; color: #92400e; padding: 12px 14px; border-radius: 8px; font-size: 13px; margin-bottom: 16px; }
+    code { background: #eef2f6; padding: 1px 6px; border-radius: 4px; font-size: 12px; }
+    a { color: #2b7de9; } table { width: 100%; border-collapse: collapse; font-size: 13px; margin: 12px 0; }
+    th, td { border: 1px solid #d4e4f2; padding: 8px 10px; text-align: left; vertical-align: top; } th { background: #eef4fb; }
+    ul { padding-left: 1.2em; }
+  </style>
+</head>
+<body>
+  <p class="warn"><strong>PROVISIONAL</strong> — Recommend Direction A. Not locked. Do <strong>not</strong> mark agent-ready until Alex/Angelina pick a direction and attach the Pages mock URL.</p>
+  <p class="ok"><strong>Recommend:</strong> Direction A — Modal picker from campaign editor (“Insert from library”).</p>
+  <p class="hold"><strong>Soft Dev hold · Idea / playground.</strong> Soft Dev not woken. CosB will ask Alex + Angelina in Slack.</p>
+  <p class="rule"><strong>Insert:</strong> into campaign <strong>body/blocks</strong> (not subject-only). List only posts the advisor can use. Prefer Type: Email; allow other types with email-ready body when available.</p>
+
+  <h1>Build contract · Insert from Content Library (#303)</h1>
+  <p>Markdown: <a href="build-contract.md">build-contract.md</a> · Hub: <a href="index.html">index.html</a> · Mock: <a href="directions/a/">Direction A</a></p>
+
+  <h2>One-liner</h2>
+  <p>From Email Campaigns edit, advisors browse/search Content Library posts they can access and insert selected post (or email-ready body) into the campaign body/blocks — no hand copy/paste.</p>
+
+  <h2>Entry points (provisional)</h2>
+  <table>
+    <thead><tr><th>Entry</th><th>Direction</th></tr></thead>
+    <tbody>
+      <tr><td>Campaign edit → <strong>Insert from library</strong></td><td><strong>A</strong> modal · <strong>B</strong> drawer</td></tr>
+      <tr><td>Campaign list / Add content → <strong>From Content Library</strong></td><td><strong>C</strong> full-page, then return</td></tr>
+    </tbody>
+  </table>
+
+  <h2>Insert payload assumptions (provisional)</h2>
+  <ul>
+    <li>Target: campaign body / content blocks.</li>
+    <li>Prefer Type: Email; other types use email-ready body when available.</li>
+    <li>Sketch: <code>{ postId, title, type, emailBodyHtml | emailReadyBlocks, … }</code> — schema after lock.</li>
+    <li>After insert: block(s) on canvas; still editable.</li>
+  </ul>
+
+  <h2>Access / approval (provisional)</h2>
+  <ul>
+    <li>Show only posts the advisor can use under existing rules.</li>
+    <li>Optional badges: Compliance Approved · Advisor-only (illustrative).</li>
+    <li>No new MAP admin approval workflows in this pass.</li>
+  </ul>
+
+  <h2>Required states</h2>
+  <table>
+    <thead><tr><th>State</th><th>Behavior</th></tr></thead>
+    <tbody>
+      <tr><td>Loading</td><td>Skeleton/spinner; no false empty</td></tr>
+      <tr><td>Empty</td><td>Clear copy + reset filters</td></tr>
+      <tr><td>Error</td><td>Load/insert failure + retry</td></tr>
+      <tr><td>Success</td><td>Block on canvas + confirmation</td></tr>
+    </tbody>
+  </table>
+
+  <h2>In scope</h2>
+  <ul>
+    <li>Mocks A/B/C for insert-from-library into email campaigns</li>
+    <li>Empty / loading / error / success</li>
+    <li>Access-respecting list + optional badges (mock)</li>
+  </ul>
+
+  <h2>Out of scope</h2>
+  <ul>
+    <li>content-library app code · new MAP admin</li>
+    <li>Waking Soft Dev · marking agent-ready</li>
+    <li>Full composer redesign</li>
+  </ul>
+
+  <h2>Open questions</h2>
+  <ol>
+    <li>Non-Email post with no email-ready body — block or degrade?</li>
+    <li>Multi-select vs single insert?</li>
+    <li>Live-link to library post vs snapshot at insert?</li>
+  </ol>
+
+  <h2>Reference</h2>
+  <p><a href="index.html">Hub</a> · <a href="directions/a/">A</a> · <a href="directions/b/">B</a> · <a href="directions/c/">C</a> · <a href="https://github.com/kartboy16/content-library/issues/303">Issue #303</a> · Angelina Hung</p>
+</body>
+</html>
