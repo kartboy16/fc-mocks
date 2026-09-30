@@ -41,7 +41,7 @@ Directions B (grouped), C (Source hubs), and D (sidebar browse synthesizing Advi
 
 ### A · FC look (hi-fi view — not a new direction)
 
-`directions/a-fc/` is an FC-fidelity view of **Direction A** for stakeholder review. **Contract unchanged:** Source × Topic AND · Manage Sources + Manage Categories · Advisor-only visibility flag. Audiences: **both**, with **advisor browse primary** + admin labeling. Abstract A remains the comparison wire. Live: https://kartboy16.github.io/fc-mocks/261/directions/a-fc/
+`directions/a-fc/` is an FC-fidelity view of **Direction A** for Angelina lock-list review. **Axes:** Source × Topic × Type AND · Manage Sources + Manage Categories (Topics) + Manage Types · Advisor-only visibility flag. **Locked lists:** Topics (7) · Sources FTT/FSB/Carriers · Type (7) · Advisor-only = flag. Soft Dev playground PASS — hold main · not agent-ready. Audiences: **both**, advisor browse primary. Live: https://kartboy16.github.io/fc-mocks/261/directions/a-fc/
 
 
 
@@ -84,7 +84,7 @@ Directions B (grouped), C (Source hubs), and D (sidebar browse synthesizing Advi
 - Changes to Advisor Categories / AdvisorSource (#209)  
 - My Media Library (#260)  
 - Auto-merge to main / marking `agent-ready` from mock work  
-- Locking Life Events / Type / Sharing as v1 without product decision  
+- Locking Life Events / Sharing as v1 without product decision (Type locked as 3rd facet for a-fc review)  
 
 ## Desktop vs mobile
 

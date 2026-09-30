@@ -66,7 +66,8 @@ Do **not** invent locked answers. Surface on hub + every direction.
 |---|---|
 | **Live** | https://kartboy16.github.io/fc-mocks/261/directions/a-fc/ |
 | **Audiences** | **Both** — **advisor browse primary** + **admin labeling** (Angelina) |
-| **Contract** | Unchanged from A: Source × Topic AND · Manage Sources + Manage Categories · Advisor-only visibility flag |
+| **Contract** | Source × Topic × Type AND · Manage Sources + Manage Categories (Topics) + Manage Types · Advisor-only visibility flag |
+| **Lock lists (Angelina review)** | Topics 7 · Sources FTT/FSB/Carriers · Type 7 values · Advisor-only = flag · Soft Dev PASS · hold main · not agent-ready |
 | **Abstract A** | Keep for comparison wire; prefer a-fc for FC-fidelity stakeholder review |
 
 ---
@@ -125,4 +126,4 @@ Do **not** invent locked answers. Surface on hub + every direction.
 
 ## Recommendation
 
-**Ship Direction A as working default** (Source + Topic) until Alex/Angelina lock. Prefer **a-fc** (FC chrome hi-fi of A) for review; keep abstract A / B / C / D as comparison — D for Advisorstream + HeyAdvisor sidebar familiarity and the optional Life Events axis. Flag backfill, Type, Sharing, Date/Saved as follow-ups. Do not confuse with #209 or #260. **Not agent-ready.**
+**Ship Direction A · FC look** with refreshed lock lists for Angelina review (Source × Topic × Type). Soft Dev playground already PASS — hold main; do not wake Software; **not agent-ready.** Prefer **a-fc**; keep abstract A/B/C/D as comparison. Flag backfill, Sharing, Date/Saved, Life Events as follow-ups. Do not confuse with #209 or #260.

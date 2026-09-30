@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Direction A · FC look — Dual-facet · #261</title>
+  <title>Direction A · FC look — Source × Topic × Type · #261</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <style>
     :root {
@@ -112,6 +112,7 @@
     }
     .drawer-item:hover { background: #e8eef5; }
     .drawer-item input { accent-color: var(--fc-blue); width: 14px; height: 14px; }
+    .drawer-item.nested { padding-left: 18px; font-size: 0.75rem; color: #3b4a63; }
     .drawer-sep { height: 1px; background: #d8e0ea; margin: 8px 4px; }
     .drawer-item .av {
       width: 20px; height: 20px; border-radius: 4px; display: inline-flex;
@@ -173,7 +174,17 @@
     .chip:hover { border-color: var(--fc-blue); color: var(--fc-blue); background: var(--mint); }
     .chip.on { background: var(--fc-blue); color: #fff; border-color: var(--fc-blue); }
     .chip.sec.on { background: #1e2a4a; border-color: #1e2a4a; }
+    .chip.type.on { background: #0f766e; border-color: #0f766e; }
     .chip.clear { border-style: dashed; color: var(--muted); }
+    .carrier-sub {
+      display: none; margin-top: 8px; padding: 10px 12px; background: #fff;
+      border: 1px dashed #c5d4e8; border-radius: 10px;
+    }
+    .carrier-sub.open { display: block; }
+    .carrier-sub .sub-lab {
+      font-size: 0.62rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em;
+      color: var(--muted); margin-bottom: 6px;
+    }
     .av {
       width: 18px; height: 18px; border-radius: 4px; display: inline-flex;
       align-items: center; justify-content: center; font-size: 0.5rem; font-weight: 800;
@@ -181,10 +192,7 @@
     }
     .av.ftt { background: #059669; }
     .av.fsb { background: #b45309; }
-    .av.ppi { background: #7c3aed; }
-    .av.gw { background: #64748b; }
     .av.carrier { background: #1e2a4a; }
-    .av.fecbc { background: #d97706; }
     .active-bar {
       display: flex; flex-wrap: wrap; gap: 6px; align-items: center; margin-bottom: 14px;
       padding: 8px 10px; background: #fff; border: 1px solid var(--border); border-radius: 10px;
@@ -237,6 +245,10 @@
     .badge-lock {
       font-size: 0.6rem; font-weight: 700; padding: 2px 7px; border-radius: 999px;
       background: #fef3c7; color: #92400e;
+    }
+    .badge-type {
+      font-size: 0.6rem; font-weight: 700; padding: 2px 7px; border-radius: 999px;
+      background: #ecfdf5; color: #0f766e; border: 1px solid #a7f3d0;
     }
     .empty { margin-top: 40px; padding: 48px 20px; text-align: center; }
     .empty h3 { font-size: 1.05rem; margin-bottom: 6px; color: #374151; }
@@ -373,7 +385,7 @@
   <div class="idea-banner">
     <div>
       <strong>Direction A · FC chrome · Advisor primary · Admin labeling · Idea/playground · Not agent-ready</strong>
-      — hi-fi of dual-facet A (not a new direction)
+      — Source × Topic × Type lock lists (Angelina review) · not a new direction
     </div>
     <div class="links">
       <a href="../../index.html">← Hub #261</a>
@@ -392,7 +404,8 @@
     <button type="button" class="step-btn admin-chip" data-screen="edit">5 · Post edit</button>
     <button type="button" class="step-btn admin-chip" data-screen="sources">6 · Manage Sources</button>
     <button type="button" class="step-btn admin-chip" data-screen="cats">7 · Manage Categories</button>
-    <button type="button" class="step-btn admin-chip" data-screen="not209">8 · Not #209</button>
+    <button type="button" class="step-btn admin-chip" data-screen="types">8 · Manage Types</button>
+    <button type="button" class="step-btn admin-chip" data-screen="not209">9 · Not #209</button>
   </div>
 
   <div class="shell">
@@ -435,27 +448,15 @@
             <button type="button" class="drawer-close" onclick="closeDrawer()" aria-label="Close">×</button>
           </div>
           <div class="drawer-list">
-            <label class="drawer-item"><input type="checkbox" data-topic="business owners" onchange="onTopicCheck(this)" /> business owners</label>
-            <label class="drawer-item"><input type="checkbox" data-topic="critical illness insurance" onchange="onTopicCheck(this)" /> critical illness insurance</label>
-            <label class="drawer-item"><input type="checkbox" data-topic="estate planning" onchange="onTopicCheck(this)" /> estate planning</label>
-            <label class="drawer-item"><input type="checkbox" data-topic="incorporated professionals" onchange="onTopicCheck(this)" /> incorporated professionals</label>
-            <label class="drawer-item"><input type="checkbox" data-topic="life insurance" onchange="onTopicCheck(this)" /> life insurance</label>
-            <label class="drawer-item"><input type="checkbox" data-topic="Retirement" checked onchange="onTopicCheck(this)" /> Retirement</label>
-            <label class="drawer-item"><input type="checkbox" data-topic="RRSP" onchange="onTopicCheck(this)" /> RRSP</label>
-            <div class="drawer-sep"></div>
-            <label class="drawer-item"><input type="checkbox" data-topic="Accountants" onchange="onTopicCheck(this)" /> Accountants</label>
-            <label class="drawer-item"><input type="checkbox" data-topic="Assumption Life" onchange="onTopicCheck(this)" /> Assumption Life</label>
-            <label class="drawer-item"><input type="checkbox" data-topic="Budget" onchange="onTopicCheck(this)" /> Budget</label>
-            <label class="drawer-item"><input type="checkbox" data-topic="Buy Sell" onchange="onTopicCheck(this)" /> Buy Sell</label>
-            <label class="drawer-item"><input type="checkbox" data-topic="Canada Life" onchange="onTopicCheck(this)" /> Canada Life</label>
-            <label class="drawer-item"><input type="checkbox" data-topic="Charitable Gifting" onchange="onTopicCheck(this)" /> Charitable Gifting</label>
-            <label class="drawer-item"><input type="checkbox" data-topic="CLU Comment" onchange="onTopicCheck(this)" /> CLU Comment</label>
-            <label class="drawer-item"><input type="checkbox" data-topic="Debt" onchange="onTopicCheck(this)" /> Debt</label>
-            <label class="drawer-item"><input type="checkbox" data-topic="dental benefits" onchange="onTopicCheck(this)" /> dental benefits</label>
-            <label class="drawer-item"><input type="checkbox" data-topic="Disability" onchange="onTopicCheck(this)" /> Disability</label>
+            <label class="drawer-item"><input type="checkbox" data-topic="Life insurance" onchange="onTopicCheck(this)" /> Life insurance</label>
+            <label class="drawer-item"><input type="checkbox" data-topic="Living benefits" onchange="onTopicCheck(this)" /> Living benefits</label>
             <label class="drawer-item"><input type="checkbox" data-topic="Group benefits" onchange="onTopicCheck(this)" /> Group benefits</label>
-            <label class="drawer-item"><input type="checkbox" data-topic="Investing" onchange="onTopicCheck(this)" /> Investing</label>
-            <label class="drawer-item"><input type="checkbox" data-topic="Compliance" onchange="onTopicCheck(this)" /> Compliance</label>
+            <label class="drawer-item"><input type="checkbox" data-topic="Investments" onchange="onTopicCheck(this)" /> Investments</label>
+            <label class="drawer-item"><input type="checkbox" data-topic="Retirement" checked onchange="onTopicCheck(this)" /> Retirement</label>
+            <label class="drawer-item"><input type="checkbox" data-topic="Estate planning" onchange="onTopicCheck(this)" /> Estate planning</label>
+            <label class="drawer-item"><input type="checkbox" data-topic="Business owners" onchange="onTopicCheck(this)" /> Business owners</label>
+            <div class="drawer-sep"></div>
+            <div style="font-size:0.62rem;font-weight:700;text-transform:uppercase;letter-spacing:0.04em;color:var(--muted);padding:4px 6px;">Locked 7 · no audience · Tax/cash flow dropped</div>
           </div>
         </aside>
 
@@ -465,12 +466,25 @@
             <button type="button" class="drawer-close" onclick="closeDrawer()" aria-label="Close">×</button>
           </div>
           <div class="drawer-list">
-            <label class="drawer-item"><input type="checkbox" data-src="FTT" checked onchange="onSourceCheck(this)" /> <span class="av ftt">FT</span> FTT</label>
+            <label class="drawer-item"><input type="checkbox" data-src="FTT" checked onchange="onSourceCheck(this)" /> <span class="av ftt">FT</span> Financial Tech Tools (FTT)</label>
             <label class="drawer-item"><input type="checkbox" data-src="FSB" onchange="onSourceCheck(this)" /> <span class="av fsb">FS</span> FSB</label>
-            <label class="drawer-item"><input type="checkbox" data-src="PPI" onchange="onSourceCheck(this)" /> <span class="av ppi">PP</span> PPI</label>
-            <label class="drawer-item"><input type="checkbox" data-src="Ghostwritten" onchange="onSourceCheck(this)" /> <span class="av gw">Gw</span> Ghostwritten</label>
-            <label class="drawer-item"><input type="checkbox" data-src="Carriers" checked onchange="onSourceCheck(this)" /> <span class="av carrier">+</span> Carriers</label>
-            <label class="drawer-item"><input type="checkbox" data-src="FECBC" onchange="onSourceCheck(this)" /> <span class="av fecbc">FE</span> FECBC</label>
+            <label class="drawer-item"><input type="checkbox" data-src="Carriers" checked onchange="onSourceCheck(this); toggleCarrierSub(this.checked)" /> <span class="av carrier">+</span> Carriers</label>
+            <div class="drawer-sep"></div>
+            <div style="font-size:0.62rem;font-weight:700;text-transform:uppercase;letter-spacing:0.04em;color:var(--muted);padding:4px 6px;">Carriers (live postCategories · excl. Assuris / NHC / dealers)</div>
+            <label class="drawer-item nested"><input type="checkbox" data-carrier="Manulife" onchange="onCarrierCheck(this)" /> Manulife</label>
+            <label class="drawer-item nested"><input type="checkbox" data-carrier="Assumption Life" onchange="onCarrierCheck(this)" /> Assumption Life</label>
+            <label class="drawer-item nested"><input type="checkbox" data-carrier="Equitable Life" onchange="onCarrierCheck(this)" /> Equitable Life</label>
+            <label class="drawer-item nested"><input type="checkbox" data-carrier="iA Financial" onchange="onCarrierCheck(this)" /> iA Financial</label>
+            <label class="drawer-item nested"><input type="checkbox" data-carrier="Sun Life" onchange="onCarrierCheck(this)" /> Sun Life</label>
+            <label class="drawer-item nested"><input type="checkbox" data-carrier="BMO Insurance" onchange="onCarrierCheck(this)" /> BMO Insurance</label>
+            <label class="drawer-item nested"><input type="checkbox" data-carrier="Desjardins" onchange="onCarrierCheck(this)" /> Desjardins</label>
+            <label class="drawer-item nested"><input type="checkbox" data-carrier="Empire Life" onchange="onCarrierCheck(this)" /> Empire Life</label>
+            <label class="drawer-item nested"><input type="checkbox" data-carrier="Foresters Financial" onchange="onCarrierCheck(this)" /> Foresters Financial</label>
+            <label class="drawer-item nested"><input type="checkbox" data-carrier="Canada Life" onchange="onCarrierCheck(this)" /> Canada Life</label>
+            <label class="drawer-item nested"><input type="checkbox" data-carrier="RBC Insurance" onchange="onCarrierCheck(this)" /> RBC Insurance</label>
+            <label class="drawer-item nested"><input type="checkbox" data-carrier="Beneva" onchange="onCarrierCheck(this)" /> Beneva</label>
+            <label class="drawer-item nested"><input type="checkbox" data-carrier="Co-operators Life" onchange="onCarrierCheck(this)" /> Co-operators Life</label>
+            <label class="drawer-item nested"><input type="checkbox" data-carrier="ivari" onchange="onCarrierCheck(this)" /> ivari</label>
           </div>
         </aside>
 
@@ -521,27 +535,59 @@
 
             <div class="facet-strip">
               <div class="facet-row">
-                <div class="facet-label">Source <span style="font-weight:500;text-transform:none;letter-spacing:0;color:var(--muted)">(logo chips · AND with topics · companion to Topics drawer)</span></div>
+                <div class="facet-label">Source <span style="font-weight:500;text-transform:none;letter-spacing:0;color:var(--muted)">(3 locked · logo chips · AND with Topic + Type)</span></div>
                 <div class="chips" id="sourceChips">
                   <button type="button" class="chip on" data-group="source" data-val="FTT" onclick="toggleChip(this)"><span class="av ftt">FT</span>FTT</button>
                   <button type="button" class="chip" data-group="source" data-val="FSB" onclick="toggleChip(this)"><span class="av fsb">FS</span>FSB</button>
-                  <button type="button" class="chip" data-group="source" data-val="PPI" onclick="toggleChip(this)"><span class="av ppi">PP</span>PPI</button>
-                  <button type="button" class="chip" data-group="source" data-val="Ghostwritten" onclick="toggleChip(this)"><span class="av gw">Gw</span>Ghostwritten</button>
-                  <button type="button" class="chip on" data-group="source" data-val="Carriers" onclick="toggleChip(this)"><span class="av carrier">+</span>Carriers</button>
-                  <button type="button" class="chip" data-group="source" data-val="FECBC" onclick="toggleChip(this)"><span class="av fecbc">FE</span>FECBC</button>
-                  <button type="button" class="chip" onclick="openSourcesDrawer()">More…</button>
-                  <button type="button" class="chip clear" onclick="clearFacet('source')">Clear source</button>
+                  <button type="button" class="chip on" data-group="source" data-val="Carriers" onclick="toggleSourceCarrier(this)"><span class="av carrier">+</span>Carriers</button>
+                  <button type="button" class="chip" onclick="openSourcesDrawer()">All sources…</button>
+                  <button type="button" class="chip clear" onclick="clearSourceFacet()">Clear source</button>
+                </div>
+                <div class="carrier-sub open" id="carrierSub">
+                  <div class="sub-lab">Carriers · when expanded/selected · live postCategories (excl. Assuris, National Health Claim, dealers)</div>
+                  <div class="chips" id="carrierChips">
+                    <button type="button" class="chip" data-group="carrier" data-val="Manulife" onclick="toggleChip(this)">Manulife</button>
+                    <button type="button" class="chip" data-group="carrier" data-val="Assumption Life" onclick="toggleChip(this)">Assumption Life</button>
+                    <button type="button" class="chip" data-group="carrier" data-val="Equitable Life" onclick="toggleChip(this)">Equitable Life</button>
+                    <button type="button" class="chip" data-group="carrier" data-val="iA Financial" onclick="toggleChip(this)">iA Financial</button>
+                    <button type="button" class="chip" data-group="carrier" data-val="Sun Life" onclick="toggleChip(this)">Sun Life</button>
+                    <button type="button" class="chip" data-group="carrier" data-val="BMO Insurance" onclick="toggleChip(this)">BMO Insurance</button>
+                    <button type="button" class="chip" data-group="carrier" data-val="Desjardins" onclick="toggleChip(this)">Desjardins</button>
+                    <button type="button" class="chip" data-group="carrier" data-val="Empire Life" onclick="toggleChip(this)">Empire Life</button>
+                    <button type="button" class="chip" data-group="carrier" data-val="Foresters Financial" onclick="toggleChip(this)">Foresters Financial</button>
+                    <button type="button" class="chip" data-group="carrier" data-val="Canada Life" onclick="toggleChip(this)">Canada Life</button>
+                    <button type="button" class="chip" data-group="carrier" data-val="RBC Insurance" onclick="toggleChip(this)">RBC Insurance</button>
+                    <button type="button" class="chip" data-group="carrier" data-val="Beneva" onclick="toggleChip(this)">Beneva</button>
+                    <button type="button" class="chip" data-group="carrier" data-val="Co-operators Life" onclick="toggleChip(this)">Co-operators Life</button>
+                    <button type="button" class="chip" data-group="carrier" data-val="ivari" onclick="toggleChip(this)">ivari</button>
+                    <button type="button" class="chip clear" onclick="clearFacet('carrier')">Clear carriers</button>
+                  </div>
                 </div>
               </div>
               <div class="facet-row">
-                <div class="facet-label">Topic / product <span style="font-weight:500;text-transform:none;letter-spacing:0;color:var(--muted)">(or open Topics pill → drawer)</span></div>
+                <div class="facet-label">Topic <span style="font-weight:500;text-transform:none;letter-spacing:0;color:var(--muted)">(7 locked · no audience · or Topics pill → drawer)</span></div>
                 <div class="chips" id="topicChips">
-                  <button type="button" class="chip sec on" data-group="topic" data-val="Retirement" onclick="toggleChip(this)">Retirement</button>
+                  <button type="button" class="chip sec" data-group="topic" data-val="Life insurance" onclick="toggleChip(this)">Life insurance</button>
+                  <button type="button" class="chip sec" data-group="topic" data-val="Living benefits" onclick="toggleChip(this)">Living benefits</button>
                   <button type="button" class="chip sec" data-group="topic" data-val="Group benefits" onclick="toggleChip(this)">Group benefits</button>
-                  <button type="button" class="chip sec" data-group="topic" data-val="Disability" onclick="toggleChip(this)">Disability</button>
-                  <button type="button" class="chip sec" data-group="topic" data-val="Investing" onclick="toggleChip(this)">Investing</button>
-                  <button type="button" class="chip sec" data-group="topic" data-val="Compliance" onclick="toggleChip(this)">Compliance</button>
+                  <button type="button" class="chip sec" data-group="topic" data-val="Investments" onclick="toggleChip(this)">Investments</button>
+                  <button type="button" class="chip sec on" data-group="topic" data-val="Retirement" onclick="toggleChip(this)">Retirement</button>
+                  <button type="button" class="chip sec" data-group="topic" data-val="Estate planning" onclick="toggleChip(this)">Estate planning</button>
+                  <button type="button" class="chip sec" data-group="topic" data-val="Business owners" onclick="toggleChip(this)">Business owners</button>
                   <button type="button" class="chip clear" onclick="clearFacet('topic')">Clear topics</button>
+                </div>
+              </div>
+              <div class="facet-row">
+                <div class="facet-label">Type <span style="font-weight:500;text-transform:none;letter-spacing:0;color:var(--muted)">(3rd facet · same chip pattern · NOT folded into Topic)</span></div>
+                <div class="chips" id="typeChips">
+                  <button type="button" class="chip type on" data-group="type" data-val="Article/blog" onclick="toggleChip(this)">Article/blog</button>
+                  <button type="button" class="chip type" data-group="type" data-val="Social post" onclick="toggleChip(this)">Social post</button>
+                  <button type="button" class="chip type" data-group="type" data-val="Email" onclick="toggleChip(this)">Email</button>
+                  <button type="button" class="chip type" data-group="type" data-val="Infographic/visual" onclick="toggleChip(this)">Infographic/visual</button>
+                  <button type="button" class="chip type" data-group="type" data-val="Video/script" onclick="toggleChip(this)">Video/script</button>
+                  <button type="button" class="chip type" data-group="type" data-val="Calculator/tool" onclick="toggleChip(this)">Calculator/tool</button>
+                  <button type="button" class="chip type" data-group="type" data-val="Checklist/guide" onclick="toggleChip(this)">Checklist/guide</button>
+                  <button type="button" class="chip clear" onclick="clearFacet('type')">Clear type</button>
                 </div>
               </div>
             </div>
@@ -551,8 +597,9 @@
               <span class="active-pill">Source: FTT <button type="button" class="x" onclick="removeActive('source','FTT')">×</button></span>
               <span class="active-pill">Source: Carriers <button type="button" class="x" onclick="removeActive('source','Carriers')">×</button></span>
               <span class="active-pill">Topic: Retirement <button type="button" class="x" onclick="removeActive('topic','Retirement')">×</button></span>
+              <span class="active-pill">Type: Article/blog <button type="button" class="x" onclick="removeActive('type','Article/blog')">×</button></span>
               <button type="button" class="chip clear" onclick="clearAllFilters()">Clear all</button>
-            </div>
+</div>
 
             <div class="grid-posts" id="browseGrid">
 
@@ -562,7 +609,6 @@
                     <button type="button" class="icon-btn" aria-label="Favorite"><svg viewBox="0 0 24 24"><path d="M12 3.5l2.4 4.9 5.4.8-3.9 3.8.9 5.4L12 15.8 7.2 18.4l.9-5.4L4.2 9.2l5.4-.8L12 3.5z"/></svg></button>
                     <div class="right">
                       <button type="button" class="icon-btn" aria-label="Hide"><svg viewBox="0 0 24 24"><path d="M3 3l18 18M10.5 10.6a3 3 0 0 0 4 4"/></svg></button>
-                      
                     </div>
                   </div>
                   <span class="src-badge">FTT</span>
@@ -570,7 +616,7 @@
                 </div>
                 <div class="body">
                   <h4>Market update: Q3 outlook</h4>
-                  <div class="tag-row"><span class="badge-topic">Retirement</span><span class="badge-topic">Investing</span></div>
+                  <div class="tag-row"><span class="badge-topic">Retirement</span><span class="badge-topic">Investments</span><span class="badge-type">Article/blog</span></div>
                 </div>
               </article>
               <article class="pcard">
@@ -587,7 +633,7 @@
                 </div>
                 <div class="body">
                   <h4>Group benefits enrollment tips</h4>
-                  <div class="tag-row"><span class="badge-topic">Group benefits</span><span class="badge-lock">Advisor-only</span></div>
+                  <div class="tag-row"><span class="badge-topic">Group benefits</span><span class="badge-type">Checklist/guide</span><span class="badge-lock">Advisor-only</span></div>
                 </div>
               </article>
               <article class="pcard">
@@ -596,15 +642,14 @@
                     <button type="button" class="icon-btn" aria-label="Favorite"><svg viewBox="0 0 24 24"><path d="M12 3.5l2.4 4.9 5.4.8-3.9 3.8.9 5.4L12 15.8 7.2 18.4l.9-5.4L4.2 9.2l5.4-.8L12 3.5z"/></svg></button>
                     <div class="right">
                       <button type="button" class="icon-btn" aria-label="Hide"><svg viewBox="0 0 24 24"><path d="M3 3l18 18M10.5 10.6a3 3 0 0 0 4 4"/></svg></button>
-                      
                     </div>
                   </div>
-                  <span class="src-badge">FECBC</span>
+                  <span class="src-badge">FSB</span>
                   <div class="ph-meta">Content library</div>
                 </div>
                 <div class="body">
-                  <h4>Compliance checklist for advisors</h4>
-                  <div class="tag-row"><span class="badge-topic">Compliance</span></div>
+                  <h4>Life insurance needs analysis</h4>
+                  <div class="tag-row"><span class="badge-topic">Life insurance</span><span class="badge-type">Calculator/tool</span></div>
                 </div>
               </article>
               <article class="pcard">
@@ -620,8 +665,8 @@
                   <div class="ph-meta">Content library</div>
                 </div>
                 <div class="body">
-                  <h4>Advisor-only sell sheet: Disability</h4>
-                  <div class="tag-row"><span class="badge-topic">Disability</span><span class="badge-lock">Advisor-only</span></div>
+                  <h4>Living benefits: CI talking points</h4>
+                  <div class="tag-row"><span class="badge-topic">Living benefits</span><span class="badge-type">Email</span><span class="badge-lock">Advisor-only</span></div>
                 </div>
               </article>
               <article class="pcard">
@@ -630,7 +675,6 @@
                     <button type="button" class="icon-btn" aria-label="Favorite"><svg viewBox="0 0 24 24"><path d="M12 3.5l2.4 4.9 5.4.8-3.9 3.8.9 5.4L12 15.8 7.2 18.4l.9-5.4L4.2 9.2l5.4-.8L12 3.5z"/></svg></button>
                     <div class="right">
                       <button type="button" class="icon-btn" aria-label="Hide"><svg viewBox="0 0 24 24"><path d="M3 3l18 18M10.5 10.6a3 3 0 0 0 4 4"/></svg></button>
-                      
                     </div>
                   </div>
                   <span class="src-badge">FTT</span>
@@ -638,7 +682,7 @@
                 </div>
                 <div class="body">
                   <h4>Retirement income strategies</h4>
-                  <div class="tag-row"><span class="badge-topic">Retirement</span><span class="badge-topic">Income</span></div>
+                  <div class="tag-row"><span class="badge-topic">Retirement</span><span class="badge-type">Infographic/visual</span></div>
                 </div>
               </article>
               <article class="pcard">
@@ -647,15 +691,14 @@
                     <button type="button" class="icon-btn" aria-label="Favorite"><svg viewBox="0 0 24 24"><path d="M12 3.5l2.4 4.9 5.4.8-3.9 3.8.9 5.4L12 15.8 7.2 18.4l.9-5.4L4.2 9.2l5.4-.8L12 3.5z"/></svg></button>
                     <div class="right">
                       <button type="button" class="icon-btn" aria-label="Hide"><svg viewBox="0 0 24 24"><path d="M3 3l18 18M10.5 10.6a3 3 0 0 0 4 4"/></svg></button>
-                      
                     </div>
                   </div>
-                  <span class="src-badge">Co-operators</span>
+                  <span class="src-badge">Co-operators Life</span>
                   <div class="ph-meta">Content library</div>
                 </div>
                 <div class="body">
                   <h4>What are segregated funds?</h4>
-                  <div class="tag-row"><span class="badge-topic">Investing</span></div>
+                  <div class="tag-row"><span class="badge-topic">Investments</span><span class="badge-type">Video/script</span></div>
                 </div>
               </article>
               <article class="pcard">
@@ -664,15 +707,14 @@
                     <button type="button" class="icon-btn" aria-label="Favorite"><svg viewBox="0 0 24 24"><path d="M12 3.5l2.4 4.9 5.4.8-3.9 3.8.9 5.4L12 15.8 7.2 18.4l.9-5.4L4.2 9.2l5.4-.8L12 3.5z"/></svg></button>
                     <div class="right">
                       <button type="button" class="icon-btn" aria-label="Hide"><svg viewBox="0 0 24 24"><path d="M3 3l18 18M10.5 10.6a3 3 0 0 0 4 4"/></svg></button>
-                      
                     </div>
                   </div>
-                  <span class="src-badge">PPI</span>
+                  <span class="src-badge">Canada Life</span>
                   <div class="ph-meta">Content library</div>
                 </div>
                 <div class="body">
-                  <h4>Benefits Now for Advisors Product Guide</h4>
-                  <div class="tag-row"><span class="badge-topic">Group benefits</span></div>
+                  <h4>Estate planning basics</h4>
+                  <div class="tag-row"><span class="badge-topic">Estate planning</span><span class="badge-type">Article/blog</span></div>
                 </div>
               </article>
               <article class="pcard">
@@ -681,24 +723,23 @@
                     <button type="button" class="icon-btn" aria-label="Favorite"><svg viewBox="0 0 24 24"><path d="M12 3.5l2.4 4.9 5.4.8-3.9 3.8.9 5.4L12 15.8 7.2 18.4l.9-5.4L4.2 9.2l5.4-.8L12 3.5z"/></svg></button>
                     <div class="right">
                       <button type="button" class="icon-btn" aria-label="Hide"><svg viewBox="0 0 24 24"><path d="M3 3l18 18M10.5 10.6a3 3 0 0 0 4 4"/></svg></button>
-                      
                     </div>
                   </div>
-                  <span class="src-badge">Ghostwritten</span>
+                  <span class="src-badge">iA Financial</span>
                   <div class="ph-meta">Content library</div>
                 </div>
                 <div class="body">
-                  <h4>Client conversation starters</h4>
-                  <div class="tag-row"><span class="badge-topic">Client engagement</span></div>
+                  <h4>Business owners buy-sell explainer</h4>
+                  <div class="tag-row"><span class="badge-topic">Business owners</span><span class="badge-type">Social post</span></div>
                 </div>
               </article>
             </div>
 
             <div class="banner ok" style="margin-top:16px">
-              <div><strong>AND logic · Direction A:</strong> Results match selected Sources <em>and</em> selected Topics. Source logo avatars (FTT, FSB, PPI, Ghostwritten, Carriers, FECBC) sit native under the FC pill row. Carriers is a rollup — no Source×Topic mega-list.</div>
+              <div><strong>AND logic · Direction A (refreshed lock):</strong> Results match selected <em>Sources</em> <strong>and</strong> <em>Topics</em> <strong>and</strong> <em>Types</em>. Sources = FTT · FSB · Carriers (rollup). Topics = 7 locked (no audience; Tax/cash flow dropped). Type = 3rd facet (not folded into Topic names). Advisor-only = visibility flag. Dropped: FECBC, PPI, Ghostwritten.</div>
             </div>
             <p class="later-note">Life Events axis (HeyAdvisor-style) = optional later — not required for a-fc / Direction A v1.</p>
-            <p class="mobile-note"><strong>Audiences:</strong> Advisor browse = primary · Admin labeling (Manage Sources / Categories / post edit) in same mock via step chips. Desktop ~1280.</p>
+            <p class="mobile-note"><strong>Audiences:</strong> Advisor browse = primary · Admin labeling (Manage Sources / Categories / Types / post edit) in same mock via step chips. Desktop ~1280. Soft Dev playground already PASS — hold main; not agent-ready.</p>
           </div>
 
           <div class="screen" id="s-topics">
@@ -721,11 +762,13 @@
               <button type="button" class="btn-create" onclick="showScreen('edit')">+ Create New Post</button>
             </div>
             <div class="facet-strip">
-              <div class="facet-label">Source (stays available while Topics drawer is open — dual facet)</div>
+              <div class="facet-label">Source + Type (stay available while Topics drawer is open — triple facet)</div>
               <div class="chips">
                 <button type="button" class="chip on"><span class="av ftt">FT</span>FTT</button>
                 <button type="button" class="chip on"><span class="av carrier">+</span>Carriers</button>
                 <button type="button" class="chip" onclick="openSourcesDrawer()">All sources…</button>
+                <button type="button" class="chip type on">Article/blog</button>
+                <button type="button" class="chip type">Infographic/visual</button>
               </div>
             </div>
             <div class="active-bar">
@@ -733,16 +776,17 @@
               <span class="active-pill">Source: FTT</span>
               <span class="active-pill">Source: Carriers</span>
               <span class="active-pill">Topic: Retirement</span>
+              <span class="active-pill">Type: Article/blog</span>
               <button type="button" class="chip clear" onclick="clearAllFilters()">Clear all</button>
             </div>
             <div class="banner info">
-              <div><strong>Topics drawer</strong> matches FC screenshot 17 — checkbox list beside the library. Direction A adds <strong>Source</strong> companion chips (and optional Sources drawer) so both facets stay first-class. AND across facets.</div>
+              <div><strong>Topics drawer</strong> = locked 7 (Life insurance · Living benefits · Group benefits · Investments · Retirement · Estate planning · Business owners). Source companion + Type chips stay first-class. Carriers rollup opens carrier sub-picks. AND across Source × Topic × Type.</div>
             </div>
             <div class="grid-posts">
-              <article class="pcard"><div class="ph"><span class="src-badge">FTT</span><div class="ph-meta">Content library</div></div><div class="body"><h4>Market update: Q3 outlook</h4><div class="tag-row"><span class="badge-topic">Retirement</span></div></div></article>
-              <article class="pcard"><div class="ph g2"><span class="src-badge">FTT</span><div class="ph-meta">Content library</div></div><div class="body"><h4>Retirement income strategies</h4><div class="tag-row"><span class="badge-topic">Retirement</span></div></div></article>
-              <article class="pcard"><div class="ph g3"><span class="src-badge">Sun Life</span><div class="ph-meta">Content library</div></div><div class="body"><h4>RRSP season talking points</h4><div class="tag-row"><span class="badge-topic">Retirement</span><span class="badge-topic">RRSP</span></div></div></article>
-              <article class="pcard"><div class="ph"><span class="src-badge">Manulife</span><div class="ph-meta">Content library</div></div><div class="body"><h4>Estate planning basics</h4><div class="tag-row"><span class="badge-topic">estate planning</span></div></div></article>
+              <article class="pcard"><div class="ph"><span class="src-badge">FTT</span><div class="ph-meta">Content library</div></div><div class="body"><h4>Market update: Q3 outlook</h4><div class="tag-row"><span class="badge-topic">Retirement</span><span class="badge-type">Article/blog</span></div></div></article>
+              <article class="pcard"><div class="ph g2"><span class="src-badge">FTT</span><div class="ph-meta">Content library</div></div><div class="body"><h4>Retirement income strategies</h4><div class="tag-row"><span class="badge-topic">Retirement</span><span class="badge-type">Infographic/visual</span></div></div></article>
+              <article class="pcard"><div class="ph g3"><span class="src-badge">Sun Life</span><div class="ph-meta">Content library</div></div><div class="body"><h4>RRSP season talking points</h4><div class="tag-row"><span class="badge-topic">Retirement</span><span class="badge-type">Email</span></div></div></article>
+              <article class="pcard"><div class="ph"><span class="src-badge">Manulife</span><div class="ph-meta">Content library</div></div><div class="body"><h4>Estate planning basics</h4><div class="tag-row"><span class="badge-topic">Estate planning</span><span class="badge-type">Article/blog</span></div></div></article>
             </div>
           </div>
 
@@ -767,8 +811,9 @@
             </div>
             <div class="active-bar">
               <span class="lab">Active:</span>
-              <span class="active-pill">Source: FECBC</span>
-              <span class="active-pill">Topic: Disability</span>
+              <span class="active-pill">Source: FSB</span>
+              <span class="active-pill">Topic: Living benefits</span>
+              <span class="active-pill">Type: Video/script</span>
               <button type="button" class="chip clear" onclick="clearAllFilters()">Clear all</button>
             </div>
             <div class="empty">
@@ -822,7 +867,7 @@
                   <span class="src-badge">Sun Life</span>
                   <div class="ph-meta">Content library</div>
                 </div>
-                <div class="body"><h4>Advisor-only sell sheet: Disability</h4><div class="tag-row"><span class="badge-topic">Disability</span><span class="badge-lock">Advisor-only</span></div></div>
+                <div class="body"><h4>Advisor-only sell sheet: Living benefits</h4><div class="tag-row"><span class="badge-topic">Living benefits</span><span class="badge-type">Checklist/guide</span><span class="badge-lock">Advisor-only</span></div></div>
               </article>
               <article class="pcard">
                 <div class="ph">
@@ -836,7 +881,7 @@
                   <span class="src-badge">Manulife</span>
                   <div class="ph-meta">Content library</div>
                 </div>
-                <div class="body"><h4>Group benefits — internal pricing notes</h4><div class="tag-row"><span class="badge-topic">Group benefits</span><span class="badge-lock">Advisor-only</span></div></div>
+                <div class="body"><h4>Group benefits — internal pricing notes</h4><div class="tag-row"><span class="badge-topic">Group benefits</span><span class="badge-type">Email</span><span class="badge-lock">Advisor-only</span></div></div>
               </article>
             </div>
             <div class="option-alt" style="margin-top:14px">
@@ -850,38 +895,62 @@
               <h2>Edit content</h2>
               <span class="admin-tag">Admin</span>
             </div>
-            <p class="admin-sub">Assign <strong>Source</strong> (single) + <strong>topics</strong> (multi via Master Categories). Recommend <strong>Visibility: Advisor-only</strong> flag separate from topic.</p>
+            <p class="admin-sub">Assign <strong>Source</strong> (single) + <strong>Topics</strong> (multi · 7 locked) + <strong>Type</strong> (3rd facet) + <strong>Visibility: Advisor-only</strong> flag (not a topic).</p>
             <div class="form-card">
               <div class="field">
                 <label>Title</label>
-                <input value="Advisor-only sell sheet: Disability" />
+                <input value="Advisor-only sell sheet: Living benefits" />
               </div>
               <div class="field">
-                <label>Source <span style="font-weight:500;text-transform:none;letter-spacing:0">(single · first-class field)</span></label>
+                <label>Source <span style="font-weight:500;text-transform:none;letter-spacing:0">(single · FTT / FSB / or a Carrier)</span></label>
                 <select>
                   <option>Select source…</option>
                   <option>Financial Tech Tools (FTT)</option>
                   <option>FSB</option>
-                  <option>PPI</option>
-                  <option>Ghostwritten</option>
-                  <option>FECBC</option>
-                  <option selected>Sun Life (carrier)</option>
-                  <option>Manulife (carrier)</option>
-                  <option>Other</option>
+                  <optgroup label="Carriers">
+                    <option selected>Sun Life</option>
+                    <option>Manulife</option>
+                    <option>Assumption Life</option>
+                    <option>Equitable Life</option>
+                    <option>iA Financial</option>
+                    <option>BMO Insurance</option>
+                    <option>Desjardins</option>
+                    <option>Empire Life</option>
+                    <option>Foresters Financial</option>
+                    <option>Canada Life</option>
+                    <option>RBC Insurance</option>
+                    <option>Beneva</option>
+                    <option>Co-operators Life</option>
+                    <option>ivari</option>
+                  </optgroup>
                 </select>
               </div>
               <div class="field">
-                <label>Topics / products <span style="font-weight:500;text-transform:none;letter-spacing:0">(Master Categories · multi)</span></label>
+                <label>Topics <span style="font-weight:500;text-transform:none;letter-spacing:0">(7 locked · multi · no audience labels)</span></label>
                 <div class="chips">
-                  <button type="button" class="chip on" onclick="this.classList.toggle('on')">Disability</button>
+                  <button type="button" class="chip" onclick="this.classList.toggle('on')">Life insurance</button>
+                  <button type="button" class="chip on" onclick="this.classList.toggle('on')">Living benefits</button>
                   <button type="button" class="chip" onclick="this.classList.toggle('on')">Group benefits</button>
+                  <button type="button" class="chip" onclick="this.classList.toggle('on')">Investments</button>
                   <button type="button" class="chip" onclick="this.classList.toggle('on')">Retirement</button>
-                  <button type="button" class="chip" onclick="this.classList.toggle('on')">Investing</button>
-                  <button type="button" class="chip" onclick="this.classList.toggle('on')">Compliance</button>
+                  <button type="button" class="chip" onclick="this.classList.toggle('on')">Estate planning</button>
+                  <button type="button" class="chip" onclick="this.classList.toggle('on')">Business owners</button>
                 </div>
               </div>
               <div class="field">
-                <label>Visibility <span style="font-weight:500;text-transform:none;letter-spacing:0">(recommended)</span></label>
+                <label>Type <span style="font-weight:500;text-transform:none;letter-spacing:0">(3rd facet · single · not folded into Topic)</span></label>
+                <div class="chips">
+                  <button type="button" class="chip type" onclick="document.querySelectorAll('#s-edit .chip.type').forEach(function(c){c.classList.remove('on')});this.classList.add('on')">Article/blog</button>
+                  <button type="button" class="chip type" onclick="document.querySelectorAll('#s-edit .chip.type').forEach(function(c){c.classList.remove('on')});this.classList.add('on')">Social post</button>
+                  <button type="button" class="chip type" onclick="document.querySelectorAll('#s-edit .chip.type').forEach(function(c){c.classList.remove('on')});this.classList.add('on')">Email</button>
+                  <button type="button" class="chip type" onclick="document.querySelectorAll('#s-edit .chip.type').forEach(function(c){c.classList.remove('on')});this.classList.add('on')">Infographic/visual</button>
+                  <button type="button" class="chip type" onclick="document.querySelectorAll('#s-edit .chip.type').forEach(function(c){c.classList.remove('on')});this.classList.add('on')">Video/script</button>
+                  <button type="button" class="chip type" onclick="document.querySelectorAll('#s-edit .chip.type').forEach(function(c){c.classList.remove('on')});this.classList.add('on')">Calculator/tool</button>
+                  <button type="button" class="chip type on" onclick="document.querySelectorAll('#s-edit .chip.type').forEach(function(c){c.classList.remove('on')});this.classList.add('on')">Checklist/guide</button>
+                </div>
+              </div>
+              <div class="field">
+                <label>Visibility <span style="font-weight:500;text-transform:none;letter-spacing:0">(flag · not a topic)</span></label>
                 <div class="toggle-row" onclick="var s=this.querySelector('.tog');s.classList.toggle('on');showToast('Visibility toggled (stub)')">
                   <button type="button" class="tog on" aria-label="Advisor-only"></button>
                   <div>
@@ -890,11 +959,11 @@
                   </div>
                 </div>
                 <div class="option-alt">
-                  <strong>Alt option (open Q):</strong> Model advisor-only / group-benefits-sell as a <em>special Master Category</em> instead of a visibility flag. Mock shows both; Designer recommends the flag.
+                  <strong>Locked:</strong> Advisor-only is a <em>visibility flag</em>, not a Topic. Do not fold into the 7 Topics list.
                 </div>
               </div>
               <div style="display:flex;gap:8px;margin-top:8px">
-                <button type="button" class="btn btn-primary" onclick="showToast('Saved Source + topics + visibility (stub)')">Save</button>
+                <button type="button" class="btn btn-primary" onclick="showToast('Saved Source + topics + Type + visibility (stub)')">Save</button>
                 <button type="button" class="btn btn-secondary" onclick="showScreen('browse')">Cancel</button>
               </div>
             </div>
@@ -906,10 +975,10 @@
               <h2>Manage Sources</h2>
               <span class="admin-tag">Admin</span>
             </div>
-            <p class="admin-sub">Content Sources · CRUD mirroring Manage Categories density · logo optional · open Q: enum vs admin-managed · firm vs FC admin</p>
+            <p class="admin-sub">Locked Sources (3): <strong>Financial Tech Tools (FTT)</strong> · <strong>FSB</strong> · <strong>Carriers</strong> rollup. Dropped FECBC, PPI, Ghostwritten. Carrier names from live postCategories (excl. Assuris, National Health Claim, dealers).</p>
             <div class="info-banner">
               <div class="ico">i</div>
-              <div><strong>Sources</strong> is the first-class label for where a post came from (FTT, carriers, FECBC, Ghostwritten…). Independent of Master Categories (topics). Do not confuse with AdvisorSource (#209).</div>
+              <div><strong>Sources</strong> = where a post came from. Independent of Topics and Type. Do not confuse with AdvisorSource (#209).</div>
             </div>
             <div class="admin-toolbar">
               <input style="min-width:200px" placeholder="Search sources…" />
@@ -917,75 +986,113 @@
                 <button type="button" class="on">All</button>
                 <button type="button">Partner</button>
                 <button type="button">Carrier</button>
-                <button type="button">Association</button>
                 <button type="button">Hidden</button>
               </div>
             </div>
             <div class="add-row">
               <input placeholder="Name" style="flex:1;min-width:140px" />
-              <select><option>Type (required)</option><option>Partner</option><option>Carrier</option><option>Association</option><option>Other</option></select>
+              <select><option>Type (required)</option><option>Partner</option><option>Carrier</option></select>
               <button type="button" class="btn btn-primary btn-disabled">+ Add Source</button>
             </div>
             <div class="table-wrap">
               <table class="admin">
                 <thead><tr><th>Name</th><th>Type</th><th>Posts</th><th>Visible</th><th>Actions</th></tr></thead>
                 <tbody>
-                  <tr><td><strong>Financial Tech Tools</strong><div class="slug">ftt</div></td><td><div class="type-pills"><span class="on">Partner</span></div></td><td>128</td><td><button type="button" class="tog on" onclick="this.classList.toggle('on')"></button></td><td><button type="button" class="btn btn-ghost btn-sm" onclick="showToast('Edit stub')">Edit</button> <button type="button" class="btn btn-danger btn-sm" onclick="showToast('Remove stub')">Remove</button></td></tr>
-                  <tr><td><strong>FSB</strong><div class="slug">fsb</div></td><td><div class="type-pills"><span class="on">Partner</span></div></td><td>41</td><td><button type="button" class="tog on" onclick="this.classList.toggle('on')"></button></td><td><button type="button" class="btn btn-ghost btn-sm">Edit</button> <button type="button" class="btn btn-danger btn-sm">Remove</button></td></tr>
-                  <tr><td><strong>PPI</strong><div class="slug">ppi</div></td><td><div class="type-pills"><span class="on">Partner</span></div></td><td>33</td><td><button type="button" class="tog on" onclick="this.classList.toggle('on')"></button></td><td><button type="button" class="btn btn-ghost btn-sm">Edit</button> <button type="button" class="btn btn-danger btn-sm">Remove</button></td></tr>
-                  <tr><td><strong>Ghostwritten</strong><div class="slug">ghostwritten</div></td><td><div class="type-pills"><span class="on">Other</span></div></td><td>22</td><td><button type="button" class="tog on" onclick="this.classList.toggle('on')"></button></td><td><button type="button" class="btn btn-ghost btn-sm">Edit</button> <button type="button" class="btn btn-danger btn-sm">Remove</button></td></tr>
-                  <tr><td><strong>Manulife</strong><div class="slug">manulife</div></td><td><div class="type-pills"><span class="on">Carrier</span></div></td><td>42</td><td><button type="button" class="tog on" onclick="this.classList.toggle('on')"></button></td><td><button type="button" class="btn btn-ghost btn-sm">Edit</button> <button type="button" class="btn btn-danger btn-sm">Remove</button></td></tr>
-                  <tr><td><strong>Sun Life</strong><div class="slug">sun-life</div></td><td><div class="type-pills"><span class="on">Carrier</span></div></td><td>37</td><td><button type="button" class="tog on" onclick="this.classList.toggle('on')"></button></td><td><button type="button" class="btn btn-ghost btn-sm">Edit</button> <button type="button" class="btn btn-danger btn-sm">Remove</button></td></tr>
-                  <tr><td><strong>FECBC</strong><div class="slug">fecbc</div></td><td><div class="type-pills"><span class="on">Association</span></div></td><td>64</td><td><button type="button" class="tog on" onclick="this.classList.toggle('on')"></button></td><td><button type="button" class="btn btn-ghost btn-sm">Edit</button> <button type="button" class="btn btn-danger btn-sm">Remove</button></td></tr>
+                  <tr><td><strong>Financial Tech Tools</strong><div class="slug">ftt</div></td><td><div class="type-pills"><span class="on">Partner</span></div></td><td>128</td><td><button type="button" class="tog on" onclick="this.classList.toggle('on')"></button></td><td><button type="button" class="btn btn-ghost btn-sm" onclick="showToast('Edit stub')">Edit</button></td></tr>
+                  <tr><td><strong>FSB</strong><div class="slug">fsb</div></td><td><div class="type-pills"><span class="on">Partner</span></div></td><td>41</td><td><button type="button" class="tog on" onclick="this.classList.toggle('on')"></button></td><td><button type="button" class="btn btn-ghost btn-sm">Edit</button></td></tr>
+                  <tr><td><strong>Carriers</strong> <span style="font-size:0.68rem;color:var(--muted)">(rollup)</span><div class="slug">carriers</div></td><td><div class="type-pills"><span class="on">Carrier</span></div></td><td>307</td><td><button type="button" class="tog on" onclick="this.classList.toggle('on')"></button></td><td><button type="button" class="btn btn-ghost btn-sm">Edit</button></td></tr>
+                  <tr><td style="padding-left:28px"><strong>Manulife</strong><div class="slug">manulife</div></td><td><div class="type-pills"><span class="on">Carrier</span></div></td><td>42</td><td><button type="button" class="tog on" onclick="this.classList.toggle('on')"></button></td><td><button type="button" class="btn btn-ghost btn-sm">Edit</button></td></tr>
+                  <tr><td style="padding-left:28px"><strong>Assumption Life</strong><div class="slug">assumption-life</div></td><td><div class="type-pills"><span class="on">Carrier</span></div></td><td>18</td><td><button type="button" class="tog on" onclick="this.classList.toggle('on')"></button></td><td><button type="button" class="btn btn-ghost btn-sm">Edit</button></td></tr>
+                  <tr><td style="padding-left:28px"><strong>Equitable Life</strong><div class="slug">equitable-life</div></td><td><div class="type-pills"><span class="on">Carrier</span></div></td><td>15</td><td><button type="button" class="tog on" onclick="this.classList.toggle('on')"></button></td><td><button type="button" class="btn btn-ghost btn-sm">Edit</button></td></tr>
+                  <tr><td style="padding-left:28px"><strong>iA Financial</strong><div class="slug">ia-financial</div></td><td><div class="type-pills"><span class="on">Carrier</span></div></td><td>28</td><td><button type="button" class="tog on" onclick="this.classList.toggle('on')"></button></td><td><button type="button" class="btn btn-ghost btn-sm">Edit</button></td></tr>
+                  <tr><td style="padding-left:28px"><strong>Sun Life</strong><div class="slug">sun-life</div></td><td><div class="type-pills"><span class="on">Carrier</span></div></td><td>37</td><td><button type="button" class="tog on" onclick="this.classList.toggle('on')"></button></td><td><button type="button" class="btn btn-ghost btn-sm">Edit</button></td></tr>
+                  <tr><td style="padding-left:28px"><strong>BMO Insurance</strong><div class="slug">bmo-insurance</div></td><td><div class="type-pills"><span class="on">Carrier</span></div></td><td>12</td><td><button type="button" class="tog on" onclick="this.classList.toggle('on')"></button></td><td><button type="button" class="btn btn-ghost btn-sm">Edit</button></td></tr>
+                  <tr><td style="padding-left:28px"><strong>Desjardins</strong><div class="slug">desjardins</div></td><td><div class="type-pills"><span class="on">Carrier</span></div></td><td>21</td><td><button type="button" class="tog on" onclick="this.classList.toggle('on')"></button></td><td><button type="button" class="btn btn-ghost btn-sm">Edit</button></td></tr>
+                  <tr><td style="padding-left:28px"><strong>Empire Life</strong><div class="slug">empire-life</div></td><td><div class="type-pills"><span class="on">Carrier</span></div></td><td>14</td><td><button type="button" class="tog on" onclick="this.classList.toggle('on')"></button></td><td><button type="button" class="btn btn-ghost btn-sm">Edit</button></td></tr>
+                  <tr><td style="padding-left:28px"><strong>Foresters Financial</strong><div class="slug">foresters</div></td><td><div class="type-pills"><span class="on">Carrier</span></div></td><td>16</td><td><button type="button" class="tog on" onclick="this.classList.toggle('on')"></button></td><td><button type="button" class="btn btn-ghost btn-sm">Edit</button></td></tr>
+                  <tr><td style="padding-left:28px"><strong>Canada Life</strong><div class="slug">canada-life</div></td><td><div class="type-pills"><span class="on">Carrier</span></div></td><td>33</td><td><button type="button" class="tog on" onclick="this.classList.toggle('on')"></button></td><td><button type="button" class="btn btn-ghost btn-sm">Edit</button></td></tr>
+                  <tr><td style="padding-left:28px"><strong>RBC Insurance</strong><div class="slug">rbc-insurance</div></td><td><div class="type-pills"><span class="on">Carrier</span></div></td><td>19</td><td><button type="button" class="tog on" onclick="this.classList.toggle('on')"></button></td><td><button type="button" class="btn btn-ghost btn-sm">Edit</button></td></tr>
+                  <tr><td style="padding-left:28px"><strong>Beneva</strong><div class="slug">beneva</div></td><td><div class="type-pills"><span class="on">Carrier</span></div></td><td>11</td><td><button type="button" class="tog on" onclick="this.classList.toggle('on')"></button></td><td><button type="button" class="btn btn-ghost btn-sm">Edit</button></td></tr>
+                  <tr><td style="padding-left:28px"><strong>Co-operators Life</strong><div class="slug">co-operators-life</div></td><td><div class="type-pills"><span class="on">Carrier</span></div></td><td>24</td><td><button type="button" class="tog on" onclick="this.classList.toggle('on')"></button></td><td><button type="button" class="btn btn-ghost btn-sm">Edit</button></td></tr>
+                  <tr><td style="padding-left:28px"><strong>ivari</strong><div class="slug">ivari</div></td><td><div class="type-pills"><span class="on">Carrier</span></div></td><td>17</td><td><button type="button" class="tog on" onclick="this.classList.toggle('on')"></button></td><td><button type="button" class="btn btn-ghost btn-sm">Edit</button></td></tr>
                 </tbody>
               </table>
             </div>
-            <div class="banner warn" style="margin-top:14px">
-              <div><strong>Open Q:</strong> Fixed enum vs admin-managed CRUD? Firm admin vs FC admin ownership?</div>
+            <div class="banner ok" style="margin-top:14px">
+              <div><strong>Lock:</strong> 3 top-level Sources. Carriers expand to 14 names. No FECBC / PPI / Ghostwritten in v1 lock.</div>
             </div>
           </div>
 
           <div class="screen" id="s-cats">
             <button type="button" class="admin-back" onclick="showScreen('browse')">← Back</button>
             <div class="admin-title-row">
-              <h2>Manage Categories</h2>
+              <h2>Manage Categories (Topics)</h2>
               <span class="admin-tag">Admin</span>
             </div>
-            <p class="admin-sub">MasterCategories · set Type · featured/visible · cleanup junk for MAP trustworthiness — topics only in Direction A (Sources live under Manage Sources)</p>
+            <p class="admin-sub">Manage Categories = <strong>Topics</strong> (7 locked). No audience labels. Tax / cash flow dropped. Content Type lives under Manage Types — do not fold Type into Topic names.</p>
             <div class="info-banner">
               <div class="ico">i</div>
-              <div><strong>MasterCategories</strong> is the sole source of truth for Product/Service Types (topics). Featured / Visible / Hidden control the advisor-facing Topics filter. <strong>Do not fold Source into this list</strong> in Direction A.</div>
+              <div><strong>Topics</strong> are the sole source of truth for “what it’s about.” Featured / Visible control the advisor-facing Topics filter. <strong>Do not fold Source or Type into this list.</strong> Advisor-only is a visibility flag, not a topic.</div>
             </div>
             <div class="admin-toolbar">
-              <input style="min-width:200px" placeholder="Search categories…" />
+              <input style="min-width:200px" placeholder="Search topics…" />
               <div class="filter-pills">
                 <button type="button" class="on">All</button>
-                <button type="button">Services</button>
-                <button type="button">Products</button>
+                <button type="button">Featured</button>
                 <button type="button">Hidden</button>
-                <button type="button">Unset Type</button>
               </div>
             </div>
             <div class="add-row">
               <input placeholder="Name" style="flex:1;min-width:140px" />
-              <select><option>Type (required)</option><option>Service</option><option>Product</option></select>
-              <button type="button" class="btn btn-primary btn-disabled">+ Add category</button>
+              <button type="button" class="btn btn-primary btn-disabled">+ Add topic</button>
             </div>
             <div class="table-wrap">
               <table class="admin">
-                <thead><tr><th>Name</th><th>Type</th><th>Featured</th><th>Visible</th><th>Actions</th></tr></thead>
+                <thead><tr><th>Name</th><th>Kind</th><th>Featured</th><th>Visible</th><th>Actions</th></tr></thead>
                 <tbody>
-                  <tr><td><strong>Retirement</strong><div class="slug">retirement</div></td><td><div class="type-pills"><span class="on">Service</span><span>Product</span></div></td><td><button type="button" class="tog" onclick="this.classList.toggle('on')"></button></td><td><button type="button" class="tog on" onclick="this.classList.toggle('on')"></button></td><td><button type="button" class="btn btn-secondary btn-sm">Unhide</button> <button type="button" class="btn btn-danger btn-sm">Remove</button></td></tr>
-                  <tr><td><strong>Group benefits</strong><div class="slug">group-benefits</div></td><td><div class="type-pills"><span class="on">Service</span><span>Product</span></div></td><td><button type="button" class="tog on" onclick="this.classList.toggle('on')"></button></td><td><button type="button" class="tog on" onclick="this.classList.toggle('on')"></button></td><td><button type="button" class="btn btn-secondary btn-sm">Unhide</button> <button type="button" class="btn btn-danger btn-sm">Remove</button></td></tr>
-                  <tr><td><strong>Disability</strong><div class="slug">disability</div></td><td><div class="type-pills"><span class="on">Product</span><span>Service</span></div></td><td><button type="button" class="tog" onclick="this.classList.toggle('on')"></button></td><td><button type="button" class="tog on" onclick="this.classList.toggle('on')"></button></td><td><button type="button" class="btn btn-secondary btn-sm">Unhide</button> <button type="button" class="btn btn-danger btn-sm">Remove</button></td></tr>
-                  <tr><td><strong>Investing</strong><div class="slug">investing</div></td><td><div class="type-pills"><span class="on">Service</span><span>Product</span></div></td><td><button type="button" class="tog" onclick="this.classList.toggle('on')"></button></td><td><button type="button" class="tog on" onclick="this.classList.toggle('on')"></button></td><td><button type="button" class="btn btn-secondary btn-sm">Unhide</button> <button type="button" class="btn btn-danger btn-sm">Remove</button></td></tr>
-                  <tr><td><strong>Compliance</strong><div class="slug">compliance</div></td><td><div class="type-pills"><span class="on">Service</span><span>Product</span></div></td><td><button type="button" class="tog" onclick="this.classList.toggle('on')"></button></td><td><button type="button" class="tog on" onclick="this.classList.toggle('on')"></button></td><td><button type="button" class="btn btn-secondary btn-sm">Unhide</button> <button type="button" class="btn btn-danger btn-sm">Remove</button></td></tr>
-                  <tr><td><strong>2018 Only</strong><div class="slug">2018-only</div></td><td><div class="type-pills"><span class="on">Service</span><span>Product</span></div></td><td><button type="button" class="tog" onclick="this.classList.toggle('on')"></button></td><td><button type="button" class="tog" onclick="this.classList.toggle('on')"></button></td><td><button type="button" class="btn btn-secondary btn-sm">Unhide</button> <button type="button" class="btn btn-danger btn-sm">Remove</button></td></tr>
+                  <tr><td><strong>Life insurance</strong><div class="slug">life-insurance</div></td><td><div class="type-pills"><span class="on">Topic</span></div></td><td><button type="button" class="tog " onclick="this.classList.toggle('on')"></button></td><td><button type="button" class="tog on" onclick="this.classList.toggle('on')"></button></td><td><button type="button" class="btn btn-ghost btn-sm">Edit</button></td></tr>
+                  <tr><td><strong>Living benefits</strong><div class="slug">living-benefits</div></td><td><div class="type-pills"><span class="on">Topic</span></div></td><td><button type="button" class="tog " onclick="this.classList.toggle('on')"></button></td><td><button type="button" class="tog on" onclick="this.classList.toggle('on')"></button></td><td><button type="button" class="btn btn-ghost btn-sm">Edit</button></td></tr>
+                  <tr><td><strong>Group benefits</strong><div class="slug">group-benefits</div></td><td><div class="type-pills"><span class="on">Topic</span></div></td><td><button type="button" class="tog on" onclick="this.classList.toggle('on')"></button></td><td><button type="button" class="tog on" onclick="this.classList.toggle('on')"></button></td><td><button type="button" class="btn btn-ghost btn-sm">Edit</button></td></tr>
+                  <tr><td><strong>Investments</strong><div class="slug">investments</div></td><td><div class="type-pills"><span class="on">Topic</span></div></td><td><button type="button" class="tog " onclick="this.classList.toggle('on')"></button></td><td><button type="button" class="tog on" onclick="this.classList.toggle('on')"></button></td><td><button type="button" class="btn btn-ghost btn-sm">Edit</button></td></tr>
+                  <tr><td><strong>Retirement</strong><div class="slug">retirement</div></td><td><div class="type-pills"><span class="on">Topic</span></div></td><td><button type="button" class="tog on" onclick="this.classList.toggle('on')"></button></td><td><button type="button" class="tog on" onclick="this.classList.toggle('on')"></button></td><td><button type="button" class="btn btn-ghost btn-sm">Edit</button></td></tr>
+                  <tr><td><strong>Estate planning</strong><div class="slug">estate-planning</div></td><td><div class="type-pills"><span class="on">Topic</span></div></td><td><button type="button" class="tog " onclick="this.classList.toggle('on')"></button></td><td><button type="button" class="tog on" onclick="this.classList.toggle('on')"></button></td><td><button type="button" class="btn btn-ghost btn-sm">Edit</button></td></tr>
+                  <tr><td><strong>Business owners</strong><div class="slug">business-owners</div></td><td><div class="type-pills"><span class="on">Topic</span></div></td><td><button type="button" class="tog " onclick="this.classList.toggle('on')"></button></td><td><button type="button" class="tog on" onclick="this.classList.toggle('on')"></button></td><td><button type="button" class="btn btn-ghost btn-sm">Edit</button></td></tr>
                 </tbody>
               </table>
             </div>
-            <div class="banner info" style="margin-top:14px">
-              <div><strong>Reuse:</strong> Same density &amp; patterns as today’s Manage Categories (screenshot 10). Topics only here. Sources → Manage Sources.</div>
+            <div class="banner ok" style="margin-top:14px">
+              <div><strong>Lock:</strong> Life insurance · Living benefits · Group benefits · Investments · Retirement · Estate planning · Business owners.</div>
+            </div>
+          </div>
+
+
+          <div class="screen" id="s-types">
+            <button type="button" class="admin-back" onclick="showScreen('browse')">← Back</button>
+            <div class="admin-title-row">
+              <h2>Manage Types</h2>
+              <span class="admin-tag">Admin</span>
+            </div>
+            <p class="admin-sub">Content <strong>Type</strong> is the 3rd browse facet — same chip pattern as Source. Not folded into Topic names. Assign on post edit.</p>
+            <div class="info-banner">
+              <div class="ico">i</div>
+              <div>Type chips on advisor browse AND with Source + Topic. Optional Type badge on cards.</div>
+            </div>
+            <div class="table-wrap">
+              <table class="admin">
+                <thead><tr><th>Type</th><th>Slug</th><th>Posts</th><th>Visible</th><th>Actions</th></tr></thead>
+                <tbody>
+                  <tr><td><strong>Article/blog</strong></td><td><div class="slug">article-blog</div></td><td>214</td><td><button type="button" class="tog on" onclick="this.classList.toggle('on')"></button></td><td><button type="button" class="btn btn-ghost btn-sm">Edit</button></td></tr>
+                  <tr><td><strong>Social post</strong></td><td><div class="slug">social-post</div></td><td>96</td><td><button type="button" class="tog on" onclick="this.classList.toggle('on')"></button></td><td><button type="button" class="btn btn-ghost btn-sm">Edit</button></td></tr>
+                  <tr><td><strong>Email</strong></td><td><div class="slug">email</div></td><td>71</td><td><button type="button" class="tog on" onclick="this.classList.toggle('on')"></button></td><td><button type="button" class="btn btn-ghost btn-sm">Edit</button></td></tr>
+                  <tr><td><strong>Infographic/visual</strong></td><td><div class="slug">infographic-visual</div></td><td>48</td><td><button type="button" class="tog on" onclick="this.classList.toggle('on')"></button></td><td><button type="button" class="btn btn-ghost btn-sm">Edit</button></td></tr>
+                  <tr><td><strong>Video/script</strong></td><td><div class="slug">video-script</div></td><td>39</td><td><button type="button" class="tog on" onclick="this.classList.toggle('on')"></button></td><td><button type="button" class="btn btn-ghost btn-sm">Edit</button></td></tr>
+                  <tr><td><strong>Calculator/tool</strong></td><td><div class="slug">calculator-tool</div></td><td>22</td><td><button type="button" class="tog on" onclick="this.classList.toggle('on')"></button></td><td><button type="button" class="btn btn-ghost btn-sm">Edit</button></td></tr>
+                  <tr><td><strong>Checklist/guide</strong></td><td><div class="slug">checklist-guide</div></td><td>55</td><td><button type="button" class="tog on" onclick="this.classList.toggle('on')"></button></td><td><button type="button" class="btn btn-ghost btn-sm">Edit</button></td></tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="banner ok" style="margin-top:14px">
+              <div><strong>Lock:</strong> 7 Types as 3rd facet. Keep flow coherent with post edit Type assign.</div>
             </div>
           </div>
 
@@ -1000,7 +1107,7 @@
                 <strong>#209 Manage Advisor Categories / AdvisorSource (closed)</strong><br/>
                 About <em>advisor affiliation</em> — which insurance/investment companies or programs an <strong>advisor</strong> is tied to.<br/><br/>
                 <strong>#261 (this playground · Direction A · FC look)</strong><br/>
-                About <em>content</em> — which Source a <strong>post</strong> came from (carrier / FTT / FECBC / Other) and which topic/product Master Categories apply.<br/><br/>
+                About <em>content</em> — which Source a <strong>post</strong> came from (FTT / FSB / Carriers), which Topic (7 locked), and which Type (3rd facet). Advisor-only = visibility flag.<br/><br/>
                 Same words (“source”, “categories”) — different objects. Do not merge schemas or reopen #209 for this ask.
               </div>
             </div>
@@ -1088,20 +1195,44 @@
 
     function toggleChip(el) {
       el.classList.toggle('on');
+      if (el.dataset.group === 'source' && el.dataset.val === 'Carriers') {
+        toggleCarrierSub(el.classList.contains('on'));
+      }
       syncActiveBar();
-      showToast('Filter updated (AND across facets)');
+      showToast('Filter updated (AND · Source × Topic × Type)');
+    }
+
+    function toggleSourceCarrier(el) {
+      el.classList.toggle('on');
+      toggleCarrierSub(el.classList.contains('on'));
+      syncActiveBar();
+      showToast(el.classList.contains('on') ? 'Carriers rollup open' : 'Carriers cleared');
+    }
+
+    function toggleCarrierSub(open) {
+      var sub = document.getElementById('carrierSub');
+      if (!sub) return;
+      sub.classList.toggle('open', !!open);
     }
 
     function clearFacet(group) {
       document.querySelectorAll('[data-group="' + group + '"]').forEach(function (c) {
         c.classList.remove('on');
       });
+      if (group === 'source') toggleCarrierSub(false);
       syncActiveBar();
       showToast('Cleared ' + group + ' filters');
     }
 
+    function clearSourceFacet() {
+      clearFacet('source');
+      clearFacet('carrier');
+      toggleCarrierSub(false);
+    }
+
     function clearAllFilters() {
       document.querySelectorAll('[data-group]').forEach(function (c) { c.classList.remove('on'); });
+      toggleCarrierSub(false);
       syncActiveBar();
       showToast('All filters cleared');
       showScreen('browse');
@@ -1111,6 +1242,7 @@
       document.querySelectorAll('[data-group="' + group + '"][data-val="' + val + '"]').forEach(function (c) {
         c.classList.remove('on');
       });
+      if (group === 'source' && val === 'Carriers') toggleCarrierSub(false);
       syncActiveBar();
       showToast('Removed ' + val);
     }
@@ -1123,12 +1255,20 @@
         var v = c.dataset.val;
         parts.push('<span class="active-pill">Source: ' + v + ' <button type="button" class="x" onclick="removeActive(\'source\',\'' + v + '\')">×</button></span>');
       });
+      document.querySelectorAll('#carrierChips [data-group="carrier"].on').forEach(function (c) {
+        var v = c.dataset.val;
+        parts.push('<span class="active-pill">Carrier: ' + v + ' <button type="button" class="x" onclick="removeActive(\'carrier\',\'' + v + '\')">×</button></span>');
+      });
       document.querySelectorAll('#topicChips [data-group="topic"].on').forEach(function (c) {
         var v = c.dataset.val;
         parts.push('<span class="active-pill">Topic: ' + v + ' <button type="button" class="x" onclick="removeActive(\'topic\',\'' + v + '\')">×</button></span>');
       });
+      document.querySelectorAll('#typeChips [data-group="type"].on').forEach(function (c) {
+        var v = c.dataset.val;
+        parts.push('<span class="active-pill">Type: ' + v + ' <button type="button" class="x" onclick="removeActive(\'type\',\'' + v + '\')">×</button></span>');
+      });
       parts.push('<button type="button" class="chip clear" onclick="clearAllFilters()">Clear all</button>');
-      var has = document.querySelectorAll('[data-group].on').length > 0;
+      var has = document.querySelectorAll('#s-browse [data-group].on').length > 0;
       bar.innerHTML = has ? parts.join('') : '<span class="lab">Active:</span> <span style="color:var(--muted)">None</span> <button type="button" class="chip clear" onclick="clearAllFilters()">Clear all</button>';
     }
 
@@ -1136,7 +1276,11 @@
       showToast((input.checked ? 'Added' : 'Removed') + ' topic: ' + input.dataset.topic + ' (AND)');
     }
     function onSourceCheck(input) {
+      if (input.dataset.src === 'Carriers') toggleCarrierSub(input.checked);
       showToast((input.checked ? 'Added' : 'Removed') + ' source: ' + input.dataset.src + ' (AND)');
+    }
+    function onCarrierCheck(input) {
+      showToast((input.checked ? 'Added' : 'Removed') + ' carrier: ' + input.dataset.carrier + ' (AND)');
     }
 
     (function init() {
