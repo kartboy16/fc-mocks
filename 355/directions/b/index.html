@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Direction B — Social-native · #355</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../../shared.css" />
+</head>
+<body>
+  <div class="invite-banner">
+    <span><strong>#355 · Direction B</strong> · Social-native · Soft Dev hold · not agent-ready</span>
+    <span>
+      <span class="rec" style="background:#e5e7eb;color:#374151">ALT</span>
+      <a href="../../index.html">Hub</a> ·
+      <a href="../a/">A</a> ·
+      <a href="../c/">C</a> ·
+      <a href="../../build-contract.html">Contract</a>
+    </span>
+  </div>
+
+  <div class="shell">
+    <aside class="rail" aria-label="App nav">
+      <span class="ico">📄</span>
+      <span class="ico">🌐</span>
+      <span class="ico">✉️</span>
+      <span class="ico on">↗</span>
+      <span class="ico" style="margin-top:auto;background:#1e2a4a;color:#fff;border-radius:999px;font-size:11px;font-weight:700">JL</span>
+    </aside>
+    <div class="main">
+      <div class="top-utils">
+        <span class="signed-as">Signed in as Jordan Lee · Coulas Insurance</span>
+        <span style="color:var(--blue)">⚙ Settings</span>
+      </div>
+      <div class="page-head">
+        <h1>Share to social</h1>
+        <p>Post with your words and pictures — a website link is optional.</p>
+      </div>
+      <div class="tabs">
+        <span>Calendar</span><span class="on">Share</span><span>Settings</span>
+      </div>
+      <div class="content">
+        <div class="dir-label">
+          <strong>Direction B — Social-native</strong>
+          · Allow share without a website destination. Compose shows copy + media; no site link required (optional “Add link later”). Preview FB / LI / IG without a website URL. Zero friction — no warn dialog.
+        </div>
+
+        <div class="screen-tabs">
+          <button type="button" class="on" data-screen="compose">1 · Compose (no link)</button>
+          <button type="button" data-screen="preview">2 · Network previews</button>
+          <button type="button" data-screen="optional">3 · Optional add link later</button>
+          <button type="button" data-screen="posted">4 · Posted without link</button>
+        </div>
+
+        <div class="status-pills">
+          <span class="status-pill ok">Social · Connected</span>
+          <span class="status-pill warn">Website · Not connected (OK)</span>
+        </div>
+
+        <div id="screen-compose">
+          <div class="compose-layout">
+            <div class="compose-card">
+              <h3>Write your post</h3>
+              <p class="sub">No website link needed. Your words and picture go out as-is.</p>
+              <div class="dest-chips">
+                <span class="dest-chip sel"><span class="ch fb">f</span> Facebook</span>
+                <span class="dest-chip sel"><span class="ch li">in</span> LinkedIn</span>
+                <span class="dest-chip"><span class="ch ig">ig</span> Instagram</span>
+              </div>
+              <textarea id="copy-b" readonly>RRSP season tip: start with a simple checklist for contribution room — then talk it through with your advisor.
+
+Here’s a quick way to get organized before the deadline.</textarea>
+              <div class="media-row">
+                <div class="media-thumb">Photo</div>
+                <button type="button" class="btn btn-ghost">+ Add photo</button>
+              </div>
+              <div class="link-row optional">
+                <div class="link-ico">🔗</div>
+                <div class="link-body">
+                  <strong>No website link</strong>
+                  <span>Optional — you can add a link later if you connect your site.</span>
+                </div>
+                <button type="button" class="btn btn-outline" id="btn-add-later" style="white-space:nowrap">Add link later</button>
+              </div>
+              <div class="actions">
+                <button type="button" class="btn btn-ghost">Cancel</button>
+                <button type="button" class="btn btn-outline">Schedule</button>
+                <button type="button" class="btn btn-primary" id="btn-post-b">Post now</button>
+              </div>
+            </div>
+            <div class="preview-stack">
+              <div class="soc-preview">
+                <div class="sp-head"><span class="dot fb">f</span> Facebook preview</div>
+                <div class="sp-body">
+                  <p>RRSP season tip: start with a simple checklist…</p>
+                  <div class="sp-media"></div>
+                  <p class="no-link-note">No website link card — copy + media only</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div id="screen-preview" class="hidden">
+          <div class="preview-stack" style="max-width:420px">
+            <div class="soc-preview">
+              <div class="sp-head"><span class="dot fb">f</span> Facebook</div>
+              <div class="sp-body">
+                <p>RRSP season tip: start with a simple checklist for contribution room — then talk it through with your advisor.</p>
+                <div class="sp-media"></div>
+                <p class="no-link-note">No link card · social-native</p>
+              </div>
+            </div>
+            <div class="soc-preview">
+              <div class="sp-head"><span class="dot li">in</span> LinkedIn</div>
+              <div class="sp-body">
+                <p>RRSP season tip: start with a simple checklist for contribution room — then talk it through with your advisor.</p>
+                <div class="sp-media"></div>
+                <p class="no-link-note">No article/link attachment</p>
+              </div>
+            </div>
+            <div class="soc-preview">
+              <div class="sp-head"><span class="dot ig">ig</span> Instagram</div>
+              <div class="sp-body">
+                <div class="sp-media" style="height:160px"></div>
+                <p>RRSP season tip: start with a simple checklist…</p>
+                <p class="no-link-note">Caption + media · no destination URL</p>
+              </div>
+            </div>
+          </div>
+          <p class="note-bar">Previews show what followers see — no website URL card.</p>
+        </div>
+
+        <div id="screen-optional" class="hidden">
+          <div class="compose-card" style="max-width:560px">
+            <h3>Add a link later (optional)</h3>
+            <p class="sub">You can post now without a link. Or connect your website first if you want posts to open on your site.</p>
+            <div class="link-row optional">
+              <div class="link-ico">🔗</div>
+              <div class="link-body">
+                <strong>Website not connected</strong>
+                <span>Connect WordPress to include a link on future posts.</span>
+              </div>
+            </div>
+            <div class="actions" style="justify-content:flex-start">
+              <button type="button" class="btn btn-outline" id="btn-connect-opt">Connect website</button>
+              <button type="button" class="btn btn-primary" id="btn-skip-opt">Post without link</button>
+            </div>
+          </div>
+        </div>
+
+        <div id="screen-posted" class="hidden">
+          <div class="panel" style="max-width:480px;text-align:center;padding:36px 24px">
+            <div class="success-box" style="padding:0">
+              <div class="check">✓</div>
+              <h2>Posted to social</h2>
+              <p>Your post went out with your words and picture — no website link. You can connect WordPress anytime for future posts.</p>
+              <button type="button" class="btn btn-primary" id="btn-done-b">Back to calendar</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"><span class="ok-dot">●</span> <span id="toast-msg">Posted without a website link</span></div>
+
+  <script>
+(function () {
+  var screens = ['compose', 'preview', 'optional', 'posted'];
+  var tabs = document.querySelectorAll('.screen-tabs button');
+  var toast = document.getElementById('toast');
+  var toastMsg = document.getElementById('toast-msg');
+
+  function show(name) {
+    tabs.forEach(function (t) { t.classList.toggle('on', t.dataset.screen === name); });
+    screens.forEach(function (s) {
+      var el = document.getElementById('screen-' + s);
+      if (el) el.classList.toggle('hidden', s !== name);
+    });
+  }
+  tabs.forEach(function (t) {
+    t.addEventListener('click', function () { show(t.dataset.screen); });
+  });
+  function ping(msg) {
+    toastMsg.textContent = msg;
+    toast.classList.add('show');
+    setTimeout(function () { toast.classList.remove('show'); }, 2200);
+  }
+  document.getElementById('btn-post-b').addEventListener('click', function () {
+    show('posted');
+    ping('Posted without a website link');
+  });
+  document.getElementById('btn-add-later').addEventListener('click', function () { show('optional'); });
+  document.getElementById('btn-skip-opt').addEventListener('click', function () {
+    show('posted');
+    ping('Posted without a website link');
+  });
+  document.getElementById('btn-connect-opt').addEventListener('click', function () {
+    ping('Opening Connect WordPress…');
+  });
+  document.getElementById('btn-done-b').addEventListener('click', function () { show('compose'); });
+  show('compose');
+})();
+  </script>
+</body>
+</html>

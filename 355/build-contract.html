@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Build contract · #355 Social share without website</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    body { font-family: Inter, system-ui, sans-serif; max-width: 760px; margin: 40px auto; padding: 0 24px 80px; color: #1e2a4a; line-height: 1.55; }
+    h1 { font-size: 22px; } h2 { font-size: 16px; margin-top: 28px; }
+    p, li { font-size: 14px; color: #3a4558; }
+    .warn { background: #fff7ed; color: #9a3412; padding: 12px 14px; border-radius: 8px; font-size: 13px; margin-bottom: 16px; }
+    .ok { background: #e8f5e9; color: #1a7f4c; padding: 12px 14px; border-radius: 8px; font-size: 13px; margin-bottom: 16px; }
+    .hold { background: #fef3c7; color: #92400e; padding: 12px 14px; border-radius: 8px; font-size: 13px; margin-bottom: 16px; }
+    code { background: #eef2f6; padding: 1px 6px; border-radius: 4px; font-size: 12px; }
+    a { color: #2b7de9; } table { width: 100%; border-collapse: collapse; font-size: 13px; margin: 12px 0; }
+    th, td { border: 1px solid #d4e4f2; padding: 8px 10px; text-align: left; vertical-align: top; } th { background: #eef4fb; }
+    ul, ol { padding-left: 1.2em; }
+  </style>
+</head>
+<body>
+  <p class="warn"><strong>PROVISIONAL</strong> — Recommend Direction C. Not locked. Do <strong>not</strong> mark agent-ready until Alex locks a direction and Soft Dev is explicitly woken.</p>
+  <p class="ok"><strong>Recommend:</strong> Direction C — Hybrid warn + Post without link. Matches independent Social/Email/WP (#332); prevents silent dead links.</p>
+  <p class="hold"><strong>Soft Dev hold · Designer-first.</strong> Soft Dev not woken. CosB tips after Alex picks. No Slack wake / no Meteor / no agent-ready.</p>
+
+  <h1>Build contract · Social share without website destination (#355)</h1>
+  <p>Markdown: <a href="build-contract.md">build-contract.md</a> · Hub: <a href="index.html">index.html</a> · Mock: <a href="directions/c/">Direction C</a></p>
+
+  <h2>One-liner</h2>
+  <p>When Social is connected and WordPress is not, allow share/schedule but warn before post that posts won’t include a site link — with Connect website, Post without link, and Cancel. Light banner on Social calendar/settings when WP missing.</p>
+
+  <h2>Entry points (provisional)</h2>
+  <table>
+    <thead><tr><th>Entry</th><th>Direction</th></tr></thead>
+    <tbody>
+      <tr><td>Gate: block share until WP connected</td><td>A · alt (fights independent channels)</td></tr>
+      <tr><td>Social-native: copy + media, no link required</td><td>B · alt (zero friction)</td></tr>
+      <tr><td>Hybrid: warn + Connect / Post without link / Cancel</td><td><strong>C</strong> (recommend)</td></tr>
+    </tbody>
+  </table>
+
+  <h2>Beats (recommend C)</h2>
+  <ol>
+    <li>Light banner on Social calendar / settings when WP missing</li>
+    <li>Compose still available (not hard-blocked)</li>
+    <li>On Post now / Schedule → warn dialog</li>
+    <li><strong>Connect website</strong> → WP connect flow</li>
+    <li><strong>Post without link</strong> → social-native (copy + media)</li>
+    <li>Cancel → back to compose</li>
+    <li>Published payload has no website destination URL when posting without link</li>
+  </ol>
+
+  <h2>Acceptance criteria (provisional · C)</h2>
+  <ul>
+    <li><strong>AC-1:</strong> Social share/schedule allowed when WP missing (not hard-gated)</li>
+    <li><strong>AC-2:</strong> Warn before post/schedule when WP missing: posts won’t include a link to your site</li>
+    <li><strong>AC-3:</strong> Actions: Connect website · Post without link · Cancel</li>
+    <li><strong>AC-4:</strong> Post without link → copy + media only; no site destination URL</li>
+    <li><strong>AC-5:</strong> Light banner on Social settings and/or calendar when WP missing</li>
+    <li><strong>AC-6:</strong> No silent dead-link social shares for WP-less users</li>
+  </ul>
+
+  <h2>Copy (plain words · advisors ~50s–60s)</h2>
+  <ul>
+    <li>Banner: “No website connected — posts won’t include a link to your site.”</li>
+    <li>Dialog title: “No website connected”</li>
+    <li>Primary alt: “Connect website”</li>
+    <li>Secondary: “Post without link”</li>
+    <li>Cancel</li>
+  </ul>
+
+  <h2>Out of scope</h2>
+  <ul>
+    <li>content-library / Meteor app code</li>
+    <li>Waking Soft Dev · marking agent-ready</li>
+    <li>Real OAuth / publish / PII</li>
+  </ul>
+
+  <h2>Reference</h2>
+  <p><a href="index.html">Hub</a> · <a href="directions/a/">A</a> · <a href="directions/b/">B</a> · <a href="directions/c/">C</a> · <a href="https://github.com/kartboy16/content-library/issues/355">Issue #355</a> · related <a href="https://github.com/kartboy16/content-library/issues/332">#332</a></p>
+</body>
+</html>

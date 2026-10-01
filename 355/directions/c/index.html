@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Direction C — Hybrid warn · #355</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../../shared.css" />
+</head>
+<body>
+  <div class="invite-banner">
+    <span><strong>#355 · Direction C</strong> · Hybrid · Soft Dev hold · not agent-ready</span>
+    <span>
+      <span class="rec">RECOMMEND</span>
+      <a href="../../index.html">Hub</a> ·
+      <a href="../a/">A</a> ·
+      <a href="../b/">B</a> ·
+      <a href="../../build-contract.html">Contract</a>
+    </span>
+  </div>
+
+  <div class="shell">
+    <aside class="rail" aria-label="App nav">
+      <span class="ico">📄</span>
+      <span class="ico">🌐</span>
+      <span class="ico">✉️</span>
+      <span class="ico on">↗</span>
+      <span class="ico" style="margin-top:auto;background:#1e2a4a;color:#fff;border-radius:999px;font-size:11px;font-weight:700">JL</span>
+    </aside>
+    <div class="main">
+      <div class="top-utils">
+        <span class="signed-as">Signed in as Jordan Lee · Coulas Insurance</span>
+        <span style="color:var(--blue)">⚙ Settings</span>
+      </div>
+      <div class="page-head">
+        <h1>Social</h1>
+        <p>Share and schedule — we’ll remind you if there’s no website link.</p>
+      </div>
+      <div class="tabs">
+        <span class="on">Calendar</span><span>Share</span><span>Settings</span>
+      </div>
+      <div class="content">
+        <div class="dir-label">
+          <strong>Direction C — Hybrid (recommend)</strong>
+          · Allow social when WP is missing, but <strong>warn</strong> before post. Dialog: “No website connected — posts won’t include a link to your site.” Actions: <strong>Connect website</strong> · <strong>Post without link</strong> · Cancel. Light banner on calendar/settings. Matches independent channels (#332) without silent dead links.
+        </div>
+
+        <div class="screen-tabs">
+          <button type="button" class="on" data-screen="banner">1 · Banner (WP missing)</button>
+          <button type="button" data-screen="compose">2 · Compose + Post</button>
+          <button type="button" data-screen="warn">3 · Warn dialog</button>
+          <button type="button" data-screen="native">4 · After Post without link</button>
+          <button type="button" data-screen="settings">5 · Settings banner</button>
+        </div>
+
+        <div class="status-pills">
+          <span class="status-pill ok">Social · Connected</span>
+          <span class="status-pill miss">Website · Not connected</span>
+        </div>
+
+        <div id="screen-banner">
+          <div class="warn-banner">
+            <div class="ico">!</div>
+            <div class="body">
+              <strong>No website connected</strong>
+              <p>You can still post to social. Posts won’t include a link to your site until you connect WordPress.</p>
+              <div class="btns">
+                <button type="button" class="btn btn-primary" id="btn-banner-connect">Connect website</button>
+                <button type="button" class="btn btn-ghost" id="btn-banner-compose">Share anyway</button>
+              </div>
+            </div>
+          </div>
+          <div class="section-head">
+            <div class="left"><h2>October 2026</h2></div>
+            <button type="button" class="btn btn-primary" id="btn-new-c">+ New post</button>
+          </div>
+          <div class="cal-grid">
+            <div class="cal-cell"><div class="d">Mon 28</div></div>
+            <div class="cal-cell"><div class="d">Tue 29</div></div>
+            <div class="cal-cell"><div class="d">Wed 30</div></div>
+            <div class="cal-cell"><div class="d">Thu 1</div><div class="ev warn">Draft · no link</div></div>
+            <div class="cal-cell"><div class="d">Fri 2</div></div>
+            <div class="cal-cell"><div class="d">Sat 3</div></div>
+            <div class="cal-cell"><div class="d">Sun 4</div></div>
+          </div>
+          <p class="note-bar">Light banner — does not hard-block. New post still available.</p>
+        </div>
+
+        <div id="screen-compose" class="hidden">
+          <div class="compose-layout">
+            <div class="compose-card">
+              <h3>Write your post</h3>
+              <p class="sub">Ready to share. We’ll check for a website link when you post.</p>
+              <div class="dest-chips">
+                <span class="dest-chip sel"><span class="ch fb">f</span> Facebook</span>
+                <span class="dest-chip sel"><span class="ch li">in</span> LinkedIn</span>
+              </div>
+              <textarea readonly>RRSP season tip: start with a simple checklist for contribution room — then talk it through with your advisor.</textarea>
+              <div class="media-row">
+                <div class="media-thumb">Photo</div>
+              </div>
+              <div class="link-row missing">
+                <div class="link-ico">!</div>
+                <div class="link-body">
+                  <strong>No website link</strong>
+                  <span>Website not connected — we’ll warn you before posting.</span>
+                </div>
+              </div>
+              <div class="actions">
+                <button type="button" class="btn btn-ghost">Cancel</button>
+                <button type="button" class="btn btn-outline" id="btn-sched-c">Schedule</button>
+                <button type="button" class="btn btn-primary" id="btn-post-c">Post now</button>
+              </div>
+            </div>
+            <div class="preview-stack">
+              <div class="soc-preview">
+                <div class="sp-head"><span class="dot fb">f</span> Facebook preview</div>
+                <div class="sp-body">
+                  <p>RRSP season tip: start with a simple checklist…</p>
+                  <div class="sp-media"></div>
+                  <p class="no-link-note">Link card missing until website connected</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div id="screen-warn" class="hidden">
+          <div class="dir-label" style="margin-bottom:20px">
+            Warn dialog appears when user taps <strong>Post now</strong> or <strong>Schedule</strong> and WP is missing.
+          </div>
+          <div style="position:relative;min-height:420px;background:rgba(30,42,74,.28);border-radius:12px;display:flex;align-items:center;justify-content:center;padding:24px">
+            <div class="modal warn-modal" style="display:block;position:relative" role="dialog" aria-labelledby="warn-title">
+              <div class="modal-head" style="flex-direction:column;align-items:flex-start">
+                <div class="warn-icon">!</div>
+                <h3 id="warn-title">No website connected</h3>
+              </div>
+              <div class="modal-body">
+                <p style="font-size:14px;margin-bottom:10px">Posts won’t include a link to your site.</p>
+                <p style="font-size:13px;color:var(--muted)">You can connect WordPress so people can open your article, or post with your words and picture only.</p>
+              </div>
+              <div class="modal-foot" style="flex-direction:column;align-items:stretch">
+                <button type="button" class="btn btn-primary" id="btn-warn-connect" style="width:100%">Connect website</button>
+                <button type="button" class="btn btn-secondary" id="btn-warn-post" style="width:100%">Post without link</button>
+                <button type="button" class="btn-linkish" id="btn-warn-cancel" style="width:100%;text-align:center">Cancel</button>
+              </div>
+            </div>
+          </div>
+          <p class="note-bar">Primary alt = Connect website · Secondary = Post without link · Cancel dismisses.</p>
+        </div>
+
+        <div id="screen-native" class="hidden">
+          <div class="compose-layout">
+            <div class="compose-card">
+              <div class="self-rule" style="margin-top:0">
+                <strong>Continuing without a website link</strong>
+                Your post will use copy + media only — same as social-native (Direction B).
+              </div>
+              <h3>Confirm post</h3>
+              <p class="sub">Facebook · LinkedIn · no site URL</p>
+              <textarea readonly>RRSP season tip: start with a simple checklist for contribution room — then talk it through with your advisor.</textarea>
+              <div class="media-row"><div class="media-thumb">Photo</div></div>
+              <div class="link-row optional">
+                <div class="link-ico">✓</div>
+                <div class="link-body">
+                  <strong>Posting without link</strong>
+                  <span>You chose this after the warning. Connect website anytime for future posts.</span>
+                </div>
+              </div>
+              <div class="actions">
+                <button type="button" class="btn btn-ghost" id="btn-back-warn">Back</button>
+                <button type="button" class="btn btn-primary" id="btn-confirm-native">Post now</button>
+              </div>
+            </div>
+            <div class="preview-stack">
+              <div class="soc-preview">
+                <div class="sp-head"><span class="dot fb">f</span> Facebook</div>
+                <div class="sp-body">
+                  <p>RRSP season tip…</p>
+                  <div class="sp-media"></div>
+                  <p class="no-link-note">No website link card</p>
+                </div>
+              </div>
+              <div class="soc-preview">
+                <div class="sp-head"><span class="dot li">in</span> LinkedIn</div>
+                <div class="sp-body">
+                  <p>RRSP season tip…</p>
+                  <div class="sp-media"></div>
+                  <p class="no-link-note">No article attachment</p>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div id="posted-ok" class="hidden" style="margin-top:16px">
+            <div class="panel" style="max-width:420px;text-align:center;padding:28px 20px">
+              <div class="success-box" style="padding:0">
+                <div class="check">✓</div>
+                <h2>Posted without a site link</h2>
+                <p>Shared to Facebook and LinkedIn. Connect your website when you’re ready so future posts can include a link.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div id="screen-settings" class="hidden">
+          <div class="settings-title">Social settings</div>
+          <div class="warn-banner">
+            <div class="ico">!</div>
+            <div class="body">
+              <strong>No website connected</strong>
+              <p>Social posts won’t include a link to your site. Connect WordPress anytime — we’ll remind you before each post until then.</p>
+              <div class="btns">
+                <button type="button" class="btn btn-primary" id="btn-set-connect">Connect website</button>
+              </div>
+            </div>
+          </div>
+          <div class="section-head">
+            <div class="left">
+              <span class="chan-logo fb">f</span>
+              <h2>Facebook</h2>
+              <span class="pill-ok">Connected</span>
+            </div>
+          </div>
+          <div class="acct-grid">
+            <div class="acct">
+              <div class="row1"><span class="name">Coulas Insurance</span></div>
+              <div class="meta">Page · Jordan Lee</div>
+            </div>
+          </div>
+          <div class="section-head">
+            <div class="left">
+              <span class="chan-logo" style="background:#1e2a4a;font-size:12px">W</span>
+              <h2>Website / WordPress</h2>
+              <span class="pill-pending">Not connected</span>
+            </div>
+          </div>
+          <div class="acct pending-border">
+            <div class="row1"><span class="name">Not connected</span></div>
+            <div class="meta">Optional for social — recommended so posts can link to your site.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"><span class="ok-dot">●</span> <span id="toast-msg">Posted without a website link</span></div>
+
+  <script>
+(function () {
+  var screens = ['banner', 'compose', 'warn', 'native', 'settings'];
+  var tabs = document.querySelectorAll('.screen-tabs button');
+  var toast = document.getElementById('toast');
+  var toastMsg = document.getElementById('toast-msg');
+  var postedOk = document.getElementById('posted-ok');
+
+  function show(name) {
+    tabs.forEach(function (t) { t.classList.toggle('on', t.dataset.screen === name); });
+    screens.forEach(function (s) {
+      var el = document.getElementById('screen-' + s);
+      if (el) el.classList.toggle('hidden', s !== name);
+    });
+    if (name !== 'native' && postedOk) postedOk.classList.add('hidden');
+  }
+  tabs.forEach(function (t) {
+    t.addEventListener('click', function () { show(t.dataset.screen); });
+  });
+  function ping(msg) {
+    toastMsg.textContent = msg;
+    toast.classList.add('show');
+    setTimeout(function () { toast.classList.remove('show'); }, 2200);
+  }
+
+  document.getElementById('btn-new-c').addEventListener('click', function () { show('compose'); });
+  document.getElementById('btn-banner-compose').addEventListener('click', function () { show('compose'); });
+  document.getElementById('btn-post-c').addEventListener('click', function () { show('warn'); });
+  document.getElementById('btn-sched-c').addEventListener('click', function () { show('warn'); });
+  document.getElementById('btn-warn-post').addEventListener('click', function () { show('native'); });
+  document.getElementById('btn-warn-cancel').addEventListener('click', function () { show('compose'); });
+  document.getElementById('btn-back-warn').addEventListener('click', function () { show('warn'); });
+  document.getElementById('btn-confirm-native').addEventListener('click', function () {
+    postedOk.classList.remove('hidden');
+    ping('Posted without a website link');
+  });
+  ['btn-banner-connect', 'btn-warn-connect', 'btn-set-connect'].forEach(function (id) {
+    document.getElementById(id).addEventListener('click', function () {
+      ping('Opening Connect WordPress…');
+    });
+  });
+  show('banner');
+})();
+  </script>
+</body>
+</html>

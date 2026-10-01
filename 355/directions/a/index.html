@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Direction A — Gate until WP connected · #355</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../../shared.css" />
+</head>
+<body>
+  <div class="invite-banner">
+    <span><strong>#355 · Direction A</strong> · Gate · Soft Dev hold · not agent-ready</span>
+    <span>
+      <span class="rec" style="background:#e5e7eb;color:#374151">ALT</span>
+      <a href="../../index.html">Hub</a> ·
+      <a href="../b/">B</a> ·
+      <a href="../c/">C</a> ·
+      <a href="../../build-contract.html">Contract</a>
+    </span>
+  </div>
+
+  <div class="shell">
+    <aside class="rail" aria-label="App nav">
+      <span class="ico">📄</span>
+      <span class="ico">🌐</span>
+      <span class="ico">✉️</span>
+      <span class="ico on">↗</span>
+      <span class="ico" style="margin-top:auto;background:#1e2a4a;color:#fff;border-radius:999px;font-size:11px;font-weight:700">JL</span>
+    </aside>
+    <div class="main">
+      <div class="top-utils">
+        <span class="signed-as">Signed in as Jordan Lee · Coulas Insurance</span>
+        <span style="color:var(--blue)">⚙ Settings</span>
+      </div>
+      <div class="page-head">
+        <h1>Social</h1>
+        <p>Share and schedule posts to Facebook, LinkedIn, and Instagram.</p>
+      </div>
+      <div class="tabs">
+        <span class="on" id="tab-cal">Calendar</span>
+        <span id="tab-share">Share</span>
+        <span id="tab-set">Settings</span>
+      </div>
+      <div class="content">
+        <div class="dir-label">
+          <strong>Direction A — Gate</strong>
+          · Block social share/schedule until WordPress is connected. Clear empty/blocked state with primary CTA <strong>Connect WordPress / website</strong>. Fights independent Social/Email/WP model (#332).
+        </div>
+
+        <div class="screen-tabs">
+          <button type="button" class="on" data-screen="calendar">1 · Calendar blocked</button>
+          <button type="button" data-screen="share">2 · Share dialog gated</button>
+          <button type="button" data-screen="empty">3 · Empty / blocked state</button>
+          <button type="button" data-screen="settings">4 · Settings (WP missing)</button>
+        </div>
+
+        <div class="status-pills">
+          <span class="status-pill ok">Social · Connected</span>
+          <span class="status-pill miss">Website · Not connected</span>
+        </div>
+
+        <div id="screen-calendar">
+          <div class="section-head">
+            <div class="left"><h2>October 2026</h2></div>
+            <button type="button" class="btn btn-primary" id="btn-new-blocked" style="opacity:.55;cursor:not-allowed" title="Connect website first">+ New post</button>
+          </div>
+          <div class="warn-banner">
+            <div class="ico">!</div>
+            <div class="body">
+              <strong>Connect your website to share posts to social</strong>
+              <p>Social posts need a link to your site. Connect WordPress first, then you can share and schedule.</p>
+              <div class="btns">
+                <button type="button" class="btn btn-primary" id="btn-connect-cal">Connect WordPress</button>
+              </div>
+            </div>
+          </div>
+          <div class="cal-grid">
+            <div class="cal-cell"><div class="d">Mon 28</div></div>
+            <div class="cal-cell"><div class="d">Tue 29</div></div>
+            <div class="cal-cell"><div class="d">Wed 30</div></div>
+            <div class="cal-cell"><div class="d">Thu 1</div><div class="ev blocked">Blocked</div></div>
+            <div class="cal-cell"><div class="d">Fri 2</div></div>
+            <div class="cal-cell"><div class="d">Sat 3</div></div>
+            <div class="cal-cell"><div class="d">Sun 4</div></div>
+          </div>
+          <p class="note-bar">New post / schedule controls are disabled until website is connected. Plain words for advisors ~50s–60s.</p>
+        </div>
+
+        <div id="screen-share" class="hidden">
+          <div class="share-dialog">
+            <div class="sd-head">
+              <h3>Share to social</h3>
+              <button type="button" class="btn btn-ghost" style="padding:6px 10px">✕</button>
+            </div>
+            <div class="sd-body">
+              <div class="empty-block" style="margin:0;border-style:solid;padding:32px 20px">
+                <div class="big-ico">🌐</div>
+                <h3>Connect your website to share posts to social</h3>
+                <p>Without a website, we can’t add a link to your post. Connect WordPress, then come back to share.</p>
+                <button type="button" class="btn btn-primary" id="btn-connect-share">Connect WordPress</button>
+              </div>
+            </div>
+            <div class="sd-foot">
+              <button type="button" class="btn btn-ghost">Cancel</button>
+              <button type="button" class="btn btn-primary" disabled style="opacity:.45;cursor:not-allowed">Post</button>
+            </div>
+          </div>
+          <p class="note-bar">Share dialog does not open compose — shows gate + Connect CTA only.</p>
+        </div>
+
+        <div id="screen-empty" class="hidden">
+          <div class="empty-block">
+            <div class="big-ico">🔒</div>
+            <h3>Connect your website to share posts to social</h3>
+            <p>Your Facebook, LinkedIn, and Instagram are ready. Connect your website so posts can include a link people can open.</p>
+            <button type="button" class="btn btn-primary" id="btn-connect-empty">Connect WordPress</button>
+          </div>
+          <p class="note-bar">Standalone empty/blocked state — used when landing on Social with WP missing.</p>
+        </div>
+
+        <div id="screen-settings" class="hidden">
+          <div class="settings-title">Social settings</div>
+          <div class="info-box">
+            <span class="i">i</span>
+            <div>Sharing to social requires a connected website. Connect WordPress below, then return to Calendar to post.</div>
+          </div>
+          <div class="section-head">
+            <div class="left">
+              <span class="chan-logo fb">f</span>
+              <h2>Facebook</h2>
+              <span class="pill-ok">Connected</span>
+            </div>
+          </div>
+          <div class="acct-grid">
+            <div class="acct">
+              <div class="row1"><span class="name">Coulas Insurance</span><span class="pill-ok">Page</span></div>
+              <div class="meta">Connected · Jordan Lee</div>
+            </div>
+          </div>
+          <div class="section-head" style="margin-top:8px">
+            <div class="left">
+              <span class="chan-logo" style="background:#1e2a4a;font-size:12px">W</span>
+              <h2>Website / WordPress</h2>
+              <span class="pill-pending">Not connected</span>
+            </div>
+            <button type="button" class="btn btn-primary" id="btn-connect-set">Connect WordPress</button>
+          </div>
+          <div class="acct warn-border pending-border">
+            <div class="row1"><span class="name">No website connected</span></div>
+            <div class="meta">Required before you can share or schedule social posts (Direction A).</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"><span class="ok-dot">●</span> <span id="toast-msg">Opening Connect WordPress…</span></div>
+
+  <script>
+(function () {
+  var screens = ['calendar', 'share', 'empty', 'settings'];
+  var tabs = document.querySelectorAll('.screen-tabs button');
+  var toast = document.getElementById('toast');
+  var toastMsg = document.getElementById('toast-msg');
+
+  function show(name) {
+    tabs.forEach(function (t) { t.classList.toggle('on', t.dataset.screen === name); });
+    screens.forEach(function (s) {
+      var el = document.getElementById('screen-' + s);
+      if (el) el.classList.toggle('hidden', s !== name);
+    });
+  }
+  tabs.forEach(function (t) {
+    t.addEventListener('click', function () { show(t.dataset.screen); });
+  });
+
+  function ping(msg) {
+    toastMsg.textContent = msg;
+    toast.classList.add('show');
+    setTimeout(function () { toast.classList.remove('show'); }, 2200);
+  }
+  ['btn-connect-cal', 'btn-connect-share', 'btn-connect-empty', 'btn-connect-set', 'btn-new-blocked'].forEach(function (id) {
+    var el = document.getElementById(id);
+    if (!el) return;
+    el.addEventListener('click', function () {
+      if (id === 'btn-new-blocked') { ping('Blocked — connect your website first'); return; }
+      ping('Opening Connect WordPress…');
+    });
+  });
+  show('calendar');
+})();
+  </script>
+</body>
+</html>

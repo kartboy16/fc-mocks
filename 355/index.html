@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>FC — #355 Social share without website destination</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #f4f8fc; --card: #fff; --ink: #1e2a4a; --muted: #5b6572;
+      --blue: #2b7de9; --border: #d4e4f2; --mint: #e6f1fb;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: Inter, system-ui, sans-serif; background: var(--bg); color: var(--ink); line-height: 1.55; }
+    .hero {
+      background: linear-gradient(135deg, #1e2a4a 0%, #2b7de9 100%);
+      color: #fff; padding: 40px 24px 36px;
+    }
+    .hero-inner { max-width: 880px; margin: 0 auto; }
+    .hero .eyebrow { font-size: 0.75rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; opacity: 0.85; margin-bottom: 10px; }
+    .hero h1 { font-size: 1.75rem; margin-bottom: 10px; }
+    .hero p { opacity: 0.92; max-width: 720px; font-size: 0.95rem; }
+    .rec {
+      display: inline-block; margin-top: 18px; background: #e8f5e9; color: #065f46;
+      font-weight: 700; font-size: 0.8rem; padding: 8px 14px; border-radius: 999px;
+    }
+    .wrap { max-width: 880px; margin: 0 auto; padding: 28px 24px 72px; }
+    .cta {
+      display: block; background: var(--blue); color: #fff !important; text-decoration: none;
+      text-align: center; padding: 16px 24px; border-radius: 12px; font-weight: 700;
+      font-size: 1rem; margin-bottom: 28px; box-shadow: 0 4px 16px rgba(43,125,233,0.35);
+    }
+    .cta:hover { filter: brightness(1.05); }
+    .cta small { display: block; font-weight: 500; opacity: 0.9; font-size: 0.8rem; margin-top: 4px; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 14px; }
+    .card {
+      background: var(--card); border: 1px solid var(--border); border-radius: 12px;
+      padding: 18px; text-decoration: none; color: inherit; display: block;
+      transition: border-color 0.15s, box-shadow 0.15s;
+    }
+    .card:hover { border-color: var(--blue); box-shadow: 0 4px 16px rgba(30,42,74,0.08); }
+    .card.recd { border-color: #2b7de9; box-shadow: 0 4px 16px rgba(43,125,233,0.12); }
+    .card.alt-dim { opacity: 0.85; }
+    .card h3 { font-size: 0.95rem; margin-bottom: 6px; color: var(--blue); }
+    .card p { font-size: 0.8rem; color: var(--muted); }
+    .card .tag {
+      display: inline-block; font-size: 0.65rem; font-weight: 700; background: var(--mint);
+      color: var(--blue); padding: 2px 8px; border-radius: 999px; margin-bottom: 8px;
+    }
+    .card .tag.rec-tag { background: var(--blue); color: #fff; }
+    .card .tag.dim-tag { background: #e5e7eb; color: #6b7280; }
+    h2 { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--muted); margin: 28px 0 12px; }
+    .problem {
+      margin: 0 0 20px; padding: 14px 16px; background: #fff8eb; border: 1px solid #f0d4a8;
+      border-radius: 10px; font-size: 0.85rem; color: #8a5a10;
+    }
+    .problem strong { color: #6b4408; }
+    .hold {
+      margin: 0 0 20px; padding: 14px 16px; background: #fef3c7; border: 1px solid #fcd34d;
+      border-radius: 10px; font-size: 0.85rem; color: #92400e;
+    }
+    .ac {
+      margin: 0 0 20px; padding: 14px 16px; background: #eff6ff; border: 1px solid #bfdbfe;
+      border-radius: 10px; font-size: 0.85rem; color: #1e40af;
+    }
+    .ac strong { color: #1e3a8a; }
+    .ac ul { margin: 8px 0 0; padding-left: 1.2rem; }
+    .ac li { margin-bottom: 4px; }
+    .contrast {
+      margin: 0 0 20px; padding: 14px 16px; background: #fef2f2; border: 1px solid #fecaca;
+      border-radius: 10px; font-size: 0.85rem; color: #991b1b;
+    }
+    .oos {
+      margin: 0 0 20px; padding: 14px 16px; background: #f3f4f6; border: 1px solid #e5e7eb;
+      border-radius: 10px; font-size: 0.85rem; color: #374151;
+    }
+    .oos ul { margin: 8px 0 0; padding-left: 1.2rem; }
+    .note {
+      margin: 16px 0 0; padding: 12px 14px; background: #eef4fb; border: 1px solid var(--border);
+      border-radius: 10px; font-size: 0.85rem; color: var(--ink);
+    }
+    .meta { margin-top: 32px; font-size: 0.8rem; color: var(--muted); }
+    .meta a { color: var(--blue); }
+    code { background: #eef2f6; padding: 0.1em 0.35em; border-radius: 4px; font-size: 0.85em; }
+    a { color: var(--blue); }
+  </style>
+</head>
+<body>
+  <header class="hero">
+    <div class="hero-inner">
+      <div class="eyebrow">FinancialContent · content-library #355 · Designer mocks</div>
+      <h1>Social share without website destination (WP not required)</h1>
+      <p>The new advisor menu lets people post to social without WordPress connected — but share still assumes a website post URL. Social-only users can hit a missing or dead destination. Pick how we handle that.</p>
+      <span class="rec">Recommend · Direction C — Hybrid warn + post without link</span>
+    </div>
+  </header>
+
+  <div class="wrap">
+    <a class="cta" href="directions/c/index.html">
+      Open Direction C (recommended)
+      <small>Warn before post · Connect website · Post without link · light banner when WP missing</small>
+    </a>
+    <p style="text-align:center;margin:-18px 0 24px;font-size:0.8rem;color:var(--muted)">
+      <a href="build-contract.html">Build contract</a> ·
+      <a href="build-contract.md">Markdown</a> ·
+      <a href="directions-brief.md">Directions brief</a>
+    </p>
+
+    <div class="problem">
+      <strong>Problem:</strong> Social share still assumes a website post URL. With Social connected and WordPress missing, advisors can try to share — and the destination link may be missing or broken. Silent dead links are the failure mode to avoid.
+    </div>
+
+    <div class="hold">
+      <strong>Soft Dev hold · Designer-first · not agent-ready.</strong> Do <em>not</em> wake Soft Dev. Do <em>not</em> mark <code>agent-ready</code>. Wait for Alex pick + CosB tips.
+    </div>
+
+    <div class="contrast">
+      <strong>Why not hard-gate (A)?</strong> Recent product (#332 Setup help, new advisor menu) treats Social / Email / WordPress as <strong>independent</strong> connections. Blocking social until WP is connected fights that model. Social-native (B) is fine if Alex wants zero friction — C keeps independence but prevents silent dead links.
+    </div>
+
+    <div class="ac">
+      <strong>Acceptance sketch (product) — recommend C</strong>
+      <ul>
+        <li>Social share/schedule allowed when WP is missing</li>
+        <li>Before post/schedule: short warn dialog — “No website connected — posts won’t include a link to your site.”</li>
+        <li>Actions: <strong>Connect website</strong> (primary alt) · <strong>Post without link</strong> (secondary) · Cancel</li>
+        <li>After “Post without link,” proceed social-native (copy + media, no site URL)</li>
+        <li>Light banner on Social settings / calendar when WP missing</li>
+        <li>No silent dead-link social shares for WP-less users</li>
+      </ul>
+    </div>
+
+    <div class="ac" style="background:#f8fafc;border-color:#e2e8f0;color:#334155">
+      <strong>Screens to click</strong>
+      <ul>
+        <li><strong>A</strong> — Blocked empty state · share dialog gated · calendar blocked</li>
+        <li><strong>B</strong> — Compose without link · FB/LI/IG preview · optional “Add link later”</li>
+        <li><strong>C</strong> — Banner · warn dialog · connect WP · post without link → social-native</li>
+      </ul>
+    </div>
+
+    <div class="oos">
+      <strong>Out of scope (this pass)</strong>
+      <ul>
+        <li>content-library / Meteor app code</li>
+        <li>Waking Soft Dev · marking agent-ready</li>
+        <li>Real OAuth / publish / PII</li>
+      </ul>
+    </div>
+
+    <h2>Directions</h2>
+    <div class="grid">
+      <a class="card alt-dim" href="directions/a/index.html">
+        <span class="tag dim-tag">ALT</span>
+        <h3>A — Gate until WP connected</h3>
+        <p>Block social share/schedule until WordPress is connected. Clear empty state + Connect website CTA. Fights independent-channel model.</p>
+      </a>
+      <a class="card alt-dim" href="directions/b/index.html">
+        <span class="tag dim-tag">ALT</span>
+        <h3>B — Social-native (no site link)</h3>
+        <p>Allow share with copy + media only. No site URL required (optional Add link later). Zero friction; no warn.</p>
+      </a>
+      <a class="card recd" href="directions/c/index.html">
+        <span class="tag rec-tag">RECOMMEND</span>
+        <h3>C — Hybrid warn + post without link</h3>
+        <p>Allow social when WP missing, but warn before post. Connect website · Post without link · Cancel. Banner when WP missing.</p>
+      </a>
+    </div>
+
+    <h2>Build contract (provisional · recommend C)</h2>
+    <div class="note" style="margin-top:0">
+      Recommend C: warn before post when WP missing; never silent dead links. Full AC: <a href="build-contract.html">build-contract.html</a>. Soft Dev hold until Alex locks.
+    </div>
+
+    <div class="meta">
+      <p>Issue: <a href="https://github.com/kartboy16/content-library/issues/355">content-library #355</a> · related <a href="https://github.com/kartboy16/content-library/issues/332">#332</a></p>
+      <p>Repo: <a href="https://github.com/kartboy16/fc-mocks">kartboy16/fc-mocks</a> · path <code>/355/</code></p>
+      <p>Live: <a href="https://kartboy16.github.io/fc-mocks/355/">kartboy16.github.io/fc-mocks/355/</a></p>
+    </div>
+  </div>
+</body>
+</html>
