@@ -41,7 +41,7 @@
       <div class="content">
         <div class="dir-label">
           <strong>Direction B — Firm Users / team admin</strong>
-          · Row action invite; when launched in <em>Admin as user</em> context, recipient is <strong>prefilled</strong> (or the impersonated row is already selected).
+          · Row action invite; when launched in <em>Admin as user</em> context, recipient is <strong>locked</strong> to the impersonated advisor only — no alternate-user picker.
           <span class="admin-only" style="margin-left:8px" id="admin-badge">Admin only</span>
         </div>
 
@@ -65,7 +65,7 @@
             <span class="i">i</span>
             <div>
               Invite an advisor to connect <strong>Facebook, LinkedIn, or Instagram with their own login</strong>.
-              You’re impersonating <strong>Jordan Lee</strong> — opening invite from their row (or the primary CTA) prefills Jordan; no search required. OAuth still runs as <em>their</em> login, not yours.
+              You’re impersonating <strong>Jordan Lee</strong> — invite is locked to Jordan only (no different-user search). OAuth still runs as <em>their</em> login, not yours.
             </div>
           </div>
 
@@ -147,7 +147,7 @@
                   </td>
                   <td><span class="pill-pending">None yet</span></td>
                   <td>
-                    <button type="button" class="btn btn-outline" id="open-invite-2" style="padding:6px 10px;font-size:12px">Invite social connect</button>
+                    <button type="button" class="btn btn-ghost" id="open-invite-2" style="padding:6px 10px;font-size:12px" disabled title="Admin as user locks invite to Jordan Lee">Locked to impersonated user</button>
                   </td>
                 </tr>
               </tbody>
@@ -157,7 +157,7 @@
             <strong>Hard rule</strong>
             Invite → user OAuth as themselves. Do not conflate with #237 admin reconnect / admin Meta login attaching Pages.
           </div>
-          <p class="note-bar">Admin-as-user context: Jordan’s row highlighted · invite opens prefilled. Deep-link to Direction A for Settings entry. OAuth still as advisor’s own login.</p>
+          <p class="note-bar">Admin-as-user context: Jordan’s row highlighted · invite locked to Jordan only (no different-user). Other rows’ invite disabled while impersonating. OAuth still as advisor’s own login.</p>
         </section>
 
         <section id="screen-email" class="hidden">
@@ -249,10 +249,10 @@
       <div class="modal-body">
         <div class="oauth-note" style="margin-top:0">
           <strong>OAuth runs as this advisor — not your admin Meta account</strong>
-          Prefill from Admin as user / selected row. Jordan authorizes with <em>their own</em> login.
+          Locked to the impersonated advisor. Jordan authorizes with <em>their own</em> login.
         </div>
         <div class="field" style="margin-bottom:8px">
-          <label>Recipient <span style="font-weight:500;text-transform:none;letter-spacing:0;color:var(--admin)">(prefilled)</span></label>
+          <label>Recipient <span style="font-weight:500;text-transform:none;letter-spacing:0;color:var(--admin)">(locked · Admin as user)</span></label>
           <div class="recipient-locked" id="recipient-locked">
             <span class="av">JL</span>
             <div class="body">
@@ -261,23 +261,7 @@
             </div>
             <span class="lock-tag">🔒 Locked</span>
           </div>
-          <button type="button" class="link-quiet" id="toggle-other">Invite a different user…</button>
-        </div>
-        <div id="other-user-search" class="hidden" style="margin-bottom:14px">
-          <div class="field" style="margin-bottom:8px">
-            <label>Search</label>
-            <input type="search" placeholder="Search by name or email…" />
-          </div>
-          <div class="user-pick">
-            <div class="user-row sel" data-user="jordan">
-              <span class="av">JL</span>
-              <div><div class="nm">Jordan Lee</div><div class="em">jordan.lee@coulas.example</div></div>
-            </div>
-            <div class="user-row" data-user="riley">
-              <span class="av" style="background:#7c3aed">RT</span>
-              <div><div class="nm">Riley Tran</div><div class="em">riley.tran@coulas.example</div></div>
-            </div>
-          </div>
+          <p class="note-bar" style="margin-top:8px;border:none;padding-top:0;margin-bottom:0">Admin as user · recipient locked to the impersonated advisor — no alternate-user picker.</p>
         </div>
         <div class="field">
           <label>Channels</label>
@@ -335,43 +319,7 @@
   document.querySelectorAll('[data-goto]').forEach(el => el.addEventListener('click', e => { e.preventDefault(); show(el.dataset.goto); }));
   const invite = document.getElementById('invite');
   const toast = document.getElementById('toast');
-  const recipientLocked = document.getElementById('recipient-locked');
-  const otherSearch = document.getElementById('other-user-search');
-  const toggleOther = document.getElementById('toggle-other');
-  function setRecipient(nm, em, av, avBg, locked) {
-    recipientLocked.querySelector('.nm').textContent = nm;
-    recipientLocked.querySelector('.em').textContent = em;
-    recipientLocked.querySelector('.av').textContent = av;
-    recipientLocked.querySelector('.av').style.background = avBg || '';
-    recipientLocked.querySelector('.lock-tag').textContent = locked ? '🔒 Locked' : 'Selected';
-  }
-  function openInvite(prefillJordan) {
-    otherSearch.classList.add('hidden');
-    toggleOther.textContent = 'Invite a different user…';
-    if (prefillJordan) {
-      setRecipient('Jordan Lee', 'jordan.lee@coulas.example · Coulas Insurance', 'JL', '', true);
-    } else {
-      setRecipient('Riley Tran', 'riley.tran@coulas.example · Coulas Insurance', 'RT', '#7c3aed', true);
-    }
-    invite.classList.add('open');
-  }
-  document.getElementById('open-invite').addEventListener('click', () => openInvite(true));
-  document.getElementById('open-invite-2').addEventListener('click', () => openInvite(false));
-  toggleOther.addEventListener('click', () => {
-    const open = !otherSearch.classList.contains('hidden');
-    otherSearch.classList.toggle('hidden', open);
-    toggleOther.textContent = open ? 'Invite a different user…' : 'Keep current recipient';
-  });
-  document.querySelectorAll('#other-user-search .user-row').forEach(row => {
-    row.addEventListener('click', () => {
-      document.querySelectorAll('#other-user-search .user-row').forEach(r => r.classList.remove('sel'));
-      row.classList.add('sel');
-      const avEl = row.querySelector('.av');
-      setRecipient(row.querySelector('.nm').textContent, row.querySelector('.em').textContent + ' · Coulas Insurance', avEl.textContent, avEl.style.background, false);
-      otherSearch.classList.add('hidden');
-      toggleOther.textContent = 'Invite a different user…';
-    });
-  });
+  document.getElementById('open-invite').addEventListener('click', () => invite.classList.add('open'));
   ['close-invite','cancel-invite'].forEach(id => document.getElementById(id).addEventListener('click', () => invite.classList.remove('open')));
   document.getElementById('send-invite').addEventListener('click', () => {
     invite.classList.remove('open');

@@ -23,7 +23,7 @@
   <p class="warn"><strong>PROVISIONAL</strong> — Recommend Direction A. Not locked. Do <strong>not</strong> mark agent-ready until Alex locks a direction and Soft Dev is explicitly woken.</p>
   <p class="ok"><strong>Recommend:</strong> Direction A — Invite from Social Media → Settings (“Invite user to connect”).</p>
   <p class="hold"><strong>Soft Dev hold · Idea / playground.</strong> Soft Dev not woken. CosB will ask Alex in <code>#fc-bugs</code>.</p>
-  <p class="rule"><strong>Hard rule:</strong> Invite flow = user OAuth as <em>themselves</em> (their Meta/LI/IG login — not the admin’s). FC “Admin as user” only prefills the recipient; it does not OAuth as the admin. Do <strong>not</strong> conflate with <a href="https://github.com/kartboy16/content-library/issues/237">#237</a> admin reconnect teaching.</p>
+  <p class="rule"><strong>Hard rule:</strong> Invite flow = user OAuth as <em>themselves</em> (their Meta/LI/IG login — not the admin’s). FC “Admin as user” locks the recipient to the impersonated advisor (no alternate-user picker); it does not OAuth as the admin. Do <strong>not</strong> conflate with <a href="https://github.com/kartboy16/content-library/issues/237">#237</a> admin reconnect teaching.</p>
 
   <h1>Build contract · Admin invite user social connect (#328)</h1>
   <p>Markdown: <a href="build-contract.md">build-contract.md</a> · Hub: <a href="index.html">index.html</a> · Mock: <a href="directions/a/">Direction A</a></p>
@@ -43,7 +43,7 @@
 
   <h2>Beats (required in product)</h2>
   <ol>
-    <li><strong>Admin UI</strong> — recipient + multi-select FB / LI / IG (+ optional note) → send invite. When <strong>admin is logged in as a user</strong>, recipient is <strong>prefilled/locked</strong> to that advisor (no search required).</li>
+    <li><strong>Admin UI</strong> — recipient + multi-select FB / LI / IG (+ optional note) → send invite. When <strong>admin is logged in as a user</strong>, recipient is <strong>locked</strong> to that advisor only — <em>no alternate-user picker</em> in that mode.</li>
     <li><strong>Email</strong> — clear copy that user must use their own login + CTA</li>
     <li><strong>User flow</strong> — signed in as themselves → OAuth with their login → destination picker → success</li>
   </ol>
@@ -51,11 +51,11 @@
   <h2>Admin-as-user AC (Alex · mandatory)</h2>
   <ul>
     <li>Top chrome: <strong>Admin as user · [User · Firm]</strong> pill on admin screens.</li>
-    <li>Primary path (A): Social Settings while impersonating → Invite opens with name + email locked to the impersonated user; channels still multi-select.</li>
-    <li>Optional: “Invite a different user…” expands search; default stays autofill.</li>
+    <li>Primary path (A): Social Settings while impersonating → Invite recipient <strong>locked</strong> to the impersonated user only; channels still multi-select.</li>
+    <li>Do <strong>not</strong> offer “Invite a different user…” / search / Change user while Admin as user.</li>
     <li>Copy: OAuth still runs as <em>that user</em> (their login), not the admin’s Meta account.</li>
-    <li>B: Users-table invite from admin-as-user → same autofill (or row already selected).</li>
-    <li>C: Wizard “Choose user” skipped / pre-completed when admin-as-user; land on Channels.</li>
+    <li>B: Users-table invite from admin-as-user → locked to that user (other-row invite disabled while impersonating).</li>
+    <li>C: Wizard “Choose user” pre-completed and locked; no “Change user” in impersonation path; land on Channels.</li>
   </ul>
 
   <h2>Copy / UX rules</h2>

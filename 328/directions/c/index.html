@@ -33,12 +33,12 @@
       </div>
       <div class="page-head">
         <h1 id="page-title">Invite social connect</h1>
-        <p id="page-sub">Guided wizard — user prefilled from Admin as user; channels → preview → send.</p>
+        <p id="page-sub">Guided wizard — user locked from Admin as user; channels → preview → send.</p>
       </div>
       <div class="content">
         <div class="dir-label">
           <strong>Direction C — Guided checklist wizard</strong>
-          · Admin-as-user → step “Choose user” is <strong>skipped / pre-completed</strong> with the impersonated advisor. Starts on Channels.
+          · Admin-as-user → step “Choose user” is <strong>pre-completed and locked</strong> to the impersonated advisor — no “Change user”. Starts on Channels.
           <span class="admin-only" style="margin-left:8px" id="admin-badge">Admin only</span>
         </div>
 
@@ -54,43 +54,26 @@
         <section id="screen-admin">
           <div class="panel">
             <div class="wizard-steps" id="wiz-steps">
-              <div class="wiz-step done" data-wiz="1"><span class="n">1</span> Choose user <span class="skip-badge">Skipped</span></div>
+              <div class="wiz-step done" data-wiz="1"><span class="n">1</span> Choose user <span class="skip-badge">Locked</span></div>
               <div class="wiz-step on" data-wiz="2"><span class="n">2</span> Channels</div>
               <div class="wiz-step" data-wiz="3"><span class="n">3</span> Preview email</div>
               <div class="wiz-step" data-wiz="4"><span class="n">4</span> Send</div>
             </div>
 
             <div id="wiz-1" class="hidden">
-              <h3>Choose advisor <span class="skip-badge">Pre-completed</span></h3>
-              <p class="sub">Admin as user · Jordan Lee — no search needed. Change only if inviting someone else.</p>
+              <h3>Choose advisor <span class="skip-badge">Locked</span></h3>
+              <p class="sub">Admin as user · Jordan Lee — recipient locked; no alternate-user picker in this path.</p>
               <div class="recipient-locked" style="margin-bottom:12px">
                 <span class="av">JL</span>
                 <div class="body">
                   <div class="nm">Jordan Lee</div>
                   <div class="em">jordan.lee@coulas.example · Coulas Insurance</div>
                 </div>
-                <span class="lock-tag">🔒 Prefilled</span>
-              </div>
-              <button type="button" class="link-quiet" id="toggle-other-c" style="margin-bottom:12px">Invite a different user…</button>
-              <div id="other-user-search-c" class="hidden" style="margin-bottom:14px">
-                <div class="field" style="margin-bottom:8px">
-                  <label>Search</label>
-                  <input type="search" placeholder="Search by name or email…" />
-                </div>
-                <div class="user-pick">
-                  <div class="user-row sel">
-                    <span class="av">JL</span>
-                    <div><div class="nm">Jordan Lee</div><div class="em">jordan.lee@coulas.example · Coulas Insurance</div></div>
-                  </div>
-                  <div class="user-row">
-                    <span class="av" style="background:#5b6572">RT</span>
-                    <div><div class="nm">Riley Tran</div><div class="em">riley.tran@coulas.example</div></div>
-                  </div>
-                </div>
+                <span class="lock-tag">🔒 Locked</span>
               </div>
               <div class="oauth-note">
                 <strong>OAuth still runs as this advisor</strong>
-                Prefill is from FC impersonation only — Meta/LI/IG login is Jordan’s, not the admin’s.
+                Lock is from FC impersonation only — Meta/LI/IG login is Jordan’s, not the admin’s.
               </div>
               <div class="actions">
                 <button type="button" class="btn btn-primary" id="wiz-next-1">Continue to channels</button>
@@ -99,14 +82,14 @@
 
             <div id="wiz-2">
               <h3>Choose channels</h3>
-              <p class="sub">Recipient locked to <strong>Jordan Lee</strong> (Admin as user). Multi-select — they’ll see a checklist for each network.</p>
+              <p class="sub">Recipient <strong>locked</strong> to Jordan Lee (Admin as user) — no Change user. Multi-select — they’ll see a checklist for each network.</p>
               <div class="recipient-locked" style="margin-bottom:14px">
                 <span class="av">JL</span>
                 <div class="body">
                   <div class="nm">Jordan Lee</div>
                   <div class="em">jordan.lee@coulas.example · Coulas Insurance</div>
                 </div>
-                <span class="lock-tag">🔒 Prefilled</span>
+                <span class="lock-tag">🔒 Locked</span>
               </div>
               <div class="chan-checks" style="margin:12px 0 8px">
                 <label class="chan-check sel"><input type="checkbox" checked /> <span class="chan-logo fb" style="width:20px;height:20px;font-size:11px">f</span> Facebook</label>
@@ -122,7 +105,6 @@
                 <textarea>Please connect all three this week — use your own logins.</textarea>
               </div>
               <div class="actions">
-                <button type="button" class="btn btn-ghost" id="wiz-back-2">Change user</button>
                 <button type="button" class="btn btn-primary" id="wiz-next-2">Preview email</button>
               </div>
             </div>
@@ -160,9 +142,9 @@
           </div>
           <div class="hard-rule">
             <strong>Hard rule</strong>
-            Wizard never asks admin to OAuth for the user. Admin-as-user only prefills the recipient. Contrast #237 (admin reconnect teaching) — different problem.
+            Wizard never asks admin to OAuth for the user. Admin-as-user locks the recipient (no Change user / alternate picker). Contrast #237 (admin reconnect teaching) — different problem.
           </div>
-          <p class="note-bar">Default: wizard opens on Channels with Choose user skipped. “Change user” reveals the optional search path.</p>
+          <p class="note-bar">Default: wizard opens on Channels with Choose user pre-completed and locked. No “Change user” / alternate-user escape hatch while impersonating.</p>
         </section>
 
         <!-- EMAIL -->
@@ -314,7 +296,7 @@
     if (adminBadge) adminBadge.classList.toggle('hidden', !isAdmin);
     if (pageTitle) pageTitle.textContent = isEmail ? 'Invite email' : (isAdmin ? 'Invite social connect' : 'Connection checklist');
     if (pageSub) pageSub.textContent = isAdmin
-      ? 'Guided wizard — user prefilled from Admin as user; channels → preview → send.'
+      ? 'Guided wizard — user locked from Admin as user; channels → preview → send.'
       : (isEmail ? 'Multi-channel invite the user receives.' : 'Use your own network login for each channel.');
   }
 
@@ -341,27 +323,13 @@
     });
   }
   document.getElementById('wiz-next-1').addEventListener('click', () => setWiz(2));
-  document.getElementById('wiz-back-2').addEventListener('click', () => setWiz(1));
   document.getElementById('wiz-next-2').addEventListener('click', () => setWiz(3));
   document.getElementById('wiz-back-3').addEventListener('click', () => setWiz(2));
   document.getElementById('wiz-next-3').addEventListener('click', () => setWiz(4));
   document.getElementById('wiz-reset').addEventListener('click', () => setWiz(2));
-  const otherC = document.getElementById('other-user-search-c');
-  const toggleC = document.getElementById('toggle-other-c');
-  if (toggleC) toggleC.addEventListener('click', () => {
-    const open = !otherC.classList.contains('hidden');
-    otherC.classList.toggle('hidden', open);
-    toggleC.textContent = open ? 'Invite a different user…' : 'Keep Jordan Lee';
-  });
-  // Admin-as-user default: land on Channels (step 2), Choose user already done
+  // Admin-as-user default: land on Channels (step 2), Choose user locked/pre-completed
   setWiz(2);
 
-  document.querySelectorAll('.user-row').forEach(row => {
-    row.addEventListener('click', () => {
-      document.querySelectorAll('.user-row').forEach(r => r.classList.remove('sel'));
-      row.classList.add('sel');
-    });
-  });
   document.querySelectorAll('.chan-check').forEach(row => {
     row.addEventListener('click', e => {
       if (e.target.tagName === 'INPUT') { row.classList.toggle('sel', e.target.checked); return; }

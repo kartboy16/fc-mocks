@@ -96,7 +96,7 @@
   <div class="wrap">
     <a class="cta" href="directions/a/index.html">
       Open Direction A (recommended)
-      <small>Social Settings · admin-as-user autofill · email · user OAuth as themselves</small>
+      <small>Social Settings · admin-as-user locked recipient · email · user OAuth as themselves</small>
     </a>
     <p style="text-align:center;margin:-18px 0 24px;font-size:0.8rem;color:var(--muted)">
       <a href="build-contract.html">Provisional build contract</a> ·
@@ -119,8 +119,8 @@
     <div class="ac">
       <strong>Acceptance (Alex feedback · admin-as-user)</strong>
       <ul>
-        <li>When an <strong>admin is logged in as a user</strong> (FC impersonation), Invite opens with the recipient <strong>locked/prefilled</strong> to that advisor — <em>no search required</em>.</li>
-        <li>Optional “Invite a different user…” expands search; default remains autofill.</li>
+        <li>When an <strong>admin is logged in as a user</strong> (FC impersonation), Invite recipient is <strong>locked</strong> to that advisor only — <em>no alternate-user picker</em> in that mode.</li>
+        <li>Do <strong>not</strong> offer “Invite a different user…” / search / Change user while impersonating.</li>
         <li>OAuth still runs as <strong>that user’s</strong> Meta/LI/IG login — not the admin’s account.</li>
         <li>Top chrome shows <strong>Admin as user · [User · Firm]</strong> pill on admin screens.</li>
       </ul>
@@ -129,7 +129,7 @@
     <div class="ac" style="background:#f8fafc;border-color:#e2e8f0;color:#334155">
       <strong>Beats covered in every direction (screen tabs)</strong>
       <ul>
-        <li><strong>Admin UI</strong> — recipient (autofill when impersonating) + channel(s) (FB / LI / IG) → send invite email</li>
+        <li><strong>Admin UI</strong> — recipient (locked when impersonating) + channel(s) (FB / LI / IG) → send invite email</li>
         <li><strong>Email</strong> the user receives (copy + CTA)</li>
         <li><strong>User/advisor flow</strong> — signed in as themselves → Connect with own login → destination picker → success</li>
       </ul>
@@ -149,23 +149,23 @@
       <a class="card recd" href="directions/a/index.html">
         <span class="tag rec-tag">RECOMMEND</span>
         <h3>A — From Social Settings</h3>
-        <p>Admin-as-user on Social Settings → <strong>Invite user to connect</strong> opens with recipient <strong>prefilled/locked</strong> to the impersonated advisor. Optional “different user…” search. Channels + note + Send. Email + user OAuth landing.</p>
+        <p>Admin-as-user on Social Settings → <strong>Invite user to connect</strong> opens with recipient <strong>locked</strong> to the impersonated advisor only (no different-user search). Channels + note + Send. Email + user OAuth landing.</p>
       </a>
       <a class="card" href="directions/b/index.html">
         <span class="tag">ALT</span>
         <h3>B — Firm Users / team admin</h3>
-        <p>Users-table row action. Admin-as-user: impersonated row highlighted; invite opens <strong>prefilled</strong> (or row already selected). Optional deep-link to Social Settings.</p>
+        <p>Users-table row action. Admin-as-user: impersonated row highlighted; invite <strong>locked</strong> to that user only (no alternate picker). Optional deep-link to Social Settings.</p>
       </a>
       <a class="card" href="directions/c/index.html">
         <span class="tag">ALT</span>
         <h3>C — Guided checklist wizard</h3>
-        <p>Wizard: Choose user is <strong>skipped/pre-completed</strong> when Admin as user. Lands on Channels → Preview → Send. User checklist then OAuth.</p>
+        <p>Wizard: Choose user is <strong>pre-completed and locked</strong> when Admin as user — no Change user. Lands on Channels → Preview → Send. User checklist then OAuth.</p>
       </a>
     </div>
 
     <h2>Provisional build contract (recommend A)</h2>
     <div class="note" style="margin-top:0">
-      Entry: Social Settings → Invite user to connect. Admin-as-user → recipient autofill. User must OAuth as themselves. Channels: FB / LI / IG. Full text: <a href="build-contract.html">build-contract.html</a>.
+      Entry: Social Settings → Invite user to connect. Admin-as-user → recipient locked (no alternate-user picker). User must OAuth as themselves. Channels: FB / LI / IG. Full text: <a href="build-contract.html">build-contract.html</a>.
     </div>
 
     <div class="meta">
