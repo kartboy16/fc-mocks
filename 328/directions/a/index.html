@@ -29,7 +29,7 @@
     </aside>
     <div class="main">
       <div class="top-utils" id="top-utils">
-        <span class="impersonate" id="admin-pill">Admin as user · Coulas Insurance</span>
+        <span class="impersonate" id="admin-pill">Admin as user · Jordan Lee · Coulas Insurance</span>
         <span style="color:var(--blue)">⚙ Settings</span>
       </div>
       <div class="page-head">
@@ -43,7 +43,7 @@
       <div class="content">
         <div class="dir-label">
           <strong>Direction A — Invite from Social Settings</strong>
-          · Admin sees company connections + <em>Invite user to connect</em>.
+          · Admin-as-user → <em>Invite user to connect</em> opens with recipient <strong>prefilled</strong> to the impersonated advisor (no search required).
           <span class="admin-only" style="margin-left:8px" id="admin-badge">Admin only</span>
         </div>
 
@@ -147,7 +147,7 @@
             <strong>Hard rule (copy in product)</strong>
             Invite flow must make the user OAuth as <em>themselves</em>. Do not use admin Meta/LinkedIn/Instagram login to attach the user’s Page. Contrast: #237 admin reconnect teaching is a different problem.
           </div>
-          <p class="note-bar">Mock note: Admin-as-user pill stays on admin screens. User flow tabs switch to “Signed in as Jordan Lee” (no impersonation).</p>
+          <p class="note-bar">Mock note: Admin-as-user pill = FC impersonation context (who to invite). User OAuth still runs as <em>that advisor’s</em> Meta/LI/IG login — not the admin’s. User-flow tabs switch to “Signed in as Jordan Lee”.</p>
         </section>
 
         <!-- EMAIL -->
@@ -249,7 +249,7 @@
     </div>
   </div>
 
-  <!-- Invite modal -->
+  <!-- Invite modal — admin-as-user: recipient locked/prefilled -->
   <div class="overlay" id="invite" role="dialog" aria-modal="true" aria-labelledby="invite-title">
     <div class="modal">
       <div class="modal-head">
@@ -260,29 +260,51 @@
         <button type="button" class="btn btn-ghost" id="close-invite" style="padding:6px 10px" aria-label="Close">✕</button>
       </div>
       <div class="modal-body">
-        <div class="self-rule" style="margin-top:0">
-          <strong>They’ll use their own login</strong>
-          The invite email sends the advisor to OAuth as themselves — not as you, and not via admin impersonation.
+        <div class="oauth-note" style="margin-top:0">
+          <strong>OAuth runs as this advisor — not your admin Meta account</strong>
+          Jordan will authorize Facebook / LinkedIn / Instagram with <em>their own</em> login. FC impersonation only prefills who to invite; it does not OAuth as you.
         </div>
-        <div class="field">
-          <label>Search advisor / user</label>
-          <input type="search" placeholder="Search by name or email…" value="Jordan" />
-        </div>
-        <div class="user-pick" style="margin-bottom:14px">
-          <div class="user-row sel">
+        <div class="field" style="margin-bottom:8px">
+          <label>Recipient <span style="font-weight:500;text-transform:none;letter-spacing:0;color:var(--admin)">(prefilled · Admin as user)</span></label>
+          <div class="recipient-locked" id="recipient-locked">
             <span class="av">JL</span>
-            <div>
+            <div class="body">
               <div class="nm">Jordan Lee</div>
               <div class="em">jordan.lee@coulas.example · Coulas Insurance</div>
             </div>
+            <span class="lock-tag">🔒 Locked</span>
           </div>
-          <div class="user-row">
-            <span class="av" style="background:#5b6572">SM</span>
-            <div>
-              <div class="nm">Sam Morgan</div>
-              <div class="em">sam.morgan@coulas.example · Coulas Insurance</div>
+          <button type="button" class="link-quiet" id="toggle-other">Invite a different user…</button>
+        </div>
+        <div id="other-user-search" class="hidden" style="margin-bottom:14px">
+          <div class="field" style="margin-bottom:8px">
+            <label>Search advisor / user</label>
+            <input type="search" placeholder="Search by name or email…" id="other-search-input" />
+          </div>
+          <div class="user-pick">
+            <div class="user-row" data-user="jordan">
+              <span class="av">JL</span>
+              <div>
+                <div class="nm">Jordan Lee</div>
+                <div class="em">jordan.lee@coulas.example · Coulas Insurance</div>
+              </div>
+            </div>
+            <div class="user-row" data-user="sam">
+              <span class="av" style="background:#5b6572">SM</span>
+              <div>
+                <div class="nm">Sam Morgan</div>
+                <div class="em">sam.morgan@coulas.example · Coulas Insurance</div>
+              </div>
+            </div>
+            <div class="user-row" data-user="riley">
+              <span class="av" style="background:#7c3aed">RT</span>
+              <div>
+                <div class="nm">Riley Tran</div>
+                <div class="em">riley.tran@coulas.example · Coulas Insurance</div>
+              </div>
             </div>
           </div>
+          <p class="note-bar" style="margin-top:8px;border:none;padding-top:0">Optional — default stays the impersonated user. Selecting another unlocks the recipient.</p>
         </div>
         <div class="field">
           <label>Channels to invite</label>
@@ -327,7 +349,7 @@
     if (adminPill) {
       if (isAdmin) {
         adminPill.className = 'impersonate';
-        adminPill.textContent = 'Admin as user · Coulas Insurance';
+        adminPill.textContent = 'Admin as user · Jordan Lee · Coulas Insurance';
       } else if (!isEmail) {
         adminPill.className = 'signed-as';
         adminPill.textContent = 'Signed in as Jordan Lee · Coulas Insurance';
@@ -372,6 +394,47 @@
     show('user');
   });
 
+  const otherSearch = document.getElementById('other-user-search');
+  const toggleOther = document.getElementById('toggle-other');
+  const recipientLocked = document.getElementById('recipient-locked');
+  toggleOther.addEventListener('click', () => {
+    const open = !otherSearch.classList.contains('hidden');
+    if (open) {
+      otherSearch.classList.add('hidden');
+      toggleOther.textContent = 'Invite a different user…';
+      recipientLocked.querySelector('.lock-tag').textContent = '🔒 Locked';
+    } else {
+      otherSearch.classList.remove('hidden');
+      toggleOther.textContent = 'Keep current user (Jordan Lee)';
+    }
+  });
+  document.querySelectorAll('#other-user-search .user-row').forEach(row => {
+    row.addEventListener('click', () => {
+      document.querySelectorAll('#other-user-search .user-row').forEach(r => r.classList.remove('sel'));
+      row.classList.add('sel');
+      const nm = row.querySelector('.nm').textContent;
+      const em = row.querySelector('.em').textContent;
+      const av = row.querySelector('.av').textContent;
+      const avBg = row.querySelector('.av').style.background || '';
+      recipientLocked.querySelector('.nm').textContent = nm;
+      recipientLocked.querySelector('.em').textContent = em;
+      recipientLocked.querySelector('.av').textContent = av;
+      recipientLocked.querySelector('.av').style.background = avBg || '';
+      recipientLocked.querySelector('.lock-tag').textContent = 'Selected';
+      otherSearch.classList.add('hidden');
+      toggleOther.textContent = 'Invite a different user…';
+    });
+  });
+  document.getElementById('open-invite').addEventListener('click', () => {
+    otherSearch.classList.add('hidden');
+    toggleOther.textContent = 'Invite a different user…';
+    recipientLocked.querySelector('.nm').textContent = 'Jordan Lee';
+    recipientLocked.querySelector('.em').textContent = 'jordan.lee@coulas.example · Coulas Insurance';
+    recipientLocked.querySelector('.av').textContent = 'JL';
+    recipientLocked.querySelector('.av').style.background = '';
+    recipientLocked.querySelector('.lock-tag').textContent = '🔒 Locked';
+  }, true);
+
   document.querySelectorAll('.chan-check').forEach(row => {
     row.addEventListener('click', (e) => {
       if (e.target.tagName === 'INPUT') {
@@ -381,12 +444,6 @@
       const cb = row.querySelector('input');
       cb.checked = !cb.checked;
       row.classList.toggle('sel', cb.checked);
-    });
-  });
-  document.querySelectorAll('.user-row').forEach(row => {
-    row.addEventListener('click', () => {
-      document.querySelectorAll('.user-row').forEach(r => r.classList.remove('sel'));
-      row.classList.add('sel');
     });
   });
   document.querySelectorAll('.page-row').forEach(row => {

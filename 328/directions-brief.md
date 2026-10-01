@@ -2,13 +2,15 @@
 
 **Recommend A.** Soft Dev hold · Idea track · not agent-ready.
 
+**Alex AC:** Admin logged in as user → invite recipient **prefilled/locked** to that advisor (no search). OAuth still as that user’s login.
+
 | Dir | Pattern | Why / tradeoff |
 | --- | --- | --- |
-| **A** | Invite from Social Settings | Natural home next to connections; clear “Invite user to connect”; admin-as-user context. Best default. |
-| **B** | Firm Users row action | Discovers invite where admins manage people; optional deep-link to Settings. Good complement, weaker as sole entry. |
-| **C** | Guided checklist wizard | Best for multi-channel invites; more steps for single-channel. User checklist landing is strong. |
+| **A** | Invite from Social Settings | Natural home; admin-as-user autofill primary path; optional “different user…” search. Best default. |
+| **B** | Firm Users row action | Impersonated row highlighted; invite opens prefilled. Good complement. |
+| **C** | Guided checklist wizard | “Choose user” skipped when admin-as-user; lands on Channels. Strong multi-channel. |
 
-Beats in every direction (screen tabs): Admin UI · Invite email · User OAuth (+ destination / success).  
-Hard rule: user OAuth as themselves — not admin Meta attach (#237 is different).
+Beats: Admin UI (autofill when impersonating) · Invite email · User OAuth (+ destination / success).  
+Hard rule: user OAuth as themselves — Admin as user only prefills recipient (#237 is different).
 
 Live: https://kartboy16.github.io/fc-mocks/328/

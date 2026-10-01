@@ -6,20 +6,28 @@
 **A — Invite from Social Media → Settings** (“Invite user to connect”).
 
 ## Hard rule
-User OAuth as **themselves**. Do not use admin Meta/LI/IG login to attach the user’s Page. Do **not** conflate with [#237](https://github.com/kartboy16/content-library/issues/237) admin reconnect teaching.
+User OAuth as **themselves** (their Meta/LI/IG login — not the admin’s). FC “Admin as user” only **prefills** the recipient; it does not OAuth as the admin. Do **not** conflate with [#237](https://github.com/kartboy16/content-library/issues/237) admin reconnect teaching.
 
 ## One-liner
 Admins invite an advisor by email to add Facebook / LinkedIn / Instagram with the user’s own login, then attach Page/destination to the company on FC.
 
+## Admin-as-user AC (Alex · mandatory)
+- Top chrome: **Admin as user · [User · Firm]** pill.
+- While impersonating → Invite opens with recipient **locked/prefilled** (name + email); **no search required**.
+- Optional “Invite a different user…” expands search; default = autofill.
+- Copy: OAuth still runs as **that user**, not the admin’s Meta account.
+- B: same autofill / row selected from Users table.
+- C: “Choose user” skipped / pre-completed; land on Channels.
+
 ## Entry points
 | Entry | Dir |
 | --- | --- |
-| Social Settings → Invite user to connect | **A** (rec) |
+| Social Settings → Invite user to connect (autofill when admin-as-user) | **A** (rec) |
 | Firm Users row → Invite social connect | B |
-| Wizard: User → Channels → Preview → Send | C |
+| Wizard: User (skip if impersonating) → Channels → Preview → Send | C |
 
 ## Beats
-1. Admin — pick user + channels (FB/LI/IG) + optional note → send  
+1. Admin — recipient (autofill when impersonating) + channels (FB/LI/IG) + optional note → send  
 2. Email — own-login copy + CTA  
 3. User — signed in as themselves → OAuth → destination → success  
 

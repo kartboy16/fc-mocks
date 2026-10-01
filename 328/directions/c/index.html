@@ -28,17 +28,17 @@
     </aside>
     <div class="main">
       <div class="top-utils">
-        <span class="impersonate" id="admin-pill">Admin as user · Coulas Insurance</span>
+        <span class="impersonate" id="admin-pill">Admin as user · Jordan Lee · Coulas Insurance</span>
         <span style="color:var(--blue)">⚙ Settings</span>
       </div>
       <div class="page-head">
         <h1 id="page-title">Invite social connect</h1>
-        <p id="page-sub">Guided wizard — choose user, channels, preview email, send.</p>
+        <p id="page-sub">Guided wizard — user prefilled from Admin as user; channels → preview → send.</p>
       </div>
       <div class="content">
         <div class="dir-label">
           <strong>Direction C — Guided checklist wizard</strong>
-          · Multi-step admin: User → Channels → Preview → Send. User side: checklist then OAuth.
+          · Admin-as-user → step “Choose user” is <strong>skipped / pre-completed</strong> with the impersonated advisor. Starts on Channels.
           <span class="admin-only" style="margin-left:8px" id="admin-badge">Admin only</span>
         </div>
 
@@ -54,52 +54,75 @@
         <section id="screen-admin">
           <div class="panel">
             <div class="wizard-steps" id="wiz-steps">
-              <div class="wiz-step on" data-wiz="1"><span class="n">1</span> Choose user</div>
-              <div class="wiz-step" data-wiz="2"><span class="n">2</span> Channels</div>
+              <div class="wiz-step done" data-wiz="1"><span class="n">1</span> Choose user <span class="skip-badge">Skipped</span></div>
+              <div class="wiz-step on" data-wiz="2"><span class="n">2</span> Channels</div>
               <div class="wiz-step" data-wiz="3"><span class="n">3</span> Preview email</div>
               <div class="wiz-step" data-wiz="4"><span class="n">4</span> Send</div>
             </div>
 
-            <div id="wiz-1">
-              <h3>Choose advisor</h3>
-              <p class="sub">Who should connect with their own Facebook / LinkedIn / Instagram login?</p>
-              <div class="field">
-                <label>Search</label>
-                <input type="search" value="Jordan" />
+            <div id="wiz-1" class="hidden">
+              <h3>Choose advisor <span class="skip-badge">Pre-completed</span></h3>
+              <p class="sub">Admin as user · Jordan Lee — no search needed. Change only if inviting someone else.</p>
+              <div class="recipient-locked" style="margin-bottom:12px">
+                <span class="av">JL</span>
+                <div class="body">
+                  <div class="nm">Jordan Lee</div>
+                  <div class="em">jordan.lee@coulas.example · Coulas Insurance</div>
+                </div>
+                <span class="lock-tag">🔒 Prefilled</span>
               </div>
-              <div class="user-pick">
-                <div class="user-row sel">
-                  <span class="av">JL</span>
-                  <div><div class="nm">Jordan Lee</div><div class="em">jordan.lee@coulas.example · Coulas Insurance</div></div>
+              <button type="button" class="link-quiet" id="toggle-other-c" style="margin-bottom:12px">Invite a different user…</button>
+              <div id="other-user-search-c" class="hidden" style="margin-bottom:14px">
+                <div class="field" style="margin-bottom:8px">
+                  <label>Search</label>
+                  <input type="search" placeholder="Search by name or email…" />
                 </div>
-                <div class="user-row">
-                  <span class="av" style="background:#5b6572">RT</span>
-                  <div><div class="nm">Riley Tran</div><div class="em">riley.tran@coulas.example</div></div>
+                <div class="user-pick">
+                  <div class="user-row sel">
+                    <span class="av">JL</span>
+                    <div><div class="nm">Jordan Lee</div><div class="em">jordan.lee@coulas.example · Coulas Insurance</div></div>
+                  </div>
+                  <div class="user-row">
+                    <span class="av" style="background:#5b6572">RT</span>
+                    <div><div class="nm">Riley Tran</div><div class="em">riley.tran@coulas.example</div></div>
+                  </div>
                 </div>
+              </div>
+              <div class="oauth-note">
+                <strong>OAuth still runs as this advisor</strong>
+                Prefill is from FC impersonation only — Meta/LI/IG login is Jordan’s, not the admin’s.
               </div>
               <div class="actions">
-                <button type="button" class="btn btn-primary" id="wiz-next-1">Continue</button>
+                <button type="button" class="btn btn-primary" id="wiz-next-1">Continue to channels</button>
               </div>
             </div>
 
-            <div id="wiz-2" class="hidden">
+            <div id="wiz-2">
               <h3>Choose channels</h3>
-              <p class="sub">Multi-select — Jordan will see a checklist for each assigned network.</p>
+              <p class="sub">Recipient locked to <strong>Jordan Lee</strong> (Admin as user). Multi-select — they’ll see a checklist for each network.</p>
+              <div class="recipient-locked" style="margin-bottom:14px">
+                <span class="av">JL</span>
+                <div class="body">
+                  <div class="nm">Jordan Lee</div>
+                  <div class="em">jordan.lee@coulas.example · Coulas Insurance</div>
+                </div>
+                <span class="lock-tag">🔒 Prefilled</span>
+              </div>
               <div class="chan-checks" style="margin:12px 0 8px">
                 <label class="chan-check sel"><input type="checkbox" checked /> <span class="chan-logo fb" style="width:20px;height:20px;font-size:11px">f</span> Facebook</label>
                 <label class="chan-check sel"><input type="checkbox" checked /> <span class="chan-logo li" style="width:20px;height:20px;font-size:9px">in</span> LinkedIn</label>
                 <label class="chan-check sel"><input type="checkbox" checked /> <span class="chan-logo ig" style="width:20px;height:20px;font-size:9px">ig</span> Instagram</label>
               </div>
-              <div class="self-rule">
-                <strong>They’ll use their own login for each</strong>
-                Admin does not OAuth on their behalf.
+              <div class="oauth-note">
+                <strong>OAuth runs as Jordan — not your admin Meta account</strong>
+                Admin does not OAuth on their behalf. Each channel uses the advisor’s own login.
               </div>
               <div class="field">
                 <label>Optional note</label>
                 <textarea>Please connect all three this week — use your own logins.</textarea>
               </div>
               <div class="actions">
-                <button type="button" class="btn btn-ghost" id="wiz-back-2">Back</button>
+                <button type="button" class="btn btn-ghost" id="wiz-back-2">Change user</button>
                 <button type="button" class="btn btn-primary" id="wiz-next-2">Preview email</button>
               </div>
             </div>
@@ -137,8 +160,9 @@
           </div>
           <div class="hard-rule">
             <strong>Hard rule</strong>
-            Wizard never asks admin to OAuth for the user. Contrast #237 (admin reconnect teaching) — different problem.
+            Wizard never asks admin to OAuth for the user. Admin-as-user only prefills the recipient. Contrast #237 (admin reconnect teaching) — different problem.
           </div>
+          <p class="note-bar">Default: wizard opens on Channels with Choose user skipped. “Change user” reveals the optional search path.</p>
         </section>
 
         <!-- EMAIL -->
@@ -283,14 +307,14 @@
     const isAdmin = screen === 'admin';
     const isEmail = screen === 'email';
     if (adminPill) {
-      if (isAdmin) { adminPill.className = 'impersonate'; adminPill.textContent = 'Admin as user · Coulas Insurance'; }
+      if (isAdmin) { adminPill.className = 'impersonate'; adminPill.textContent = 'Admin as user · Jordan Lee · Coulas Insurance'; }
       else if (!isEmail) { adminPill.className = 'signed-as'; adminPill.textContent = 'Signed in as Jordan Lee'; }
       else { adminPill.className = 'impersonate'; adminPill.textContent = 'Email preview'; }
     }
     if (adminBadge) adminBadge.classList.toggle('hidden', !isAdmin);
     if (pageTitle) pageTitle.textContent = isEmail ? 'Invite email' : (isAdmin ? 'Invite social connect' : 'Connection checklist');
     if (pageSub) pageSub.textContent = isAdmin
-      ? 'Guided wizard — choose user, channels, preview email, send.'
+      ? 'Guided wizard — user prefilled from Admin as user; channels → preview → send.'
       : (isEmail ? 'Multi-channel invite the user receives.' : 'Use your own network login for each channel.');
   }
 
@@ -310,7 +334,10 @@
     document.querySelectorAll('#wiz-steps .wiz-step').forEach(s => {
       const step = +s.dataset.wiz;
       s.classList.toggle('on', step === n);
-      s.classList.toggle('done', step < n);
+      // Step 1 is pre-completed for admin-as-user; keep done whenever past it or when viewing it after skip
+      s.classList.toggle('done', step < n || (step === 1 && n !== 1));
+      const badge = s.querySelector('.skip-badge');
+      if (badge && step === 1) badge.style.display = (n === 1) ? 'none' : '';
     });
   }
   document.getElementById('wiz-next-1').addEventListener('click', () => setWiz(2));
@@ -318,7 +345,16 @@
   document.getElementById('wiz-next-2').addEventListener('click', () => setWiz(3));
   document.getElementById('wiz-back-3').addEventListener('click', () => setWiz(2));
   document.getElementById('wiz-next-3').addEventListener('click', () => setWiz(4));
-  document.getElementById('wiz-reset').addEventListener('click', () => setWiz(1));
+  document.getElementById('wiz-reset').addEventListener('click', () => setWiz(2));
+  const otherC = document.getElementById('other-user-search-c');
+  const toggleC = document.getElementById('toggle-other-c');
+  if (toggleC) toggleC.addEventListener('click', () => {
+    const open = !otherC.classList.contains('hidden');
+    otherC.classList.toggle('hidden', open);
+    toggleC.textContent = open ? 'Invite a different user…' : 'Keep Jordan Lee';
+  });
+  // Admin-as-user default: land on Channels (step 2), Choose user already done
+  setWiz(2);
 
   document.querySelectorAll('.user-row').forEach(row => {
     row.addEventListener('click', () => {
