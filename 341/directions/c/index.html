@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Direction C — Two-line row · #341</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #f4f8fc; --card: #fff; --ink: #1e2a4a; --muted: #5b6572;
+      --blue: #2b7de9; --blue-dark: #1e5bb8; --border: #d4e4f2; --mint: #e6f1fb; --row-hover: #f8fbfe;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: Inter, system-ui, sans-serif; background: var(--bg); color: var(--ink); font-size: 13px; line-height: 1.45; }
+    a { color: var(--blue); }
+    .thesis { background: linear-gradient(135deg, #1e2a4a, #2b7de9); color: #fff; padding: 16px 24px; }
+    .thesis .rec { display: inline-block; background: rgba(255,255,255,0.2); color: #fff; font-size: 0.68rem; font-weight: 700; padding: 3px 10px; border-radius: 999px; margin-bottom: 8px; }
+    .thesis h1 { font-size: 1.05rem; margin-bottom: 4px; }
+    .thesis p { opacity: 0.9; font-size: 0.8rem; max-width: 920px; }
+    .nav { padding: 8px 24px; font-size: 0.75rem; background: #fafafa; border-bottom: 1px solid var(--border); display: flex; gap: 12px; flex-wrap: wrap; align-items: center; }
+    .nav a { color: var(--blue); text-decoration: none; font-weight: 500; }
+    .nav .sep { color: #c0c8d4; } .nav .on { font-weight: 700; color: var(--ink); }
+    .app { display: flex; min-height: calc(100vh - 110px); }
+    .rail { width: 52px; background: #1e2a4a; flex-shrink: 0; display: flex; flex-direction: column; align-items: center; padding: 12px 0; gap: 8px; }
+    .rail .ri { width: 32px; height: 32px; border-radius: 8px; background: rgba(255,255,255,0.08); color: rgba(255,255,255,0.7); font-size: 0.65rem; font-weight: 700; display: flex; align-items: center; justify-content: center; }
+    .rail .ri.on { background: var(--blue); color: #fff; }
+    .main { flex: 1; min-width: 0; padding: 14px 18px 48px; }
+    .callout { margin-bottom: 12px; padding: 10px 12px; background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 10px; font-size: 0.78rem; color: #1e40af; }
+    .page-head h2 { font-size: 1.2rem; font-weight: 700; }
+    .page-head .sub { color: var(--muted); font-size: 0.78rem; margin: 2px 0 10px; }
+    .panel { background: var(--card); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
+    .row {
+      display: grid; grid-template-columns: minmax(160px, 22%) 1fr minmax(160px, 200px);
+      gap: 12px 16px; padding: 14px 16px; border-bottom: 1px solid #eef2f6; align-items: start;
+    }
+    .row:hover { background: var(--row-hover); }
+    .row:last-child { border-bottom: none; }
+    .advisor { display: flex; align-items: center; gap: 8px; }
+    .avatar { width: 34px; height: 34px; border-radius: 999px; background: var(--mint); color: var(--blue); font-weight: 700; font-size: 0.7rem; display: flex; align-items: center; justify-content: center; }
+    .name { font-weight: 600; font-size: 0.9rem; }
+    .firm { color: var(--muted); font-size: 0.72rem; }
+    .line2 {
+      grid-column: 1 / -1; display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px;
+      padding-top: 2px; margin-top: 2px; border-top: 1px dashed #e8eef5;
+    }
+    .topics-chip { display: inline-flex; padding: 5px 10px; background: var(--mint); color: var(--blue-dark); border-radius: 999px; font-size: 0.75rem; font-weight: 700; border: 1px solid #c5daf5; }
+    .view-all { background: none; border: none; font-family: inherit; font-size: 0.75rem; font-weight: 600; color: var(--blue); cursor: pointer; text-decoration: underline; }
+    .posts-block { min-width: 0; }
+    .sec-label { font-size: 0.65rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; color: var(--muted); margin-bottom: 6px; }
+    .sug-track { display: flex; gap: 8px; overflow-x: auto; }
+    .sug-card { flex: 0 0 140px; border: 1px solid var(--border); border-radius: 8px; padding: 8px; background: #fff; font-size: 0.72rem; font-weight: 600; }
+    .act-stack { display: flex; flex-direction: column; gap: 6px; }
+    .act-btn { display: inline-flex; align-items: center; justify-content: center; padding: 8px 10px; border: 1px solid var(--border); border-radius: 8px; background: #fff; font-family: inherit; font-size: 0.75rem; font-weight: 500; cursor: pointer; width: 100%; min-height: 40px; }
+    .act-btn.primary { background: var(--blue); color: #fff; border-color: var(--blue); font-weight: 600; }
+    .act-btn.pick { color: var(--blue); border-color: var(--blue); font-weight: 600; }
+    .act-btn.secondary { background: transparent; border-color: transparent; color: var(--muted); font-size: 0.72rem; text-decoration: underline; min-height: 32px; }
+    .toast { position: fixed; bottom: 24px; right: 24px; background: #1e2a4a; color: #fff; padding: 10px 16px; border-radius: 8px; font-size: 0.8rem; display: none; z-index: 200; }
+    .toast.show { display: block; }
+    .legend { margin-top: 12px; font-size: 0.75rem; color: var(--muted); padding: 10px 12px; background: #fff; border: 1px solid var(--border); border-radius: 10px; }
+    @media (max-width: 800px) {
+      .row { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <header class="thesis">
+    <span class="rec">ALT · DIRECTION C</span>
+    <h1>Direction C — Two-line row layout</h1>
+    <p>Advisor + posts + actions on line 1. Topics summary on line 2 with View all. Actions clustered right — Pick / Suggest primary; Load from website muted. Trades vertical space for less horizontal hunt.</p>
+  </header>
+  <nav class="nav">
+    <a href="../../index.html">← Hub #341</a><span class="sep">·</span>
+    <a href="../a/index.html">A</a><span class="sep">·</span>
+    <a href="../b/index.html">B</a><span class="sep">·</span>
+    <a href="../c/index.html" class="on">C</a><span class="sep">·</span>
+    <a href="../../build-contract.html">Build contract</a>
+  </nav>
+  <div class="app">
+    <aside class="rail" aria-hidden="true">
+      <div class="ri">CL</div><div class="ri on">MA</div><div class="ri">SM</div><div class="ri">EM</div><div class="ri">Cal</div><div class="ri">⚙</div>
+    </aside>
+    <div class="main">
+      <div class="callout"><strong>Alt layout:</strong> Topics never compete with Posts width. Slightly taller rows — good if Past/Suggested cards need room.</div>
+      <div class="page-head">
+        <h2>Manage Advisor Posts</h2>
+        <p class="sub">Mock · Direction C · two-line rows · Pick/Suggest primary</p>
+      </div>
+      <div class="panel">
+        <div class="row">
+          <div class="advisor">
+            <div class="avatar">SC</div>
+            <div><div class="name">Sarah Chen</div><div class="firm">WealthPath Advisors · Vancouver</div></div>
+          </div>
+          <div class="posts-block">
+            <div class="sec-label">Suggested</div>
+            <div class="sug-track">
+              <div class="sug-card">Navigating Market Volatility in 2026</div>
+              <div class="sug-card">Charitable Giving &amp; Tax Efficiency</div>
+            </div>
+          </div>
+          <div class="act-stack">
+            <button type="button" class="act-btn primary" onclick="toast('Suggest posts')">Suggest posts</button>
+            <button type="button" class="act-btn pick" onclick="toast('Pick a post for me')">Pick a post for me</button>
+            <button type="button" class="act-btn secondary" onclick="toast('Load from website')">Load from website</button>
+          </div>
+          <div class="line2">
+            <span class="topics-chip">8 topics</span>
+            <button type="button" class="view-all" onclick="toast('View all tags')">View all</button>
+            <span style="color:var(--muted);font-size:0.75rem">Sources + services collapsed · Past posts available in detail</span>
+          </div>
+        </div>
+        <div class="row">
+          <div class="advisor">
+            <div class="avatar">PS</div>
+            <div><div class="name">Priya Singh</div><div class="firm">Harbour Family Office · Toronto</div></div>
+          </div>
+          <div class="posts-block">
+            <div class="sec-label">Suggested</div>
+            <div class="sug-track">
+              <div class="sug-card">Succession Planning Conversations</div>
+              <div class="sug-card">Key Person Insurance Explained</div>
+            </div>
+          </div>
+          <div class="act-stack">
+            <button type="button" class="act-btn primary" onclick="toast('Suggest posts')">Suggest posts</button>
+            <button type="button" class="act-btn pick" onclick="toast('Pick a post for me')">Pick a post for me</button>
+            <button type="button" class="act-btn secondary" onclick="toast('Load from website')">Load from website</button>
+          </div>
+          <div class="line2">
+            <span class="topics-chip">11 topics</span>
+            <button type="button" class="view-all" onclick="toast('View all tags')">View all</button>
+            <span style="color:var(--muted);font-size:0.75rem">Tag-heavy advisor — summary stays on line 2</span>
+          </div>
+        </div>
+        <div class="row">
+          <div class="advisor">
+            <div class="avatar">MO</div>
+            <div><div class="name">Michael Okonkwo</div><div class="firm">Prairie Capital · Calgary</div></div>
+          </div>
+          <div class="posts-block">
+            <div class="sec-label">Suggested</div>
+            <div class="sug-track">
+              <div class="sug-card">Dollar-Cost Averaging Basics</div>
+            </div>
+          </div>
+          <div class="act-stack">
+            <button type="button" class="act-btn primary" onclick="toast('Suggest posts')">Suggest posts</button>
+            <button type="button" class="act-btn pick" onclick="toast('Pick a post for me')">Pick a post for me</button>
+            <button type="button" class="act-btn secondary" onclick="toast('Load from website')">Load from website</button>
+          </div>
+          <div class="line2">
+            <span class="topics-chip">5 topics</span>
+            <button type="button" class="view-all" onclick="toast('View all tags')">View all</button>
+          </div>
+        </div>
+      </div>
+      <div class="legend"><strong>Trade-off:</strong> Cleaner horizontal scan; taller list. Soft Dev hold. A is still recommended as the smallest change to existing MAP table chrome.</div>
+    </div>
+  </div>
+  <div class="toast" id="toast"></div>
+  <script>
+    function toast(msg) {
+      var t = document.getElementById('toast');
+      t.textContent = msg; t.classList.add('show');
+      clearTimeout(window._tt); window._tt = setTimeout(function(){ t.classList.remove('show'); }, 2200);
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Direction A — More menu · #338 Email Campaigns row actions</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #f4f8fc; --card: #fff; --ink: #1e2a4a; --muted: #5b6572;
+      --blue: #2b7de9; --blue-dark: #1e5bb8; --border: #d4e4f2; --mint: #e6f1fb;
+      --danger: #c62828; --danger-bg: #fff5f5; --row-hover: #f8fbfe;
+      --ok: #047857; --ok-bg: #e8f5e9; --warn: #9a3412; --warn-bg: #fff7ed;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: Inter, system-ui, sans-serif; background: var(--bg); color: var(--ink); font-size: 14px; line-height: 1.45; }
+    a { color: var(--blue); }
+    .thesis {
+      background: linear-gradient(135deg, #1e2a4a, #2b7de9); color: #fff; padding: 16px 24px;
+    }
+    .thesis .rec {
+      display: inline-block; background: #fff; color: var(--blue); font-size: 0.68rem;
+      font-weight: 700; padding: 3px 10px; border-radius: 999px; margin-bottom: 8px;
+    }
+    .thesis h1 { font-size: 1.1rem; margin-bottom: 4px; }
+    .thesis p { opacity: 0.9; font-size: 0.85rem; max-width: 900px; }
+    .nav {
+      padding: 8px 24px; font-size: 0.8rem; background: #fafafa;
+      border-bottom: 1px solid var(--border); display: flex; gap: 12px; flex-wrap: wrap; align-items: center;
+    }
+    .nav a { color: var(--blue); text-decoration: none; font-weight: 500; }
+    .nav .sep { color: #c0c8d4; }
+    .nav .on { font-weight: 700; color: var(--ink); }
+    .app { display: flex; min-height: calc(100vh - 120px); }
+    .rail {
+      width: 52px; background: #1e2a4a; flex-shrink: 0;
+      display: flex; flex-direction: column; align-items: center; padding: 12px 0; gap: 8px;
+    }
+    .rail .ri {
+      width: 32px; height: 32px; border-radius: 8px; background: rgba(255,255,255,0.08);
+      color: rgba(255,255,255,0.7); font-size: 0.65rem; font-weight: 700;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .rail .ri.on { background: var(--blue); color: #fff; }
+    .main { flex: 1; min-width: 0; padding: 16px 20px 48px; }
+    .callout {
+      margin-bottom: 12px; padding: 12px 14px; background: #eff6ff; border: 1px solid #bfdbfe;
+      border-radius: 10px; font-size: 0.82rem; color: #1e40af;
+    }
+    .callout strong { color: #1e3a8a; }
+    .page-head { margin-bottom: 12px; display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 10px; }
+    .page-head h2 { font-size: 1.35rem; font-weight: 700; }
+    .page-head .sub { color: var(--muted); font-size: 0.85rem; margin-top: 2px; }
+    .btn-primary {
+      display: inline-flex; align-items: center; gap: 6px; padding: 10px 16px;
+      background: var(--blue); color: #fff; border: none; border-radius: 10px;
+      font-family: inherit; font-size: 0.9rem; font-weight: 600; cursor: pointer;
+      min-height: 44px;
+    }
+    .btn-primary:hover { background: var(--blue-dark); }
+    .toolbar { display: flex; gap: 8px; align-items: center; margin-bottom: 10px; flex-wrap: wrap; }
+    .search-box {
+      flex: 1; min-width: 180px; max-width: 280px; padding: 10px 12px;
+      border: 1px solid var(--border); border-radius: 10px; font-family: inherit; font-size: 0.9rem; background: #fff;
+      min-height: 44px;
+    }
+    .tb-btn {
+      display: inline-flex; align-items: center; gap: 6px; padding: 10px 14px;
+      border: 1px solid var(--border); border-radius: 10px; background: #fff;
+      font-family: inherit; font-size: 0.85rem; font-weight: 500; color: var(--ink); cursor: pointer;
+      min-height: 44px;
+    }
+    .panel {
+      background: var(--card); border: 1px solid var(--border); border-radius: 12px;
+      overflow: visible; box-shadow: 0 1px 3px rgba(30,42,74,0.04);
+    }
+    .panel-inner { overflow-x: auto; border-radius: 12px; }
+    table.camp { width: 100%; border-collapse: collapse; font-size: 0.9rem; min-width: 640px; }
+    table.camp th {
+      text-align: left; padding: 12px 14px; background: #eef4fb; color: var(--muted);
+      font-weight: 600; font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.04em;
+      border-bottom: 1px solid var(--border); white-space: nowrap;
+    }
+    table.camp td { padding: 14px; border-bottom: 1px solid #eef2f6; vertical-align: middle; }
+    table.camp tr:last-child td { border-bottom: none; }
+    table.camp tr:hover td { background: var(--row-hover); }
+    .camp-name { font-weight: 600; font-size: 0.95rem; color: var(--ink); }
+    .camp-name a { color: inherit; text-decoration: none; }
+    .camp-name a:hover { color: var(--blue); text-decoration: underline; }
+    .camp-meta { color: var(--muted); font-size: 0.78rem; margin-top: 2px; }
+    .status {
+      display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px;
+      border-radius: 999px; font-size: 0.78rem; font-weight: 600;
+    }
+    .status.draft { background: #f0f4f8; color: var(--muted); }
+    .status.scheduled { background: #eff6ff; color: #1e40af; }
+    .status.sent { background: var(--ok-bg); color: var(--ok); }
+    .status .dot { width: 7px; height: 7px; border-radius: 50%; background: currentColor; }
+    .date-cell { font-size: 0.88rem; color: var(--ink); white-space: nowrap; }
+    .date-sub { font-size: 0.75rem; color: var(--muted); }
+    .actions-cell { position: relative; white-space: nowrap; }
+    .more-btn {
+      display: inline-flex; align-items: center; gap: 8px; padding: 10px 14px;
+      border: 1px solid var(--border); border-radius: 10px; background: #fff;
+      font-family: inherit; font-size: 0.88rem; font-weight: 600; color: var(--ink);
+      cursor: pointer; min-height: 44px; min-width: 110px; justify-content: center;
+    }
+    .more-btn:hover, .more-btn.open {
+      border-color: var(--blue); color: var(--blue); background: var(--mint);
+    }
+    .more-btn .dots { font-size: 1.1rem; letter-spacing: 0.05em; line-height: 1; }
+    .menu {
+      display: none; position: absolute; right: 14px; top: calc(100% - 6px); z-index: 50;
+      min-width: 220px; background: #fff; border: 1px solid var(--border);
+      border-radius: 12px; box-shadow: 0 12px 32px rgba(30,42,74,0.16); padding: 6px;
+    }
+    .menu.open { display: block; }
+    .menu button {
+      display: flex; align-items: center; gap: 10px; width: 100%; text-align: left;
+      padding: 12px 14px; border: none; border-radius: 8px; background: transparent;
+      font-family: inherit; font-size: 0.92rem; font-weight: 500; color: var(--ink);
+      cursor: pointer; min-height: 44px;
+    }
+    .menu button:hover { background: var(--mint); color: var(--blue-dark); }
+    .menu button .ico { width: 20px; text-align: center; opacity: 0.7; font-size: 0.85rem; }
+    .menu .sep { height: 1px; background: var(--border); margin: 4px 6px; }
+    .menu button.danger { color: var(--danger); font-weight: 600; }
+    .menu button.danger:hover { background: var(--danger-bg); color: var(--danger); }
+    .before {
+      margin-top: 16px; padding: 12px 14px; background: #fff; border: 1px dashed #f0d4a8;
+      border-radius: 10px; font-size: 0.8rem; color: #8a5a10;
+    }
+    .before .icons { display: flex; gap: 6px; margin-top: 8px; flex-wrap: wrap; }
+    .before .ico-fake {
+      width: 32px; height: 32px; border-radius: 6px; background: #f0f4f8;
+      display: flex; align-items: center; justify-content: center; font-size: 0.75rem; color: #8a94a6;
+      border: 1px solid var(--border);
+    }
+    .before .ico-fake.bad { background: #fee2e2; color: var(--danger); border-color: #fecaca; }
+    .toast {
+      position: fixed; bottom: 24px; right: 24px; background: #1e2a4a; color: #fff;
+      padding: 12px 18px; border-radius: 10px; font-size: 0.88rem; display: none; z-index: 200;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.2); max-width: 360px;
+    }
+    .toast.show { display: block; animation: fadein 0.2s ease; }
+    @keyframes fadein { from { opacity: 0; transform: translateY(6px); } }
+    .modal-bg {
+      display: none; position: fixed; inset: 0; background: rgba(30,42,74,0.45);
+      z-index: 100; align-items: center; justify-content: center; padding: 20px;
+    }
+    .modal-bg.open { display: flex; }
+    .modal {
+      background: #fff; border-radius: 14px; padding: 24px; max-width: 420px; width: 100%;
+      box-shadow: 0 20px 48px rgba(0,0,0,0.2);
+    }
+    .modal h3 { font-size: 1.15rem; margin-bottom: 8px; }
+    .modal p { color: var(--muted); font-size: 0.9rem; margin-bottom: 20px; }
+    .modal-actions { display: flex; gap: 10px; justify-content: flex-end; flex-wrap: wrap; }
+    .modal-actions button {
+      padding: 12px 18px; border-radius: 10px; font-family: inherit; font-size: 0.9rem;
+      font-weight: 600; cursor: pointer; min-height: 44px; border: 1px solid var(--border); background: #fff;
+    }
+    .modal-actions .cancel:hover { background: #f4f8fc; }
+    .modal-actions .confirm {
+      background: var(--danger); color: #fff; border-color: var(--danger);
+    }
+    .modal-actions .confirm:hover { filter: brightness(1.05); }
+    .legend {
+      margin-top: 14px; font-size: 0.8rem; color: var(--muted);
+      padding: 12px 14px; background: #fff; border: 1px solid var(--border); border-radius: 10px;
+    }
+  </style>
+</head>
+<body>
+  <header class="thesis">
+    <span class="rec">RECOMMENDED · DIRECTION A</span>
+    <h1>Direction A — More menu with plain words</h1>
+    <p>Scan columns stay clear (name / status / date). One labeled <strong>Actions</strong> control opens a menu: View, Download PDF, View HTML, Duplicate, and <strong>Delete</strong> (danger). Built for advisors/assistants ~50s–60s — large tap targets, no icon guessing.</p>
+  </header>
+  <nav class="nav">
+    <a href="../../index.html">← Hub #338</a>
+    <span class="sep">·</span>
+    <a href="../a/index.html" class="on">A</a>
+    <span class="sep">·</span>
+    <a href="../b/index.html">B</a>
+    <span class="sep">·</span>
+    <a href="../c/index.html">C</a>
+    <span class="sep">·</span>
+    <a href="../../build-contract.html">Build contract</a>
+  </nav>
+  <div class="app">
+    <aside class="rail" aria-hidden="true">
+      <div class="ri">CL</div>
+      <div class="ri">MA</div>
+      <div class="ri">SM</div>
+      <div class="ri on">EM</div>
+      <div class="ri">Cal</div>
+      <div class="ri">⚙</div>
+    </aside>
+    <div class="main">
+      <div class="callout">
+        <strong>Try it:</strong> Open <em>Actions</em> on any row. Delete opens a confirm dialog — verbally and visually distinct from Duplicate. Campaign name still opens View.
+      </div>
+
+      <div class="page-head">
+        <div>
+          <h2>Email Campaigns</h2>
+          <p class="sub">Mock · Direction A · labeled Actions menu (not five unlabeled icons)</p>
+        </div>
+        <button type="button" class="btn-primary" onclick="toast('Create campaign — out of scope for #338')">+ New campaign</button>
+      </div>
+
+      <div class="toolbar">
+        <input class="search-box" type="search" placeholder="Search campaigns…" />
+        <button type="button" class="tb-btn">Status ▾</button>
+        <button type="button" class="tb-btn">Refresh</button>
+      </div>
+
+      <div class="panel">
+        <div class="panel-inner">
+          <table class="camp">
+            <thead>
+              <tr>
+                <th style="width:38%">Campaign</th>
+                <th style="width:16%">Status</th>
+                <th style="width:20%">Last updated</th>
+                <th style="width:26%">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>
+                  <div class="camp-name"><a href="#" onclick="toast('View: Q4 Market Outlook');return false;">Q4 Market Outlook Newsletter</a></div>
+                  <div class="camp-meta">1,248 recipients · WealthPath Advisors</div>
+                </td>
+                <td><span class="status scheduled"><span class="dot"></span> Scheduled</span></td>
+                <td>
+                  <div class="date-cell">Sep 28, 2026</div>
+                  <div class="date-sub">Sends Oct 3 · 9:00 AM PT</div>
+                </td>
+                <td class="actions-cell">
+                  <button type="button" class="more-btn" aria-haspopup="true" aria-expanded="false" onclick="toggleMenu(event, 'm1')">
+                    <span class="dots">⋯</span> Actions
+                  </button>
+                  <div class="menu" id="m1" role="menu">
+                    <button type="button" role="menuitem" onclick="act('View', 'Q4 Market Outlook')"><span class="ico">👁</span> View</button>
+                    <button type="button" role="menuitem" onclick="act('Download PDF', 'Q4 Market Outlook')"><span class="ico">⬇</span> Download PDF</button>
+                    <button type="button" role="menuitem" onclick="act('View HTML', 'Q4 Market Outlook')"><span class="ico">&lt;/&gt;</span> View HTML</button>
+                    <button type="button" role="menuitem" onclick="act('Duplicate', 'Q4 Market Outlook')"><span class="ico">⧉</span> Duplicate</button>
+                    <div class="sep"></div>
+                    <button type="button" role="menuitem" class="danger" onclick="askDelete('Q4 Market Outlook Newsletter')"><span class="ico">🗑</span> Delete</button>
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <div class="camp-name"><a href="#" onclick="toast('View: RRSP Season Tips');return false;">RRSP Season Tips — February</a></div>
+                  <div class="camp-meta">876 recipients · Prairie Capital</div>
+                </td>
+                <td><span class="status draft"><span class="dot"></span> Draft</span></td>
+                <td>
+                  <div class="date-cell">Sep 22, 2026</div>
+                  <div class="date-sub">Edited by A. Nguyen</div>
+                </td>
+                <td class="actions-cell">
+                  <button type="button" class="more-btn" aria-haspopup="true" aria-expanded="false" onclick="toggleMenu(event, 'm2')">
+                    <span class="dots">⋯</span> Actions
+                  </button>
+                  <div class="menu" id="m2" role="menu">
+                    <button type="button" role="menuitem" onclick="act('View', 'RRSP Season Tips')"><span class="ico">👁</span> View</button>
+                    <button type="button" role="menuitem" onclick="act('Download PDF', 'RRSP Season Tips')"><span class="ico">⬇</span> Download PDF</button>
+                    <button type="button" role="menuitem" onclick="act('View HTML', 'RRSP Season Tips')"><span class="ico">&lt;/&gt;</span> View HTML</button>
+                    <button type="button" role="menuitem" onclick="act('Duplicate', 'RRSP Season Tips')"><span class="ico">⧉</span> Duplicate</button>
+                    <div class="sep"></div>
+                    <button type="button" role="menuitem" class="danger" onclick="askDelete('RRSP Season Tips — February')"><span class="ico">🗑</span> Delete</button>
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <div class="camp-name"><a href="#" onclick="toast('View: Estate Planning Webinar');return false;">Estate Planning Webinar Invite</a></div>
+                  <div class="camp-meta">512 recipients · Harbour Family Office</div>
+                </td>
+                <td><span class="status sent"><span class="dot"></span> Sent</span></td>
+                <td>
+                  <div class="date-cell">Aug 14, 2026</div>
+                  <div class="date-sub">Open rate 38%</div>
+                </td>
+                <td class="actions-cell">
+                  <button type="button" class="more-btn" aria-haspopup="true" aria-expanded="false" onclick="toggleMenu(event, 'm3')">
+                    <span class="dots">⋯</span> Actions
+                  </button>
+                  <div class="menu" id="m3" role="menu">
+                    <button type="button" role="menuitem" onclick="act('View', 'Estate Planning Webinar')"><span class="ico">👁</span> View</button>
+                    <button type="button" role="menuitem" onclick="act('Download PDF', 'Estate Planning Webinar')"><span class="ico">⬇</span> Download PDF</button>
+                    <button type="button" role="menuitem" onclick="act('View HTML', 'Estate Planning Webinar')"><span class="ico">&lt;/&gt;</span> View HTML</button>
+                    <button type="button" role="menuitem" onclick="act('Duplicate', 'Estate Planning Webinar')"><span class="ico">⧉</span> Duplicate</button>
+                    <div class="sep"></div>
+                    <button type="button" role="menuitem" class="danger" onclick="askDelete('Estate Planning Webinar Invite')"><span class="ico">🗑</span> Delete</button>
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <div class="camp-name"><a href="#" onclick="toast('View: Tax Loss Harvesting');return false;">Tax-Loss Harvesting Reminders</a></div>
+                  <div class="camp-meta">1,045 recipients · North Shore Wealth</div>
+                </td>
+                <td><span class="status draft"><span class="dot"></span> Draft</span></td>
+                <td>
+                  <div class="date-cell">Sep 30, 2026</div>
+                  <div class="date-sub">Edited today</div>
+                </td>
+                <td class="actions-cell">
+                  <button type="button" class="more-btn" aria-haspopup="true" aria-expanded="false" onclick="toggleMenu(event, 'm4')">
+                    <span class="dots">⋯</span> Actions
+                  </button>
+                  <div class="menu" id="m4" role="menu">
+                    <button type="button" role="menuitem" onclick="act('View', 'Tax-Loss Harvesting')"><span class="ico">👁</span> View</button>
+                    <button type="button" role="menuitem" onclick="act('Download PDF', 'Tax-Loss Harvesting')"><span class="ico">⬇</span> Download PDF</button>
+                    <button type="button" role="menuitem" onclick="act('View HTML', 'Tax-Loss Harvesting')"><span class="ico">&lt;/&gt;</span> View HTML</button>
+                    <button type="button" role="menuitem" onclick="act('Duplicate', 'Tax-Loss Harvesting')"><span class="ico">⧉</span> Duplicate</button>
+                    <div class="sep"></div>
+                    <button type="button" role="menuitem" class="danger" onclick="askDelete('Tax-Loss Harvesting Reminders')"><span class="ico">🗑</span> Delete</button>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="before">
+        <strong>Before (problem):</strong> five unlabeled icons jammed in the row — easy to hit trash instead of duplicate.
+        <div class="icons" aria-hidden="true">
+          <span class="ico-fake" title="view">👁</span>
+          <span class="ico-fake" title="pdf">PDF</span>
+          <span class="ico-fake" title="html">&lt;/&gt;</span>
+          <span class="ico-fake" title="duplicate">⧉</span>
+          <span class="ico-fake bad" title="delete">🗑</span>
+        </div>
+      </div>
+
+      <div class="legend">
+        <strong>Why A:</strong> One large labeled control, plain-word menu, Delete separated and confirmed. Name / status / date stay the scan path. Soft Dev hold until Alex/Angelina lock.
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-bg" id="delModal" role="dialog" aria-modal="true" aria-labelledby="delTitle">
+    <div class="modal">
+      <h3 id="delTitle">Delete this campaign?</h3>
+      <p id="delBody">This cannot be undone. The campaign will be removed from Email Campaigns.</p>
+      <div class="modal-actions">
+        <button type="button" class="cancel" onclick="closeDelete()">Cancel</button>
+        <button type="button" class="confirm" id="delConfirm">Delete campaign</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script>
+    var openId = null;
+    var pendingName = null;
+
+    function closeMenus() {
+      document.querySelectorAll('.menu.open').forEach(function (m) { m.classList.remove('open'); });
+      document.querySelectorAll('.more-btn.open').forEach(function (b) {
+        b.classList.remove('open');
+        b.setAttribute('aria-expanded', 'false');
+      });
+      openId = null;
+    }
+
+    function toggleMenu(e, id) {
+      e.stopPropagation();
+      var wasOpen = openId === id;
+      closeMenus();
+      if (wasOpen) return;
+      var menu = document.getElementById(id);
+      var btn = e.currentTarget;
+      menu.classList.add('open');
+      btn.classList.add('open');
+      btn.setAttribute('aria-expanded', 'true');
+      openId = id;
+    }
+
+    document.addEventListener('click', closeMenus);
+
+    function toast(msg) {
+      closeMenus();
+      var t = document.getElementById('toast');
+      t.textContent = msg;
+      t.classList.add('show');
+      clearTimeout(window._tt);
+      window._tt = setTimeout(function () { t.classList.remove('show'); }, 2600);
+    }
+
+    function act(label, name) {
+      toast(label + ' — ' + name);
+    }
+
+    function askDelete(name) {
+      closeMenus();
+      pendingName = name;
+      document.getElementById('delBody').textContent =
+        'Delete “' + name + '”? This cannot be undone.';
+      document.getElementById('delModal').classList.add('open');
+    }
+
+    function closeDelete() {
+      document.getElementById('delModal').classList.remove('open');
+      pendingName = null;
+    }
+
+    document.getElementById('delConfirm').onclick = function () {
+      var n = pendingName;
+      closeDelete();
+      toast('Deleted — ' + n + ' (mock)');
+    };
+
+    document.getElementById('delModal').addEventListener('click', function (e) {
+      if (e.target === this) closeDelete();
+    });
+  </script>
+</body>
+</html>

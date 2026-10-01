@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Direction A — Topics collapse · #341 MAP density</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #f4f8fc; --card: #fff; --ink: #1e2a4a; --muted: #5b6572;
+      --blue: #2b7de9; --blue-dark: #1e5bb8; --border: #d4e4f2; --mint: #e6f1fb;
+      --row-hover: #f8fbfe;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: Inter, system-ui, sans-serif; background: var(--bg); color: var(--ink); font-size: 13px; line-height: 1.45; }
+    a { color: var(--blue); }
+    .thesis { background: linear-gradient(135deg, #1e2a4a, #2b7de9); color: #fff; padding: 16px 24px; }
+    .thesis .rec { display: inline-block; background: #fff; color: var(--blue); font-size: 0.68rem; font-weight: 700; padding: 3px 10px; border-radius: 999px; margin-bottom: 8px; }
+    .thesis h1 { font-size: 1.05rem; margin-bottom: 4px; }
+    .thesis p { opacity: 0.9; font-size: 0.8rem; max-width: 920px; }
+    .nav { padding: 8px 24px; font-size: 0.75rem; background: #fafafa; border-bottom: 1px solid var(--border); display: flex; gap: 12px; flex-wrap: wrap; align-items: center; }
+    .nav a { color: var(--blue); text-decoration: none; font-weight: 500; }
+    .nav .sep { color: #c0c8d4; } .nav .on { font-weight: 700; color: var(--ink); }
+    .app { display: flex; min-height: calc(100vh - 110px); }
+    .rail { width: 52px; background: #1e2a4a; flex-shrink: 0; display: flex; flex-direction: column; align-items: center; padding: 12px 0; gap: 8px; }
+    .rail .ri { width: 32px; height: 32px; border-radius: 8px; background: rgba(255,255,255,0.08); color: rgba(255,255,255,0.7); font-size: 0.65rem; font-weight: 700; display: flex; align-items: center; justify-content: center; }
+    .rail .ri.on { background: var(--blue); color: #fff; }
+    .main { flex: 1; min-width: 0; padding: 14px 18px 48px; }
+    .callout { margin-bottom: 12px; padding: 10px 12px; background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 10px; font-size: 0.78rem; color: #1e40af; }
+    .shipped { margin-bottom: 12px; padding: 10px 12px; background: #e8f5e9; border: 1px solid #a7d7b5; border-radius: 10px; font-size: 0.78rem; color: #065f46; }
+    .page-head { margin-bottom: 10px; }
+    .page-head h2 { font-size: 1.2rem; font-weight: 700; }
+    .page-head .sub { color: var(--muted); font-size: 0.78rem; margin-top: 2px; }
+    .toolbar { display: flex; gap: 8px; align-items: center; margin-bottom: 8px; flex-wrap: wrap; }
+    .search-box { flex: 1; min-width: 160px; max-width: 240px; padding: 8px 11px; border: 1px solid var(--border); border-radius: 8px; font-family: inherit; font-size: 0.85rem; background: #fff; min-height: 40px; }
+    .tb-btn { padding: 8px 11px; border: 1px solid var(--border); border-radius: 8px; background: #fff; font-family: inherit; font-size: 0.78rem; font-weight: 500; cursor: pointer; min-height: 40px; }
+    .panel { background: var(--card); border: 1px solid var(--border); border-radius: 10px; overflow: hidden; box-shadow: 0 1px 3px rgba(30,42,74,0.04); }
+    .panel-scroll { overflow-x: auto; }
+    table.adv { width: 100%; border-collapse: collapse; font-size: 0.78rem; min-width: 820px; }
+    table.adv th { text-align: left; padding: 9px 10px; background: #eef4fb; color: var(--muted); font-weight: 600; font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.04em; border-bottom: 1px solid var(--border); white-space: nowrap; }
+    table.adv td { padding: 12px 10px; border-bottom: 1px solid #eef2f6; vertical-align: top; }
+    table.adv tr:hover td { background: var(--row-hover); }
+    .advisor { display: flex; align-items: center; gap: 8px; }
+    .avatar { width: 32px; height: 32px; border-radius: 999px; background: var(--mint); color: var(--blue); font-weight: 700; font-size: 0.7rem; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .advisor .name { font-weight: 600; font-size: 0.85rem; }
+    .advisor .firm { color: var(--muted); font-size: 0.7rem; }
+    .topics-cell { min-width: 140px; }
+    .topics-chip {
+      display: inline-flex; align-items: center; gap: 6px; padding: 6px 10px;
+      background: var(--mint); color: var(--blue-dark); border-radius: 999px;
+      font-size: 0.75rem; font-weight: 700; border: 1px solid #c5daf5;
+    }
+    .view-all {
+      display: inline-block; margin-top: 6px; background: none; border: none;
+      font-family: inherit; font-size: 0.75rem; font-weight: 600; color: var(--blue);
+      cursor: pointer; text-decoration: underline; text-underline-offset: 2px; padding: 4px 0; min-height: 32px;
+    }
+    .view-all:hover { color: var(--blue-dark); }
+    .sec-label { font-size: 0.65rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; color: var(--muted); margin-bottom: 6px; display: flex; align-items: center; gap: 6px; }
+    .sec-label .n { background: #eef4fb; color: var(--ink); padding: 1px 6px; border-radius: 999px; font-size: 0.62rem; }
+    .divider { height: 1px; background: var(--border); margin: 8px 0; }
+    .past-list { max-height: 90px; overflow-y: auto; border: 1px solid var(--border); border-radius: 8px; background: #fafbfd; }
+    .past-row { display: flex; align-items: center; gap: 8px; padding: 5px 8px; border-bottom: 1px solid #eef2f6; }
+    .past-row:last-child { border-bottom: none; }
+    .past-ico { width: 26px; height: 26px; border-radius: 6px; flex-shrink: 0; background: linear-gradient(135deg, #2b7de9, #1e2a4a); color: #fff; font-size: 0.55rem; font-weight: 700; display: flex; align-items: center; justify-content: center; }
+    .past-t { font-weight: 600; font-size: 0.72rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .past-meta { color: var(--muted); font-size: 0.62rem; }
+    .sug-track { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 4px; }
+    .sug-card { flex: 0 0 150px; background: #fff; border: 1px solid var(--border); border-radius: 10px; overflow: hidden; }
+    .sug-img { height: 56px; background: linear-gradient(135deg, #2b7de9, #1e2a4a); }
+    .sug-body { padding: 8px; }
+    .sug-title { font-weight: 600; font-size: 0.72rem; line-height: 1.3; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+    .act-stack { display: flex; flex-direction: column; gap: 6px; min-width: 148px; }
+    .act-btn {
+      display: inline-flex; align-items: center; justify-content: center; gap: 4px;
+      padding: 8px 10px; border: 1px solid var(--border); border-radius: 8px; background: #fff;
+      font-family: inherit; font-size: 0.75rem; font-weight: 500; color: var(--ink);
+      cursor: pointer; width: 100%; white-space: nowrap; min-height: 40px;
+    }
+    .act-btn:hover { border-color: var(--blue); color: var(--blue); }
+    .act-btn.primary { background: var(--blue); color: #fff; border-color: var(--blue); font-weight: 600; }
+    .act-btn.primary:hover { background: var(--blue-dark); color: #fff; }
+    .act-btn.pick { background: #fff; color: var(--blue); border-color: var(--blue); font-weight: 600; }
+    .act-btn.pick:hover { background: var(--mint); }
+    .act-btn.secondary {
+      background: transparent; border-color: transparent; color: var(--muted);
+      font-weight: 500; font-size: 0.72rem; min-height: 32px; padding: 4px 8px;
+      text-decoration: underline; text-underline-offset: 2px;
+    }
+    .act-btn.secondary:hover { color: var(--blue); background: transparent; border-color: transparent; }
+    .before {
+      margin-top: 14px; padding: 12px 14px; background: #fff; border: 1px dashed #f0d4a8;
+      border-radius: 10px; font-size: 0.78rem; color: #8a5a10;
+    }
+    .before .pile { margin-top: 8px; display: flex; flex-wrap: wrap; gap: 4px; }
+    .before .pill { display: inline-block; background: #f0f4f8; color: var(--muted); padding: 2px 7px; border-radius: 999px; font-size: 0.65rem; }
+    .before .svc { background: var(--mint); color: var(--blue-dark); font-weight: 600; }
+    .legend { margin-top: 12px; font-size: 0.75rem; color: var(--muted); padding: 10px 12px; background: #fff; border: 1px solid var(--border); border-radius: 10px; }
+    .toast { position: fixed; bottom: 24px; right: 24px; background: #1e2a4a; color: #fff; padding: 10px 16px; border-radius: 8px; font-size: 0.8rem; display: none; z-index: 300; max-width: 340px; box-shadow: 0 8px 24px rgba(0,0,0,0.2); }
+    .toast.show { display: block; }
+    .drawer-bg {
+      display: none; position: fixed; inset: 0; background: rgba(30,42,74,0.4); z-index: 100;
+    }
+    .drawer-bg.open { display: block; }
+    .drawer {
+      position: fixed; top: 0; right: 0; width: min(380px, 100%); height: 100%;
+      background: #fff; z-index: 110; box-shadow: -8px 0 32px rgba(30,42,74,0.18);
+      transform: translateX(100%); transition: transform 0.2s ease;
+      display: flex; flex-direction: column;
+    }
+    .drawer.open { transform: translateX(0); }
+    .drawer-head { padding: 18px 20px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; }
+    .drawer-head h3 { font-size: 1.05rem; }
+    .drawer-head .sub { font-size: 0.78rem; color: var(--muted); margin-top: 2px; }
+    .drawer-close {
+      border: 1px solid var(--border); background: #fff; border-radius: 8px;
+      width: 40px; height: 40px; font-size: 1.2rem; cursor: pointer; color: var(--muted);
+    }
+    .drawer-close:hover { color: var(--ink); background: #f4f8fc; }
+    .drawer-body { padding: 16px 20px 40px; overflow-y: auto; flex: 1; }
+    .drawer-sec { margin-bottom: 20px; }
+    .drawer-sec h4 { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--muted); margin-bottom: 10px; }
+    .tag-list { display: flex; flex-wrap: wrap; gap: 6px; }
+    .tag-src { display: inline-block; background: #f0f4f8; color: var(--muted); padding: 6px 10px; border-radius: 999px; font-size: 0.78rem; font-weight: 500; }
+    .tag-svc { display: inline-block; background: var(--mint); color: var(--blue-dark); padding: 6px 10px; border-radius: 999px; font-size: 0.78rem; font-weight: 600; }
+  </style>
+</head>
+<body>
+  <header class="thesis">
+    <span class="rec">RECOMMENDED · DIRECTION A</span>
+    <h1>Direction A — “N topics” + View all · demote Load from website</h1>
+    <p>Sources + Services collapse to a compact topics chip. <strong>View all</strong> opens a drawer of tags. <strong>Pick a post for me</strong> and <strong>Suggest posts</strong> stay primary (#266). “Load from WP” → muted <strong>Load from website</strong>.</p>
+  </header>
+  <nav class="nav">
+    <a href="../../index.html">← Hub #341</a><span class="sep">·</span>
+    <a href="../a/index.html" class="on">A</a><span class="sep">·</span>
+    <a href="../b/index.html">B</a><span class="sep">·</span>
+    <a href="../c/index.html">C</a><span class="sep">·</span>
+    <a href="../../build-contract.html">Build contract</a>
+  </nav>
+  <div class="app">
+    <aside class="rail" aria-hidden="true">
+      <div class="ri">CL</div><div class="ri on">MA</div><div class="ri">SM</div><div class="ri">EM</div><div class="ri">Cal</div><div class="ri">⚙</div>
+    </aside>
+    <div class="main">
+      <div class="shipped"><strong>#266 shipped:</strong> Pick / Suggest behavior unchanged — kept primary and prominent. This mock only reduces density around them.</div>
+      <div class="callout"><strong>Try it:</strong> Click <em>View all</em> on a topics chip to open the tag drawer. Notice Load from website is a quiet secondary link under the primary actions.</div>
+
+      <div class="page-head">
+        <h2>Manage Advisor Posts</h2>
+        <p class="sub">Mock · Direction A · topics collapse + demoted Load from website</p>
+      </div>
+      <div class="toolbar">
+        <input class="search-box" type="search" placeholder="Search advisors…" />
+        <button type="button" class="tb-btn">Filters</button>
+        <button type="button" class="tb-btn">Refresh</button>
+      </div>
+
+      <div class="panel"><div class="panel-scroll">
+        <table class="adv">
+          <thead>
+            <tr>
+              <th style="width:18%">Advisor</th>
+              <th style="width:14%">Topics</th>
+              <th>Posts</th>
+              <th style="width:16%">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- Sarah — tag heavy -->
+            <tr>
+              <td>
+                <div class="advisor">
+                  <div class="avatar">SC</div>
+                  <div>
+                    <div class="name">Sarah Chen</div>
+                    <div class="firm">WealthPath Advisors<br/>Vancouver, BC</div>
+                  </div>
+                </div>
+              </td>
+              <td class="topics-cell">
+                <span class="topics-chip">8 topics</span>
+                <button type="button" class="view-all" onclick="openDrawer('Sarah Chen', ['Content library','Website'], ['Estate planning','Retirement','Tax','Insurance','Investments','Mortgages'])">View all</button>
+              </td>
+              <td>
+                <div class="sec-label">Past <span class="n">4</span></div>
+                <div class="past-list">
+                  <div class="past-row"><div class="past-ico">Web</div><div><div class="past-t">CPP Timing: When to Take Benefits</div><div class="past-meta">Apr 11 · Retirement</div></div></div>
+                  <div class="past-row"><div class="past-ico">Web</div><div><div class="past-t">Year-End Tax Planning Checklist</div><div class="past-meta">Mar 2 · Tax</div></div></div>
+                  <div class="past-row"><div class="past-ico">FB</div><div><div class="past-t">Estate Planning for Blended Families</div><div class="past-meta">Feb 18 · Estate</div></div></div>
+                  <div class="past-row"><div class="past-ico">LI</div><div><div class="past-t">Understanding Dividend Tax Credit</div><div class="past-meta">Jan 9 · Tax</div></div></div>
+                </div>
+                <div class="divider"></div>
+                <div class="sec-label">Suggested <span class="n">2</span></div>
+                <div class="sug-track">
+                  <div class="sug-card"><div class="sug-img"></div><div class="sug-body"><div class="sug-title">Navigating Market Volatility in 2026</div></div></div>
+                  <div class="sug-card"><div class="sug-img" style="background:linear-gradient(135deg,#7c3aed,#1e2a4a)"></div><div class="sug-body"><div class="sug-title">Charitable Giving &amp; Tax Efficiency</div></div></div>
+                </div>
+              </td>
+              <td>
+                <div class="act-stack">
+                  <button type="button" class="act-btn primary" onclick="toast('Suggest posts — batch (#266 unchanged)')">Suggest posts</button>
+                  <button type="button" class="act-btn pick" onclick="toast('Pick a post for me (#266 unchanged)')">Pick a post for me</button>
+                  <button type="button" class="act-btn" onclick="toast('Choose services')">Choose services</button>
+                  <button type="button" class="act-btn secondary" onclick="toast('Load from website (demoted)')">Load from website</button>
+                </div>
+              </td>
+            </tr>
+
+            <!-- Michael -->
+            <tr>
+              <td>
+                <div class="advisor">
+                  <div class="avatar">MO</div>
+                  <div>
+                    <div class="name">Michael Okonkwo</div>
+                    <div class="firm">Prairie Capital Planning<br/>Calgary, AB</div>
+                  </div>
+                </div>
+              </td>
+              <td class="topics-cell">
+                <span class="topics-chip">5 topics</span>
+                <button type="button" class="view-all" onclick="openDrawer('Michael Okonkwo', ['Content library','Website','RSS'], ['Retirement','Investments'])">View all</button>
+              </td>
+              <td>
+                <div class="sec-label">Past <span class="n">2</span></div>
+                <div class="past-list">
+                  <div class="past-row"><div class="past-ico">Web</div><div><div class="past-t">TFSA Contribution Room 2026</div><div class="past-meta">Sep 1 · Retirement</div></div></div>
+                  <div class="past-row"><div class="past-ico">LI</div><div><div class="past-t">Building an Emergency Fund</div><div class="past-meta">Aug 12 · Cash</div></div></div>
+                </div>
+                <div class="divider"></div>
+                <div class="sec-label">Suggested <span class="n">1</span></div>
+                <div class="sug-track">
+                  <div class="sug-card"><div class="sug-img" style="background:linear-gradient(135deg,#0a66c2,#1e2a4a)"></div><div class="sug-body"><div class="sug-title">Dollar-Cost Averaging Basics</div></div></div>
+                </div>
+              </td>
+              <td>
+                <div class="act-stack">
+                  <button type="button" class="act-btn primary" onclick="toast('Suggest posts')">Suggest posts</button>
+                  <button type="button" class="act-btn pick" onclick="toast('Pick a post for me')">Pick a post for me</button>
+                  <button type="button" class="act-btn" onclick="toast('Choose services')">Choose services</button>
+                  <button type="button" class="act-btn secondary" onclick="toast('Load from website (demoted)')">Load from website</button>
+                </div>
+              </td>
+            </tr>
+
+            <!-- Priya — many tags -->
+            <tr>
+              <td>
+                <div class="advisor">
+                  <div class="avatar">PS</div>
+                  <div>
+                    <div class="name">Priya Singh</div>
+                    <div class="firm">Harbour Family Office<br/>Toronto, ON</div>
+                  </div>
+                </div>
+              </td>
+              <td class="topics-cell">
+                <span class="topics-chip">11 topics</span>
+                <button type="button" class="view-all" onclick="openDrawer('Priya Singh', ['Content library','Website','Partner feed'], ['Estate planning','Tax','Insurance','Trusts','Philanthropy','Retirement','Investments','Business owners'])">View all</button>
+              </td>
+              <td>
+                <div class="sec-label">Past <span class="n">3</span></div>
+                <div class="past-list">
+                  <div class="past-row"><div class="past-ico">Web</div><div><div class="past-t">Family Trust Basics for Owners</div><div class="past-meta">Sep 18 · Trusts</div></div></div>
+                  <div class="past-row"><div class="past-ico">FB</div><div><div class="past-t">Insurance Needs After a Liquidity Event</div><div class="past-meta">Sep 4 · Insurance</div></div></div>
+                  <div class="past-row"><div class="past-ico">LI</div><div><div class="past-t">Charitable Remainder Trusts</div><div class="past-meta">Aug 20 · Philanthropy</div></div></div>
+                </div>
+                <div class="divider"></div>
+                <div class="sec-label">Suggested <span class="n">2</span></div>
+                <div class="sug-track">
+                  <div class="sug-card"><div class="sug-img" style="background:linear-gradient(135deg,#047857,#1e2a4a)"></div><div class="sug-body"><div class="sug-title">Succession Planning Conversations</div></div></div>
+                  <div class="sug-card"><div class="sug-img" style="background:linear-gradient(135deg,#b45309,#1e2a4a)"></div><div class="sug-body"><div class="sug-title">Key Person Insurance Explained</div></div></div>
+                </div>
+              </td>
+              <td>
+                <div class="act-stack">
+                  <button type="button" class="act-btn primary" onclick="toast('Suggest posts')">Suggest posts</button>
+                  <button type="button" class="act-btn pick" onclick="toast('Pick a post for me')">Pick a post for me</button>
+                  <button type="button" class="act-btn" onclick="toast('Choose services')">Choose services</button>
+                  <button type="button" class="act-btn secondary" onclick="toast('Load from website (demoted)')">Load from website</button>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div></div>
+
+      <div class="before">
+        <strong>Before (problem):</strong> Sources + Services tag piles + “Load from WP” in the primary action stack → horizontal scroll and mis-priority.
+        <div class="pile">
+          <span class="pill">Content library</span><span class="pill">Website</span><span class="pill">RSS</span>
+          <span class="pill svc">Estate</span><span class="pill svc">Retirement</span><span class="pill svc">Tax</span><span class="pill svc">Insurance</span><span class="pill svc">Investments</span><span class="pill svc">Mortgages</span>
+          <span class="pill" style="background:#fee2e2;color:#991b1b">Load from WP</span>
+        </div>
+      </div>
+
+      <div class="legend">
+        <strong>Why A:</strong> Collapses tag noise, keeps Pick/Suggest primary, plain-language demotion of website load. Soft Dev hold until Alex/Angelina lock.
+      </div>
+    </div>
+  </div>
+
+  <div class="drawer-bg" id="drawerBg" onclick="closeDrawer()"></div>
+  <aside class="drawer" id="drawer" aria-hidden="true">
+    <div class="drawer-head">
+      <div>
+        <h3 id="drawerTitle">Topics</h3>
+        <div class="sub" id="drawerSub">Sources and services for this advisor</div>
+      </div>
+      <button type="button" class="drawer-close" onclick="closeDrawer()" aria-label="Close">×</button>
+    </div>
+    <div class="drawer-body">
+      <div class="drawer-sec">
+        <h4>Sources</h4>
+        <div class="tag-list" id="drawerSources"></div>
+      </div>
+      <div class="drawer-sec">
+        <h4>Services &amp; products</h4>
+        <div class="tag-list" id="drawerServices"></div>
+      </div>
+    </div>
+  </aside>
+
+  <div class="toast" id="toast"></div>
+
+  <script>
+    function toast(msg) {
+      var t = document.getElementById('toast');
+      t.textContent = msg; t.classList.add('show');
+      clearTimeout(window._tt); window._tt = setTimeout(function(){ t.classList.remove('show'); }, 2400);
+    }
+    function openDrawer(name, sources, services) {
+      document.getElementById('drawerTitle').textContent = name + ' · Topics';
+      document.getElementById('drawerSub').textContent =
+        sources.length + ' sources · ' + services.length + ' services & products';
+      var sEl = document.getElementById('drawerSources');
+      var vEl = document.getElementById('drawerServices');
+      sEl.innerHTML = sources.map(function(s){ return '<span class="tag-src">' + s + '</span>'; }).join('');
+      vEl.innerHTML = services.map(function(s){ return '<span class="tag-svc">' + s + '</span>'; }).join('');
+      document.getElementById('drawerBg').classList.add('open');
+      var d = document.getElementById('drawer');
+      d.classList.add('open');
+      d.setAttribute('aria-hidden', 'false');
+    }
+    function closeDrawer() {
+      document.getElementById('drawerBg').classList.remove('open');
+      var d = document.getElementById('drawer');
+      d.classList.remove('open');
+      d.setAttribute('aria-hidden', 'true');
+    }
+    document.addEventListener('keydown', function(e){ if (e.key === 'Escape') closeDrawer(); });
+  </script>
+</body>
+</html>

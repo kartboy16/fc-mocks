@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Build contract · #338 Labeled row actions</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    body { font-family: Inter, system-ui, sans-serif; max-width: 760px; margin: 40px auto; padding: 0 24px 80px; color: #1e2a4a; line-height: 1.55; }
+    h1 { font-size: 22px; } h2 { font-size: 16px; margin-top: 28px; }
+    p, li { font-size: 14px; color: #3a4558; }
+    .warn { background: #fff7ed; color: #9a3412; padding: 12px 14px; border-radius: 8px; font-size: 13px; margin-bottom: 16px; }
+    .ok { background: #e8f5e9; color: #1a7f4c; padding: 12px 14px; border-radius: 8px; font-size: 13px; margin-bottom: 16px; }
+    .hold { background: #fef3c7; color: #92400e; padding: 12px 14px; border-radius: 8px; font-size: 13px; margin-bottom: 16px; }
+    code { background: #eef2f6; padding: 1px 6px; border-radius: 4px; font-size: 12px; }
+    a { color: #2b7de9; } table { width: 100%; border-collapse: collapse; font-size: 13px; margin: 12px 0; }
+    th, td { border: 1px solid #d4e4f2; padding: 8px 10px; text-align: left; vertical-align: top; } th { background: #eef4fb; }
+    ul, ol { padding-left: 1.2em; }
+  </style>
+</head>
+<body>
+  <p class="warn"><strong>PROVISIONAL</strong> — Recommend Direction A. Not locked. Do <strong>not</strong> mark agent-ready until Alex/Angelina pick a direction.</p>
+  <p class="ok"><strong>Recommend:</strong> Direction A — One labeled Actions / More menu with plain words; Delete as danger.</p>
+  <p class="hold"><strong>Soft Dev hold.</strong> Soft Dev not woken. Hold until direction lock.</p>
+
+  <h1>Build contract · Email Campaigns labeled row actions (#338)</h1>
+  <p>Markdown: <a href="build-contract.md">build-contract.md</a> · Hub: <a href="index.html">index.html</a> · Mock: <a href="directions/a/">Direction A</a></p>
+
+  <h2>One-liner</h2>
+  <p>Replace five unlabeled icon actions per campaign row with a labeled Actions (More) menu so advisors can read View, Download PDF, View HTML, Duplicate, and Delete without mis-tapping trash vs duplicate.</p>
+
+  <h2>Row layout (Direction A)</h2>
+  <table>
+    <thead><tr><th>Column</th><th>Role</th></tr></thead>
+    <tbody>
+      <tr><td>Campaign name</td><td>Primary scan</td></tr>
+      <tr><td>Status</td><td>Primary scan</td></tr>
+      <tr><td>Last updated / date</td><td>Primary scan</td></tr>
+      <tr><td>Actions</td><td>Single labeled control → menu</td></tr>
+    </tbody>
+  </table>
+
+  <h2>Menu items</h2>
+  <ol>
+    <li><strong>View</strong></li>
+    <li><strong>Download PDF</strong></li>
+    <li><strong>View HTML</strong></li>
+    <li><strong>Duplicate</strong> (non-destructive)</li>
+    <li><strong>Delete</strong> — danger styling + confirm</li>
+  </ol>
+
+  <h2>In scope</h2>
+  <ul>
+    <li>Mocks A/B/C for labeled row actions</li>
+    <li>Delete confirm pattern</li>
+    <li>Realistic campaign table in FC chrome</li>
+  </ul>
+
+  <h2>Out of scope</h2>
+  <ul>
+    <li>Send / schedule pipeline · full IA rewrite</li>
+    <li>Waking Soft Dev · marking agent-ready</li>
+  </ul>
+
+  <h2>Reference</h2>
+  <p><a href="index.html">Hub</a> · <a href="directions/a/">A</a> · <a href="directions/b/">B</a> · <a href="directions/c/">C</a> · <a href="https://github.com/kartboy16/content-library/issues/338">Issue #338</a></p>
+</body>
+</html>

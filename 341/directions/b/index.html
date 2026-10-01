@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Direction B — Hide Load for non-admin · #341</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #f4f8fc; --card: #fff; --ink: #1e2a4a; --muted: #5b6572;
+      --blue: #2b7de9; --blue-dark: #1e5bb8; --border: #d4e4f2; --mint: #e6f1fb; --row-hover: #f8fbfe;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: Inter, system-ui, sans-serif; background: var(--bg); color: var(--ink); font-size: 13px; line-height: 1.45; }
+    a { color: var(--blue); }
+    .thesis { background: linear-gradient(135deg, #1e2a4a, #2b7de9); color: #fff; padding: 16px 24px; }
+    .thesis .rec { display: inline-block; background: rgba(255,255,255,0.2); color: #fff; font-size: 0.68rem; font-weight: 700; padding: 3px 10px; border-radius: 999px; margin-bottom: 8px; }
+    .thesis h1 { font-size: 1.05rem; margin-bottom: 4px; }
+    .thesis p { opacity: 0.9; font-size: 0.8rem; max-width: 920px; }
+    .nav { padding: 8px 24px; font-size: 0.75rem; background: #fafafa; border-bottom: 1px solid var(--border); display: flex; gap: 12px; flex-wrap: wrap; align-items: center; }
+    .nav a { color: var(--blue); text-decoration: none; font-weight: 500; }
+    .nav .sep { color: #c0c8d4; } .nav .on { font-weight: 700; color: var(--ink); }
+    .app { display: flex; min-height: calc(100vh - 110px); }
+    .rail { width: 52px; background: #1e2a4a; flex-shrink: 0; display: flex; flex-direction: column; align-items: center; padding: 12px 0; gap: 8px; }
+    .rail .ri { width: 32px; height: 32px; border-radius: 8px; background: rgba(255,255,255,0.08); color: rgba(255,255,255,0.7); font-size: 0.65rem; font-weight: 700; display: flex; align-items: center; justify-content: center; }
+    .rail .ri.on { background: var(--blue); color: #fff; }
+    .main { flex: 1; min-width: 0; padding: 14px 18px 48px; }
+    .callout { margin-bottom: 12px; padding: 10px 12px; background: #fff8eb; border: 1px solid #f0d4a8; border-radius: 10px; font-size: 0.78rem; color: #8a5a10; }
+    .admin-note { margin-bottom: 12px; padding: 10px 12px; background: #f5f3ff; border: 1px solid #c4b5fd; border-radius: 10px; font-size: 0.78rem; color: #5b21b6; }
+    .demo-bar { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-bottom: 12px; padding: 10px 12px; background: #fff; border: 1px solid var(--border); border-radius: 10px; }
+    .demo-btn { padding: 8px 12px; border: 1px solid var(--border); border-radius: 8px; background: #fff; font-family: inherit; font-size: 0.75rem; font-weight: 600; cursor: pointer; }
+    .demo-btn.on { border-color: var(--blue); color: var(--blue); background: var(--mint); }
+    .page-head h2 { font-size: 1.2rem; font-weight: 700; }
+    .page-head .sub { color: var(--muted); font-size: 0.78rem; margin-top: 2px; margin-bottom: 10px; }
+    .panel { background: var(--card); border: 1px solid var(--border); border-radius: 10px; overflow: hidden; }
+    .panel-scroll { overflow-x: auto; }
+    table.adv { width: 100%; border-collapse: collapse; font-size: 0.78rem; min-width: 780px; }
+    table.adv th { text-align: left; padding: 9px 10px; background: #eef4fb; color: var(--muted); font-weight: 600; font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.04em; border-bottom: 1px solid var(--border); }
+    table.adv td { padding: 12px 10px; border-bottom: 1px solid #eef2f6; vertical-align: top; }
+    table.adv tr:hover td { background: var(--row-hover); }
+    .advisor { display: flex; align-items: center; gap: 8px; }
+    .avatar { width: 32px; height: 32px; border-radius: 999px; background: var(--mint); color: var(--blue); font-weight: 700; font-size: 0.7rem; display: flex; align-items: center; justify-content: center; }
+    .name { font-weight: 600; font-size: 0.85rem; }
+    .firm { color: var(--muted); font-size: 0.7rem; }
+    .topics-chip { display: inline-flex; padding: 6px 10px; background: var(--mint); color: var(--blue-dark); border-radius: 999px; font-size: 0.75rem; font-weight: 700; border: 1px solid #c5daf5; }
+    .view-all { display: inline-block; margin-top: 6px; background: none; border: none; font-family: inherit; font-size: 0.75rem; font-weight: 600; color: var(--blue); cursor: pointer; text-decoration: underline; }
+    .act-stack { display: flex; flex-direction: column; gap: 6px; min-width: 148px; position: relative; }
+    .act-btn { display: inline-flex; align-items: center; justify-content: center; padding: 8px 10px; border: 1px solid var(--border); border-radius: 8px; background: #fff; font-family: inherit; font-size: 0.75rem; font-weight: 500; color: var(--ink); cursor: pointer; width: 100%; min-height: 40px; }
+    .act-btn.primary { background: var(--blue); color: #fff; border-color: var(--blue); font-weight: 600; }
+    .act-btn.pick { color: var(--blue); border-color: var(--blue); font-weight: 600; }
+    .act-btn.primary:hover { background: var(--blue-dark); }
+    .act-btn.pick:hover { background: var(--mint); }
+    .more-btn { padding: 8px 10px; border: 1px dashed var(--border); border-radius: 8px; background: #fff; font-family: inherit; font-size: 0.72rem; font-weight: 600; color: var(--muted); cursor: pointer; width: 100%; min-height: 36px; }
+    .more-btn:hover, .more-btn.open { border-color: var(--blue); color: var(--blue); }
+    .menu { display: none; position: absolute; right: 0; top: 100%; z-index: 40; min-width: 200px; background: #fff; border: 1px solid var(--border); border-radius: 10px; box-shadow: 0 12px 28px rgba(30,42,74,0.14); padding: 6px; }
+    .menu.open { display: block; }
+    .menu button { display: block; width: 100%; text-align: left; padding: 10px 12px; border: none; border-radius: 8px; background: transparent; font-family: inherit; font-size: 0.8rem; font-weight: 500; cursor: pointer; min-height: 40px; }
+    .menu button:hover { background: var(--mint); }
+    .posts-mini { color: var(--muted); font-size: 0.75rem; }
+    .toast { position: fixed; bottom: 24px; right: 24px; background: #1e2a4a; color: #fff; padding: 10px 16px; border-radius: 8px; font-size: 0.8rem; display: none; z-index: 200; }
+    .toast.show { display: block; }
+    .legend { margin-top: 12px; font-size: 0.75rem; color: var(--muted); padding: 10px 12px; background: #fff; border: 1px solid var(--border); border-radius: 10px; }
+    body.role-admin .admin-only { display: block; }
+    body.role-user .admin-only { display: none; }
+  </style>
+</head>
+<body class="role-user">
+  <header class="thesis">
+    <span class="rec">ALT · DIRECTION B</span>
+    <h1>Direction B — Same collapse · Load from website behind More (non-admin)</h1>
+    <p>Same “N topics” + View all. For non-admins, <strong>Load from website</strong> lives only under More. Toggle admin to see it promoted slightly (still not beside Pick/Suggest).</p>
+  </header>
+  <nav class="nav">
+    <a href="../../index.html">← Hub #341</a><span class="sep">·</span>
+    <a href="../a/index.html">A</a><span class="sep">·</span>
+    <a href="../b/index.html" class="on">B</a><span class="sep">·</span>
+    <a href="../c/index.html">C</a><span class="sep">·</span>
+    <a href="../../build-contract.html">Build contract</a>
+  </nav>
+  <div class="app">
+    <aside class="rail" aria-hidden="true">
+      <div class="ri">CL</div><div class="ri on">MA</div><div class="ri">SM</div><div class="ri">EM</div><div class="ri">Cal</div><div class="ri">⚙</div>
+    </aside>
+    <div class="main">
+      <div class="admin-note"><strong>Admin note (mock):</strong> Product may role-gate website load. Non-admin default = hide behind More. Admin can still open More for the same control — not a primary action.</div>
+      <div class="callout"><strong>Toggle role</strong> to compare what assistants vs admins see in the overflow.</div>
+      <div class="demo-bar">
+        <button type="button" class="demo-btn on" id="btnUser" onclick="setRole('user')">Non-admin (assistant)</button>
+        <button type="button" class="demo-btn" id="btnAdmin" onclick="setRole('admin')">Admin</button>
+      </div>
+      <div class="page-head">
+        <h2>Manage Advisor Posts</h2>
+        <p class="sub">Mock · Direction B · topics collapse · Load behind More</p>
+      </div>
+      <div class="panel"><div class="panel-scroll">
+        <table class="adv">
+          <thead><tr><th>Advisor</th><th>Topics</th><th>Posts</th><th>Actions</th></tr></thead>
+          <tbody>
+            <tr>
+              <td><div class="advisor"><div class="avatar">SC</div><div><div class="name">Sarah Chen</div><div class="firm">WealthPath Advisors</div></div></div></td>
+              <td>
+                <span class="topics-chip">8 topics</span>
+                <button type="button" class="view-all" onclick="toast('View all drawer (same as A)')">View all</button>
+              </td>
+              <td class="posts-mini">Past 4 · Suggested 2<br/><span style="color:#8a94a6">Past/Suggested chrome unchanged (#254)</span></td>
+              <td>
+                <div class="act-stack">
+                  <button type="button" class="act-btn primary" onclick="toast('Suggest posts')">Suggest posts</button>
+                  <button type="button" class="act-btn pick" onclick="toast('Pick a post for me')">Pick a post for me</button>
+                  <button type="button" class="act-btn" onclick="toast('Choose services')">Choose services</button>
+                  <button type="button" class="more-btn" onclick="toggle(event,'mb1')">More ▾</button>
+                  <div class="menu" id="mb1">
+                    <button type="button" class="admin-only" onclick="toast('Load from website (admin)')">Load from website</button>
+                    <button type="button" onclick="toast('Refresh row')">Refresh row</button>
+                    <button type="button" onclick="toast('Open advisor settings')">Advisor settings</button>
+                  </div>
+                </div>
+              </td>
+            </tr>
+            <tr>
+              <td><div class="advisor"><div class="avatar">PS</div><div><div class="name">Priya Singh</div><div class="firm">Harbour Family Office</div></div></div></td>
+              <td>
+                <span class="topics-chip">11 topics</span>
+                <button type="button" class="view-all" onclick="toast('View all drawer')">View all</button>
+              </td>
+              <td class="posts-mini">Past 3 · Suggested 2</td>
+              <td>
+                <div class="act-stack">
+                  <button type="button" class="act-btn primary" onclick="toast('Suggest posts')">Suggest posts</button>
+                  <button type="button" class="act-btn pick" onclick="toast('Pick a post for me')">Pick a post for me</button>
+                  <button type="button" class="act-btn" onclick="toast('Choose services')">Choose services</button>
+                  <button type="button" class="more-btn" onclick="toggle(event,'mb2')">More ▾</button>
+                  <div class="menu" id="mb2">
+                    <button type="button" class="admin-only" onclick="toast('Load from website (admin)')">Load from website</button>
+                    <button type="button" onclick="toast('Refresh row')">Refresh row</button>
+                    <button type="button" onclick="toast('Open advisor settings')">Advisor settings</button>
+                  </div>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div></div>
+      <div class="legend"><strong>Trade-off:</strong> Stronger demotion for assistants; needs a clear role rule. Soft Dev hold. Prefer A if all MAP users need occasional website load without digging.</div>
+    </div>
+  </div>
+  <div class="toast" id="toast"></div>
+  <script>
+    function setRole(role) {
+      document.body.className = role === 'admin' ? 'role-admin' : 'role-user';
+      document.getElementById('btnUser').classList.toggle('on', role !== 'admin');
+      document.getElementById('btnAdmin').classList.toggle('on', role === 'admin');
+      closeAll();
+    }
+    function closeAll() {
+      document.querySelectorAll('.menu.open').forEach(function(m){m.classList.remove('open');});
+      document.querySelectorAll('.more-btn.open').forEach(function(b){b.classList.remove('open');});
+    }
+    function toggle(e, id) {
+      e.stopPropagation();
+      var m = document.getElementById(id);
+      var open = m.classList.contains('open');
+      closeAll();
+      if (!open) { m.classList.add('open'); e.currentTarget.classList.add('open'); }
+    }
+    document.addEventListener('click', closeAll);
+    function toast(msg) {
+      closeAll();
+      var t = document.getElementById('toast');
+      t.textContent = msg; t.classList.add('show');
+      clearTimeout(window._tt); window._tt = setTimeout(function(){ t.classList.remove('show'); }, 2200);
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Direction C — View + More · demote empty columns · #338</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #f4f8fc; --card: #fff; --ink: #1e2a4a; --muted: #5b6572;
+      --blue: #2b7de9; --blue-dark: #1e5bb8; --border: #d4e4f2; --mint: #e6f1fb;
+      --danger: #c62828; --danger-bg: #fff5f5; --row-hover: #f8fbfe;
+      --ok: #047857; --ok-bg: #e8f5e9;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: Inter, system-ui, sans-serif; background: var(--bg); color: var(--ink); font-size: 14px; line-height: 1.45; }
+    a { color: var(--blue); }
+    .thesis { background: linear-gradient(135deg, #1e2a4a, #2b7de9); color: #fff; padding: 16px 24px; }
+    .thesis .rec { display: inline-block; background: rgba(255,255,255,0.2); color: #fff; font-size: 0.68rem; font-weight: 700; padding: 3px 10px; border-radius: 999px; margin-bottom: 8px; }
+    .thesis h1 { font-size: 1.1rem; margin-bottom: 4px; }
+    .thesis p { opacity: 0.9; font-size: 0.85rem; max-width: 900px; }
+    .nav { padding: 8px 24px; font-size: 0.8rem; background: #fafafa; border-bottom: 1px solid var(--border); display: flex; gap: 12px; flex-wrap: wrap; align-items: center; }
+    .nav a { color: var(--blue); text-decoration: none; font-weight: 500; }
+    .nav .sep { color: #c0c8d4; } .nav .on { font-weight: 700; color: var(--ink); }
+    .app { display: flex; min-height: calc(100vh - 120px); }
+    .rail { width: 52px; background: #1e2a4a; flex-shrink: 0; display: flex; flex-direction: column; align-items: center; padding: 12px 0; gap: 8px; }
+    .rail .ri { width: 32px; height: 32px; border-radius: 8px; background: rgba(255,255,255,0.08); color: rgba(255,255,255,0.7); font-size: 0.65rem; font-weight: 700; display: flex; align-items: center; justify-content: center; }
+    .rail .ri.on { background: var(--blue); color: #fff; }
+    .main { flex: 1; min-width: 0; padding: 16px 20px 48px; }
+    .callout { margin-bottom: 12px; padding: 12px 14px; background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 10px; font-size: 0.82rem; color: #1e40af; }
+    .demo-bar { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-bottom: 12px; padding: 10px 12px; background: #fff; border: 1px solid var(--border); border-radius: 10px; }
+    .demo-btn { padding: 8px 12px; border: 1px solid var(--border); border-radius: 8px; background: #fff; font-family: inherit; font-size: 0.78rem; font-weight: 600; cursor: pointer; }
+    .demo-btn.on { border-color: var(--blue); color: var(--blue); background: var(--mint); }
+    .page-head { margin-bottom: 12px; }
+    .page-head h2 { font-size: 1.35rem; font-weight: 700; }
+    .page-head .sub { color: var(--muted); font-size: 0.85rem; margin-top: 2px; }
+    .panel { background: var(--card); border: 1px solid var(--border); border-radius: 12px; overflow: visible; }
+    .panel-inner { overflow-x: auto; border-radius: 12px; }
+    table.camp { width: 100%; border-collapse: collapse; font-size: 0.9rem; min-width: 640px; }
+    table.camp th { text-align: left; padding: 12px 14px; background: #eef4fb; color: var(--muted); font-weight: 600; font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.04em; border-bottom: 1px solid var(--border); }
+    table.camp td { padding: 12px 14px; border-bottom: 1px solid #eef2f6; vertical-align: middle; }
+    table.camp tr:hover td { background: var(--row-hover); }
+    .camp-name { font-weight: 600; font-size: 0.95rem; }
+    .camp-meta { color: var(--muted); font-size: 0.78rem; margin-top: 2px; }
+    .status { display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: 999px; font-size: 0.78rem; font-weight: 600; }
+    .status.draft { background: #f0f4f8; color: var(--muted); }
+    .status.scheduled { background: #eff6ff; color: #1e40af; }
+    .status.sent { background: var(--ok-bg); color: var(--ok); }
+    .status .dot { width: 7px; height: 7px; border-radius: 50%; background: currentColor; }
+    .empty-col { color: #c0c8d4; font-size: 0.85rem; }
+    .badge { display: inline-block; padding: 3px 8px; border-radius: 999px; font-size: 0.72rem; font-weight: 600; background: var(--ok-bg); color: var(--ok); }
+    .badge.warn { background: #fff7ed; color: #9a3412; }
+    .act-row { display: flex; gap: 8px; align-items: center; position: relative; }
+    .view-btn {
+      display: inline-flex; align-items: center; padding: 10px 16px; background: var(--blue); color: #fff;
+      border: none; border-radius: 10px; font-family: inherit; font-size: 0.88rem; font-weight: 600;
+      cursor: pointer; min-height: 44px;
+    }
+    .view-btn:hover { background: var(--blue-dark); }
+    .more-btn {
+      display: inline-flex; align-items: center; gap: 6px; padding: 10px 14px; border: 1px solid var(--border);
+      border-radius: 10px; background: #fff; font-family: inherit; font-size: 0.88rem; font-weight: 600;
+      color: var(--ink); cursor: pointer; min-height: 44px;
+    }
+    .more-btn:hover, .more-btn.open { border-color: var(--blue); color: var(--blue); background: var(--mint); }
+    .menu {
+      display: none; position: absolute; right: 0; top: calc(100% + 4px); z-index: 50;
+      min-width: 220px; background: #fff; border: 1px solid var(--border);
+      border-radius: 12px; box-shadow: 0 12px 32px rgba(30,42,74,0.16); padding: 6px;
+    }
+    .menu.open { display: block; }
+    .menu button {
+      display: block; width: 100%; text-align: left; padding: 12px 14px; border: none; border-radius: 8px;
+      background: transparent; font-family: inherit; font-size: 0.9rem; font-weight: 500; color: var(--ink); cursor: pointer; min-height: 44px;
+    }
+    .menu button:hover { background: var(--mint); }
+    .menu .sep { height: 1px; background: var(--border); margin: 4px 6px; }
+    .menu button.danger { color: var(--danger); font-weight: 600; }
+    .menu button.danger:hover { background: var(--danger-bg); }
+    .toast { position: fixed; bottom: 24px; right: 24px; background: #1e2a4a; color: #fff; padding: 12px 18px; border-radius: 10px; font-size: 0.88rem; display: none; z-index: 200; }
+    .toast.show { display: block; }
+    .legend { margin-top: 14px; font-size: 0.8rem; color: var(--muted); padding: 12px 14px; background: #fff; border: 1px solid var(--border); border-radius: 10px; }
+    .col-extra { display: table-cell; }
+    body.hide-empty .col-extra { display: none; }
+  </style>
+</head>
+<body>
+  <header class="thesis">
+    <span class="rec">ALT · DIRECTION C</span>
+    <h1>Direction C — Primary View + More · demote empty columns</h1>
+    <p>Keep a primary <strong>View</strong> button; put PDF / HTML / Duplicate / Delete in More. Toggle shows how empty Compliance / Approval columns can hide to free scan space.</p>
+  </header>
+  <nav class="nav">
+    <a href="../../index.html">← Hub #338</a><span class="sep">·</span>
+    <a href="../a/index.html">A</a><span class="sep">·</span>
+    <a href="../b/index.html">B</a><span class="sep">·</span>
+    <a href="../c/index.html" class="on">C</a><span class="sep">·</span>
+    <a href="../../build-contract.html">Build contract</a>
+  </nav>
+  <div class="app">
+    <aside class="rail" aria-hidden="true">
+      <div class="ri">CL</div><div class="ri">MA</div><div class="ri">SM</div><div class="ri on">EM</div><div class="ri">Cal</div><div class="ri">⚙</div>
+    </aside>
+    <div class="main">
+      <div class="callout"><strong>Demo:</strong> Toggle whether empty Compliance / Approval columns stay visible. When hidden, name / status / date / actions get more room.</div>
+      <div class="demo-bar">
+        <button type="button" class="demo-btn on" id="btnShow" onclick="setCols(false)">Show empty columns</button>
+        <button type="button" class="demo-btn" id="btnHide" onclick="setCols(true)">Hide empty Compliance / Approval</button>
+      </div>
+      <div class="page-head">
+        <h2>Email Campaigns</h2>
+        <p class="sub">Mock · Direction C · View + More · optional column demotion</p>
+      </div>
+      <div class="panel"><div class="panel-inner">
+        <table class="camp">
+          <thead>
+            <tr>
+              <th>Campaign</th>
+              <th>Status</th>
+              <th class="col-extra">Compliance</th>
+              <th class="col-extra">Approval</th>
+              <th>Last updated</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><div class="camp-name">Q4 Market Outlook Newsletter</div><div class="camp-meta">1,248 recipients</div></td>
+              <td><span class="status scheduled"><span class="dot"></span> Scheduled</span></td>
+              <td class="col-extra"><span class="empty-col">—</span></td>
+              <td class="col-extra"><span class="empty-col">—</span></td>
+              <td>Sep 28, 2026</td>
+              <td>
+                <div class="act-row">
+                  <button type="button" class="view-btn" onclick="toast('View')">View</button>
+                  <button type="button" class="more-btn" onclick="toggle(event,'mc1')">More ▾</button>
+                  <div class="menu" id="mc1">
+                    <button type="button" onclick="toast('Download PDF')">Download PDF</button>
+                    <button type="button" onclick="toast('View HTML')">View HTML</button>
+                    <button type="button" onclick="toast('Duplicate')">Duplicate</button>
+                    <div class="sep"></div>
+                    <button type="button" class="danger" onclick="toast('Delete confirm')">Delete</button>
+                  </div>
+                </div>
+              </td>
+            </tr>
+            <tr>
+              <td><div class="camp-name">RRSP Season Tips — February</div><div class="camp-meta">876 recipients</div></td>
+              <td><span class="status draft"><span class="dot"></span> Draft</span></td>
+              <td class="col-extra"><span class="badge warn">Pending</span></td>
+              <td class="col-extra"><span class="empty-col">—</span></td>
+              <td>Sep 22, 2026</td>
+              <td>
+                <div class="act-row">
+                  <button type="button" class="view-btn" onclick="toast('View')">View</button>
+                  <button type="button" class="more-btn" onclick="toggle(event,'mc2')">More ▾</button>
+                  <div class="menu" id="mc2">
+                    <button type="button" onclick="toast('Download PDF')">Download PDF</button>
+                    <button type="button" onclick="toast('View HTML')">View HTML</button>
+                    <button type="button" onclick="toast('Duplicate')">Duplicate</button>
+                    <div class="sep"></div>
+                    <button type="button" class="danger" onclick="toast('Delete confirm')">Delete</button>
+                  </div>
+                </div>
+              </td>
+            </tr>
+            <tr>
+              <td><div class="camp-name">Estate Planning Webinar Invite</div><div class="camp-meta">512 recipients</div></td>
+              <td><span class="status sent"><span class="dot"></span> Sent</span></td>
+              <td class="col-extra"><span class="badge">Approved</span></td>
+              <td class="col-extra"><span class="badge">Approved</span></td>
+              <td>Aug 14, 2026</td>
+              <td>
+                <div class="act-row">
+                  <button type="button" class="view-btn" onclick="toast('View')">View</button>
+                  <button type="button" class="more-btn" onclick="toggle(event,'mc3')">More ▾</button>
+                  <div class="menu" id="mc3">
+                    <button type="button" onclick="toast('Download PDF')">Download PDF</button>
+                    <button type="button" onclick="toast('View HTML')">View HTML</button>
+                    <button type="button" onclick="toast('Duplicate')">Duplicate</button>
+                    <div class="sep"></div>
+                    <button type="button" class="danger" onclick="toast('Delete confirm')">Delete</button>
+                  </div>
+                </div>
+              </td>
+            </tr>
+            <tr>
+              <td><div class="camp-name">Tax-Loss Harvesting Reminders</div><div class="camp-meta">1,045 recipients</div></td>
+              <td><span class="status draft"><span class="dot"></span> Draft</span></td>
+              <td class="col-extra"><span class="empty-col">—</span></td>
+              <td class="col-extra"><span class="empty-col">—</span></td>
+              <td>Sep 30, 2026</td>
+              <td>
+                <div class="act-row">
+                  <button type="button" class="view-btn" onclick="toast('View')">View</button>
+                  <button type="button" class="more-btn" onclick="toggle(event,'mc4')">More ▾</button>
+                  <div class="menu" id="mc4">
+                    <button type="button" onclick="toast('Download PDF')">Download PDF</button>
+                    <button type="button" onclick="toast('View HTML')">View HTML</button>
+                    <button type="button" onclick="toast('Duplicate')">Duplicate</button>
+                    <div class="sep"></div>
+                    <button type="button" class="danger" onclick="toast('Delete confirm')">Delete</button>
+                  </div>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div></div>
+      <div class="legend"><strong>Note:</strong> Column demotion is illustrative — product rule for “empty” TBD. Soft Dev hold. Recommend A as default for labeled menu clarity.</div>
+    </div>
+  </div>
+  <div class="toast" id="toast"></div>
+  <script>
+    function setCols(hide) {
+      document.body.classList.toggle('hide-empty', hide);
+      document.getElementById('btnShow').classList.toggle('on', !hide);
+      document.getElementById('btnHide').classList.toggle('on', hide);
+    }
+    function closeAll() {
+      document.querySelectorAll('.menu.open').forEach(function(m){m.classList.remove('open');});
+      document.querySelectorAll('.more-btn.open').forEach(function(b){b.classList.remove('open');});
+    }
+    function toggle(e, id) {
+      e.stopPropagation();
+      var m = document.getElementById(id);
+      var open = m.classList.contains('open');
+      closeAll();
+      if (!open) { m.classList.add('open'); e.currentTarget.classList.add('open'); }
+    }
+    document.addEventListener('click', closeAll);
+    function toast(msg) {
+      closeAll();
+      var t = document.getElementById('toast');
+      t.textContent = msg; t.classList.add('show');
+      clearTimeout(window._tt); window._tt = setTimeout(function(){ t.classList.remove('show'); }, 2200);
+    }
+  </script>
+</body>
+</html>
