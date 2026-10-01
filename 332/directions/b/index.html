@@ -3,14 +3,15 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Direction B — Soft welcome panel · #332</title>
+  <title>Direction B — Soft panel + ? help FAB · #332</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="../../shared.css" />
 </head>
 <body>
   <div class="invite-banner">
-    <span><strong>#332 · Direction B</strong> · Soft Dev hold · not agent-ready</span>
+    <span><strong>#332 · Direction B</strong> · Alex lock · Soft Dev hold · not agent-ready</span>
     <span>
+      <span class="rec">LOCKED</span>
       <a href="../../index.html">Hub</a> ·
       <a href="../a/">A</a> ·
       <a href="../c/">C</a> ·
@@ -40,15 +41,16 @@
       </div>
       <div class="content">
         <div class="dir-label">
-          <strong>Direction B — Soft welcome panel</strong>
-          · Right sheet (non-blocking feel) with same missing list + Contact us. Less interrupt than a centered modal. Still dismissible once/rare.
-          Contact: <code>support@financialtechtools.ca</code>. Related <a href="https://github.com/kartboy16/content-library/issues/155">#155</a> ≠ this.
+          <strong>Direction B — Soft welcome panel + persistent ?</strong>
+          · <strong>Not</strong> a one-time dialog. Soft right sheet auto-opens on first visit; dismiss closes the panel but a <strong>?</strong> help control stays bottom-right forever. Reopen anytime via ?. Contact: <code>support@financialtechtools.ca</code>. Related <a href="https://github.com/kartboy16/content-library/issues/155">#155</a> ≠ this.
         </div>
 
         <div class="screen-tabs">
-          <button type="button" class="on" data-screen="all">1 · All three missing</button>
-          <button type="button" data-screen="partial">2 · Partial (WP connected)</button>
-          <button type="button" data-screen="dismissed">3 · Dismissed</button>
+          <button type="button" class="on" data-screen="first">1 · First visit (auto-open)</button>
+          <button type="button" data-screen="dismissed">2 · Dismissed (? stays)</button>
+          <button type="button" data-screen="reopen">3 · Reopen via ?</button>
+          <button type="button" data-screen="partial">4 · Partial (WP connected)</button>
+          <button type="button" data-screen="contact">5 · Contact us mailto</button>
         </div>
 
         <div class="stage" id="stage" style="min-height:560px">
@@ -68,9 +70,9 @@
               <div class="setup-head">
                 <div>
                   <h3 id="setup-title">Welcome — a quick setup tip</h3>
-                  <p class="sub">You’re in. A few channels still need connecting so you can distribute content.</p>
+                  <p class="sub" id="setup-sub">You’re in. A few channels still need connecting so you can distribute content.</p>
                 </div>
-                <button type="button" class="btn btn-ghost" id="close-x" style="padding:6px 10px" aria-label="Close">✕</button>
+                <button type="button" class="btn btn-ghost" id="close-x" style="padding:6px 10px" aria-label="Close panel">✕</button>
               </div>
               <div class="setup-body sheet-body">
                 <div class="chan-list" id="chan-list"></div>
@@ -85,22 +87,26 @@
                   <a class="btn btn-primary" id="contact-cta" href="#" style="width:100%">Contact us to help set up</a>
                 </div>
                 <button type="button" class="later" id="dismiss-later">I’ll do this later</button>
-                <p class="once-note">One-time welcome — won’t reappear every session.</p>
+                <p class="once-note" id="persist-note">Dismiss closes this panel — reopen anytime with the <strong>?</strong> below.</p>
               </div>
             </div>
           </div>
 
           <div id="dismissed-panel" class="hidden">
-            <p class="note-bar" style="margin-top:8px">Dismissed — Content Library usable immediately. Soft panel does not re-nag this session.</p>
+            <p class="note-bar" style="margin-top:8px">Panel closed — Content Library fully usable. Persistent <strong>?</strong> stays bottom-right so help is always one click away.</p>
           </div>
+
+          <!-- Persistent ? help FAB — always visible in B pattern -->
+          <button type="button" class="help-fab" id="help-fab" aria-label="Open setup help" title="Setup help">?</button>
         </div>
 
-        <p class="note-bar">Mock alt: softer interrupt (right sheet). Same Contact us mailto + self-serve. Soft Dev hold.</p>
+        <p class="note-bar">Alex lock · B with persistent ? FAB. First visit auto-opens soft panel; thereafter reopen via ?. Soft Dev hold · not agent-ready.</p>
       </div>
     </div>
   </div>
 
-  <div class="toast" id="toast"><span class="ok-dot">●</span> Welcome dismissed — finish anytime from Settings</div>
+  <div class="toast" id="toast"><span class="ok-dot">●</span> Panel closed — tap ? anytime to reopen</div>
+  <div class="toast" id="toast-mail" style="bottom:88px"><span class="ok-dot">●</span> Opening mailto: support@financialtechtools.ca</div>
 
   <script>
 (function () {
@@ -112,7 +118,12 @@
   const chanList = document.getElementById('chan-list');
   const selfLinks = document.getElementById('self-links');
   const contactCta = document.getElementById('contact-cta');
+  const helpFab = document.getElementById('help-fab');
   const toast = document.getElementById('toast');
+  const toastMail = document.getElementById('toast-mail');
+  const setupTitle = document.getElementById('setup-title');
+  const setupSub = document.getElementById('setup-sub');
+  const persistNote = document.getElementById('persist-note');
 
   const states = {
     all: {
@@ -133,6 +144,9 @@
     }
   };
 
+  var currentData = 'all';
+  var panelOpen = true;
+
   function mailto(missing) {
     var list = missing.join(', ');
     return 'mailto:' + MAIL +
@@ -149,37 +163,112 @@
     }).join('');
     selfLinks.innerHTML = state.channels.filter(function (c) { return !c.ok; }).map(function (c) {
       var label = c.key === 'social' ? 'Social settings' : (c.key === 'email' ? 'Email settings' : 'Website / WordPress');
-      return '<a href="#">→ ' + label + '</a>';
+      return '<a href="#">' + '→ ' + label + '</a>';
     }).join('');
     contactCta.href = mailto(state.missing);
   }
 
+  function setPanel(open) {
+    panelOpen = open;
+    if (open) {
+      overlay.style.display = 'flex';
+      dismissed.classList.add('hidden');
+      helpFab.classList.remove('pulse');
+    } else {
+      overlay.style.display = 'none';
+      dismissed.classList.remove('hidden');
+      helpFab.classList.add('pulse');
+    }
+    helpFab.setAttribute('aria-expanded', open ? 'true' : 'false');
+  }
+
   function show(screen) {
     tabs.forEach(function (t) { t.classList.toggle('on', t.dataset.screen === screen); });
-    if (screen === 'dismissed') {
-      overlay.style.display = 'none';
-      behind.style.filter = '';
-      behind.style.opacity = '1';
-      dismissed.classList.remove('hidden');
+    behind.style.filter = '';
+    behind.style.opacity = '1';
+    helpFab.style.display = 'grid';
+
+    if (screen === 'first') {
+      currentData = 'all';
+      setupTitle.textContent = 'Welcome — a quick setup tip';
+      setupSub.textContent = 'You’re in. A few channels still need connecting so you can distribute content.';
+      persistNote.innerHTML = 'First visit auto-opens this panel. Dismiss anytime — reopen with the <strong>?</strong> below.';
+      render(states.all);
+      setPanel(true);
       return;
     }
-    dismissed.classList.add('hidden');
-    behind.style.filter = 'none';
-    behind.style.opacity = '1';
-    overlay.style.display = 'flex';
-    render(states[screen]);
+
+    if (screen === 'dismissed') {
+      currentData = 'all';
+      render(states.all);
+      setPanel(false);
+      return;
+    }
+
+    if (screen === 'reopen') {
+      currentData = 'all';
+      setupTitle.textContent = 'Setup help';
+      setupSub.textContent = 'Reopened from ?. Same missing channels — Contact us or connect yourself.';
+      persistNote.innerHTML = 'Reopened via persistent <strong>?</strong>. Close again anytime; ? stays.';
+      render(states.all);
+      setPanel(true);
+      return;
+    }
+
+    if (screen === 'partial') {
+      currentData = 'partial';
+      setupTitle.textContent = 'Welcome — a quick setup tip';
+      setupSub.textContent = 'WordPress is connected. Social and Email still need a hand.';
+      persistNote.innerHTML = 'Partial state — only missing channels call out. ? still reopens after dismiss.';
+      render(states.partial);
+      setPanel(true);
+      return;
+    }
+
+    if (screen === 'contact') {
+      currentData = 'all';
+      setupTitle.textContent = 'Welcome — a quick setup tip';
+      setupSub.textContent = 'You’re in. A few channels still need connecting so you can distribute content.';
+      persistNote.innerHTML = 'Primary CTA opens <code>mailto:support@financialtechtools.ca</code> (subject/body prefilled).';
+      render(states.all);
+      setPanel(true);
+      toastMail.classList.add('show');
+      setTimeout(function () { toastMail.classList.remove('show'); }, 3200);
+      return;
+    }
   }
 
   function dismiss() {
-    show('dismissed');
+    setPanel(false);
+    tabs.forEach(function (t) { t.classList.toggle('on', t.dataset.screen === 'dismissed'); });
     toast.classList.add('show');
     setTimeout(function () { toast.classList.remove('show'); }, 2800);
+  }
+
+  function reopenFromFab() {
+    if (panelOpen) {
+      dismiss();
+      return;
+    }
+    setupTitle.textContent = 'Setup help';
+    setupSub.textContent = 'Reopened from ?. Same missing channels — Contact us or connect yourself.';
+    persistNote.innerHTML = 'Reopened via persistent <strong>?</strong>. Close again anytime; ? stays.';
+    render(states[currentData] || states.all);
+    setPanel(true);
+    tabs.forEach(function (t) { t.classList.toggle('on', t.dataset.screen === 'reopen'); });
   }
 
   tabs.forEach(function (t) { t.addEventListener('click', function () { show(t.dataset.screen); }); });
   document.getElementById('close-x').addEventListener('click', dismiss);
   document.getElementById('dismiss-later').addEventListener('click', dismiss);
-  show('all');
+  helpFab.addEventListener('click', reopenFromFab);
+
+  contactCta.addEventListener('click', function () {
+    toastMail.classList.add('show');
+    setTimeout(function () { toastMail.classList.remove('show'); }, 2800);
+  });
+
+  show('first');
 })();
   </script>
 </body>

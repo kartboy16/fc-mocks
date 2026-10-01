@@ -40,6 +40,7 @@
     }
     .card:hover { border-color: var(--blue); box-shadow: 0 4px 16px rgba(30,42,74,0.08); }
     .card.recd { border-color: #2b7de9; box-shadow: 0 4px 16px rgba(43,125,233,0.12); }
+    .card.alt-dim { opacity: 0.78; }
     .card h3 { font-size: 0.95rem; margin-bottom: 6px; color: var(--blue); }
     .card p { font-size: 0.8rem; color: var(--muted); }
     .card .tag {
@@ -47,6 +48,7 @@
       color: var(--blue); padding: 2px 8px; border-radius: 999px; margin-bottom: 8px;
     }
     .card .tag.rec-tag { background: var(--blue); color: #fff; }
+    .card .tag.dim-tag { background: #e5e7eb; color: #6b7280; }
     h2 { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--muted); margin: 28px 0 12px; }
     .problem {
       margin: 0 0 20px; padding: 14px 16px; background: #fff8eb; border: 1px solid #f0d4a8;
@@ -88,51 +90,55 @@
     <div class="hero-inner">
       <div class="eyebrow">FinancialContent · content-library #332 · Designer mocks</div>
       <h1>First login — Contact us / help setup when channels aren’t connected</h1>
-      <p>When <strong>social</strong>, <strong>email</strong>, or <strong>WordPress</strong> aren’t connected on first login (or rare first-seen), show a light <strong>Contact us / help setup</strong> dialog so advisors aren’t stuck with incomplete distribution.</p>
-      <span class="rec">Recommend · Direction A — Centered modal checklist</span>
+      <p>When <strong>social</strong>, <strong>email</strong>, or <strong>WordPress</strong> aren’t connected, show a soft help panel — <strong>not</strong> a one-time dialog. Auto-open on first visit; a persistent <strong>?</strong> bottom-right reopens it anytime. Primary CTA: Contact us (<code>mailto:support@financialtechtools.ca</code>).</p>
+      <span class="rec">Alex lock · Direction B — Soft panel + ? help FAB</span>
     </div>
   </header>
 
   <div class="wrap">
-    <a class="cta" href="directions/a/index.html">
-      Open Direction A (recommended)
-      <small>Centered modal over Content Library · missing chips · Contact us + self-serve · dismiss once</small>
+    <a class="cta" href="directions/b/index.html">
+      Open Direction B (Alex lock)
+      <small>Soft right sheet · first visit auto-open · persistent ? bottom-right · Contact us mailto</small>
     </a>
     <p style="text-align:center;margin:-18px 0 24px;font-size:0.8rem;color:var(--muted)">
-      <a href="build-contract.html">Provisional build contract</a> ·
+      <a href="build-contract.html">Build contract</a> ·
       <a href="build-contract.md">Markdown</a> ·
       <a href="directions-brief.md">Directions brief</a>
     </p>
 
     <div class="problem">
-      <strong>Problem (Alex):</strong> On first login, if any of social / email / WordPress are not connected, advisors need a path to <em>get help</em> — not silence. Primary CTA is <strong>Contact us</strong> (<code>mailto:support@financialtechtools.ca</code>) with optional self-serve connect links. Dismissible; one-time or rare (don’t re-nag every session).
+      <strong>Problem (Alex):</strong> Advisors need help when Social / Email / WordPress aren’t connected — without a one-shot dialog that vanishes forever. Soft panel auto-opens once; thereafter reopen via persistent <strong>?</strong> bottom-right. Primary: <strong>Contact us</strong> (<code>mailto:support@financialtechtools.ca</code>) + optional self-serve.
     </div>
 
     <div class="hold">
-      <strong>Soft Dev hold · Idea / playground · not agent-ready.</strong> Designer-first mocks only. Do <em>not</em> wake Soft Dev. Do <em>not</em> mark <code>agent-ready</code>. CosB will ask Alex in <code>#fc-bugs</code> which direction to lock.
+      <strong>Soft Dev hold · Idea / playground · not agent-ready.</strong> Designer-first mocks only. Do <em>not</em> wake Soft Dev. Do <em>not</em> mark <code>agent-ready</code>. CosB can re-ask Alex in <code>#fc-bugs</code> if needed.
     </div>
 
     <div class="contrast">
-      <strong>Related but different — do not rebuild #155.</strong> <a href="https://github.com/kartboy16/content-library/issues/155" style="color:#991b1b">#155</a> is a full profile / first-login setup walkthrough (in-build). This mock is a lighter <strong>help / contact</strong> dialog for incomplete channel setup only. Reference #155; don’t ship the full walkthrough here.
+      <strong>Related but different — do not rebuild #155.</strong> <a href="https://github.com/kartboy16/content-library/issues/155" style="color:#991b1b">#155</a> is a full profile / first-login setup walkthrough (in-build). This mock is a lighter <strong>help / contact</strong> panel for incomplete channel setup only. Reference #155; don’t ship the full walkthrough here.
     </div>
 
     <div class="ac">
-      <strong>Acceptance sketch (product)</strong>
+      <strong>Acceptance sketch (product) — locked B pattern</strong>
       <ul>
-        <li>Dialog when at least one of Social / Email / WordPress is disconnected on first login / first eligible session</li>
-        <li>Names what’s missing (Connected vs Not connected chips)</li>
-        <li>Primary: <strong>Contact us to help set up</strong> → <code>mailto:support@financialtechtools.ca</code> (subject/body prefill OK)</li>
+        <li><strong>First visit:</strong> soft panel auto-opens over Content Library; <strong>?</strong> already visible bottom-right</li>
+        <li><strong>Dismiss:</strong> closes the panel only — Content Library usable; <strong>?</strong> remains</li>
+        <li><strong>Thereafter:</strong> reopen the same panel anytime via the persistent <strong>?</strong> FAB</li>
+        <li>Names what’s missing (Social / Email / WordPress · Connected vs Not connected chips)</li>
+        <li>Primary: <strong>Contact us to help set up</strong> → <code>mailto:support@financialtechtools.ca</code></li>
         <li>Optional self-serve: Social settings · Email settings · Website/WordPress</li>
-        <li>Dismissible (“I’ll do this later”); once / rare — not every session</li>
+        <li><strong>Not</strong> a one-time dialog that disappears with no reopen path</li>
       </ul>
     </div>
 
     <div class="ac" style="background:#f8fafc;border-color:#e2e8f0;color:#334155">
-      <strong>Screens in every direction (tabs)</strong>
+      <strong>Screens in Direction B (tabs)</strong>
       <ul>
-        <li><strong>All three missing</strong> — Social + Email + WordPress not connected</li>
+        <li><strong>First visit</strong> — panel auto-open + ? visible</li>
+        <li><strong>Dismissed</strong> — panel closed, ? still bottom-right</li>
+        <li><strong>Reopen via ?</strong> — panel returns from FAB click</li>
         <li><strong>Partial</strong> — e.g. WordPress connected; Social + Email missing</li>
-        <li><strong>Dismissed</strong> — empty / normal Content Library after close (no re-nag)</li>
+        <li><strong>Contact us mailto</strong> — primary CTA → support@financialtechtools.ca</li>
       </ul>
     </div>
 
@@ -148,26 +154,26 @@
 
     <h2>Directions</h2>
     <div class="grid">
-      <a class="card recd" href="directions/a/index.html">
-        <span class="tag rec-tag">RECOMMEND</span>
+      <a class="card recd" href="directions/b/index.html">
+        <span class="tag rec-tag">ALEX LOCK</span>
+        <h3>B — Soft panel + ? help FAB</h3>
+        <p>Right sheet auto-opens on first visit. Dismiss closes panel; persistent ? bottom-right reopens anytime. Contact us + self-serve. Not a one-time dialog.</p>
+      </a>
+      <a class="card alt-dim" href="directions/a/index.html">
+        <span class="tag dim-tag">ALT · SUPERSEDED</span>
         <h3>A — Centered modal checklist</h3>
-        <p>Post-login over Content Library (blurred). Channel checklist + chips. Primary Contact us · self-serve links · “I’ll do this later.” Shown once/rare.</p>
+        <p>Earlier recommend. One-time / rare centered modal. Alex preferred B with persistent ? instead.</p>
       </a>
-      <a class="card" href="directions/b/index.html">
-        <span class="tag">ALT</span>
-        <h3>B — Soft welcome panel</h3>
-        <p>Right sheet / bottom welcome card — same missing list + Contact us; less modal interrupt. Still dismissible once.</p>
-      </a>
-      <a class="card" href="directions/c/index.html">
-        <span class="tag">ALT</span>
+      <a class="card alt-dim" href="directions/c/index.html">
+        <span class="tag dim-tag">ALT · SUPERSEDED</span>
         <h3>C — Contact-first short form</h3>
-        <p>Modal focused on Contact us (prefilled help message) + optional self-serve. Stronger help-desk path to support@financialtechtools.ca.</p>
+        <p>Help-desk-first modal. Kept as reference alt; Alex locked B with ? FAB pattern.</p>
       </a>
     </div>
 
-    <h2>Provisional build contract (recommend A)</h2>
+    <h2>Build contract (locked B)</h2>
     <div class="note" style="margin-top:0">
-      Entry: first login / first eligible session when any of Social · Email · WordPress missing.
+      Entry: first visit auto-open when any of Social · Email · WordPress missing; persistent ? for reopen.
       Contact us = <code>mailto:support@financialtechtools.ca</code>. Full text: <a href="build-contract.html">build-contract.html</a>.
     </div>
 

@@ -20,16 +20,16 @@
   </style>
 </head>
 <body>
-  <p class="warn"><strong>PROVISIONAL</strong> — Recommend Direction A. Not locked. Do <strong>not</strong> mark agent-ready until Alex locks a direction and Soft Dev is explicitly woken.</p>
-  <p class="ok"><strong>Recommend:</strong> Direction A — Centered modal checklist over Content Library.</p>
-  <p class="hold"><strong>Soft Dev hold · Idea / playground.</strong> Soft Dev not woken. CosB will ask Alex in <code>#fc-bugs</code>.</p>
-  <p class="rule"><strong>Related ≠ same:</strong> Do <strong>not</strong> rebuild <a href="https://github.com/kartboy16/content-library/issues/155">#155</a> full profile walkthrough. This is a lighter Contact us / help dialog for incomplete Social · Email · WordPress setup only.</p>
+  <p class="ok"><strong>Alex lock:</strong> Direction B — Soft welcome panel + persistent <strong>?</strong> help FAB (bottom-right). Not a one-time dialog.</p>
+  <p class="hold"><strong>Soft Dev hold · Idea / playground · not agent-ready.</strong> Soft Dev not woken. CosB can re-ask Alex in <code>#fc-bugs</code> if needed.</p>
+  <p class="warn"><strong>Not agent-ready.</strong> Do <strong>not</strong> mark agent-ready until Soft Dev is explicitly woken after this lock.</p>
+  <p class="rule"><strong>Related ≠ same:</strong> Do <strong>not</strong> rebuild <a href="https://github.com/kartboy16/content-library/issues/155">#155</a> full profile walkthrough. This is a lighter Contact us / help panel for incomplete Social · Email · WordPress setup only.</p>
 
   <h1>Build contract · First login Contact us / help setup (#332)</h1>
-  <p>Markdown: <a href="build-contract.md">build-contract.md</a> · Hub: <a href="index.html">index.html</a> · Mock: <a href="directions/a/">Direction A</a></p>
+  <p>Markdown: <a href="build-contract.md">build-contract.md</a> · Hub: <a href="index.html">index.html</a> · Mock: <a href="directions/b/">Direction B</a></p>
 
   <h2>One-liner</h2>
-  <p>On first login (or rare first-seen), if any of Social / Email / WordPress are not connected, show a dismissible dialog that names what’s missing, offers <strong>Contact us</strong> help, and optional self-serve connect links — without re-nagging every session.</p>
+  <p>When any of Social / Email / WordPress are not connected, auto-open a soft help panel on first visit; dismiss closes the panel but a persistent <strong>?</strong> stays bottom-right so advisors can reopen anytime. Primary CTA: Contact us → <code>mailto:support@financialtechtools.ca</code>.</p>
 
   <h2>Contact us (mandatory)</h2>
   <ul>
@@ -38,31 +38,41 @@
     <li>Show the address in UI copy where helpful: <strong>support@financialtechtools.ca</strong></li>
   </ul>
 
-  <h2>Entry points (provisional)</h2>
+  <h2>Entry points (locked)</h2>
   <table>
     <thead><tr><th>Entry</th><th>Direction</th></tr></thead>
     <tbody>
-      <tr><td>Post-login over Content Library — centered modal checklist</td><td><strong>A</strong> (recommend)</td></tr>
-      <tr><td>Post-login soft welcome — right sheet / bottom card</td><td><strong>B</strong></td></tr>
-      <tr><td>Post-login contact-first modal with short form</td><td><strong>C</strong></td></tr>
+      <tr><td>Soft right sheet + persistent ? FAB (first auto-open, then reopen via ?)</td><td><strong>B</strong> (Alex lock)</td></tr>
+      <tr><td>Centered modal checklist (one-time / rare)</td><td>A · superseded alt</td></tr>
+      <tr><td>Contact-first short form modal</td><td>C · superseded alt</td></tr>
     </tbody>
   </table>
 
   <h2>Beats (required in product)</h2>
   <ol>
-    <li><strong>Trigger</strong> — first login / first eligible session when ≥1 of Social, Email, WordPress disconnected</li>
+    <li><strong>First visit auto-open</strong> — soft panel opens when ≥1 of Social, Email, WordPress disconnected; <strong>?</strong> already visible bottom-right</li>
     <li><strong>Checklist</strong> — name each channel; Connected vs Not connected chips</li>
     <li><strong>Contact us</strong> — mailto support@financialtechtools.ca (primary)</li>
     <li><strong>Self-serve</strong> (optional) — Social settings · Email settings · Website/WordPress</li>
-    <li><strong>Dismiss</strong> — “I’ll do this later”; persist once/rare (no every-session nag)</li>
+    <li><strong>Dismiss</strong> — closes panel only; Content Library usable; <strong>?</strong> remains</li>
+    <li><strong>Reopen via ?</strong> — same panel returns from persistent help FAB anytime (not a one-time dialog)</li>
   </ol>
+
+  <h2>Acceptance criteria (locked B)</h2>
+  <ul>
+    <li><strong>AC-1:</strong> Soft panel auto-opens on first eligible visit when ≥1 channel missing; ? FAB is visible</li>
+    <li><strong>AC-2:</strong> Panel lists Social / Email / WordPress with Connected vs Not connected</li>
+    <li><strong>AC-3:</strong> Primary Contact us → <code>mailto:support@financialtechtools.ca</code>; optional self-serve links</li>
+    <li><strong>AC-4:</strong> Dismiss closes the panel; ? remains bottom-right</li>
+    <li><strong>AC-5:</strong> Clicking ? reopens the soft panel (persistent help — not one-time)</li>
+  </ul>
 
   <h2>Copy / UX rules</h2>
   <ul>
-    <li>One-time or rare — don’t re-nag every session</li>
+    <li><strong>Not</strong> a one-time dialog that vanishes with no reopen path</li>
     <li>Name what’s missing (don’t hide connected channels if partial — show Connected chip)</li>
     <li>Contact us primary; self-serve secondary</li>
-    <li>Dismissible without forcing contact</li>
+    <li>Dismissible without forcing contact; ? stays</li>
     <li>Fake advisor in mocks OK (e.g. Jordan Lee · Coulas Insurance)</li>
   </ul>
 
@@ -73,8 +83,8 @@
 
   <h2>In scope</h2>
   <ul>
-    <li>Mocks A/B/C with screens: all missing · partial · dismissed</li>
-    <li>Provisional AC for Soft Dev after lock</li>
+    <li>Mocks: B revised for ? FAB pattern; A/C kept as superseded alts</li>
+    <li>AC for Soft Dev after explicit wake (not this pass)</li>
   </ul>
 
   <h2>Out of scope</h2>
@@ -87,13 +97,13 @@
 
   <h2>Open questions</h2>
   <ol>
-    <li>Exact “once vs rare” persistence (local flag / server flag / days-apart re-offer)?</li>
+    <li>Exact “first visit” persistence (local flag / server flag)?</li>
     <li>Does “Social” mean any of FB/LI/IG, or all?</li>
     <li>Should admin-as-user see this for the impersonated advisor?</li>
-    <li>Ship A alone, or A + B (sheet) as progressive disclosure?</li>
+    <li>Hide ? when all three channels are connected?</li>
   </ol>
 
   <h2>Reference</h2>
-  <p><a href="index.html">Hub</a> · <a href="directions/a/">A</a> · <a href="directions/b/">B</a> · <a href="directions/c/">C</a> · <a href="https://github.com/kartboy16/content-library/issues/332">Issue #332</a> · <a href="https://github.com/kartboy16/content-library/issues/155">#155</a></p>
+  <p><a href="index.html">Hub</a> · <a href="directions/b/">B (lock)</a> · <a href="directions/a/">A</a> · <a href="directions/c/">C</a> · <a href="https://github.com/kartboy16/content-library/issues/332">Issue #332</a> · <a href="https://github.com/kartboy16/content-library/issues/155">#155</a></p>
 </body>
 </html>

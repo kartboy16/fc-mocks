@@ -459,3 +459,43 @@ table.users tr:hover td { background: #f8fbff; }
 .empty-app p { font-size: 13px; color: var(--muted); margin-bottom: 16px; }
 .toast.dismissed-toast { background: #1e2a4a; }
 .rail .ico.cl-on { background: var(--mint); color: var(--blue); box-shadow: inset 3px 0 0 var(--blue); border-radius: 0 10px 10px 0; width: 48px; margin-left: auto; }
+
+/* #332 Direction B — persistent ? help FAB */
+.help-fab {
+  position: absolute;
+  right: 20px;
+  bottom: 20px;
+  z-index: 30;
+  width: 48px;
+  height: 48px;
+  border-radius: 999px;
+  border: none;
+  background: var(--blue);
+  color: #fff;
+  font-family: inherit;
+  font-size: 22px;
+  font-weight: 700;
+  line-height: 1;
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+  box-shadow: 0 8px 24px rgba(43,125,233,.4);
+  transition: transform .15s, background .15s, box-shadow .15s;
+}
+.help-fab:hover {
+  background: var(--blue2);
+  transform: scale(1.06);
+  box-shadow: 0 10px 28px rgba(43,125,233,.5);
+}
+.help-fab:focus-visible {
+  outline: 3px solid #93c5fd;
+  outline-offset: 3px;
+}
+.help-fab.pulse {
+  animation: help-fab-pulse 2.4s ease-in-out infinite;
+}
+@keyframes help-fab-pulse {
+  0%, 100% { box-shadow: 0 8px 24px rgba(43,125,233,.4); }
+  50% { box-shadow: 0 8px 28px rgba(43,125,233,.65), 0 0 0 8px rgba(43,125,233,.18); }
+}
+.stage .help-fab { /* stays inside stage for mock framing */ }
