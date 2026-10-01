@@ -29,7 +29,7 @@ When any of Social / Email / WordPress are not connected, auto-open a soft help 
 3. Contact us → mailto support@financialtechtools.ca  
 4. Optional self-serve (Social / Email / Website settings)  
 5. Dismiss — closes panel only; ? remains  
-6. Reopen via ? — same panel returns anytime (not one-time)
+6. Help FAB — clicking ? reopens the soft panel (persistent, not one-time)
 
 ## Acceptance criteria (locked B)
 - **AC-1:** Soft panel auto-opens on first eligible visit when ≥1 channel missing; ? FAB visible  

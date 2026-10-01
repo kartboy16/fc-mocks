@@ -48,7 +48,7 @@
         <div class="screen-tabs">
           <button type="button" class="on" data-screen="first">1 · First visit (auto-open)</button>
           <button type="button" data-screen="dismissed">2 · Dismissed (? stays)</button>
-          <button type="button" data-screen="reopen">3 · Reopen via ?</button>
+          <button type="button" data-screen="reopen">3 · Setup help</button>
           <button type="button" data-screen="partial">4 · Partial (WP connected)</button>
           <button type="button" data-screen="contact">5 · Contact us mailto</button>
         </div>
@@ -208,8 +208,8 @@
     if (screen === 'reopen') {
       currentData = 'all';
       setupTitle.textContent = 'Setup help';
-      setupSub.textContent = 'Reopened from ?. Same missing channels — Contact us or connect yourself.';
-      persistNote.innerHTML = 'Reopened via persistent <strong>?</strong>. Close again anytime; ? stays.';
+      setupSub.textContent = 'A few channels still need connecting. Contact us or connect yourself.';
+      persistNote.innerHTML = 'Contact us or connect yourself. The <strong>?</strong> stays available.';
       render(states.all);
       setPanel(true);
       return;
@@ -251,8 +251,8 @@
       return;
     }
     setupTitle.textContent = 'Setup help';
-    setupSub.textContent = 'Reopened from ?. Same missing channels — Contact us or connect yourself.';
-    persistNote.innerHTML = 'Reopened via persistent <strong>?</strong>. Close again anytime; ? stays.';
+    setupSub.textContent = 'A few channels still need connecting. Contact us or connect yourself.';
+    persistNote.innerHTML = 'Contact us or connect yourself. The <strong>?</strong> stays available.';
     render(states[currentData] || states.all);
     setPanel(true);
     tabs.forEach(function (t) { t.classList.toggle('on', t.dataset.screen === 'reopen'); });

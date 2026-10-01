@@ -10,7 +10,7 @@
 | A | Centered modal checklist | Earlier recommend; one-time/rare. Superseded by Alex’s B + ? pick. |
 | C | Contact-first short form | Stronger help-desk path. Superseded alt. |
 
-**B screens:** first visit (auto-open + ?) · dismissed (? stays) · reopen via ? · partial missing · Contact us mailto.
+**B screens:** first visit (auto-open + ?) · dismissed (? stays) · setup help via ? · partial missing · Contact us mailto.
 
 Related: [#155](https://github.com/kartboy16/content-library/issues/155) walkthrough — reference only, don’t rebuild.
 
