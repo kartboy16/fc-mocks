@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Build contract · #332 First login Contact us / help setup</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    body { font-family: Inter, system-ui, sans-serif; max-width: 760px; margin: 40px auto; padding: 0 24px 80px; color: #1e2a4a; line-height: 1.55; }
+    h1 { font-size: 22px; } h2 { font-size: 16px; margin-top: 28px; }
+    p, li { font-size: 14px; color: #3a4558; }
+    .warn { background: #fff7ed; color: #9a3412; padding: 12px 14px; border-radius: 8px; font-size: 13px; margin-bottom: 16px; }
+    .rule { background: #fef2f2; color: #991b1b; padding: 12px 14px; border-radius: 8px; font-size: 13px; margin-bottom: 16px; }
+    .ok { background: #e8f5e9; color: #1a7f4c; padding: 12px 14px; border-radius: 8px; font-size: 13px; margin-bottom: 16px; }
+    .hold { background: #fef3c7; color: #92400e; padding: 12px 14px; border-radius: 8px; font-size: 13px; margin-bottom: 16px; }
+    code { background: #eef2f6; padding: 1px 6px; border-radius: 4px; font-size: 12px; }
+    a { color: #2b7de9; } table { width: 100%; border-collapse: collapse; font-size: 13px; margin: 12px 0; }
+    th, td { border: 1px solid #d4e4f2; padding: 8px 10px; text-align: left; vertical-align: top; } th { background: #eef4fb; }
+    ul, ol { padding-left: 1.2em; }
+  </style>
+</head>
+<body>
+  <p class="warn"><strong>PROVISIONAL</strong> — Recommend Direction A. Not locked. Do <strong>not</strong> mark agent-ready until Alex locks a direction and Soft Dev is explicitly woken.</p>
+  <p class="ok"><strong>Recommend:</strong> Direction A — Centered modal checklist over Content Library.</p>
+  <p class="hold"><strong>Soft Dev hold · Idea / playground.</strong> Soft Dev not woken. CosB will ask Alex in <code>#fc-bugs</code>.</p>
+  <p class="rule"><strong>Related ≠ same:</strong> Do <strong>not</strong> rebuild <a href="https://github.com/kartboy16/content-library/issues/155">#155</a> full profile walkthrough. This is a lighter Contact us / help dialog for incomplete Social · Email · WordPress setup only.</p>
+
+  <h1>Build contract · First login Contact us / help setup (#332)</h1>
+  <p>Markdown: <a href="build-contract.md">build-contract.md</a> · Hub: <a href="index.html">index.html</a> · Mock: <a href="directions/a/">Direction A</a></p>
+
+  <h2>One-liner</h2>
+  <p>On first login (or rare first-seen), if any of Social / Email / WordPress are not connected, show a dismissible dialog that names what’s missing, offers <strong>Contact us</strong> help, and optional self-serve connect links — without re-nagging every session.</p>
+
+  <h2>Contact us (mandatory)</h2>
+  <ul>
+    <li>Primary CTA opens <code>mailto:support@financialtechtools.ca</code></li>
+    <li>Prefill subject/body OK (e.g. “Help connecting Social, Email, WordPress” + firm/advisor)</li>
+    <li>Show the address in UI copy where helpful: <strong>support@financialtechtools.ca</strong></li>
+  </ul>
+
+  <h2>Entry points (provisional)</h2>
+  <table>
+    <thead><tr><th>Entry</th><th>Direction</th></tr></thead>
+    <tbody>
+      <tr><td>Post-login over Content Library — centered modal checklist</td><td><strong>A</strong> (recommend)</td></tr>
+      <tr><td>Post-login soft welcome — right sheet / bottom card</td><td><strong>B</strong></td></tr>
+      <tr><td>Post-login contact-first modal with short form</td><td><strong>C</strong></td></tr>
+    </tbody>
+  </table>
+
+  <h2>Beats (required in product)</h2>
+  <ol>
+    <li><strong>Trigger</strong> — first login / first eligible session when ≥1 of Social, Email, WordPress disconnected</li>
+    <li><strong>Checklist</strong> — name each channel; Connected vs Not connected chips</li>
+    <li><strong>Contact us</strong> — mailto support@financialtechtools.ca (primary)</li>
+    <li><strong>Self-serve</strong> (optional) — Social settings · Email settings · Website/WordPress</li>
+    <li><strong>Dismiss</strong> — “I’ll do this later”; persist once/rare (no every-session nag)</li>
+  </ol>
+
+  <h2>Copy / UX rules</h2>
+  <ul>
+    <li>One-time or rare — don’t re-nag every session</li>
+    <li>Name what’s missing (don’t hide connected channels if partial — show Connected chip)</li>
+    <li>Contact us primary; self-serve secondary</li>
+    <li>Dismissible without forcing contact</li>
+    <li>Fake advisor in mocks OK (e.g. Jordan Lee · Coulas Insurance)</li>
+  </ul>
+
+  <h2>Channels in scope</h2>
+  <ul>
+    <li>Social · Email · WordPress (Website)</li>
+  </ul>
+
+  <h2>In scope</h2>
+  <ul>
+    <li>Mocks A/B/C with screens: all missing · partial · dismissed</li>
+    <li>Provisional AC for Soft Dev after lock</li>
+  </ul>
+
+  <h2>Out of scope</h2>
+  <ul>
+    <li>content-library / Meteor app code</li>
+    <li>Waking Soft Dev · marking agent-ready</li>
+    <li>#155 full profile walkthrough (reference only)</li>
+    <li>Real OAuth / SMTP / PII</li>
+  </ul>
+
+  <h2>Open questions</h2>
+  <ol>
+    <li>Exact “once vs rare” persistence (local flag / server flag / days-apart re-offer)?</li>
+    <li>Does “Social” mean any of FB/LI/IG, or all?</li>
+    <li>Should admin-as-user see this for the impersonated advisor?</li>
+    <li>Ship A alone, or A + B (sheet) as progressive disclosure?</li>
+  </ol>
+
+  <h2>Reference</h2>
+  <p><a href="index.html">Hub</a> · <a href="directions/a/">A</a> · <a href="directions/b/">B</a> · <a href="directions/c/">C</a> · <a href="https://github.com/kartboy16/content-library/issues/332">Issue #332</a> · <a href="https://github.com/kartboy16/content-library/issues/155">#155</a></p>
+</body>
+</html>

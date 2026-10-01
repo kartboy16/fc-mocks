@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Direction C — Contact-first short form · #332</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../../shared.css" />
+</head>
+<body>
+  <div class="invite-banner">
+    <span><strong>#332 · Direction C</strong> · Soft Dev hold · not agent-ready</span>
+    <span>
+      <a href="../../index.html">Hub</a> ·
+      <a href="../a/">A</a> ·
+      <a href="../b/">B</a> ·
+      <a href="../../build-contract.html">Contract</a>
+    </span>
+  </div>
+
+  <div class="shell">
+    <aside class="rail" aria-label="App nav">
+      <span class="ico cl-on">📄</span>
+      <span class="ico">🌐</span>
+      <span class="ico">✉️</span>
+      <span class="ico">↗</span>
+      <span class="ico" style="margin-top:auto;background:#1e2a4a;color:#fff;border-radius:999px;font-size:11px;font-weight:700">JL</span>
+    </aside>
+    <div class="main">
+      <div class="top-utils">
+        <span class="signed-as">Signed in as Jordan Lee · Coulas Insurance</span>
+        <span style="color:var(--blue)">⚙ Settings</span>
+      </div>
+      <div class="page-head">
+        <h1>Content Library</h1>
+        <p>Browse posts, articles, and assets ready for your channels.</p>
+      </div>
+      <div class="tabs">
+        <span class="on">All content</span><span>Articles</span><span>Social</span><span>Email</span><span>Infographics</span>
+      </div>
+      <div class="content">
+        <div class="dir-label">
+          <strong>Direction C — Contact-first short form</strong>
+          · Modal prioritizes help-desk path. Prefills “I need help connecting…” then opens
+          <code>mailto:support@financialtechtools.ca</code>. Self-serve still available below. Related <a href="https://github.com/kartboy16/content-library/issues/155">#155</a> ≠ this.
+        </div>
+
+        <div class="screen-tabs">
+          <button type="button" class="on" data-screen="all">1 · All three missing</button>
+          <button type="button" data-screen="partial">2 · Partial (WP connected)</button>
+          <button type="button" data-screen="dismissed">3 · Dismissed</button>
+        </div>
+
+        <div class="stage" id="stage">
+          <div id="cl-behind" class="blur-behind">
+            <div class="cl-grid">
+              <div class="cl-card"><div class="thumb"></div><div class="t">Retirement income checklist</div><div class="m">Article · Approved</div></div>
+              <div class="cl-card"><div class="thumb"></div><div class="t">RRSP season tips</div><div class="m">Social · Ready</div></div>
+              <div class="cl-card"><div class="thumb"></div><div class="t">Market update — Q3</div><div class="m">Email · Approved</div></div>
+              <div class="cl-card"><div class="thumb"></div><div class="t">TFSA contribution room</div><div class="m">Infographic</div></div>
+              <div class="cl-card"><div class="thumb"></div><div class="t">Estate planning basics</div><div class="m">Article · Approved</div></div>
+              <div class="cl-card"><div class="thumb"></div><div class="t">Client webinar invite</div><div class="m">Email · Draft</div></div>
+            </div>
+          </div>
+
+          <div class="setup-overlay" id="overlay">
+            <div class="setup-modal" role="dialog" aria-modal="true" aria-labelledby="setup-title" style="width:min(540px,100%)">
+              <div class="setup-head">
+                <div>
+                  <h3 id="setup-title">Need help connecting your channels?</h3>
+                  <p class="sub">We’ll email support so someone can walk you through setup.</p>
+                </div>
+                <button type="button" class="btn btn-ghost" id="close-x" style="padding:6px 10px" aria-label="Close">✕</button>
+              </div>
+              <div class="setup-body">
+                <div class="oauth-note" style="margin-top:0">
+                  <strong>Missing right now</strong>
+                  <span id="missing-summary">Social · Email · WordPress</span>
+                </div>
+                <div class="chan-list" id="chan-list" style="margin-bottom:12px"></div>
+
+                <form class="contact-form" id="contact-form" onsubmit="return false;">
+                  <div class="field">
+                    <label>To</label>
+                    <input type="text" value="support@financialtechtools.ca" readonly style="background:#f7fafc" />
+                  </div>
+                  <div class="field">
+                    <label>Subject</label>
+                    <input type="text" id="subj" value="" />
+                  </div>
+                  <div class="field">
+                    <label>Message</label>
+                    <textarea id="body"></textarea>
+                  </div>
+                </form>
+
+                <div class="self-serve">
+                  <div class="label">Prefer to connect yourself?</div>
+                  <div class="links" id="self-links"></div>
+                </div>
+                <p class="support-line">Sends via your email client to <a href="mailto:support@financialtechtools.ca">support@financialtechtools.ca</a>.</p>
+              </div>
+              <div class="setup-foot">
+                <div class="row">
+                  <a class="btn btn-primary" id="contact-cta" href="#">Send Contact us email</a>
+                </div>
+                <button type="button" class="later" id="dismiss-later">I’ll do this later</button>
+                <p class="once-note">Shown once (or rarely) — dismiss anytime.</p>
+              </div>
+            </div>
+          </div>
+
+          <div id="dismissed-panel" class="hidden">
+            <div class="empty-app" style="border-style:solid;text-align:left;max-width:none;margin:0">
+              <div class="cl-grid">
+                <div class="cl-card"><div class="thumb"></div><div class="t">Retirement income checklist</div><div class="m">Article · Approved</div></div>
+                <div class="cl-card"><div class="thumb"></div><div class="t">RRSP season tips</div><div class="m">Social · Ready</div></div>
+                <div class="cl-card"><div class="thumb"></div><div class="t">Market update — Q3</div><div class="m">Email · Approved</div></div>
+                <div class="cl-card"><div class="thumb"></div><div class="t">TFSA contribution room</div><div class="m">Infographic</div></div>
+              </div>
+              <p class="note-bar" style="margin-top:20px">Dismissed — normal app. Contact form not re-shown this session.</p>
+            </div>
+          </div>
+        </div>
+
+        <p class="note-bar">Mock: Contact-first path still lands on mailto support@financialtechtools.ca (form mirrors prefill). Soft Dev hold.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"><span class="ok-dot">●</span> Opening your email client to support@financialtechtools.ca…</div>
+
+  <script>
+(function () {
+  const MAIL = 'support@financialtechtools.ca';
+  const tabs = document.querySelectorAll('.screen-tabs button');
+  const overlay = document.getElementById('overlay');
+  const behind = document.getElementById('cl-behind');
+  const dismissed = document.getElementById('dismissed-panel');
+  const chanList = document.getElementById('chan-list');
+  const selfLinks = document.getElementById('self-links');
+  const contactCta = document.getElementById('contact-cta');
+  const missingSummary = document.getElementById('missing-summary');
+  const subj = document.getElementById('subj');
+  const body = document.getElementById('body');
+  const toast = document.getElementById('toast');
+
+  const states = {
+    all: {
+      channels: [
+        { key: 'social', name: 'Social', detail: 'Facebook, LinkedIn, Instagram', ok: false, ico: '↗', cls: 'social' },
+        { key: 'email', name: 'Email', detail: 'Newsletter / campaign sending', ok: false, ico: '✉', cls: 'email' },
+        { key: 'wp', name: 'WordPress', detail: 'Website / blog publishing', ok: false, ico: 'W', cls: 'wp' }
+      ],
+      missing: ['Social', 'Email', 'WordPress']
+    },
+    partial: {
+      channels: [
+        { key: 'social', name: 'Social', detail: 'Facebook, LinkedIn, Instagram', ok: false, ico: '↗', cls: 'social' },
+        { key: 'email', name: 'Email', detail: 'Newsletter / campaign sending', ok: false, ico: '✉', cls: 'email' },
+        { key: 'wp', name: 'WordPress', detail: 'coulas.example · connected', ok: true, ico: 'W', cls: 'wp' }
+      ],
+      missing: ['Social', 'Email']
+    }
+  };
+
+  function syncMailto() {
+    contactCta.href = 'mailto:' + MAIL +
+      '?subject=' + encodeURIComponent(subj.value) +
+      '&body=' + encodeURIComponent(body.value);
+  }
+
+  function render(state) {
+    missingSummary.textContent = state.missing.join(' · ');
+    chanList.innerHTML = state.channels.map(function (c) {
+      return '<div class="chan-row ' + (c.ok ? 'ok' : 'missing') + '">' +
+        '<span class="ico-box ' + c.cls + '">' + c.ico + '</span>' +
+        '<div class="body"><strong>' + c.name + '</strong><span>' + c.detail + '</span></div>' +
+        '<span class="chip ' + (c.ok ? 'chip-ok' : 'chip-miss') + '">' + (c.ok ? 'Connected' : 'Not connected') + '</span></div>';
+    }).join('');
+    selfLinks.innerHTML = state.channels.filter(function (c) { return !c.ok; }).map(function (c) {
+      var label = c.key === 'social' ? 'Social settings' : (c.key === 'email' ? 'Email settings' : 'Website / WordPress');
+      return '<a href="#">→ ' + label + '</a>';
+    }).join('');
+    var list = state.missing.join(', ');
+    subj.value = 'Help connecting ' + list + ' on FinancialContent';
+    body.value = 'Hi,\n\nI need help connecting: ' + list + '.\n\nFirm: Coulas Insurance\nAdvisor: Jordan Lee\n\nThanks,';
+    syncMailto();
+  }
+
+  function show(screen) {
+    tabs.forEach(function (t) { t.classList.toggle('on', t.dataset.screen === screen); });
+    if (screen === 'dismissed') {
+      overlay.style.display = 'none';
+      behind.classList.add('hidden');
+      dismissed.classList.remove('hidden');
+      return;
+    }
+    behind.classList.remove('hidden');
+    behind.classList.add('blur-behind');
+    dismissed.classList.add('hidden');
+    overlay.style.display = 'flex';
+    render(states[screen]);
+  }
+
+  function dismiss() {
+    show('dismissed');
+  }
+
+  tabs.forEach(function (t) { t.addEventListener('click', function () { show(t.dataset.screen); }); });
+  document.getElementById('close-x').addEventListener('click', dismiss);
+  document.getElementById('dismiss-later').addEventListener('click', dismiss);
+  subj.addEventListener('input', syncMailto);
+  body.addEventListener('input', syncMailto);
+  contactCta.addEventListener('click', function () {
+    toast.classList.add('show');
+    setTimeout(function () { toast.classList.remove('show'); }, 2800);
+  });
+  show('all');
+})();
+  </script>
+</body>
+</html>

@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Direction B — Soft welcome panel · #332</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../../shared.css" />
+</head>
+<body>
+  <div class="invite-banner">
+    <span><strong>#332 · Direction B</strong> · Soft Dev hold · not agent-ready</span>
+    <span>
+      <a href="../../index.html">Hub</a> ·
+      <a href="../a/">A</a> ·
+      <a href="../c/">C</a> ·
+      <a href="../../build-contract.html">Contract</a>
+    </span>
+  </div>
+
+  <div class="shell">
+    <aside class="rail" aria-label="App nav">
+      <span class="ico cl-on">📄</span>
+      <span class="ico">🌐</span>
+      <span class="ico">✉️</span>
+      <span class="ico">↗</span>
+      <span class="ico" style="margin-top:auto;background:#1e2a4a;color:#fff;border-radius:999px;font-size:11px;font-weight:700">JL</span>
+    </aside>
+    <div class="main">
+      <div class="top-utils">
+        <span class="signed-as">Signed in as Jordan Lee · Coulas Insurance</span>
+        <span style="color:var(--blue)">⚙ Settings</span>
+      </div>
+      <div class="page-head">
+        <h1>Content Library</h1>
+        <p>Browse posts, articles, and assets ready for your channels.</p>
+      </div>
+      <div class="tabs">
+        <span class="on">All content</span><span>Articles</span><span>Social</span><span>Email</span><span>Infographics</span>
+      </div>
+      <div class="content">
+        <div class="dir-label">
+          <strong>Direction B — Soft welcome panel</strong>
+          · Right sheet (non-blocking feel) with same missing list + Contact us. Less interrupt than a centered modal. Still dismissible once/rare.
+          Contact: <code>support@financialtechtools.ca</code>. Related <a href="https://github.com/kartboy16/content-library/issues/155">#155</a> ≠ this.
+        </div>
+
+        <div class="screen-tabs">
+          <button type="button" class="on" data-screen="all">1 · All three missing</button>
+          <button type="button" data-screen="partial">2 · Partial (WP connected)</button>
+          <button type="button" data-screen="dismissed">3 · Dismissed</button>
+        </div>
+
+        <div class="stage" id="stage" style="min-height:560px">
+          <div id="cl-behind">
+            <div class="cl-grid">
+              <div class="cl-card"><div class="thumb"></div><div class="t">Retirement income checklist</div><div class="m">Article · Approved</div></div>
+              <div class="cl-card"><div class="thumb"></div><div class="t">RRSP season tips</div><div class="m">Social · Ready</div></div>
+              <div class="cl-card"><div class="thumb"></div><div class="t">Market update — Q3</div><div class="m">Email · Approved</div></div>
+              <div class="cl-card"><div class="thumb"></div><div class="t">TFSA contribution room</div><div class="m">Infographic</div></div>
+              <div class="cl-card"><div class="thumb"></div><div class="t">Estate planning basics</div><div class="m">Article · Approved</div></div>
+              <div class="cl-card"><div class="thumb"></div><div class="t">Client webinar invite</div><div class="m">Email · Draft</div></div>
+            </div>
+          </div>
+
+          <div class="setup-overlay sheet-right" id="overlay">
+            <div class="setup-modal sheet" role="dialog" aria-labelledby="setup-title">
+              <div class="setup-head">
+                <div>
+                  <h3 id="setup-title">Welcome — a quick setup tip</h3>
+                  <p class="sub">You’re in. A few channels still need connecting so you can distribute content.</p>
+                </div>
+                <button type="button" class="btn btn-ghost" id="close-x" style="padding:6px 10px" aria-label="Close">✕</button>
+              </div>
+              <div class="setup-body sheet-body">
+                <div class="chan-list" id="chan-list"></div>
+                <div class="self-serve">
+                  <div class="label">Connect yourself</div>
+                  <div class="links" id="self-links"></div>
+                </div>
+                <p class="support-line">Need help? <a href="mailto:support@financialtechtools.ca">support@financialtechtools.ca</a></p>
+              </div>
+              <div class="setup-foot">
+                <div class="row" style="justify-content:stretch">
+                  <a class="btn btn-primary" id="contact-cta" href="#" style="width:100%">Contact us to help set up</a>
+                </div>
+                <button type="button" class="later" id="dismiss-later">I’ll do this later</button>
+                <p class="once-note">One-time welcome — won’t reappear every session.</p>
+              </div>
+            </div>
+          </div>
+
+          <div id="dismissed-panel" class="hidden">
+            <p class="note-bar" style="margin-top:8px">Dismissed — Content Library usable immediately. Soft panel does not re-nag this session.</p>
+          </div>
+        </div>
+
+        <p class="note-bar">Mock alt: softer interrupt (right sheet). Same Contact us mailto + self-serve. Soft Dev hold.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"><span class="ok-dot">●</span> Welcome dismissed — finish anytime from Settings</div>
+
+  <script>
+(function () {
+  const MAIL = 'support@financialtechtools.ca';
+  const tabs = document.querySelectorAll('.screen-tabs button');
+  const overlay = document.getElementById('overlay');
+  const behind = document.getElementById('cl-behind');
+  const dismissed = document.getElementById('dismissed-panel');
+  const chanList = document.getElementById('chan-list');
+  const selfLinks = document.getElementById('self-links');
+  const contactCta = document.getElementById('contact-cta');
+  const toast = document.getElementById('toast');
+
+  const states = {
+    all: {
+      channels: [
+        { key: 'social', name: 'Social', detail: 'Not connected yet', ok: false, ico: '↗', cls: 'social' },
+        { key: 'email', name: 'Email', detail: 'Not connected yet', ok: false, ico: '✉', cls: 'email' },
+        { key: 'wp', name: 'WordPress', detail: 'Not connected yet', ok: false, ico: 'W', cls: 'wp' }
+      ],
+      missing: ['Social', 'Email', 'WordPress']
+    },
+    partial: {
+      channels: [
+        { key: 'social', name: 'Social', detail: 'Not connected yet', ok: false, ico: '↗', cls: 'social' },
+        { key: 'email', name: 'Email', detail: 'Not connected yet', ok: false, ico: '✉', cls: 'email' },
+        { key: 'wp', name: 'WordPress', detail: 'coulas.example', ok: true, ico: 'W', cls: 'wp' }
+      ],
+      missing: ['Social', 'Email']
+    }
+  };
+
+  function mailto(missing) {
+    var list = missing.join(', ');
+    return 'mailto:' + MAIL +
+      '?subject=' + encodeURIComponent('Help connecting ' + list + ' on FinancialContent') +
+      '&body=' + encodeURIComponent('Hi,\n\nI need help connecting: ' + list + '.\n\nFirm: Coulas Insurance\nAdvisor: Jordan Lee\n\nThanks,');
+  }
+
+  function render(state) {
+    chanList.innerHTML = state.channels.map(function (c) {
+      return '<div class="chan-row ' + (c.ok ? 'ok' : 'missing') + '">' +
+        '<span class="ico-box ' + c.cls + '">' + c.ico + '</span>' +
+        '<div class="body"><strong>' + c.name + '</strong><span>' + c.detail + '</span></div>' +
+        '<span class="chip ' + (c.ok ? 'chip-ok' : 'chip-miss') + '">' + (c.ok ? 'Connected' : 'Not connected') + '</span></div>';
+    }).join('');
+    selfLinks.innerHTML = state.channels.filter(function (c) { return !c.ok; }).map(function (c) {
+      var label = c.key === 'social' ? 'Social settings' : (c.key === 'email' ? 'Email settings' : 'Website / WordPress');
+      return '<a href="#">→ ' + label + '</a>';
+    }).join('');
+    contactCta.href = mailto(state.missing);
+  }
+
+  function show(screen) {
+    tabs.forEach(function (t) { t.classList.toggle('on', t.dataset.screen === screen); });
+    if (screen === 'dismissed') {
+      overlay.style.display = 'none';
+      behind.style.filter = '';
+      behind.style.opacity = '1';
+      dismissed.classList.remove('hidden');
+      return;
+    }
+    dismissed.classList.add('hidden');
+    behind.style.filter = 'none';
+    behind.style.opacity = '1';
+    overlay.style.display = 'flex';
+    render(states[screen]);
+  }
+
+  function dismiss() {
+    show('dismissed');
+    toast.classList.add('show');
+    setTimeout(function () { toast.classList.remove('show'); }, 2800);
+  }
+
+  tabs.forEach(function (t) { t.addEventListener('click', function () { show(t.dataset.screen); }); });
+  document.getElementById('close-x').addEventListener('click', dismiss);
+  document.getElementById('dismiss-later').addEventListener('click', dismiss);
+  show('all');
+})();
+  </script>
+</body>
+</html>
