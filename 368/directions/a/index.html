@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Direction A — Cards + sheet · #368 MAP mobile</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../../shared.css" />
+</head>
+<body>
+  <header class="thesis">
+    <span class="rec">RECOMMEND</span>
+    <h1>A — Cards + bottom sheet</h1>
+    <p>Search, scan advisor cards, tap Edit services. Chips open in a bottom sheet so the list stays behind. One-handed add and remove. Phone frame ~390px. Soft Dev hold · not agent-ready. Not the #341 desktop density mock.</p>
+  </header>
+  <nav class="nav">
+    <a href="../../index.html">#368 hub</a>
+    <span class="sep">·</span>
+    <a href="../a/" class="on">A Cards + sheet</a>
+    <a href="../b/">B Accordion</a>
+    <a href="../c/">C Full screen</a>
+    <span class="sep">·</span>
+    <a href="../../build-contract.html">Build contract</a>
+  </nav>
+  <div class="stage">
+    <div class="phone" aria-label="Phone preview">
+      <div class="screen" id="screen"></div>
+    </div>
+    <p class="hint"><strong>Try it:</strong> search “Priya”, tap <strong>Edit services</strong>, remove a chip, add “Estate planning”, tap <strong>Done</strong>. The card count updates. Pick / Suggest are secondary (#266) — not this task. Fictional advisors only. Internal names are filtered as data — there is no hide control.</p>
+  </div>
+  <script>
+
+const MODE = "a";
+const CATALOG = [
+  "Retirement planning",
+  "Tax-efficient investing",
+  "Estate planning",
+  "Insurance review",
+  "Group benefits",
+  "Portfolio management",
+  "ESG investing",
+  "Education savings",
+  "Business succession",
+  "Mortgage planning",
+  "Wealth transfer",
+  "Cash-flow planning"
+];
+const state = {
+  q: "",
+  draft: "",
+  openId: null,
+  advisors: [
+    { id: "jl", name: "Jordan Lee", firm: "Northshore Wealth", initials: "JL", services: ["Retirement planning", "Tax-efficient investing", "Estate planning"] },
+    { id: "ps", name: "Priya Shah", firm: "Harbour & Co.", initials: "PS", services: ["Insurance review", "Group benefits"] },
+    { id: "so", name: "Sam Okonkwo", firm: "Cedar Peak Advisory", initials: "SO", services: ["Portfolio management", "ESG investing", "Education savings", "Business succession"] },
+    { id: "mc", name: "Maya Chen", firm: "Lakeside Financial", initials: "MC", services: ["Mortgage planning"] },
+    { id: "da", name: "Diego Alvarez", firm: "Ridgeview Partners", initials: "DA", services: [] },
+    { id: "rb", name: "Riley Brooks", firm: "Summit Path Planning", initials: "RB", services: ["Wealth transfer", "Cash-flow planning"] }
+  ]
+};
+
+function esc(s) {
+  return String(s).replace(/[&<>"']/g, function (c) {
+    return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
+  });
+}
+function byId(id) { return state.advisors.find(function (a) { return a.id === id; }); }
+function countLabel(n) {
+  if (n === 0) return "No services yet";
+  if (n === 1) return "1 service";
+  return n + " services";
+}
+function filtered() {
+  var q = state.q.trim().toLowerCase();
+  if (!q) return state.advisors;
+  return state.advisors.filter(function (a) {
+    return a.name.toLowerCase().indexOf(q) !== -1 || a.firm.toLowerCase().indexOf(q) !== -1;
+  });
+}
+function addChip(id, name) {
+  name = (name || "").trim();
+  if (!name) return;
+  var a = byId(id);
+  if (!a) return;
+  if (a.services.some(function (s) { return s.toLowerCase() === name.toLowerCase(); })) return;
+  var hit = CATALOG.filter(function (c) { return c.toLowerCase() === name.toLowerCase(); })[0];
+  a.services.push(hit || name);
+}
+function removeChip(id, name) {
+  var a = byId(id);
+  if (!a) return;
+  a.services = a.services.filter(function (s) { return s !== name; });
+}
+function editorHTML(a) {
+  var chips = a.services.length
+    ? a.services.map(function (s) {
+        return '<span class="chip">' + esc(s) +
+          '<button type="button" class="x" data-act="remove" data-id="' + a.id + '" data-name="' + esc(s) + '" aria-label="Remove ' + esc(s) + '">×</button></span>';
+      }).join("")
+    : '<p class="empty-chips">No services yet. Search below and add one.</p>';
+  var have = {};
+  a.services.forEach(function (s) { have[s.toLowerCase()] = true; });
+  var q = state.draft.trim().toLowerCase();
+  var sugg = CATALOG.filter(function (c) {
+    return !have[c.toLowerCase()] && (!q || c.toLowerCase().indexOf(q) !== -1);
+  }).slice(0, 6);
+  var exact = !!have[q] || CATALOG.some(function (c) { return c.toLowerCase() === q; });
+  var custom = (q && !exact)
+    ? '<button type="button" class="suggbtn custom" data-act="add" data-id="' + a.id + '">Add “' + esc(state.draft.trim()) + '”</button>'
+    : "";
+  return '<div class="editor">' +
+    '<div class="lbl">Current</div><div class="chips">' + chips + '</div>' +
+    '<label class="lbl" for="add">Add a service or product</label>' +
+    '<div class="addrow"><input id="add" type="search" enterkeyhint="done" placeholder="Search or type" value="' + esc(state.draft) + '" autocomplete="off">' +
+    '<button type="button" class="addbtn" data-act="add" data-id="' + a.id + '">Add</button></div>' +
+    '<div class="sugg">' + sugg.map(function (s) {
+      return '<button type="button" class="suggbtn" data-act="addnamed" data-id="' + a.id + '" data-name="' + esc(s) + '">' + esc(s) + '</button>';
+    }).join("") + custom + '</div></div>';
+}
+function secondaryHTML() {
+  return '<div class="secondary">' +
+    '<button type="button" data-act="pick">Pick a post</button>' +
+    '<button type="button" data-act="suggest">Suggest posts</button></div>' +
+    '<p class="fine">Already shipped (#266). Not the focus here.</p>';
+}
+function cardHTML(a, expanded) {
+  var n = a.services.length;
+  var countClass = n === 0 ? "count zero" : "count";
+  var body = '<div class="who"><div class="avatar" aria-hidden="true">' + esc(a.initials) + '</div><div><div class="nm">' + esc(a.name) + '</div><div class="firm">' + esc(a.firm) + '</div><div class="' + countClass + '">' + countLabel(n) + '</div></div></div>';
+  if (MODE === "c") {
+    return '<button type="button" class="rowbtn" data-act="open" data-id="' + a.id + '">' + body + '<span class="chev" aria-hidden="true">›</span></button>';
+  }
+  var edit = '<button type="button" class="edit" data-act="open" data-id="' + a.id + '">' + (expanded ? "Hide services" : "Edit services") + '</button>';
+  var extra = (MODE === "b" && expanded) ? '<div class="inline-editor">' + editorHTML(a) + secondaryHTML() + '</div>' : "";
+  var artAct = (MODE === "a") ? ' data-act="open" data-id="' + a.id + '"' : "";
+  return '<article class="card' + (expanded ? " open" : "") + '"' + artAct + '>' + body + edit + extra + '</article>';
+}
+function listHTML() {
+  var rows = filtered();
+  if (!rows.length) return '<p class="empty">No advisors match that search.</p>';
+  return rows.map(function (a) { return cardHTML(a, state.openId === a.id); }).join("");
+}
+function sheetHTML(a) {
+  return '<div class="sheet-bg" data-act="close"></div><div class="sheet" role="dialog" aria-modal="true" aria-labelledby="sheet-title">' +
+    '<div class="grab"></div><div class="sheet-head"><div><h3 id="sheet-title">Services & products</h3><div class="sub">' + esc(a.name) + ' · ' + esc(a.firm) + '</div></div>' +
+    '<button type="button" class="xclose" data-act="close" aria-label="Close">×</button></div>' +
+    '<div class="sheet-body">' + editorHTML(a) + '</div>' +
+    '<div class="sheet-foot"><button type="button" class="done" data-act="close">Done</button>' + secondaryHTML() + '</div></div>';
+}
+function render() {
+  var focusId = document.activeElement && document.activeElement.id;
+  var pos = (focusId && document.activeElement.selectionStart != null) ? document.activeElement.selectionStart : null;
+  var open = state.openId ? byId(state.openId) : null;
+  var appbar;
+  var main;
+  if (MODE === "c" && open) {
+    appbar = '<div class="appbar"><div class="backrow"><button type="button" class="back" data-act="close" aria-label="Back to advisors">‹</button><div><div class="kicker">Services & products</div><h2>' + esc(open.name) + '</h2><div class="sub">' + esc(open.firm) + ' · ' + countLabel(open.services.length) + '</div></div></div></div>';
+    main = '<div class="full-editor">' + editorHTML(open) + secondaryHTML() + '</div>';
+  } else {
+    appbar = '<div class="appbar"><div class="kicker">Admin</div><h2>Manage Advisor Posts</h2><div class="sub">Scan advisors · edit services on your phone</div></div>' +
+      '<div class="searchwrap"><input id="q" type="search" placeholder="Search advisors" value="' + esc(state.q) + '" autocomplete="off" enterkeyhint="search"></div>';
+    main = '<div class="scroll">' + listHTML() + '</div>';
+    if (MODE === "a" && open) main += sheetHTML(open);
+  }
+  document.getElementById("screen").innerHTML =
+    '<div class="statusbar"><span>9:41</span><span class="sigs" aria-hidden="true"><i></i><i></i><i></i><i></i></span></div>' +
+    appbar + main +
+    '<div class="homebar"><span></span></div>' +
+    '<div class="toast" id="toast"></div>';
+  if (focusId) {
+    var el = document.getElementById(focusId);
+    if (el) {
+      el.focus();
+      if (pos != null && el.setSelectionRange) el.setSelectionRange(pos, pos);
+    }
+  }
+}
+function toast(msg) {
+  var t = document.getElementById("toast");
+  if (!t) return;
+  t.textContent = msg;
+  t.classList.add("show");
+  clearTimeout(toast._t);
+  toast._t = setTimeout(function () { t.classList.remove("show"); }, 2400);
+}
+document.getElementById("screen").addEventListener("click", function (e) {
+  var t = e.target.closest("[data-act]");
+  if (!t || !document.getElementById("screen").contains(t)) return;
+  var act = t.getAttribute("data-act");
+  var id = t.getAttribute("data-id");
+  if (act === "open") {
+    if (MODE === "b" && state.openId === id) state.openId = null;
+    else state.openId = id;
+    state.draft = "";
+    render();
+    return;
+  }
+  if (act === "close") {
+    state.openId = null;
+    state.draft = "";
+    render();
+    return;
+  }
+  if (act === "remove") {
+    removeChip(id, t.getAttribute("data-name"));
+    render();
+    return;
+  }
+  if (act === "add") {
+    addChip(id, state.draft);
+    state.draft = "";
+    render();
+    var add = document.getElementById("add");
+    if (add) add.focus();
+    return;
+  }
+  if (act === "addnamed") {
+    addChip(id, t.getAttribute("data-name"));
+    state.draft = "";
+    render();
+    return;
+  }
+  if (act === "pick") toast("Pick a post already shipped (#266). Not this phone layout.");
+  if (act === "suggest") toast("Suggest posts already shipped (#266). Not this phone layout.");
+});
+document.getElementById("screen").addEventListener("input", function (e) {
+  if (e.target.id === "q") {
+    state.q = e.target.value;
+    var pos = e.target.selectionStart;
+    render();
+    var q = document.getElementById("q");
+    if (q) { q.focus(); if (q.setSelectionRange) q.setSelectionRange(pos, pos); }
+  }
+  if (e.target.id === "add") {
+    state.draft = e.target.value;
+    var pos = e.target.selectionStart;
+    render();
+    var add = document.getElementById("add");
+    if (add) { add.focus(); if (pos != null && add.setSelectionRange) add.setSelectionRange(pos, pos); }
+  }
+});
+document.getElementById("screen").addEventListener("keydown", function (e) {
+  if (e.target.id === "add" && e.key === "Enter") {
+    e.preventDefault();
+    if (!state.openId) return;
+    addChip(state.openId, e.target.value);
+    state.draft = "";
+    render();
+    var add = document.getElementById("add");
+    if (add) add.focus();
+  }
+});
+render();
+
+  </script>
+</body>
+</html>
