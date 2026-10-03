@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>FC — #368 MAP mobile · Services & products</title>
+  <title>FC — #368 MAP on a phone · suggest, pick, edit services</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <style>
     :root {
@@ -85,8 +85,8 @@
   <header class="hero">
     <div class="hero-inner">
       <div class="eyebrow">FinancialContent · content-library #368 · Designer mocks</div>
-      <h1>MAP on a phone — scan advisors, edit Services &amp; products</h1>
-      <p>Desktop Manage Advisor Posts is a dense table. This slice is phone use only: find an advisor and add or remove Services &amp; products chips with a large tap target. Not the desktop density pick in #341.</p>
+      <h1>MAP on a phone — scan, suggest, pick, edit services</h1>
+      <p>Desktop Manage Advisor Posts is a dense table. On a phone, find an advisor and reach three jobs without that table: Suggest posts, Pick for me, and Edit services. Not the desktop density pick in #341. Alex has not locked a direction.</p>
       <span class="rec">Recommend · Direction A — Cards + bottom sheet</span>
     </div>
   </header>
@@ -94,7 +94,7 @@
   <div class="wrap">
     <a class="cta" href="directions/a/index.html">
       Open Direction A (recommended)
-      <small>Search · advisor cards · Edit services in a bottom sheet · add / remove chips</small>
+      <small>Three actions on the card · Suggest posts · Pick for me · Edit services · each in its own sheet</small>
     </a>
     <p style="text-align:center;margin:-18px 0 24px;font-size:0.8rem;color:var(--muted)">
       <a href="build-contract.html">Build contract</a> ·
@@ -102,29 +102,30 @@
     </p>
 
     <div class="problem">
-      <strong>Problem:</strong> Alex needs to work Manage Advisor Posts from his phone. The desktop table does not scan, and Services &amp; products chips are not editable one-handed. This is phone layout — do not redesign <a href="https://kartboy16.github.io/fc-mocks/341/">#341</a> (desktop density / Load from website).
+      <strong>Problem:</strong> Alex needs Manage Advisor Posts on his phone. The first mock only scanned advisors and edited Services &amp; products. He still needs the phone flow for <strong>Suggest posts</strong> and <strong>Pick for me</strong> (#266 already shipped on desktop — this is placement, not a new algorithm). Do not redesign <a href="https://kartboy16.github.io/fc-mocks/341/">#341</a>.
     </div>
 
     <div class="hold">
-      <strong>Soft Dev hold · Designer-first · not agent-ready.</strong> Do <em>not</em> wake Soft Dev. Do <em>not</em> mark <code>agent-ready</code>. Wait for Alex to lock a direction.
+      <strong>Soft Dev hold · Designer-first · not agent-ready.</strong> Alex has <em>not</em> locked A, B, or C. Do <em>not</em> wake Soft Dev. Do <em>not</em> mark <code>agent-ready</code>.
     </div>
 
     <div class="ac">
       <strong>Why A</strong>
       <ul>
-        <li>Fastest scan: name, firm, and “N services” — not a chip pile on every card.</li>
-        <li>Bottom sheet keeps the list in context while chips are edited (usual phone pattern).</li>
-        <li>B stays in the list but a long editor pushes other advisors off screen.</li>
-        <li>C is the clearest focus, at the cost of an extra Back step.</li>
+        <li>All three jobs are on the card: Suggest posts, Pick for me, Edit services. No menu to hunt through.</li>
+        <li>Each job opens its own bottom sheet, so Pick for me is a full action, not a buried text link.</li>
+        <li>B has the same three actions, but only after you expand, and the flow pushes other advisors down.</li>
+        <li>C is the clearest focus, but you pass through a hub before Suggest or Pick.</li>
       </ul>
     </div>
 
     <div class="ac" style="background:#f8fafc;border-color:#e2e8f0;color:#334155">
-      <strong>Acceptance sketch (after lock)</strong>
+      <strong>Acceptance sketch (after lock — not locked yet)</strong>
       <ul>
         <li><strong>AC-1:</strong> Phone-width layout scans advisors with no horizontal table.</li>
         <li><strong>AC-2:</strong> Services &amp; products chips can be added and removed on the phone.</li>
-        <li>Pick / Suggest (#266) may sit as secondary actions. They are not this slice.</li>
+        <li><strong>AC-3:</strong> Suggest posts lists a few posts (title + short why) with Use and Dismiss. Back returns to the advisor list.</li>
+        <li><strong>AC-4:</strong> Pick for me shows one post (title + why this one) with Use this post and See another. Not buried.</li>
         <li>No “hide Alex / Angelina” control — those names are filtered as data, not UI. Mocks use fictional advisors.</li>
       </ul>
     </div>
@@ -133,7 +134,7 @@
       <strong>Out of scope</strong>
       <ul>
         <li>#341 desktop density (topics collapse, Load from website)</li>
-        <li>Redesigning Pick / Suggest (#266)</li>
+        <li>A new Pick / Suggest algorithm (#266 already shipped — phone placement only)</li>
         <li>A control to hide internal users</li>
         <li>content-library / Meteor · waking Soft Dev · agent-ready</li>
       </ul>
@@ -144,23 +145,23 @@
       <a class="card recd" href="directions/a/index.html">
         <span class="tag rec-tag">RECOMMEND</span>
         <h3>A — Cards + sheet</h3>
-        <p>Search at top. Cards show name, firm, and how many services. Edit services opens a bottom sheet: chips with ×, search/add, Done.</p>
+        <p>Each card shows Suggest posts, Pick for me, and Edit services. Each opens its own bottom sheet. Suggest is a short list (Use / Dismiss). Pick is one post (Use this post / See another).</p>
       </a>
       <a class="card alt-dim" href="directions/b/index.html">
         <span class="tag dim-tag">ALT</span>
         <h3>B — Accordion</h3>
-        <p>Same list. Tap expands the card in place to edit chips. No sheet. Risk of a long scroll.</p>
+        <p>Tap to expand. The same three actions sit inline, and the chosen flow renders in the card. Risk of a long scroll.</p>
       </a>
       <a class="card alt-dim" href="directions/c/index.html">
         <span class="tag dim-tag">ALT</span>
-        <h3>C — List → full screen</h3>
-        <p>Compact name list. Tap opens a full-screen Services &amp; products editor. Back returns to the list.</p>
+        <h3>C — List → hub</h3>
+        <p>Compact name list. Tap opens a full-screen hub with the three actions. Each drills in. Suggest’s back returns to the list; Pick and Edit return to the hub first.</p>
       </a>
     </div>
 
     <h2>Build contract (provisional · recommend A)</h2>
     <div class="note" style="margin-top:0">
-      Phone scan plus chip edit. Full AC: <a href="build-contract.html">build-contract.html</a>. Soft Dev hold until Alex locks. #341 stays a separate desktop decision.
+      Phone scan, chip edit, Suggest posts, and Pick for me. Full AC: <a href="build-contract.html">build-contract.html</a>. Alex has not locked a direction. Soft Dev hold. #341 stays a separate desktop decision.
     </div>
 
     <div class="meta">

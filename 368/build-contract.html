@@ -19,30 +19,30 @@
   </style>
 </head>
 <body>
-  <p class="warn"><strong>PROVISIONAL</strong> — Recommend Direction A. Not locked. Do <strong>not</strong> mark agent-ready until Alex locks a direction and Soft Dev is explicitly woken.</p>
-  <p class="ok"><strong>Recommend:</strong> Direction A — Cards + bottom sheet. Fastest phone scan and one-handed chip edit without leaving the list behind.</p>
+  <p class="warn"><strong>PROVISIONAL</strong> — Recommend Direction A. <strong>Alex has not locked a direction.</strong> Do <strong>not</strong> mark agent-ready until Alex locks one and Soft Dev is explicitly woken.</p>
+  <p class="ok"><strong>Recommend:</strong> Direction A — cards with three plain actions (Suggest posts, Pick for me, Edit services). Each opens its own bottom sheet, so none of the three jobs is buried in a menu.</p>
   <p class="hold"><strong>Soft Dev hold · Designer-first.</strong> Soft Dev not woken. No Slack wake / no Meteor / no agent-ready.</p>
 
-  <h1>Build contract · MAP mobile, Services &amp; products (#368)</h1>
+  <h1>Build contract · MAP on a phone (#368)</h1>
   <p>Markdown: <a href="build-contract.md">build-contract.md</a> · Hub: <a href="index.html">index.html</a> · Mock: <a href="directions/a/">Direction A</a></p>
 
   <h2>One-liner</h2>
-  <p>On a phone, scan Manage Advisor Posts as cards (no horizontal table) and add or remove Services &amp; products chips in a bottom sheet.</p>
+  <p>On a phone, scan Manage Advisor Posts and, without the desktop table, suggest posts, pick one post, or edit Services &amp; products chips.</p>
 
   <h2>Not this issue</h2>
   <ul>
     <li><strong>#341</strong> is desktop density (topics collapse, Load from website). Separate lock. Do not redesign it here. <a href="https://kartboy16.github.io/fc-mocks/341/">fc-mocks/341</a></li>
-    <li><strong>#266</strong> Pick / Suggest already shipped. Secondary only.</li>
-    <li>Skipping internal users is <strong>data</strong>, not a UI control. No “hide Alex / Angelina” toggle. Mocks use fictional advisors.</li>
+    <li><strong>#266</strong> Pick / Suggest already shipped on desktop. This is phone placement and flow, not a new algorithm.</li>
+    <li>Skipping internal users is <strong>data</strong>, not a UI control. No “hide Alex / Angelina” toggle. Mocks use fictional advisors only.</li>
   </ul>
 
   <h2>Entry points (provisional)</h2>
   <table>
     <thead><tr><th>Entry</th><th>Direction</th></tr></thead>
     <tbody>
-      <tr><td>Cards + bottom sheet chip editor</td><td><strong>A</strong> (recommend)</td></tr>
-      <tr><td>Accordion: expand card in place</td><td>B · alt (long scroll risk)</td></tr>
-      <tr><td>Compact list → full-screen editor</td><td>C · alt (extra Back step)</td></tr>
+      <tr><td>Card shows Suggest posts, Pick for me, Edit services; each opens a bottom sheet</td><td><strong>A</strong> (recommend)</td></tr>
+      <tr><td>Expand a card; the same three actions sit inline</td><td>B · alt (long scroll)</td></tr>
+      <tr><td>Compact list → full-screen hub → each action drills in</td><td>C · alt (extra steps)</td></tr>
     </tbody>
   </table>
 
@@ -51,36 +51,48 @@
     <li>Phone-width Manage Advisor Posts — no desktop table, no horizontal scroll</li>
     <li>Search advisors by name or firm</li>
     <li>Card shows name, firm, and service count</li>
-    <li>Tap card or Edit services → bottom sheet</li>
-    <li>Remove a chip (×) · search catalog or type · Add</li>
-    <li>Done closes the sheet; the card count updates</li>
-    <li>Pick a post / Suggest posts stay available but secondary</li>
+    <li>Three actions on the card: Suggest posts, Pick for me, Edit services</li>
+    <li>Suggest posts → a few posts, title + short why, Use or Dismiss. Close returns to the advisor list</li>
+    <li>Pick for me → one post, why this one, Use this post or See another. Not buried</li>
+    <li>Edit services → add or remove chips. Done closes the sheet; the count updates</li>
+    <li>After Use, the card can show “Using: {title}”</li>
   </ol>
 
-  <h2>Acceptance criteria (provisional · A)</h2>
+  <h2>Where Suggest and Pick sit in B and C</h2>
+  <ul>
+    <li><strong>B:</strong> Show actions expands the card. The three actions are inline. The chosen flow renders under them. Back to advisors collapses to the list.</li>
+    <li><strong>C:</strong> Tap a row for a hub with the three actions. Suggest posts drills in and Back returns to the advisor list. Pick for me and Edit services return to the hub first.</li>
+  </ul>
+
+  <h2>Acceptance criteria (provisional · not locked)</h2>
   <ul>
     <li><strong>AC-1:</strong> Phone-width layout scans advisors without a horizontal table</li>
     <li><strong>AC-2:</strong> Services &amp; products chips can be added and removed on the phone</li>
-    <li><strong>AC-3:</strong> Clickable HTML mock on fc-mocks + this build contract before any Soft Dev work</li>
-    <li>Pick / Suggest (#266) are not required to change</li>
+    <li><strong>AC-3:</strong> Suggest posts opens a phone list or sheet (title + short why) with Use and Dismiss. Back returns to the advisor list</li>
+    <li><strong>AC-4:</strong> Pick for me shows one recommended post (title + why this one) with Use this post and See another, not buried</li>
+    <li><strong>AC-5:</strong> Clickable HTML mock on fc-mocks + this build contract before any Soft Dev work</li>
     <li>No “hide internal users” control</li>
+    <li>No new Pick/Suggest algorithm</li>
   </ul>
 
   <h2>Copy (plain words)</h2>
   <ul>
     <li>Screen title: “Manage Advisor Posts”</li>
     <li>Search: “Search advisors”</li>
-    <li>Card action: “Edit services”</li>
-    <li>Sheet title: “Services &amp; products”</li>
-    <li>Empty: “No services yet. Search below and add one.”</li>
+    <li>Actions: “Suggest posts” · “Pick for me” · “Edit services”</li>
+    <li>Suggest: “Why:”, “Use”, “Dismiss”, “Back to advisors”</li>
+    <li>Pick: “Why this one:”, “Use this post”, “See another”</li>
+    <li>Sheet title for chips: “Services &amp; products”</li>
+    <li>Empty chips: “No services yet. Search below and add one.”</li>
     <li>Primary: “Done”</li>
     <li>Count: “No services yet” / “1 service” / “N services”</li>
+    <li>In use: “Using: {title}”</li>
   </ul>
 
   <h2>Out of scope</h2>
   <ul>
     <li>#341 desktop density</li>
-    <li>Redesigning Pick / Suggest</li>
+    <li>A new Pick / Suggest algorithm</li>
     <li>Hide-internal-users UI</li>
     <li>content-library / Meteor app code</li>
     <li>Waking Soft Dev · marking agent-ready</li>
@@ -88,6 +100,6 @@
   </ul>
 
   <h2>Reference</h2>
-  <p><a href="index.html">Hub</a> · <a href="directions/a/">A</a> · <a href="directions/b/">B</a> · <a href="directions/c/">C</a> · <a href="https://github.com/kartboy16/content-library/issues/368">Issue #368</a> · related <a href="https://github.com/kartboy16/content-library/issues/341">#341</a></p>
+  <p><a href="index.html">Hub</a> · <a href="directions/a/">A</a> · <a href="directions/b/">B</a> · <a href="directions/c/">C</a> · <a href="https://github.com/kartboy16/content-library/issues/368">Issue #368</a> · related <a href="https://github.com/kartboy16/content-library/issues/341">#341</a> · <a href="https://github.com/kartboy16/content-library/issues/266">#266</a></p>
 </body>
 </html>

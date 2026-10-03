@@ -3,15 +3,15 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Direction C — List to full screen · #368 MAP mobile</title>
+  <title>Direction C — List, hub, drill-in · #368 MAP mobile</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="../../shared.css" />
 </head>
 <body>
   <header class="thesis">
     <span class="rec alt">ALT</span>
-    <h1>C — Compact list, full-screen editor</h1>
-    <p>Name list only. Tap an advisor for a full-screen Services & products editor. Clearest focus; you leave the list until Back. Phone frame ~390px. Soft Dev hold · not agent-ready. Not the #341 desktop density mock.</p>
+    <h1>C — Compact list, then a full-screen hub</h1>
+    <p>A short name list. Tap an advisor for a full-screen hub with Suggest posts, Pick for me, and Edit services. Each action drills in. Suggest’s back returns to the advisor list; Pick and Edit return to the hub first. Phone frame ~390px. Alex has not locked a direction. Soft Dev hold · not agent-ready. Not the #341 desktop mock.</p>
   </header>
   <nav class="nav">
     <a href="../../index.html">#368 hub</a>
@@ -26,7 +26,7 @@
     <div class="phone" aria-label="Phone preview">
       <div class="screen" id="screen"></div>
     </div>
-    <p class="hint"><strong>Try it:</strong> tap <strong>Diego Alvarez</strong> (no services yet), add a chip, then <strong>Back</strong>. The row count updates. Fictional advisors only. Internal names are filtered as data — there is no hide control.</p>
+    <p class="hint"><strong>Try it:</strong> tap <strong>Diego Alvarez</strong>. On the hub, open <strong>Pick for me</strong>, then <strong>Suggest posts</strong> (Back to advisors), then <strong>Edit services</strong>. Fictional advisors only — no hide control.</p>
   </div>
   <script>
 
@@ -45,10 +45,46 @@ const CATALOG = [
   "Wealth transfer",
   "Cash-flow planning"
 ];
+const POSTS = {
+  jl: [
+    { id: "jl1", title: "Three questions before you retire", why: "Lines up with retirement planning on this advisor." },
+    { id: "jl2", title: "A year-end tax checklist", why: "Fits tax-efficient investing." },
+    { id: "jl3", title: "Estate documents to review this year", why: "They already offer estate planning." }
+  ],
+  ps: [
+    { id: "ps1", title: "What an insurance review actually covers", why: "Matches the insurance review service." },
+    { id: "ps2", title: "Group benefits, explained simply", why: "Written for clients who get benefits at work." },
+    { id: "ps3", title: "Five coverage gaps families miss", why: "A short post for an insurance-focused practice." }
+  ],
+  so: [
+    { id: "so1", title: "How a portfolio gets rebalanced", why: "Matches portfolio management." },
+    { id: "so2", title: "What ESG investing means in practice", why: "They list ESG investing." },
+    { id: "so3", title: "Saving for school without guessing", why: "Fits education savings." }
+  ],
+  mc: [
+    { id: "mc1", title: "Mortgage planning before you renew", why: "Their listed service is mortgage planning." },
+    { id: "mc2", title: "Fixed or variable: a plain comparison", why: "A common question for mortgage clients." },
+    { id: "mc3", title: "What to do six months before renewal", why: "Timely for a mortgage-focused advisor." }
+  ],
+  da: [
+    { id: "da1", title: "Where to start with a new advisor", why: "No services yet — a general first post." },
+    { id: "da2", title: "Questions to ask in a first meeting", why: "Works before services are filled in." },
+    { id: "da3", title: "A one-page money checkup", why: "Useful while services are still empty." }
+  ],
+  rb: [
+    { id: "rb1", title: "Passing wealth without the jargon", why: "Matches wealth transfer." },
+    { id: "rb2", title: "A cash-flow check you can do this month", why: "Fits cash-flow planning." },
+    { id: "rb3", title: "Gifts, estates, and what to document", why: "Sits next to wealth transfer." }
+  ]
+};
 const state = {
   q: "",
   draft: "",
   openId: null,
+  panel: null,
+  pickAt: {},
+  dismissed: {},
+  used: {},
   advisors: [
     { id: "jl", name: "Jordan Lee", firm: "Northshore Wealth", initials: "JL", services: ["Retirement planning", "Tax-efficient investing", "Estate planning"] },
     { id: "ps", name: "Priya Shah", firm: "Harbour & Co.", initials: "PS", services: ["Insurance review", "Group benefits"] },
@@ -65,6 +101,9 @@ function esc(s) {
   });
 }
 function byId(id) { return state.advisors.find(function (a) { return a.id === id; }); }
+function postById(advisorId, postId) {
+  return (POSTS[advisorId] || []).filter(function (p) { return p.id === postId; })[0] || null;
+}
 function countLabel(n) {
   if (n === 0) return "No services yet";
   if (n === 1) return "1 service";
@@ -76,6 +115,20 @@ function filtered() {
   return state.advisors.filter(function (a) {
     return a.name.toLowerCase().indexOf(q) !== -1 || a.firm.toLowerCase().indexOf(q) !== -1;
   });
+}
+function visiblePosts(id) {
+  var gone = state.dismissed[id] || {};
+  return (POSTS[id] || []).filter(function (p) { return !gone[p.id]; });
+}
+function currentPick(id) {
+  var list = visiblePosts(id);
+  if (!list.length) return null;
+  var i = (state.pickAt[id] || 0) % list.length;
+  return list[i];
+}
+function usedTitle(id) {
+  var p = state.used[id] ? postById(id, state.used[id]) : null;
+  return p ? p.title : "";
 }
 function addChip(id, name) {
   name = (name || "").trim();
@@ -90,6 +143,33 @@ function removeChip(id, name) {
   var a = byId(id);
   if (!a) return;
   a.services = a.services.filter(function (s) { return s !== name; });
+}
+function toList() {
+  state.openId = null;
+  state.panel = null;
+  state.draft = "";
+}
+function actionsHTML(a) {
+  function btn(panel, label) {
+    var on = (MODE === "b" && state.panel === panel) ? " on" : "";
+    return '<button type="button" class="act' + on + '" data-act="panel" data-panel="' + panel + '" data-id="' + a.id + '">' +
+      esc(label) + '<span class="go" aria-hidden="true">›</span></button>';
+  }
+  return '<div class="acts">' +
+    btn("suggest", "Suggest posts") +
+    btn("pick", "Pick for me") +
+    btn("edit", "Edit services") +
+    "</div>";
+}
+function whoHTML(a) {
+  var n = a.services.length;
+  var countClass = n === 0 ? "count zero" : "count";
+  var using = usedTitle(a.id);
+  var line = using ? '<div class="usingline">Using: ' + esc(using) + "</div>" : "";
+  return '<div class="who"><div class="avatar" aria-hidden="true">' + esc(a.initials) + '</div><div><div class="nm">' + esc(a.name) + '</div><div class="firm">' + esc(a.firm) + '</div><div class="' + countClass + '">' + countLabel(n) + "</div>" + line + "</div></div>";
+}
+function backAdvisorsBtn() {
+  return '<button type="button" class="backlink" data-act="tolist">Back to advisors</button>';
 }
 function editorHTML(a) {
   var chips = a.services.length
@@ -109,58 +189,121 @@ function editorHTML(a) {
     ? '<button type="button" class="suggbtn custom" data-act="add" data-id="' + a.id + '">Add “' + esc(state.draft.trim()) + '”</button>'
     : "";
   return '<div class="editor">' +
-    '<div class="lbl">Current</div><div class="chips">' + chips + '</div>' +
+    '<div class="lbl">Current</div><div class="chips">' + chips + "</div>" +
     '<label class="lbl" for="add">Add a service or product</label>' +
     '<div class="addrow"><input id="add" type="search" enterkeyhint="done" placeholder="Search or type" value="' + esc(state.draft) + '" autocomplete="off">' +
     '<button type="button" class="addbtn" data-act="add" data-id="' + a.id + '">Add</button></div>' +
     '<div class="sugg">' + sugg.map(function (s) {
-      return '<button type="button" class="suggbtn" data-act="addnamed" data-id="' + a.id + '" data-name="' + esc(s) + '">' + esc(s) + '</button>';
-    }).join("") + custom + '</div></div>';
+      return '<button type="button" class="suggbtn" data-act="addnamed" data-id="' + a.id + '" data-name="' + esc(s) + '">' + esc(s) + "</button>";
+    }).join("") + custom + "</div></div>";
 }
-function secondaryHTML() {
-  return '<div class="secondary">' +
-    '<button type="button" data-act="pick">Pick a post</button>' +
-    '<button type="button" data-act="suggest">Suggest posts</button></div>' +
-    '<p class="fine">Already shipped (#266). Not the focus here.</p>';
-}
-function cardHTML(a, expanded) {
-  var n = a.services.length;
-  var countClass = n === 0 ? "count zero" : "count";
-  var body = '<div class="who"><div class="avatar" aria-hidden="true">' + esc(a.initials) + '</div><div><div class="nm">' + esc(a.name) + '</div><div class="firm">' + esc(a.firm) + '</div><div class="' + countClass + '">' + countLabel(n) + '</div></div></div>';
-  if (MODE === "c") {
-    return '<button type="button" class="rowbtn" data-act="open" data-id="' + a.id + '">' + body + '<span class="chev" aria-hidden="true">›</span></button>';
+function suggestHTML(a) {
+  var posts = visiblePosts(a.id);
+  if (!posts.length) {
+    return '<p class="empty">No suggestions left for ' + esc(a.name) + ". Dismissed posts stay hidden in this preview.</p>" + backAdvisorsBtn();
   }
-  var edit = '<button type="button" class="edit" data-act="open" data-id="' + a.id + '">' + (expanded ? "Hide services" : "Edit services") + '</button>';
-  var extra = (MODE === "b" && expanded) ? '<div class="inline-editor">' + editorHTML(a) + secondaryHTML() + '</div>' : "";
-  var artAct = (MODE === "a") ? ' data-act="open" data-id="' + a.id + '"' : "";
-  return '<article class="card' + (expanded ? " open" : "") + '"' + artAct + '>' + body + edit + extra + '</article>';
+  return posts.map(function (p) {
+    var on = state.used[a.id] === p.id;
+    return '<article class="post' + (on ? " using" : "") + '">' +
+      "<h4>" + esc(p.title) + "</h4>" +
+      '<p class="why"><strong>Why: </strong>' + esc(p.why) + "</p>" +
+      '<div class="postacts">' +
+      '<button type="button" class="use' + (on ? " quiet" : "") + '" data-act="use" data-from="suggest" data-id="' + a.id + '" data-post="' + p.id + '">' + (on ? "Using this" : "Use") + "</button>" +
+      '<button type="button" class="dismiss" data-act="dismiss" data-id="' + a.id + '" data-post="' + p.id + '">Dismiss</button>' +
+      "</div></article>";
+  }).join("") + backAdvisorsBtn();
+}
+function pickHTML(a) {
+  var post = currentPick(a.id);
+  var left = visiblePosts(a.id).length;
+  if (!post) {
+    return '<p class="empty">No posts left to pick for ' + esc(a.name) + ".</p>" + backAdvisorsBtn();
+  }
+  var on = state.used[a.id] === post.id;
+  return '<div class="pickhero">' +
+    '<p class="hubnote">One clear pick for ' + esc(a.name) + ". Not a list.</p>" +
+    "<h4>" + esc(post.title) + "</h4>" +
+    '<p class="why"><strong>Why this one: </strong>' + esc(post.why) + "</p>" +
+    '<button type="button" class="use" data-act="use" data-from="pick" data-id="' + a.id + '" data-post="' + post.id + '">' + (on ? "Using this post" : "Use this post") + "</button>" +
+    '<button type="button" class="altbtn" data-act="another" data-id="' + a.id + '">See another</button>' +
+    (left < 2 ? '<p class="fine">Only one post left.</p>' : "") +
+    backAdvisorsBtn() +
+    "</div>";
+}
+function editBlock(a) {
+  var done = (MODE === "c")
+    ? '<button type="button" class="done" data-act="tohub" style="margin-top:12px">Done</button>'
+    : '<button type="button" class="done" data-act="tolist" style="margin-top:12px">Done</button>';
+  return editorHTML(a) + done;
+}
+function panelInner(a) {
+  if (state.panel === "suggest") return suggestHTML(a);
+  if (state.panel === "pick") return pickHTML(a);
+  if (state.panel === "edit") return editBlock(a);
+  return "";
+}
+function sheetHTML(a) {
+  var titles = { suggest: "Suggest posts", pick: "Pick for me", edit: "Services & products" };
+  var title = titles[state.panel] || "Advisor";
+  return '<div class="sheet-bg" data-act="tolist"></div><div class="sheet" role="dialog" aria-modal="true" aria-labelledby="sheet-title">' +
+    '<div class="grab"></div><div class="sheet-head"><div><h3 id="sheet-title">' + esc(title) + '</h3><div class="sub">' + esc(a.name) + " · " + esc(a.firm) + "</div></div>" +
+    '<button type="button" class="xclose" data-act="tolist" aria-label="Back to advisors">×</button></div>' +
+    '<div class="sheet-body">' + panelInner(a) + "</div></div>";
+}
+function cardA(a) {
+  return '<article class="card">' + whoHTML(a) + actionsHTML(a) + "</article>";
+}
+function cardB(a) {
+  var open = state.openId === a.id;
+  if (!open) {
+    return '<article class="card"><button type="button" class="card-toggle" data-act="toggle" data-id="' + a.id + '">' + whoHTML(a) + '</button><button type="button" class="edit" data-act="toggle" data-id="' + a.id + '">Show actions</button></article>';
+  }
+  var inner = state.panel ? '<div class="inline-editor">' + panelInner(a) + "</div>" : "";
+  return '<article class="card open">' + whoHTML(a) +
+    '<div class="hidebar"><button type="button" data-act="tolist">Hide</button></div>' +
+    actionsHTML(a) + inner + "</article>";
+}
+function rowC(a) {
+  return '<button type="button" class="rowbtn" data-act="open" data-id="' + a.id + '">' + whoHTML(a) + '<span class="chev" aria-hidden="true">›</span></button>';
 }
 function listHTML() {
   var rows = filtered();
   if (!rows.length) return '<p class="empty">No advisors match that search.</p>';
-  return rows.map(function (a) { return cardHTML(a, state.openId === a.id); }).join("");
+  return rows.map(function (a) {
+    if (MODE === "b") return cardB(a);
+    if (MODE === "c") return rowC(a);
+    return cardA(a);
+  }).join("");
 }
-function sheetHTML(a) {
-  return '<div class="sheet-bg" data-act="close"></div><div class="sheet" role="dialog" aria-modal="true" aria-labelledby="sheet-title">' +
-    '<div class="grab"></div><div class="sheet-head"><div><h3 id="sheet-title">Services & products</h3><div class="sub">' + esc(a.name) + ' · ' + esc(a.firm) + '</div></div>' +
-    '<button type="button" class="xclose" data-act="close" aria-label="Close">×</button></div>' +
-    '<div class="sheet-body">' + editorHTML(a) + '</div>' +
-    '<div class="sheet-foot"><button type="button" class="done" data-act="close">Done</button>' + secondaryHTML() + '</div></div>';
+function appbarList() {
+  return '<div class="appbar"><div class="kicker">Admin</div><h2>Manage Advisor Posts</h2><div class="sub">Scan advisors on your phone</div></div>' +
+    '<div class="searchwrap"><input id="q" type="search" placeholder="Search advisors" value="' + esc(state.q) + '" autocomplete="off" enterkeyhint="search"></div>';
+}
+function fullHead(kicker, title, sub, backAct, backLabel) {
+  return '<div class="appbar"><div class="backrow"><button type="button" class="back" data-act="' + backAct + '" aria-label="' + esc(backLabel) + '">‹</button><div><div class="kicker">' + esc(kicker) + "</div><h2>" + esc(title) + '</h2><div class="sub">' + sub + "</div></div></div></div>";
 }
 function render() {
   var focusId = document.activeElement && document.activeElement.id;
   var pos = (focusId && document.activeElement.selectionStart != null) ? document.activeElement.selectionStart : null;
   var open = state.openId ? byId(state.openId) : null;
   var appbar;
-  var main;
-  if (MODE === "c" && open) {
-    appbar = '<div class="appbar"><div class="backrow"><button type="button" class="back" data-act="close" aria-label="Back to advisors">‹</button><div><div class="kicker">Services & products</div><h2>' + esc(open.name) + '</h2><div class="sub">' + esc(open.firm) + ' · ' + countLabel(open.services.length) + '</div></div></div></div>';
-    main = '<div class="full-editor">' + editorHTML(open) + secondaryHTML() + '</div>';
+  var main = "";
+  if (MODE === "c" && open && !state.panel) {
+    appbar = fullHead("Manage Advisor Posts", open.name, esc(open.firm) + " · " + countLabel(open.services.length), "tolist", "Back to advisors");
+    var using = usedTitle(open.id);
+    main = '<div class="scroll"><p class="hubnote">Choose one. All three are on this screen.</p>' +
+      (using ? '<p class="usingline" style="margin-bottom:10px">Using: ' + esc(using) + "</p>" : "") +
+      actionsHTML(open) + "</div>";
+  } else if (MODE === "c" && open && state.panel) {
+    var titles = { suggest: "Suggest posts", pick: "Pick for me", edit: "Services & products" };
+    var backAct = state.panel === "suggest" ? "tolist" : "tohub";
+    var backLabel = state.panel === "suggest" ? "Back to advisors" : "Back";
+    appbar = fullHead(open.name, titles[state.panel], esc(open.firm), backAct, backLabel);
+    main = '<div class="full-editor">' + panelInner(open) + "</div>";
   } else {
-    appbar = '<div class="appbar"><div class="kicker">Admin</div><h2>Manage Advisor Posts</h2><div class="sub">Scan advisors · edit services on your phone</div></div>' +
-      '<div class="searchwrap"><input id="q" type="search" placeholder="Search advisors" value="' + esc(state.q) + '" autocomplete="off" enterkeyhint="search"></div>';
-    main = '<div class="scroll">' + listHTML() + '</div>';
-    if (MODE === "a" && open) main += sheetHTML(open);
+    appbar = appbarList();
+    main = '<div class="scroll">' + listHTML() + "</div>";
+    if (MODE === "a" && open && state.panel) main += sheetHTML(open);
   }
   document.getElementById("screen").innerHTML =
     '<div class="statusbar"><span>9:41</span><span class="sigs" aria-hidden="true"><i></i><i></i><i></i><i></i></span></div>' +
@@ -181,31 +324,36 @@ function toast(msg) {
   t.textContent = msg;
   t.classList.add("show");
   clearTimeout(toast._t);
-  toast._t = setTimeout(function () { t.classList.remove("show"); }, 2400);
+  toast._t = setTimeout(function () { t.classList.remove("show"); }, 2200);
 }
 document.getElementById("screen").addEventListener("click", function (e) {
   var t = e.target.closest("[data-act]");
   if (!t || !document.getElementById("screen").contains(t)) return;
   var act = t.getAttribute("data-act");
   var id = t.getAttribute("data-id");
-  if (act === "open") {
-    if (MODE === "b" && state.openId === id) state.openId = null;
-    else state.openId = id;
+  if (act === "open" || act === "toggle") {
+    if (MODE === "b" && act === "toggle" && state.openId === id && !state.panel) {
+      toList();
+    } else if (MODE === "b" && act === "toggle" && state.openId === id) {
+      toList();
+    } else {
+      state.openId = id;
+      state.panel = null;
+      state.draft = "";
+    }
+    render();
+    return;
+  }
+  if (act === "panel") {
+    state.openId = id;
+    state.panel = t.getAttribute("data-panel");
     state.draft = "";
     render();
     return;
   }
-  if (act === "close") {
-    state.openId = null;
-    state.draft = "";
-    render();
-    return;
-  }
-  if (act === "remove") {
-    removeChip(id, t.getAttribute("data-name"));
-    render();
-    return;
-  }
+  if (act === "tolist") { toList(); render(); return; }
+  if (act === "tohub") { state.panel = null; state.draft = ""; render(); return; }
+  if (act === "remove") { removeChip(id, t.getAttribute("data-name")); render(); return; }
   if (act === "add") {
     addChip(id, state.draft);
     state.draft = "";
@@ -220,23 +368,46 @@ document.getElementById("screen").addEventListener("click", function (e) {
     render();
     return;
   }
-  if (act === "pick") toast("Pick a post already shipped (#266). Not this phone layout.");
-  if (act === "suggest") toast("Suggest posts already shipped (#266). Not this phone layout.");
+  if (act === "dismiss") {
+    var postId = t.getAttribute("data-post");
+    if (!state.dismissed[id]) state.dismissed[id] = {};
+    state.dismissed[id][postId] = true;
+    if (state.used[id] === postId) delete state.used[id];
+    render();
+    return;
+  }
+  if (act === "another") {
+    var left = visiblePosts(id);
+    if (left.length < 2) { toast("Only one post left."); return; }
+    state.pickAt[id] = (state.pickAt[id] || 0) + 1;
+    render();
+    return;
+  }
+  if (act === "use") {
+    var pid = t.getAttribute("data-post");
+    var post = postById(id, pid);
+    var advisor = byId(id);
+    if (!post || !advisor) return;
+    state.used[id] = pid;
+    if (t.getAttribute("data-from") === "pick") toList();
+    render();
+    toast("Using “" + post.title + "” for " + advisor.name);
+  }
 });
 document.getElementById("screen").addEventListener("input", function (e) {
   if (e.target.id === "q") {
     state.q = e.target.value;
-    var pos = e.target.selectionStart;
+    var caret = e.target.selectionStart;
     render();
     var q = document.getElementById("q");
-    if (q) { q.focus(); if (q.setSelectionRange) q.setSelectionRange(pos, pos); }
+    if (q) { q.focus(); if (q.setSelectionRange) q.setSelectionRange(caret, caret); }
   }
   if (e.target.id === "add") {
     state.draft = e.target.value;
-    var pos = e.target.selectionStart;
+    var caret2 = e.target.selectionStart;
     render();
     var add = document.getElementById("add");
-    if (add) { add.focus(); if (pos != null && add.setSelectionRange) add.setSelectionRange(pos, pos); }
+    if (add) { add.focus(); if (caret2 != null && add.setSelectionRange) add.setSelectionRange(caret2, caret2); }
   }
 });
 document.getElementById("screen").addEventListener("keydown", function (e) {

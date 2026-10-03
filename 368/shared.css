@@ -170,3 +170,61 @@ a { color: var(--blue); }
   }
   .screen { border-radius: 0; height: 100dvh; }
 }
+
+.card-toggle {
+  width: 100%; text-align: left; background: transparent; border: none;
+  font: inherit; color: inherit; cursor: pointer; padding: 0;
+}
+.acts { display: flex; flex-direction: column; gap: 8px; margin-top: 12px; }
+.act {
+  width: 100%; min-height: 48px; border-radius: 12px;
+  border: 1px solid var(--blue); background: var(--mint); color: var(--blue-dark);
+  font-family: inherit; font-size: 15px; font-weight: 700; cursor: pointer;
+  display: flex; align-items: center; justify-content: space-between; padding: 10px 14px; text-align: left;
+}
+.act:hover { background: #d7e8f8; }
+.act.on { background: var(--blue); color: #fff; border-color: var(--blue); }
+.act.on:hover { background: var(--blue-dark); }
+.act .go { font-weight: 500; font-size: 20px; }
+.hidebar { display: flex; justify-content: flex-end; margin-top: 4px; }
+.hidebar button {
+  min-height: 44px; padding: 0 8px; border: none; background: transparent;
+  color: var(--muted); font-family: inherit; font-size: 14px; font-weight: 700;
+  text-decoration: underline; text-underline-offset: 2px; cursor: pointer;
+}
+.usingline { margin-top: 4px; font-size: 13px; font-weight: 700; color: #065f46; }
+.post {
+  background: #fff; border: 1px solid var(--border); border-radius: 14px;
+  padding: 12px; margin-bottom: 10px;
+}
+.post.using { border-color: var(--blue); box-shadow: 0 0 0 3px rgba(43,125,233,.18); }
+.post h4 { font-size: 16px; line-height: 1.3; }
+.why { margin-top: 6px; font-size: 13px; color: var(--muted); }
+.why strong { color: var(--ink); }
+.postacts { display: flex; gap: 8px; margin-top: 12px; }
+.use {
+  flex: 1; min-height: 48px; border: none; border-radius: 12px;
+  background: var(--blue); color: #fff; font-family: inherit; font-size: 15px; font-weight: 700; cursor: pointer;
+}
+.use:hover { background: var(--blue-dark); }
+.use.quiet { background: #e8f5e9; color: #065f46; }
+.dismiss {
+  min-height: 48px; min-width: 104px; padding: 0 14px; border-radius: 12px;
+  border: 1px solid var(--border); background: #fff; color: var(--ink);
+  font-family: inherit; font-size: 15px; font-weight: 700; cursor: pointer;
+}
+.dismiss:hover { border-color: #fca5a5; background: #fef2f2; color: #991b1b; }
+.pickhero { padding: 4px 2px 8px; }
+.pickhero h4 { font-size: 20px; line-height: 1.25; }
+.altbtn {
+  width: 100%; min-height: 48px; margin-top: 8px; border-radius: 12px;
+  border: 1px solid var(--border); background: #fff; color: var(--ink);
+  font-family: inherit; font-size: 15px; font-weight: 700; cursor: pointer;
+}
+.altbtn:hover { border-color: var(--blue); color: var(--blue-dark); }
+.backlink {
+  width: 100%; min-height: 48px; margin-top: 4px; border-radius: 12px;
+  border: 1px solid var(--border); background: #fff; color: var(--ink);
+  font-family: inherit; font-size: 15px; font-weight: 700; cursor: pointer;
+}
+.hubnote { font-size: 13px; color: var(--muted); margin: 4px 0 12px; }
