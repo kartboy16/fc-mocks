@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Build contract · #372 MAP Suggest Posts created date range</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<style>
+body{font-family:Inter,system-ui,sans-serif;max-width:780px;margin:40px auto;padding:0 24px 80px;color:#1e2a4a;line-height:1.55}
+h1{font-size:22px}h2{font-size:16px;margin-top:28px}
+p,li{font-size:14px;color:#3a4558}
+.warn{background:#fff7ed;color:#9a3412;padding:12px 14px;border-radius:8px;font-size:13px;margin:12px 0}
+.hold{background:#fef3c7;color:#92400e;padding:12px 14px;border-radius:8px;font-size:13px;margin:12px 0}
+.navl{font-size:13px;margin-bottom:8px}
+code{background:#eef2f6;padding:1px 6px;border-radius:4px;font-size:12px}
+a{color:#2b7de9}ul{padding-left:1.2em}li{margin-bottom:4px}
+</style>
+</head>
+<body>
+<p class="navl"><a href="index.html">← Hub #372</a> · <a href="directions/a/index.html">A (recommend)</a> · <a href="directions/b/index.html">B</a> · <a href="directions/c/index.html">C</a> · <a href="build-contract.md">Markdown</a></p>
+<h1>Build contract · #372 MAP Suggest Posts — creation date range filter</h1>
+<p class="warn"><strong>PROVISIONAL.</strong> Recommend Direction <strong>A</strong> (inline Created from / to). <strong>Alex has not locked a direction.</strong></p>
+<p class="hold"><strong>Soft Dev hold · Designer-first · not agent-ready.</strong> Soft Dev not woken. Do <strong>not</strong> mark <code>agent-ready</code>. No content-library / Meteor work until Alex picks A, B, or C.</p>
+<p>Issue: <a href="https://github.com/kartboy16/content-library/issues/372">https://github.com/kartboy16/content-library/issues/372</a></p>
+<h2>One-liner</h2>
+<p>In Manage Advisor Posts, admins can narrow <strong>Suggest Posts</strong> to posts created between two dates. Leaving the dates empty (or clearing them) keeps today's Suggest behavior.</p>
+<h2>Recommend</h2>
+<p><strong>A: Inline Created from / to.</strong> Two compact date fields, “Created from” and “to”, sit in the existing filter row next to <em>Post history</em>. They use the same floating-label field style, with a small <strong>Clear</strong>. A status line under the row reads “Showing posts created Jan 1 – Mar 31, 2026 · 5 of 18 suggested posts”. It is the most direct option, adds no new pattern, and makes clear what's applied.</p>
+<ul>
+<li><strong>B</strong> (Created dropdown: Any time / Last 30 days / Last 90 days / Last 12 months / This year / Custom range…) takes fewer clicks for common cases but puts two time dropdowns side by side.</li>
+<li><strong>C</strong> (+ Created date chip → popover → removable chip) keeps the row tidiest but takes one extra click, and an applied chip is easier to miss.</li>
+</ul>
+<h2>Mocks</h2>
+<ul>
+<li>Hub: <a href="https://kartboy16.github.io/fc-mocks/372/">https://kartboy16.github.io/fc-mocks/372/</a></li>
+<li>A (recommend): <a href="https://kartboy16.github.io/fc-mocks/372/directions/a/">https://kartboy16.github.io/fc-mocks/372/directions/a/</a></li>
+<li>B: <a href="https://kartboy16.github.io/fc-mocks/372/directions/b/">https://kartboy16.github.io/fc-mocks/372/directions/b/</a></li>
+<li>C: <a href="https://kartboy16.github.io/fc-mocks/372/directions/c/">https://kartboy16.github.io/fc-mocks/372/directions/c/</a></li>
+</ul>
+<p>Each page shows four states: 1 Default (no date limit) · 2 Range applied (fewer suggestions, including an advisor with none) · 3 Clear → default · 4 To-date before From-date (inline message).</p>
+<h2>Acceptance criteria (provisional · not locked)</h2>
+<ul>
+<li><strong>AC-1:</strong> The Suggest Posts filters include a creation date range control with both a <strong>from</strong> and a <strong>to</strong> date, in the existing MAP filter row.</li>
+<li><strong>AC-2:</strong> Empty = no date limit. With both empty, Suggest Posts returns exactly what it returns today.</li>
+<li><strong>AC-3:</strong> Only “from” set = created on or after that date. Only “to” set = created on or before. Both dates are inclusive.</li>
+<li><strong>AC-4:</strong> Setting or changing the range refreshes suggested posts for every advisor row. Rows with no matches show a plain message (“No suggested posts created Jan 1 – Mar 31, 2026. Widen the dates or clear the Created filter…”), not a blank cell.</li>
+<li><strong>AC-5:</strong> <strong>Clear</strong> (A), <em>Any time</em> / Clear (B), or × on the chip (C) empties the range and restores prior Suggest Posts behavior.</li>
+<li><strong>AC-6:</strong> <strong>Validation:</strong> if the to-date is before the from-date, show a plain inline message (“The end date (Dec 1, 2025) is before the start date (Jan 1, 2026). Pick an end date on or after Jan 1, 2026.”), mark the to field, and do <strong>not</strong> apply the range. Suggestions stay on the last valid range. Future dates are not selectable.</li>
+<li><strong>AC-7:</strong> A short status line says what's applied (“Showing posts created {range} · X of Y suggested posts”) and offers Clear. With no range: “No creation date limit · showing all Y suggested posts”.</li>
+<li><strong>AC-8:</strong> Visual consistency with existing MAP filters: same field height, border, and floating label as <em>Post history</em> / <em>Default schedule date</em>, and the same include-chip style if C is picked. Do not redesign the MAP table.</li>
+<li><strong>AC-9:</strong> <em>Suggest posts</em> uses the current Created range. <em>Pick a post for me</em> (#266) is unchanged unless Alex says otherwise (see open questions).</li>
+</ul>
+<h2>Interaction with the Post history window (assumption)</h2>
+<ul>
+<li><em>Post history</em> (“Past 36 months”) keeps doing what it does today: which past and upcoming posts show for each advisor, and what counts as already posted.</li>
+<li><strong>Created from / to only narrows the Suggested candidates.</strong> If Suggest is already limited by the window today, the Created range narrows <strong>within</strong> it and never widens it.</li>
+<li><strong>Open question for Alex.</strong></li>
+</ul>
+<h2>Open questions for Alex</h2>
+<p>1. <strong>Window vs. Created:</strong> Should the Created range be capped by the Post history window, or be independent? (Mock assumes it narrows within whatever Suggest considers today.)</p>
+<p>2. <strong>What “created” means:</strong> The date the post was added to the Content library (assumed), or its WordPress publish date?</p>
+<p>3. <strong>Pick a post for me:</strong> Should Pick also respect the Created range? (Mock: no, Suggest only, as the issue states.)</p>
+<p>4. <strong>Created date on cards:</strong> Is it OK to show a small “Created Feb 26, 2026” line on each suggestion card so admins can see the filter worked? (Shown in all three mocks, optional.)</p>
+<h2>Copy (plain words)</h2>
+<ul>
+<li>A: “Created from” · “to” · “Clear”</li>
+<li>B: “Created” · “Any time” · “Last 30 days” · “Last 90 days” · “Last 12 months” · “This year” · “Custom range…” · “From” · “To” · “Clear”</li>
+<li>C: “+ Created date” · popover title “Show suggested posts created…” · “From” · “To” · “Leave one side empty for no limit on that side.” · “Cancel” · “Apply” · chip “Created: Jan 1 – Mar 31, 2026 ×”</li>
+<li>Status: “Showing posts created {range} · X of Y suggested posts” · “No creation date limit · showing all Y suggested posts”</li>
+<li>Range format: same year “Jan 1 – Mar 31, 2026”; across years “Nov 1, 2025 – Mar 31, 2026”; one side “on or after Mar 1, 2026” / “on or before Mar 31, 2026”</li>
+</ul>
+<h2>Non-goals</h2>
+<ul>
+<li><strong>#368</strong> (MAP on a phone) and <strong>#341</strong> (MAP density) are separate issues. Not touched here.</li>
+<li><strong>#266</strong> Pick / Suggest behavior already shipped. This only adds a date filter to Suggest Posts, not a new ranking.</li>
+<li>Not the WordPress load bug (separate wealthstream.ca investigation).</li>
+<li>No redesign of the MAP table, filter drawer, or exclusion chips.</li>
+<li>No <code>agent-ready</code> and no Soft Dev wake until Alex locks a direction.</li>
+<li>Fictional advisors only (Sarah Chen, Michael Okonkwo, Dana Lefebvre).</li>
+</ul>
+<h2>Status</h2>
+<p>Soft Dev <strong>hold</strong>. <strong>Not agent-ready.</strong> Waiting for Alex to pick A / B / C and answer the open questions.</p>
+</body>
+</html>

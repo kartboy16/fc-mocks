@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>FC — #372 MAP Suggest Posts · creation date range filter</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #f4f8fc; --card: #fff; --ink: #1e2a4a; --muted: #5b6572;
+      --blue: #2b7de9; --border: #d4e4f2; --mint: #e6f1fb;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: Inter, system-ui, sans-serif; background: var(--bg); color: var(--ink); line-height: 1.55; }
+    .hero {
+      background: linear-gradient(135deg, #1e2a4a 0%, #2b7de9 100%);
+      color: #fff; padding: 40px 24px 36px;
+    }
+    .hero-inner { max-width: 880px; margin: 0 auto; }
+    .hero .eyebrow { font-size: 0.75rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; opacity: 0.85; margin-bottom: 10px; }
+    .hero h1 { font-size: 1.75rem; margin-bottom: 10px; }
+    .hero p { opacity: 0.92; max-width: 720px; font-size: 0.95rem; }
+    .rec {
+      display: inline-block; margin-top: 18px; background: #e8f5e9; color: #065f46;
+      font-weight: 700; font-size: 0.8rem; padding: 8px 14px; border-radius: 999px;
+    }
+    .wrap { max-width: 880px; margin: 0 auto; padding: 28px 24px 72px; }
+    .cta {
+      display: block; background: var(--blue); color: #fff !important; text-decoration: none;
+      text-align: center; padding: 16px 24px; border-radius: 12px; font-weight: 700;
+      font-size: 1rem; margin-bottom: 28px; box-shadow: 0 4px 16px rgba(43,125,233,0.35);
+    }
+    .cta:hover { filter: brightness(1.05); }
+    .cta small { display: block; font-weight: 500; opacity: 0.9; font-size: 0.8rem; margin-top: 4px; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 14px; }
+    .card {
+      background: var(--card); border: 1px solid var(--border); border-radius: 12px;
+      padding: 18px; text-decoration: none; color: inherit; display: block;
+      transition: border-color 0.15s, box-shadow 0.15s;
+    }
+    .card:hover { border-color: var(--blue); box-shadow: 0 4px 16px rgba(30,42,74,0.08); }
+    .card.recd { border-color: #2b7de9; box-shadow: 0 4px 16px rgba(43,125,233,0.12); }
+    .card.alt-dim { opacity: 0.85; }
+    .card h3 { font-size: 0.95rem; margin-bottom: 6px; color: var(--blue); }
+    .card p { font-size: 0.8rem; color: var(--muted); }
+    .card .tag {
+      display: inline-block; font-size: 0.65rem; font-weight: 700; background: var(--mint);
+      color: var(--blue); padding: 2px 8px; border-radius: 999px; margin-bottom: 8px;
+    }
+    .card .tag.rec-tag { background: var(--blue); color: #fff; }
+    .card .tag.dim-tag { background: #e5e7eb; color: #6b7280; }
+    h2 { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--muted); margin: 28px 0 12px; }
+    .problem {
+      margin: 0 0 20px; padding: 14px 16px; background: #fff8eb; border: 1px solid #f0d4a8;
+      border-radius: 10px; font-size: 0.85rem; color: #8a5a10;
+    }
+    .problem strong { color: #6b4408; }
+    .hold {
+      margin: 0 0 20px; padding: 14px 16px; background: #fef3c7; border: 1px solid #fcd34d;
+      border-radius: 10px; font-size: 0.85rem; color: #92400e;
+    }
+    .ac {
+      margin: 0 0 20px; padding: 14px 16px; background: #eff6ff; border: 1px solid #bfdbfe;
+      border-radius: 10px; font-size: 0.85rem; color: #1e40af;
+    }
+    .ac strong { color: #1e3a8a; }
+    .ac ul { margin: 8px 0 0; padding-left: 1.2rem; }
+    .ac li { margin-bottom: 4px; }
+    .oos {
+      margin: 0 0 20px; padding: 14px 16px; background: #f3f4f6; border: 1px solid #e5e7eb;
+      border-radius: 10px; font-size: 0.85rem; color: #374151;
+    }
+    .oos ul { margin: 8px 0 0; padding-left: 1.2rem; }
+    .note {
+      margin: 16px 0 0; padding: 12px 14px; background: #eef4fb; border: 1px solid var(--border);
+      border-radius: 10px; font-size: 0.85rem; color: var(--ink);
+    }
+    .meta { margin-top: 32px; font-size: 0.8rem; color: var(--muted); }
+    .meta a { color: var(--blue); }
+    code { background: #eef2f6; padding: 0.1em 0.35em; border-radius: 4px; font-size: 0.85em; }
+    a { color: var(--blue); }
+  </style>
+<style>.q{margin:0 0 20px;padding:14px 16px;background:#f5f3ff;border:1px solid #c4b5fd;border-radius:10px;font-size:.85rem;color:#4c1d95}.q ol{margin:8px 0 0;padding-left:1.2rem}.q li{margin-bottom:6px}</style>
+
+</head>
+<body>
+  <header class="hero">
+    <div class="hero-inner">
+      <div class="eyebrow">FinancialContent · content-library #372 · Designer mocks</div>
+      <h1>MAP Suggest Posts: filter by creation date</h1>
+      <p>In Manage Advisor Posts, admins can narrow <strong>Suggest Posts</strong> to posts created between two dates. Empty or cleared means no date limit, which is exactly today’s behavior. Three ways to fit it into the existing filter row. Alex has not locked a direction.</p>
+      <span class="rec">Recommend · Direction A: inline Created from / to</span>
+    </div>
+  </header>
+
+  <div class="wrap">
+    <a class="cta" href="directions/a/index.html">
+      Open Direction A (recommended)
+      <small>“Created from” and “to” in the filter row · small Clear · status line says what’s applied</small>
+    </a>
+    <p style="text-align:center;margin:-18px 0 24px;font-size:0.8rem;color:var(--muted)">
+      <a href="build-contract.html">Build contract</a> ·
+      <a href="build-contract.md">Markdown</a>
+    </p>
+
+    <div class="problem">
+      <strong>Ask (Alex, Mon Oct 5 ~10:31 AM PT):</strong> The Suggest Posts filters should include a <strong>creation date range (from / to)</strong> so admins can narrow suggested posts by when the posts were created. Clearing the range restores today’s Suggest behavior. The mocks reuse the live filter row (Search · Filters · Post history · Default schedule date · Refresh, plus the list source and exclusion chips) and do not redesign the MAP table.
+    </div>
+
+    <div class="hold">
+      <strong>Soft Dev hold · Designer-first · not agent-ready.</strong> Alex has <em>not</em> locked A, B, or C. Do <em>not</em> wake Soft Dev. Do <em>not</em> mark <code>agent-ready</code>.
+    </div>
+
+    <div class="ac">
+      <strong>Why A</strong>
+      <ul>
+        <li>It matches the inline filter row we already have. Two fields in the same floating-label style as <em>Post history</em> and <em>Default schedule date</em>, so there is no new pattern to learn.</li>
+        <li>It is the most direct: type or pick two dates and the suggestions update. A status line confirms it: “Showing posts created Jan 1 – Mar 31, 2026 · 5 of 18 suggested posts”.</li>
+        <li>Clear defaults: both empty = no limit. Either side works alone (on or after / on or before).</li>
+        <li>B takes fewer clicks for “last 90 days”, but puts two time dropdowns side by side. C keeps the row tidiest, but adds a click, and an applied chip is easier to miss.</li>
+      </ul>
+    </div>
+
+    <div class="note" style="margin:0 0 20px">
+      <strong>How it works with the Post history window (“Past 36 months”).</strong> Post history keeps doing what it does today: which past and upcoming posts show for each advisor, and what counts as already posted. The new Created range <strong>only narrows the Suggested candidates</strong>. If Suggest is already limited by the window, the Created range narrows <em>within</em> it and never widens it. This is an assumption, so it is question 1 below.
+    </div>
+
+    <div class="q">
+      <strong>Open questions for Alex</strong>
+      <ol>
+        <li><strong>Window vs. Created:</strong> Should the Created range be capped by the Post history window, or be independent? The mock assumes it narrows within whatever Suggest considers today.</li>
+        <li><strong>What “created” means:</strong> The date the post was added to the Content library (assumed), or its WordPress publish date?</li>
+        <li><strong>Pick a post for me:</strong> Should Pick also respect the Created range? Mock: no, Suggest only, as the issue states.</li>
+        <li><strong>Created date on cards:</strong> Is it OK to show a small “Created Feb 26, 2026” line on each suggestion card so admins can see the filter worked? Shown in all three mocks, optional.</li>
+      </ol>
+    </div>
+
+    <div class="ac" style="background:#f8fafc;border-color:#e2e8f0;color:#334155">
+      <strong>What every direction shows (use the Demo state bar)</strong>
+      <ul>
+        <li><strong>1 · Default:</strong> no date limit, all 18 suggested posts across three fictional advisors.</li>
+        <li><strong>2 · Range applied:</strong> Jan 1 – Mar 31, 2026 narrows suggestions (Sarah 4 of 8, Michael 1 of 6, Dana 0 with a plain “widen or clear” message).</li>
+        <li><strong>3 · Clear → default:</strong> clearing restores everything, the same as never setting a date.</li>
+        <li><strong>4 · To before From:</strong> a plain inline message, the to field turns red, and the range is not applied.</li>
+      </ul>
+    </div>
+
+    <div class="oos">
+      <strong>Out of scope</strong>
+      <ul>
+        <li><a href="https://kartboy16.github.io/fc-mocks/368/">#368</a> MAP on a phone and <a href="https://kartboy16.github.io/fc-mocks/341/">#341</a> MAP density are separate issues and not touched here</li>
+        <li>#266 Pick / Suggest behavior is already shipped. This only adds a date filter to Suggest Posts</li>
+        <li>The WordPress load bug (separate investigation)</li>
+        <li>Redesigning the MAP table, the filter drawer, or the exclusion chips</li>
+        <li>content-library / Meteor · waking Soft Dev · agent-ready</li>
+      </ul>
+    </div>
+
+    <h2>Directions</h2>
+    <div class="grid">
+      <a class="card recd" href="directions/a/index.html">
+        <span class="tag rec-tag">RECOMMEND</span>
+        <h3>A · Inline From / To</h3>
+        <p>“Created from” and “to” date fields in the filter row, plus a small Clear. Empty = no limit. A status line says what’s applied.</p>
+      </a>
+      <a class="card alt-dim" href="directions/b/index.html">
+        <span class="tag dim-tag">ALT</span>
+        <h3>B · Preset dropdown + Custom</h3>
+        <p>One “Created” dropdown: Any time, Last 30 / 90 days, Last 12 months, This year, Custom range…. Custom opens From/To. Matches the Post history dropdown.</p>
+      </a>
+      <a class="card alt-dim" href="directions/c/index.html">
+        <span class="tag dim-tag">ALT</span>
+        <h3>C · Chip + popover</h3>
+        <p>“+ Created date” chip opens presets and From/To. Once applied it becomes a removable chip: “Created: Jan 1 – Mar 31, 2026 ×”. Tidiest row, one extra click.</p>
+      </a>
+    </div>
+
+    <h2>Build contract (provisional · recommend A)</h2>
+    <div class="note" style="margin-top:0">
+      From and to control on the Suggest filters, Clear restores prior behavior, validation for to-before-from, consistent with MAP filters. Full AC: <a href="build-contract.html">build-contract.html</a>. Alex has not locked a direction. Soft Dev hold.
+    </div>
+
+    <div class="meta">
+      <p>Issue: <a href="https://github.com/kartboy16/content-library/issues/372">content-library #372</a> · related <a href="https://github.com/kartboy16/content-library/issues/266">#266</a> (shipped) · separate from <a href="https://github.com/kartboy16/content-library/issues/368">#368</a> and <a href="https://github.com/kartboy16/content-library/issues/341">#341</a></p>
+      <p>Repo: <a href="https://github.com/kartboy16/fc-mocks">kartboy16/fc-mocks</a> · path <code>/372/</code></p>
+      <p>Live: <a href="https://kartboy16.github.io/fc-mocks/372/">kartboy16.github.io/fc-mocks/372/</a></p>
+    </div>
+  </div>
+</body>
+</html>
