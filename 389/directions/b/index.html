@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Direction B — One-tap Decline, confirm only · #389 Content approvals Decline</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<style>
+:root{--bg:#f4f8fc;--card:#fff;--ink:#1e2a4a;--muted:#5b6572;--blue:#2b7de9;--blue-dark:#1e5bb8;--border:#d4e4f2;--mint:#e6f1fb;--ok:#047857;--ok-bg:#e8f5e9;--warn:#92400e;--warn-bg:#fef3c7;--err:#b42318;--err-bg:#fef3f2;--decl:#6b7280;--decl-bg:#f3f4f6}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Inter,system-ui,sans-serif;background:var(--bg);color:var(--ink);font-size:14px;line-height:1.45}
+a{color:var(--blue)}
+.thesis{background:linear-gradient(135deg,#1e2a4a,#2b7de9);color:#fff;padding:16px 24px}
+.thesis .rec{display:inline-block;background:#fff;color:var(--blue);font-size:.68rem;font-weight:700;padding:3px 10px;border-radius:999px;margin-bottom:8px}
+.thesis .rec.alt{background:rgba(255,255,255,.2);color:#fff}
+.thesis h1{font-size:1.05rem;margin-bottom:4px}
+.thesis p{opacity:.92;font-size:.8rem;max-width:920px}
+.nav{padding:8px 24px;font-size:.75rem;background:#fafafa;border-bottom:1px solid var(--border);display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+.nav a{color:var(--blue);text-decoration:none;font-weight:500}
+.nav .sep{color:#c0c8d4}.nav .on{font-weight:700;color:var(--ink)}
+.nav .hold{margin-left:auto;background:#fef3c7;color:#92400e;border:1px solid #fcd34d;border-radius:999px;padding:2px 10px;font-weight:600;font-size:.68rem}
+.demo-bar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:12px 24px;padding:10px 12px;background:#fff;border:1px dashed #b9c7d8;border-radius:10px}
+.demo-bar .lbl{font-size:.65rem;font-weight:700;text-transform:uppercase;color:var(--muted);margin-right:4px}
+.demo-btn{padding:5px 10px;border:1px solid var(--border);border-radius:8px;background:#fff;font-family:inherit;font-size:.72rem;font-weight:600;color:var(--ink);cursor:pointer}
+.demo-btn:hover,.demo-btn.on{border-color:var(--blue);color:var(--blue);background:var(--mint)}
+.demo-note{flex:1 1 220px;font-size:.72rem;color:var(--muted);min-width:180px}
+.stage{padding:4px 16px 48px;display:flex;flex-wrap:wrap;gap:24px;justify-content:center;align-items:flex-start}
+.phone{width:390px;height:min(780px,calc(100vh - 200px));min-height:620px;background:#0e1730;border-radius:40px;padding:12px;box-shadow:0 28px 70px rgba(30,42,74,.28);flex-shrink:0}
+.screen{background:var(--bg);border-radius:30px;height:100%;overflow:hidden;display:flex;flex-direction:column;position:relative}
+.statusbar{display:flex;justify-content:space-between;align-items:center;padding:10px 18px 4px;font-size:12px;font-weight:700}
+.statusbar .sigs{display:flex;gap:4px;align-items:flex-end;height:12px}
+.statusbar .sigs i{display:block;width:3px;background:var(--ink);border-radius:1px}
+.statusbar .sigs i:nth-child(1){height:4px}.statusbar .sigs i:nth-child(2){height:7px}.statusbar .sigs i:nth-child(3){height:10px}.statusbar .sigs i:nth-child(4){height:12px;opacity:.35}
+.appbar{padding:4px 16px 10px}
+.appbar .kicker{font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--blue)}
+.appbar h2{font-size:20px;font-weight:700;line-height:1.2}
+.appbar .sub{font-size:13px;color:var(--muted);margin-top:2px}
+.scroll{flex:1;overflow-y:auto;padding:0 16px 24px;-webkit-overflow-scrolling:touch}
+.piece-card{background:#fff;border:1px solid var(--border);border-radius:16px;overflow:hidden;margin-bottom:12px;box-shadow:0 1px 2px rgba(30,42,74,.04)}
+.piece-img{height:120px;background:linear-gradient(135deg,#bfdbfe,#93c5fd);display:flex;align-items:flex-end;padding:12px;color:#1e3a8a;font-size:11px;font-weight:700}
+.piece-body{padding:14px}
+.piece-body h3{font-size:16px;font-weight:700;margin-bottom:6px;line-height:1.3}
+.piece-body .meta{font-size:12px;color:var(--muted);margin-bottom:10px}
+.piece-body .excerpt{font-size:13px;color:#3a4558;margin-bottom:14px}
+.actions{display:flex;flex-direction:column;gap:8px}
+.btn{min-height:48px;border-radius:12px;font-family:inherit;font-size:15px;font-weight:700;cursor:pointer;border:1px solid transparent;padding:12px 16px;width:100%}
+.btn-primary{background:var(--blue);color:#fff;border-color:var(--blue)}
+.btn-primary:hover{filter:brightness(1.05)}
+.btn-secondary{background:#fff;color:var(--ink);border-color:var(--border)}
+.btn-secondary:hover{border-color:#9ca3af;background:#f9fafb}
+.btn-ghost{background:transparent;color:var(--blue);border:none;font-weight:600;min-height:40px}
+.btn-danger-soft{background:#fff;color:#7f1d1d;border-color:#f2a7a7}
+.btn-danger-soft:hover{background:#fff5f5}
+.remind-note{margin-top:10px;padding:10px 12px;background:#eef4fb;border:1px solid var(--border);border-radius:10px;font-size:12px;color:var(--blue-dark)}
+.list-item{background:#fff;border:1px solid var(--border);border-radius:14px;padding:12px 14px;margin-bottom:8px;cursor:pointer;display:flex;gap:12px;align-items:flex-start}
+.list-item:hover{border-color:var(--blue)}
+.list-item .thumb{width:48px;height:48px;border-radius:10px;background:linear-gradient(135deg,#bfdbfe,#93c5fd);flex-shrink:0}
+.list-item .ttl{font-weight:700;font-size:14px;line-height:1.3}
+.list-item .sub{font-size:12px;color:var(--muted);margin-top:2px}
+.badge{display:inline-block;font-size:10px;font-weight:700;padding:2px 8px;border-radius:999px;text-transform:uppercase;letter-spacing:.03em}
+.badge.pending{background:#fef3c7;color:#92400e}
+.badge.approved{background:var(--ok-bg);color:var(--ok)}
+.badge.declined{background:var(--decl-bg);color:#374151}
+.overlay{position:absolute;inset:0;background:rgba(14,23,48,.45);z-index:20;display:none;align-items:flex-end;justify-content:center}
+.overlay.open{display:flex}
+.sheet{background:#fff;border-radius:22px 22px 0 0;width:100%;max-height:88%;padding:16px 16px 28px;box-shadow:0 -12px 40px rgba(14,23,48,.25);overflow-y:auto}
+.sheet .grab{width:36px;height:4px;background:#d1d5db;border-radius:999px;margin:0 auto 14px}
+.sheet h3{font-size:17px;font-weight:700;margin-bottom:6px}
+.sheet .lead{font-size:13px;color:var(--muted);margin-bottom:14px}
+.dialog{background:#fff;border-radius:16px;margin:auto 16px;padding:18px;max-width:340px;width:100%;box-shadow:0 16px 40px rgba(14,23,48,.3)}
+.overlay.center{align-items:center}
+.reason-list{display:flex;flex-direction:column;gap:8px;margin-bottom:12px}
+.reason{display:flex;align-items:flex-start;gap:10px;padding:12px;border:1px solid var(--border);border-radius:12px;cursor:pointer;background:#fff;text-align:left;font-family:inherit;font-size:13px;color:var(--ink);width:100%}
+.reason:hover{border-color:var(--blue)}
+.reason.on{border-color:var(--blue);background:var(--mint);box-shadow:0 0 0 2px rgba(43,125,233,.15)}
+.reason input{margin-top:2px;accent-color:var(--blue)}
+.reason .lab{font-weight:600}
+.reason .hint{display:block;font-size:11px;color:var(--muted);font-weight:500;margin-top:2px}
+.freetext{width:100%;font-family:inherit;font-size:14px;padding:10px 12px;border:1px solid var(--border);border-radius:10px;resize:vertical;min-height:64px;margin-bottom:12px}
+.freetext:focus{outline:3px solid #bfdbfe;border-color:var(--blue)}
+.sheet-actions{display:flex;flex-direction:column;gap:8px;margin-top:4px}
+.confirm-state{text-align:center;padding:28px 8px 8px}
+.confirm-state .icon{width:56px;height:56px;border-radius:999px;background:var(--decl-bg);color:#374151;display:grid;place-items:center;font-size:28px;margin:0 auto 14px;font-weight:700}
+.confirm-state h3{font-size:18px;margin-bottom:6px}
+.confirm-state p{font-size:13px;color:var(--muted);margin-bottom:8px;max-width:280px;margin-left:auto;margin-right:auto}
+.undo-bar{margin:14px 0;padding:10px 12px;background:var(--warn-bg);border:1px solid #fcd34d;border-radius:12px;font-size:12px;color:var(--warn);display:flex;align-items:center;gap:8px;justify-content:space-between;flex-wrap:wrap}
+.undo-bar button{background:#fff;border:1px solid #fcd34d;border-radius:8px;padding:6px 12px;font-family:inherit;font-size:12px;font-weight:700;color:var(--warn);cursor:pointer}
+.admin-panel{flex:1;min-width:280px;max-width:520px;background:#fff;border:1px solid var(--border);border-radius:14px;overflow:hidden;box-shadow:0 1px 3px rgba(30,42,74,.06)}
+.admin-panel .ah{padding:14px 16px;border-bottom:1px solid var(--border);background:#fafafa}
+.admin-panel .ah h3{font-size:15px;font-weight:700}
+.admin-panel .ah .sub{font-size:12px;color:var(--muted);margin-top:2px}
+.admin-row{padding:12px 16px;border-bottom:1px solid #eef2f6;display:flex;gap:12px;align-items:flex-start}
+.admin-row:last-child{border-bottom:none}
+.admin-row .av{width:36px;height:36px;border-radius:999px;background:var(--mint);color:var(--blue);font-weight:700;font-size:12px;display:grid;place-items:center;flex-shrink:0}
+.admin-row .nm{font-weight:700;font-size:13px}
+.admin-row .firm{font-size:11px;color:var(--muted)}
+.admin-row .piece{font-size:12px;margin-top:4px;color:#3a4558}
+.admin-row .badges{margin-top:6px;display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.tip{position:relative;display:inline-flex}
+.tip .tipbox{display:none;position:absolute;bottom:calc(100% + 6px);left:0;background:#1e2a4a;color:#fff;font-size:11px;padding:8px 10px;border-radius:8px;width:200px;z-index:5;box-shadow:0 8px 20px rgba(0,0,0,.2)}
+.tip:hover .tipbox,.tip:focus-within .tipbox{display:block}
+.tip .tipbox::after{content:"";position:absolute;top:100%;left:12px;border:6px solid transparent;border-top-color:#1e2a4a}
+.legend{max-width:920px;margin:0 auto;padding:0 24px 40px;font-size:.74rem;color:var(--muted)}
+.legend p+p{margin-top:6px}
+.toast{position:fixed;bottom:24px;right:24px;background:#1e2a4a;color:#fff;padding:10px 16px;border-radius:8px;font-size:.8rem;display:none;z-index:200;max-width:360px;box-shadow:0 8px 24px rgba(0,0,0,.2)}
+.toast.show{display:block}
+.errline{display:none;font-size:12px;color:var(--err);background:var(--err-bg);border:1px solid #fecdca;border-radius:8px;padding:8px 10px;margin-bottom:10px}
+.errline.show{display:block}
+.hidden{display:none!important}
+.phone-wrap{display:flex;flex-direction:column;align-items:center}
+.phone-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);margin-bottom:8px}
+@media(max-width:860px){.admin-panel{max-width:390px;width:100%}}
+</style>
+</head>
+<body>
+<header class="thesis">
+  <span class="rec alt">ALT</span>
+  <h1>B — One-tap Decline, confirm only</h1>
+  <p>Decline → one confirm dialog (“Stop reminders and skip this piece?”) → done. No reason, no undo. Fastest; less insight for FTT. Soft Dev hold · not agent-ready.</p>
+</header>
+<nav class="nav">
+  <a href="../../index.html">#389 hub</a>
+  <span class="sep">·</span>
+  <a href="../a/">A Light confirm</a>
+  <a href="../b/" class="on">B Confirm only</a>
+  <a href="../c/">C Required reason</a>
+  <span class="sep">·</span>
+  <a href="../../build-contract.html">Build contract</a>
+  <span class="hold">Soft Dev hold · not agent-ready</span>
+</nav>
+
+<div class="demo-bar">
+  <span class="lbl">Demo view</span>
+  <button type="button" class="demo-btn on" data-view="email">1 · Email landing</button>
+  <button type="button" class="demo-btn" data-view="inapp">2 · In-app approvals</button>
+  <button type="button" class="demo-btn" data-view="after">3 · After decline</button>
+  <button type="button" class="demo-btn" data-view="admin">4 · Admin (MAP)</button>
+  <span class="demo-note" id="demoNote">Approval page from the reminder email. Approve stays primary. Decline is secondary.</span>
+</div>
+
+<div class="stage">
+  <div class="phone-wrap" id="phoneWrap">
+    <div class="phone-label">Advisor · phone ~390px</div>
+    <div class="phone" aria-label="Phone preview">
+      <div class="screen" id="screen"></div>
+    </div>
+  </div>
+  <div class="admin-panel hidden" id="adminPanel">
+    <div class="ah">
+      <h3>Manage Advisor Posts · Approvals</h3>
+      <div class="sub">FTT admin view · Declined is distinct from Pending and Approved · reminders stop for declined pieces</div>
+    </div>
+    <div id="adminBody"></div>
+  </div>
+</div>
+
+<div class="legend" id="legend"></div>
+<div class="toast" id="toast"></div>
+
+<script>
+const MODE = "b";
+const PIECE = {
+  id: "p1",
+  title: "Three questions before you retire",
+  excerpt: "A short post that helps clients pause and ask the right questions before they leave work for good.",
+  topic: "Retirement planning",
+  sent: "Oct 3, 2026",
+  from: "FinancialContent"
+};
+const PENDING = [
+  { id: "p1", title: "Three questions before you retire", sub: "Retirement · reminder sent Oct 3", status: "pending" },
+  { id: "p2", title: "A year-end tax checklist", sub: "Tax · waiting since Oct 1", status: "pending" },
+  { id: "p3", title: "Estate documents to review this year", sub: "Estate · waiting since Sep 28", status: "pending" }
+];
+const REASONS = [
+  { id: "relevant", lab: "Not relevant to my clients", hint: "Does not fit who I work with" },
+  { id: "timing", lab: "Timing is not right", hint: "Maybe later, not now" },
+  { id: "compliance", lab: "Compliance concern", hint: "I would rather not use this one" },
+  { id: "other", lab: "Other", hint: "Short note (optional in A, required in C)" }
+];
+
+const state = {
+  view: "email",
+  declined: false,
+  reasonId: null,
+  reasonText: "",
+  undoLeft: 0,
+  undoTimer: null,
+  detailOpen: false,
+  dialogOpen: false,
+  source: "email"
+};
+
+const notes = {
+  email: "Approval page from the reminder email. Approve stays primary. Decline is secondary.",
+  inapp: "In-app Content approvals list. Open a piece, then Approve or Decline — same controls as the email landing.",
+  after: "After decline: plain confirmation. Reminders stop for this piece. Direction-specific undo / reason.",
+  admin: "FTT admin sees Declined (and reason where collected). Status-only — no email/Slack notify unless you ask."
+};
+
+function esc(s) {
+  return String(s).replace(/[&<>"']/g, function (c) {
+    return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
+  });
+}
+function toast(msg) {
+  var t = document.getElementById("toast");
+  t.textContent = msg;
+  t.classList.add("show");
+  clearTimeout(toast._x);
+  toast._x = setTimeout(function () { t.classList.remove("show"); }, 2400);
+}
+function statusbar() {
+  return '<div class="statusbar"><span>9:41</span><span class="sigs"><i></i><i></i><i></i><i></i></span></div>';
+}
+
+function renderReasons() {
+  var html = '<div class="reason-list">';
+  REASONS.forEach(function (r) {
+    var on = state.reasonId === r.id ? " on" : "";
+    html += '<button type="button" class="reason' + on + '" data-reason="' + r.id + '">' +
+      '<input type="radio" name="reason" ' + (state.reasonId === r.id ? "checked" : "") + ' tabindex="-1" />' +
+      '<span><span class="lab">' + esc(r.lab) + '</span><span class="hint">' + esc(r.hint) + '</span></span></button>';
+  });
+  html += "</div>";
+  if (state.reasonId === "other") {
+    html += '<textarea class="freetext" id="freeText" placeholder="Short note (a sentence is enough)">' + esc(state.reasonText) + "</textarea>";
+  }
+  return html;
+}
+
+function pieceActions() {
+  return '<div class="actions">' +
+    '<button type="button" class="btn btn-primary" id="btnApprove">Approve</button>' +
+    '<button type="button" class="btn btn-secondary" id="btnDecline">Decline</button>' +
+    "</div>" +
+    '<div class="remind-note">If you ignore this piece, reminder emails keep coming. Decline stops them. Approve is unchanged.</div>';
+}
+
+function renderEmail() {
+  return statusbar() +
+    '<div class="appbar"><div class="kicker">From your approval email</div><h2>Review this piece</h2>' +
+    '<div class="sub">Jordan Lee · Harbour Wealth</div></div>' +
+    '<div class="scroll"><div class="piece-card">' +
+    '<div class="piece-img">Blog · Retirement</div>' +
+    '<div class="piece-body"><h3>' + esc(PIECE.title) + "</h3>" +
+    '<div class="meta">Sent ' + esc(PIECE.sent) + " · " + esc(PIECE.from) + "</div>" +
+    '<p class="excerpt">' + esc(PIECE.excerpt) + "</p>" +
+    pieceActions() +
+    "</div></div></div>";
+}
+
+function renderInappList() {
+  var items = PENDING.map(function (p) {
+    var st = (state.declined && p.id === "p1") ? "declined" : p.status;
+    var badge = st === "declined"
+      ? '<span class="badge declined">Declined</span>'
+      : '<span class="badge pending">Needs approval</span>';
+    return '<div class="list-item" data-open="' + p.id + '">' +
+      '<div class="thumb"></div><div style="flex:1;min-width:0">' +
+      '<div class="ttl">' + esc(p.title) + "</div>" +
+      '<div class="sub">' + esc(p.sub) + "</div>" +
+      '<div style="margin-top:6px">' + badge + "</div></div></div>";
+  }).join("");
+  return statusbar() +
+    '<div class="appbar"><div class="kicker">FinancialContent</div><h2>Content approvals</h2>' +
+    '<div class="sub">Pieces waiting for your OK</div></div>' +
+    '<div class="scroll">' + items + "</div>";
+}
+
+function renderInappDetail() {
+  return statusbar() +
+    '<div class="appbar"><div class="kicker"><button type="button" class="btn-ghost" id="btnBack" style="padding:0;min-height:auto;font-size:12px">← Content approvals</button></div>' +
+    '<h2>Review</h2><div class="sub">Jordan Lee · Harbour Wealth</div></div>' +
+    '<div class="scroll"><div class="piece-card">' +
+    '<div class="piece-img">Blog · Retirement</div>' +
+    '<div class="piece-body"><h3>' + esc(PIECE.title) + "</h3>" +
+    '<div class="meta">' + esc(PIECE.topic) + " · from your approval list</div>" +
+    '<p class="excerpt">' + esc(PIECE.excerpt) + "</p>" +
+    pieceActions() +
+    "</div></div></div>";
+}
+
+function reasonLabel() {
+  if (!state.reasonId) return "";
+  var r = REASONS.filter(function (x) { return x.id === state.reasonId; })[0];
+  if (!r) return "";
+  if (state.reasonId === "other" && state.reasonText) return state.reasonText;
+  return r.lab;
+}
+
+function renderAfter() {
+  var undo = "";
+  if (MODE === "a" && state.undoLeft > 0) {
+    undo = '<div class="undo-bar"><span>Changed your mind? Undo for ' + state.undoLeft + "s</span>" +
+      '<button type="button" id="btnUndo">Undo</button></div>';
+  }
+  var reasonLine = "";
+  if ((MODE === "a" || MODE === "c") && state.reasonId) {
+    reasonLine = '<p style="font-size:12px;color:var(--muted)">Reason: <strong style="color:var(--ink)">' + esc(reasonLabel()) + "</strong></p>";
+  }
+  var later = MODE === "a"
+    ? '<button type="button" class="btn btn-ghost" id="btnLater">Approve later from Content approvals</button>'
+    : '<button type="button" class="btn btn-ghost" id="btnLater">Back to Content approvals</button>';
+  var undoHint = MODE === "a"
+    ? " (or tap Undo while it is available)."
+    : ".";
+  return statusbar() +
+    '<div class="appbar"><div class="kicker">FinancialContent</div><h2>Done</h2></div>' +
+    '<div class="scroll"><div class="confirm-state">' +
+    '<div class="icon">✕</div>' +
+    "<h3>Declined</h3>" +
+    "<p><strong>No more reminder emails for this piece.</strong></p>" +
+    "<p>\u201c" + esc(PIECE.title) + "\u201d will not be published or scheduled for you.</p>" +
+    reasonLine +
+    undo +
+    later +
+    "</div>" +
+    '<div class="remind-note">Approve is unchanged for other pieces. You can still approve this one later from Content approvals' +
+    undoHint +
+    "</div></div>";
+}
+
+function renderDialogA() {
+  return '<div class="overlay center open" id="overlay"><div class="dialog">' +
+    '<h3 style="font-size:16px;margin-bottom:6px">Decline this piece?</h3>' +
+    '<p style="font-size:13px;color:var(--muted);margin-bottom:12px">We will stop reminder emails. You can still approve it later from Content approvals.</p>' +
+    '<p style="font-size:12px;font-weight:600;margin-bottom:8px;color:var(--ink)">Optional \u2014 why? (helps our team)</p>' +
+    renderReasons() +
+    '<div class="sheet-actions">' +
+    '<button type="button" class="btn btn-danger-soft" id="btnConfirmDecline">Decline</button>' +
+    '<button type="button" class="btn btn-ghost" id="btnCancel">Cancel</button>' +
+    "</div></div></div>";
+}
+
+function renderDialogB() {
+  return '<div class="overlay center open" id="overlay"><div class="dialog">' +
+    '<h3 style="font-size:16px;margin-bottom:6px">Stop reminders and skip this piece?</h3>' +
+    '<p style="font-size:13px;color:var(--muted);margin-bottom:14px">We will mark it declined and stop reminder emails. It will not be published for you.</p>' +
+    '<div class="sheet-actions">' +
+    '<button type="button" class="btn btn-danger-soft" id="btnConfirmDecline">Decline</button>' +
+    '<button type="button" class="btn btn-ghost" id="btnCancel">Cancel</button>' +
+    "</div></div></div>";
+}
+
+function renderSheetC() {
+  return '<div class="overlay open" id="overlay"><div class="sheet">' +
+    '<div class="grab"></div>' +
+    "<h3>Decline this piece</h3>" +
+    '<p class="lead">Tell us why so we know not to chase it. Reminder emails will stop. Approve stays available for other pieces.</p>' +
+    '<div class="errline" id="reasonErr">Pick a reason (or Other with a short note) to continue.</div>' +
+    renderReasons() +
+    '<div class="sheet-actions">' +
+    '<button type="button" class="btn btn-danger-soft" id="btnConfirmDecline">Decline and stop reminders</button>' +
+    '<button type="button" class="btn btn-ghost" id="btnCancel">Cancel</button>' +
+    "</div></div></div>";
+}
+
+function renderAdmin() {
+  var reason = reasonLabel();
+  var tip = reason
+    ? '<span class="tip"><span class="badge declined" tabindex="0">Declined</span><span class="tipbox">Reason: ' + esc(reason) + "</span></span>"
+    : '<span class="badge declined">Declined</span>';
+  var reasonBlock = "";
+  if (MODE === "c" && reason) {
+    reasonBlock = '<div style="margin-top:6px;font-size:12px;color:#374151;background:#f3f4f6;padding:6px 8px;border-radius:8px"><strong>Reason:</strong> ' + esc(reason) + "</div>";
+  } else if (MODE === "a" && reason) {
+    reasonBlock = '<div style="margin-top:4px;font-size:11px;color:var(--muted)">Hover / focus the badge for reason</div>';
+  }
+  var body =
+    '<div class="admin-row">' +
+    '<div class="av">JL</div><div style="flex:1">' +
+    '<div class="nm">Jordan Lee</div><div class="firm">Harbour Wealth</div>' +
+    '<div class="piece">' + esc(PIECE.title) + "</div>" +
+    '<div class="badges">' + tip + '<span style="font-size:11px;color:var(--muted)">Reminders stopped</span></div>' +
+    reasonBlock +
+    "</div></div>" +
+    '<div class="admin-row">' +
+    '<div class="av">PS</div><div style="flex:1">' +
+    '<div class="nm">Priya Shah</div><div class="firm">Cedar Peak Advisory</div>' +
+    '<div class="piece">A year-end tax checklist</div>' +
+    '<div class="badges"><span class="badge pending">Pending</span></div>' +
+    "</div></div>" +
+    '<div class="admin-row">' +
+    '<div class="av">SO</div><div style="flex:1">' +
+    '<div class="nm">Sam Okonkwo</div><div class="firm">Lakeside Financial</div>' +
+    '<div class="piece">Estate documents to review this year</div>' +
+    '<div class="badges"><span class="badge approved">Approved</span></div>' +
+    "</div></div>";
+  document.getElementById("adminBody").innerHTML = body;
+}
+
+function clearUndo() {
+  if (state.undoTimer) { clearInterval(state.undoTimer); state.undoTimer = null; }
+  state.undoLeft = 0;
+}
+
+function startUndo() {
+  clearUndo();
+  if (MODE !== "a") return;
+  state.undoLeft = 10;
+  state.undoTimer = setInterval(function () {
+    state.undoLeft -= 1;
+    if (state.undoLeft <= 0) clearUndo();
+    if (state.view === "after") render();
+  }, 1000);
+}
+
+function doDecline() {
+  if (MODE === "c") {
+    if (!state.reasonId) {
+      var err = document.getElementById("reasonErr");
+      if (err) err.classList.add("show");
+      return;
+    }
+    if (state.reasonId === "other" && !state.reasonText.trim()) {
+      var err2 = document.getElementById("reasonErr");
+      if (err2) {
+        err2.textContent = "Add a short note for Other, or pick another reason.";
+        err2.classList.add("show");
+      }
+      return;
+    }
+  }
+  var ft = document.getElementById("freeText");
+  if (ft) state.reasonText = ft.value;
+  state.declined = true;
+  state.dialogOpen = false;
+  state.view = "after";
+  startUndo();
+  syncDemoButtons();
+  render();
+  toast("Declined · no more reminder emails for this piece");
+}
+
+function openDeclineUI() {
+  state.dialogOpen = true;
+  render();
+}
+
+function render() {
+  var screen = document.getElementById("screen");
+  var phoneWrap = document.getElementById("phoneWrap");
+  var adminPanel = document.getElementById("adminPanel");
+  document.getElementById("demoNote").textContent = notes[state.view] || "";
+
+  if (state.view === "admin") {
+    phoneWrap.classList.add("hidden");
+    adminPanel.classList.remove("hidden");
+    renderAdmin();
+  } else {
+    phoneWrap.classList.remove("hidden");
+    adminPanel.classList.add("hidden");
+    var html = "";
+    if (state.view === "email") {
+      state.source = "email";
+      html = renderEmail();
+    } else if (state.view === "inapp") {
+      state.source = "inapp";
+      html = state.detailOpen ? renderInappDetail() : renderInappList();
+    } else if (state.view === "after") {
+      html = renderAfter();
+    }
+    if (state.dialogOpen) {
+      if (MODE === "a") html += renderDialogA();
+      else if (MODE === "b") html += renderDialogB();
+      else html += renderSheetC();
+    }
+    screen.innerHTML = html;
+    bind();
+  }
+  renderLegend();
+}
+
+function bind() {
+  var approve = document.getElementById("btnApprove");
+  if (approve) approve.onclick = function () {
+    toast("Approve is unchanged in this mock — gate and publish flow stay as today.");
+  };
+  var decline = document.getElementById("btnDecline");
+  if (decline) decline.onclick = function () { openDeclineUI(); };
+  var cancel = document.getElementById("btnCancel");
+  if (cancel) cancel.onclick = function () {
+    state.dialogOpen = false;
+    render();
+  };
+  var confirm = document.getElementById("btnConfirmDecline");
+  if (confirm) confirm.onclick = function () {
+    var ft = document.getElementById("freeText");
+    if (ft) state.reasonText = ft.value;
+    doDecline();
+  };
+  document.querySelectorAll("[data-reason]").forEach(function (btn) {
+    btn.onclick = function () {
+      state.reasonId = btn.getAttribute("data-reason");
+      var ft = document.getElementById("freeText");
+      if (ft) state.reasonText = ft.value;
+      render();
+    };
+  });
+  var ft = document.getElementById("freeText");
+  if (ft) ft.oninput = function () { state.reasonText = ft.value; };
+  var undo = document.getElementById("btnUndo");
+  if (undo) undo.onclick = function () {
+    state.declined = false;
+    clearUndo();
+    state.reasonId = null;
+    state.reasonText = "";
+    state.view = state.source === "inapp" ? "inapp" : "email";
+    state.detailOpen = state.source === "inapp";
+    syncDemoButtons();
+    render();
+    toast("Undone — piece is pending again. Reminders can resume.");
+  };
+  var later = document.getElementById("btnLater");
+  if (later) later.onclick = function () {
+    state.view = "inapp";
+    state.detailOpen = false;
+    syncDemoButtons();
+    render();
+  };
+  var back = document.getElementById("btnBack");
+  if (back) back.onclick = function () {
+    state.detailOpen = false;
+    render();
+  };
+  document.querySelectorAll("[data-open]").forEach(function (el) {
+    el.onclick = function () {
+      var id = el.getAttribute("data-open");
+      if (id === "p1" && state.declined) {
+        state.view = "after";
+        syncDemoButtons();
+        render();
+        return;
+      }
+      if (id !== "p1") {
+        toast("Other pieces keep today\u2019s Approve-only flow in this mock.");
+        return;
+      }
+      state.detailOpen = true;
+      render();
+    };
+  });
+}
+
+function syncDemoButtons() {
+  document.querySelectorAll(".demo-btn").forEach(function (b) {
+    b.classList.toggle("on", b.getAttribute("data-view") === state.view);
+  });
+}
+
+function renderLegend() {
+  var el = document.getElementById("legend");
+  var lines = {
+    a: "<p><strong>Direction A:</strong> Decline opens a short confirm. Optional quick picks (Not relevant / Timing / Compliance / Other). After decline: \u201cDeclined · No more reminder emails for this piece\u201d with <strong>Undo for ~10 seconds</strong>, then Approve later. Admin: Declined badge + reason tooltip. Soft Dev hold.</p>",
+    b: "<p><strong>Direction B:</strong> Decline → one confirm dialog → done. No reason, no undo. Fastest path; admin sees Declined only. Soft Dev hold.</p>",
+    c: "<p><strong>Direction C:</strong> Decline opens a sheet; reason is required before confirming. No undo. Admin shows reason prominently under the Declined badge. Soft Dev hold.</p>"
+  };
+  el.innerHTML = lines[MODE] +
+    "<p><strong>AC check:</strong> Decline on email landing and in-app · declined ≠ approved ≠ pending · not published · reminders stop · plain confirmation · admin can see declined · Approve unchanged.</p>" +
+    "<p>Fictional names only (Jordan Lee, Priya Shah, Sam Okonkwo). Plain words — no jargon.</p>";
+}
+
+document.querySelectorAll(".demo-btn").forEach(function (b) {
+  b.onclick = function () {
+    state.view = b.getAttribute("data-view");
+    state.dialogOpen = false;
+    if (state.view === "inapp") state.detailOpen = false;
+    if (state.view === "after" && !state.declined) {
+      state.declined = true;
+      if (MODE === "a") { state.reasonId = "timing"; startUndo(); }
+      if (MODE === "c") { state.reasonId = "relevant"; }
+    }
+    syncDemoButtons();
+    render();
+  };
+});
+
+render();
+
+</script>
+</body>
+</html>
