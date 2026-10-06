@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Build contract · #387 pick email list on approve/send</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<style>
+body{font-family:Inter,system-ui,sans-serif;max-width:780px;margin:40px auto;padding:0 24px 80px;color:#1e2a4a;line-height:1.55}
+h1{font-size:22px}h2{font-size:16px;margin-top:28px}
+p,li{font-size:14px;color:#3a4558}
+.warn{background:#fff7ed;color:#9a3412;padding:12px 14px;border-radius:8px;font-size:13px;margin:12px 0}
+.hold{background:#fef3c7;color:#92400e;padding:12px 14px;border-radius:8px;font-size:13px;margin:12px 0}
+.navl{font-size:13px;margin-bottom:8px}
+code{background:#eef2f6;padding:1px 6px;border-radius:4px;font-size:12px}
+a{color:#2b7de9}ul{padding-left:1.2em}li{margin-bottom:4px}
+</style>
+</head>
+<body>
+<p class="navl"><a href="index.html">← Hub #387</a> · <a href="directions/a/index.html">A (recommend)</a> · <a href="directions/b/index.html">B</a> · <a href="directions/c/index.html">C</a> · <a href="build-contract.md">Markdown</a></p>
+<h1>Build contract · #387 Content approvals + Email Campaigns — pick email list on approve/send</h1>
+<p class="warn"><strong>PROVISIONAL.</strong> Recommend Direction <strong>A</strong> (required radio list in the approve/send sheet). <strong>Alex / Angelina have not locked a direction.</strong></p>
+<p class="hold"><strong>Soft Dev hold · Designer-first · not agent-ready.</strong> Soft Dev not woken. Do <strong>not</strong> mark <code>agent-ready</code>. No content-library / Meteor work until Alex / Angelina pick A, B, or C and the Pages URL is on the issue.</p>
+<p>Issue: <a href="https://github.com/kartboy16/content-library/issues/387">https://github.com/kartboy16/content-library/issues/387</a></p>
+<h2>One-liner</h2>
+<p>On approve (Content approvals) and send (Email Campaigns), the advisor chooses which email list the campaign goes to, using plain list names. A send cannot go out without a list when the advisor has more than one.</p>
+<h2>Recommend</h2>
+<p><strong>A: Required radio list in the approve/send sheet.</strong> A “Send to” section lists the advisor’s email lists as radios (one list per send for v1 clarity). With one list, it is pre-selected and shown as “Your only list · General (842 contacts)”. With several, none selected until the advisor picks; Approve / Send stays disabled with “Choose a list to continue.” Confirmation restates “Sending to Corporate (214 contacts).” Clearest way to prevent the wrong-audience mistake.</p>
+<ul>
+<li><strong>B</strong> (Dropdown “Send to” + confirm chip) — same single-list default and multi-list required rules; less vertical space; slightly easier to miss.</li>
+<li><strong>C</strong> (Multi-select checkboxes) — one campaign can go to more than one list. <strong>Different product rule</strong> than A/B. Ask Alex / Angelina before shipping.</li>
+</ul>
+<h2>Mocks</h2>
+<ul>
+<li>Hub: <a href="https://kartboy16.github.io/fc-mocks/387/">https://kartboy16.github.io/fc-mocks/387/</a></li>
+<li>A (recommend): <a href="https://kartboy16.github.io/fc-mocks/387/directions/a/">https://kartboy16.github.io/fc-mocks/387/directions/a/</a></li>
+<li>B: <a href="https://kartboy16.github.io/fc-mocks/387/directions/b/">https://kartboy16.github.io/fc-mocks/387/directions/b/</a></li>
+<li>C: <a href="https://kartboy16.github.io/fc-mocks/387/directions/c/">https://kartboy16.github.io/fc-mocks/387/directions/c/</a></li>
+</ul>
+<p>Each page demos: (1) one-list default · (2) multi-list with no selection (blocked) · (3) selection + confirmation summary · (4) phone layout (~390px). Surface tabs switch Content approvals ↔ Email Campaigns with the same picker.</p>
+<h2>Acceptance criteria (provisional · from issue · not locked)</h2>
+<ul>
+<li><strong>AC-1:</strong> Approve flow in Content approvals shows a clear list picker listing the advisor’s existing email lists (plain names, e.g. General, Corporate, Group).</li>
+<li><strong>AC-2:</strong> Email Campaigns send flow uses the same picker / same selection pattern.</li>
+<li><strong>AC-3:</strong> A send cannot go out without an explicit list selection when the advisor has more than one list. Sensible default (auto-selected, still visible) when there is only one.</li>
+<li><strong>AC-4:</strong> Chosen list(s) are shown in the confirmation / summary before send and recorded on the campaign.</li>
+<li><strong>AC-5:</strong> Plain advisor-facing copy (no tech jargon — never “stack”, Mailchimp jargon, or developer terms).</li>
+<li><strong>AC-6:</strong> Mobile layout works (phone sheet / large tap targets).</li>
+</ul>
+<h2>Open question for Alex / Angelina</h2>
+<p>1. <strong>One list per send (A / B) vs multi-list (C)?</strong> A and B assume exactly one list per send. C allows General + Group in one send. Which product rule?</p>
+<h2>Copy (plain words)</h2>
+<ul>
+<li>Section: “Send to”</li>
+<li>Single list: “Your only list · General (842 contacts)”</li>
+<li>Multi, none chosen: “Choose a list to continue.”</li>
+<li>Confirmation: “Sending to Corporate (214 contacts).” / (C) “Sending to Corporate (214 contacts) and Group (156 contacts).”</li>
+<li>Saved: “This list will be saved on the campaign so you can see where it went later.”</li>
+<li>Primary: “Approve &amp; send” / “Send now” / “Confirm &amp; send” / (disabled) “Choose a list to continue”</li>
+<li>Cancel</li>
+</ul>
+<h2>Non-goals</h2>
+<ul>
+<li>Creating, importing, or renaming email lists</li>
+<li>Redesigning the full approvals queue or campaigns editor</li>
+<li>Mailchimp / sync / “stack” terminology in advisor UI</li>
+<li>No <code>agent-ready</code> and no Soft Dev wake until Alex / Angelina lock a direction and Pages URL is on the issue</li>
+<li>Fictional advisor only (Jordan Blake · Atlantic Wealth Partners)</li>
+</ul>
+<h2>Status</h2>
+<p>Soft Dev <strong>hold</strong>. <strong>Not agent-ready.</strong> Waiting for Alex / Angelina to pick A / B / C and answer the one-list vs multi-list question.</p>
+</body>
+</html>

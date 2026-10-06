@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Direction A — Required radio list in the approve/send sheet · #387 Email list on approve/send</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<style>
+
+:root{--bg:#f4f8fc;--card:#fff;--ink:#1e2a4a;--muted:#5b6572;--blue:#2b7de9;--blue-dark:#1e5bb8;--border:#d4e4f2;--mint:#e6f1fb;--ok:#047857;--ok-bg:#e8f5e9;--warn:#9a3412;--warn-bg:#fff7ed;--err:#b42318;--err-bg:#fef3f2;--danger:#c62828}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Inter,system-ui,sans-serif;background:var(--bg);color:var(--ink);font-size:14px;line-height:1.45}
+a{color:var(--blue)}
+.thesis{background:linear-gradient(135deg,#1e2a4a,#2b7de9);color:#fff;padding:16px 24px}
+.thesis .rec{display:inline-block;background:#fff;color:var(--blue);font-size:.68rem;font-weight:700;padding:3px 10px;border-radius:999px;margin-bottom:8px}
+.thesis .rec.alt{background:rgba(255,255,255,.2);color:#fff}
+.thesis h1{font-size:1.1rem;margin-bottom:4px}
+.thesis p{opacity:.92;font-size:.82rem;max-width:920px}
+.nav{padding:8px 24px;font-size:.75rem;background:#fafafa;border-bottom:1px solid var(--border);display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+.nav a{color:var(--blue);text-decoration:none;font-weight:500}
+.nav .sep{color:#c0c8d4}.nav .on{font-weight:700;color:var(--ink)}
+.nav .hold{margin-left:auto;background:#fef3c7;color:#92400e;border:1px solid #fcd34d;border-radius:999px;padding:2px 10px;font-weight:600;font-size:.68rem}
+.app{display:flex;min-height:calc(100vh - 110px)}
+.rail{width:64px;background:#fff;border-right:1px solid var(--border);flex-shrink:0;display:flex;flex-direction:column;align-items:center;padding:12px 0;gap:10px}
+.rail .logo{font-size:.55rem;font-weight:800;color:var(--blue-dark);text-align:center;line-height:1.1;margin-bottom:6px}
+.rail .ri{width:44px;padding:6px 0;border-radius:8px;color:var(--muted);font-size:.55rem;font-weight:600;text-align:center}
+.rail .ri b{display:block;font-size:.9rem;color:var(--blue)}
+.rail .ri.on{background:var(--mint);color:var(--blue-dark)}
+.main{flex:1;min-width:0;padding:14px 18px 48px}
+.demo-bar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:12px;padding:10px 12px;background:#fff;border:1px dashed #b9c7d8;border-radius:10px}
+.demo-bar .lbl{font-size:.65rem;font-weight:700;text-transform:uppercase;color:var(--muted);margin-right:4px}
+.demo-btn{padding:5px 10px;border:1px solid var(--border);border-radius:8px;background:#fff;font-family:inherit;font-size:.72rem;font-weight:600;color:var(--ink);cursor:pointer}
+.demo-btn:hover,.demo-btn.on{border-color:var(--blue);color:var(--blue);background:var(--mint)}
+.demo-note{flex:1 1 220px;font-size:.72rem;color:var(--muted);min-width:180px}
+.surf-tabs{display:flex;gap:0;margin-bottom:12px;border:1px solid var(--border);border-radius:10px;overflow:hidden;background:#fff;width:fit-content}
+.surf-tabs button{padding:10px 16px;border:none;background:transparent;font-family:inherit;font-size:.82rem;font-weight:600;color:var(--muted);cursor:pointer;min-height:44px}
+.surf-tabs button.on{background:var(--blue);color:#fff}
+.surf-tabs button+button{border-left:1px solid var(--border)}
+.page-head{margin-bottom:10px;display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:10px}
+.page-head h2{font-size:1.25rem;font-weight:700}
+.page-head .sub{color:var(--muted);font-size:.8rem;margin-top:2px}
+.btn-primary{display:inline-flex;align-items:center;gap:6px;padding:10px 16px;background:var(--blue);color:#fff;border:none;border-radius:10px;font-family:inherit;font-size:.9rem;font-weight:600;cursor:pointer;min-height:44px}
+.btn-primary:hover{background:var(--blue-dark)}
+.btn-primary:disabled{background:#a8c4e8;cursor:not-allowed}
+.btn-ghost{display:inline-flex;align-items:center;padding:10px 16px;border:1px solid var(--border);border-radius:10px;background:#fff;font-family:inherit;font-size:.88rem;font-weight:600;color:var(--ink);cursor:pointer;min-height:44px}
+.btn-ghost:hover{background:#f4f8fc}
+.panel{background:var(--card);border:1px solid var(--border);border-radius:12px;overflow:hidden;box-shadow:0 1px 3px rgba(30,42,74,.04)}
+table.rows{width:100%;border-collapse:collapse;font-size:.88rem}
+table.rows th{text-align:left;padding:12px 14px;background:#eef4fb;color:var(--muted);font-weight:600;font-size:.72rem;text-transform:uppercase;letter-spacing:.04em;border-bottom:1px solid var(--border)}
+table.rows td{padding:14px;border-bottom:1px solid #eef2f6;vertical-align:middle}
+table.rows tr:last-child td{border-bottom:none}
+table.rows tr:hover td{background:#f8fbfe}
+.camp-name{font-weight:600;font-size:.95rem}
+.camp-meta{color:var(--muted);font-size:.78rem;margin-top:2px}
+.status{display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border-radius:999px;font-size:.78rem;font-weight:600}
+.status.pending{background:#fff7ed;color:#9a3412}
+.status.draft{background:#f0f4f8;color:var(--muted)}
+.status.ready{background:#eff6ff;color:#1e40af}
+.row-actions{display:flex;gap:8px;flex-wrap:wrap}
+.row-actions button{padding:8px 12px;border:1px solid var(--border);border-radius:8px;background:#fff;font-family:inherit;font-size:.8rem;font-weight:600;color:var(--ink);cursor:pointer;min-height:40px}
+.row-actions button.pri{background:var(--blue);color:#fff;border-color:var(--blue)}
+.row-actions button.pri:hover{background:var(--blue-dark)}
+.ctx{margin-bottom:10px;padding:10px 12px;background:#eef4fb;border:1px solid var(--border);border-radius:10px;font-size:.8rem;color:#1e3a8a}
+.ctx strong{color:#1e2a4a}
+.legend{margin-top:14px;font-size:.78rem;color:var(--muted);padding:12px 14px;background:#fff;border:1px solid var(--border);border-radius:10px}
+.legend p+p{margin-top:6px}
+.toast{position:fixed;bottom:24px;right:24px;background:#1e2a4a;color:#fff;padding:12px 18px;border-radius:10px;font-size:.88rem;display:none;z-index:300;box-shadow:0 8px 24px rgba(0,0,0,.2);max-width:360px}
+.toast.show{display:block;animation:fadein .2s ease}
+@keyframes fadein{from{opacity:0;transform:translateY(6px)}}
+
+/* Sheet / modal */
+.sheet-bg{display:none;position:fixed;inset:0;background:rgba(30,42,74,.45);z-index:100;align-items:flex-end;justify-content:center;padding:0}
+.sheet-bg.open{display:flex}
+.sheet-bg.center{align-items:center;padding:20px}
+.sheet{background:#fff;border-radius:16px 16px 0 0;width:100%;max-width:520px;max-height:92vh;overflow:auto;box-shadow:0 -8px 40px rgba(0,0,0,.2);animation:slideup .22s ease}
+.sheet-bg.center .sheet{border-radius:16px;animation:fadein .2s ease;max-height:90vh}
+@keyframes slideup{from{transform:translateY(24px);opacity:.6}}
+.sheet-hd{padding:18px 20px 12px;border-bottom:1px solid #eef2f6;position:sticky;top:0;background:#fff;z-index:2}
+.sheet-hd .kicker{font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);margin-bottom:4px}
+.sheet-hd h3{font-size:1.15rem;margin-bottom:4px}
+.sheet-hd .sub{font-size:.82rem;color:var(--muted)}
+.sheet-bd{padding:16px 20px 8px}
+.sheet-ft{padding:12px 20px 20px;display:flex;gap:10px;justify-content:flex-end;flex-wrap:wrap;border-top:1px solid #eef2f6;position:sticky;bottom:0;background:#fff}
+.sec{margin-bottom:16px}
+.sec-label{font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);margin-bottom:8px}
+.preview{background:#f8fbfe;border:1px solid var(--border);border-radius:10px;padding:12px 14px}
+.preview .t{font-weight:600;font-size:.92rem}
+.preview .m{font-size:.78rem;color:var(--muted);margin-top:4px}
+.sendto{border:1px solid var(--border);border-radius:12px;overflow:hidden;background:#fff}
+.sendto.need{border-color:#f0d4a8;box-shadow:0 0 0 2px rgba(245,158,11,.15)}
+.ask{display:none;margin-bottom:10px;padding:10px 12px;background:var(--warn-bg);border:1px solid #fcd34d;border-radius:10px;font-size:.82rem;color:var(--warn);font-weight:600}
+.ask.show{display:block}
+.list-opt{display:flex;align-items:flex-start;gap:12px;padding:14px 14px;border-bottom:1px solid #eef2f6;cursor:pointer;min-height:52px}
+.list-opt:last-child{border-bottom:none}
+.list-opt:hover{background:#f8fbfe}
+.list-opt.selected{background:var(--mint)}
+.list-opt input{margin-top:3px;width:18px;height:18px;accent-color:var(--blue);flex-shrink:0}
+.list-opt .name{font-weight:600;font-size:.92rem}
+.list-opt .meta{font-size:.78rem;color:var(--muted);margin-top:2px}
+.list-opt .hint{font-size:.72rem;color:var(--blue-dark);font-weight:600;margin-top:4px}
+.only-banner{padding:10px 14px;background:var(--ok-bg);color:var(--ok);font-size:.82rem;font-weight:600;border-bottom:1px solid #bbf7d0}
+.dd-wrap{margin-bottom:10px}
+.dd-wrap label{display:block;font-size:.72rem;font-weight:600;color:var(--muted);margin-bottom:6px}
+.dd-wrap select{width:100%;padding:12px 14px;border:1px solid var(--border);border-radius:10px;font-family:inherit;font-size:.92rem;font-weight:500;background:#fff;min-height:48px;color:var(--ink)}
+.dd-wrap select:focus{outline:none;border-color:var(--blue);box-shadow:0 0 0 2px rgba(43,125,233,.15)}
+.chip-line{display:none;align-items:center;gap:8px;flex-wrap:wrap;margin-top:10px;padding:10px 12px;background:var(--mint);border:1px solid #bfdbfe;border-radius:10px;font-size:.82rem;color:#1e3a8a}
+.chip-line.show{display:flex}
+.chip-line .chip{display:inline-flex;align-items:center;gap:6px;padding:4px 10px;background:var(--blue);color:#fff;border-radius:999px;font-weight:600;font-size:.78rem}
+.confirm-box{display:none;margin-top:12px;padding:12px 14px;background:#f0fdf4;border:1px solid #86efac;border-radius:10px}
+.confirm-box.show{display:block}
+.confirm-box .ttl{font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--ok);margin-bottom:6px}
+.confirm-box .line{font-size:.9rem;font-weight:600;color:var(--ink)}
+.confirm-box .note{font-size:.78rem;color:var(--muted);margin-top:4px}
+.saved-note{display:none;margin-top:8px;font-size:.75rem;color:var(--ok);font-weight:600}
+.saved-note.show{display:block}
+
+/* Phone frame */
+.layout-wrap{display:block}
+.layout-wrap.phone-mode .desktop-only{display:none}
+.layout-wrap.phone-mode .phone-stage{display:flex}
+.phone-stage{display:none;justify-content:center;padding:8px 0 24px}
+.phone{width:390px;max-width:100%;background:#111827;border-radius:28px;padding:12px 10px 18px;box-shadow:0 16px 48px rgba(0,0,0,.25)}
+.phone .notch{width:120px;height:22px;background:#000;border-radius:0 0 14px 14px;margin:0 auto 8px}
+.phone .screen{background:var(--bg);border-radius:18px;overflow:hidden;min-height:640px;display:flex;flex-direction:column}
+.phone .ph-bar{background:#fff;padding:12px 14px;border-bottom:1px solid var(--border)}
+.phone .ph-bar h2{font-size:1.05rem}
+.phone .ph-bar .sub{font-size:.72rem;color:var(--muted)}
+.phone .ph-body{padding:12px;flex:1}
+.phone .ph-card{background:#fff;border:1px solid var(--border);border-radius:12px;padding:14px;margin-bottom:10px}
+.phone .ph-card .t{font-weight:600}
+.phone .ph-card .m{font-size:.75rem;color:var(--muted);margin-top:4px}
+.phone .ph-actions{display:flex;flex-direction:column;gap:8px;margin-top:10px}
+.phone .ph-actions button{width:100%;min-height:48px;border-radius:10px;font-family:inherit;font-size:.9rem;font-weight:600;cursor:pointer;border:1px solid var(--border);background:#fff}
+.phone .ph-actions button.pri{background:var(--blue);color:#fff;border-color:var(--blue)}
+.phone-sheet-note{font-size:.72rem;color:var(--muted);text-align:center;margin-top:8px;padding:0 8px}
+
+@media (max-width:720px){
+  .rail{display:none}
+  .main{padding:12px}
+  table.rows{font-size:.8rem}
+  .row-actions{flex-direction:column}
+}
+
+</style>
+</head>
+<body>
+<header class="thesis">
+  <span class="rec">RECOMMENDED · DIRECTION A</span>
+  <h1>Direction A — Required radio list in the approve/send sheet</h1>
+  <p>In the approve and send sheets, a <strong>Send to</strong> section lists the advisor’s email lists as radio options (one list per send). With one list, it is pre-selected and shown as “Your only list · General (842 contacts)”. With several, none selected until the advisor picks; Approve/Send stays disabled with “Choose a list to continue.” Confirmation restates “Sending to Corporate (214 contacts).” Clearest way to prevent the wrong-audience mistake.</p>
+</header>
+<nav class="nav">
+  <a href="../../index.html">← Hub #387</a>
+  <span class="sep">·</span>
+  <a href="../a/index.html" class="on">A</a>
+  <span class="sep">·</span>
+  <a href="../b/index.html">B</a>
+  <span class="sep">·</span>
+  <a href="../c/index.html">C</a>
+  <span class="sep">·</span>
+  <a href="../../build-contract.html">Build contract</a>
+  <span class="hold">Soft Dev hold · not agent-ready</span>
+</nav>
+<div class="app">
+  <aside class="rail" aria-hidden="true">
+    <div class="logo">Financial<br/>Content.ca</div>
+    <div class="ri"><b>▤</b>Content</div>
+    <div class="ri"><b>▭</b>Website</div>
+    <div class="ri"><b>⋈</b>Social</div>
+    <div class="ri on" id="railEmail"><b>✉</b>Email</div>
+    <div class="ri"><b>▦</b>Calendar</div>
+    <div class="ri"><b>⚙</b>Settings</div>
+  </aside>
+  <div class="main">
+    <div class="demo-bar">
+      <span class="lbl">Demo state</span>
+      <button type="button" class="demo-btn on" data-demo="one" onclick="setDemo('one')">1 · One list (default)</button>
+      <button type="button" class="demo-btn" data-demo="multi-need" onclick="setDemo('multi-need')">2 · Several lists · not chosen</button>
+      <button type="button" class="demo-btn" data-demo="multi-picked" onclick="setDemo('multi-picked')">3 · Chosen + confirm</button>
+      <button type="button" class="demo-btn" data-demo="phone" onclick="setDemo('phone')">4 · Phone layout</button>
+      <span class="demo-note" id="demoNote">One list is pre-selected and still visible. Approve / Send can proceed.</span>
+    </div>
+
+    <div class="surf-tabs" role="tablist" aria-label="Entry surface">
+      <button type="button" class="on" id="tabApprov" onclick="setSurface('approvals')">Content approvals</button>
+      <button type="button" id="tabCamp" onclick="setSurface('campaigns')">Email Campaigns</button>
+    </div>
+
+    <div class="layout-wrap" id="layoutWrap">
+      <div class="desktop-only">
+        <div class="ctx" id="ctxLine"><strong>Atlantic Wealth Partners</strong> · Advisor workspace for Jordan Blake · lists: General, Corporate, Group</div>
+        <div class="page-head">
+          <div>
+            <h2 id="pageTitle">Content approvals</h2>
+            <p class="sub" id="pageSub">Review queued email campaigns before they go out. Choose which list each campaign reaches on approve.</p>
+          </div>
+          <button type="button" class="btn-primary" id="headCta" onclick="openSheet()">Approve &amp; send…</button>
+        </div>
+        <div class="panel">
+          <table class="rows">
+            <thead>
+              <tr>
+                <th>Campaign</th>
+                <th>Status</th>
+                <th>Requested</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="tableBody">
+              <!-- filled by JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="phone-stage" id="phoneStage">
+        <div class="phone" aria-label="Phone preview ~390px">
+          <div class="notch"></div>
+          <div class="screen">
+            <div class="ph-bar">
+              <h2 id="phTitle">Content approvals</h2>
+              <div class="sub" id="phSub">Atlantic Wealth Partners · Jordan Blake</div>
+            </div>
+            <div class="ph-body">
+              <div class="ph-card">
+                <div class="t">Q4 RRSP reminder</div>
+                <div class="m" id="phMeta">Waiting for approval · requested Oct 3, 2026</div>
+                <div class="ph-actions">
+                  <button type="button" class="pri" id="phPrimary" onclick="openSheet()">Approve &amp; send…</button>
+                  <button type="button" onclick="toast('Preview opened (mock)')">Preview</button>
+                </div>
+              </div>
+              <div class="ph-card">
+                <div class="t">Year-end tax tips</div>
+                <div class="m">Draft · not ready yet</div>
+              </div>
+              <p class="phone-sheet-note">Tap Approve &amp; send… — the same sheet opens as a bottom sheet on phone (full-width, large tap targets).</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="legend">
+      <p><strong>Same picker on both surfaces.</strong> Content approvals (approve) and Email Campaigns (send) use the identical “Send to” control. Chosen list is restated in the confirmation summary and saved on the campaign.</p>
+      <p><strong>Product rule (open question):</strong> Directions A and B assume <em>one list per send</em>. Direction C allows sending to more than one list at once. Ask Alex / Angelina which rule to ship.</p>
+      <p>Fictional advisor only (Jordan Blake · Atlantic Wealth Partners). Soft Dev hold · not agent-ready.</p>
+    </div>
+  </div>
+</div>
+
+<!-- Approve / Send sheet -->
+<div class="sheet-bg center" id="sheetBg" role="dialog" aria-modal="true" aria-labelledby="sheetTitle">
+  <div class="sheet" id="sheet">
+    <div class="sheet-hd">
+      <div class="kicker" id="sheetKicker">Content approvals</div>
+      <h3 id="sheetTitle">Approve &amp; send</h3>
+      <p class="sub">Q4 RRSP reminder · plain-language year-end checklist for clients</p>
+    </div>
+    <div class="sheet-bd">
+      <div class="sec">
+        <div class="sec-label">Campaign</div>
+        <div class="preview">
+          <div class="t">Q4 RRSP reminder</div>
+          <div class="m">Subject: Your RRSP checklist before the deadline · From: Jordan Blake · Atlantic Wealth Partners</div>
+        </div>
+      </div>
+
+      <div class="sec">
+        <div class="sec-label">Send to</div>
+        <div class="ask" id="needAsk">Choose a list to continue.</div>
+        <div class="sendto" id="sendToBox">
+          <!-- filled by JS -->
+        </div>
+        <div class="chip-line" id="chipLine"><span>Sending to</span><span class="chip" id="chipText">Corporate · 214 contacts</span></div>
+        <div class="confirm-box" id="confirmBox">
+          <div class="ttl">Before you send</div>
+          <div class="line" id="confirmLine">Sending to Corporate (214 contacts).</div>
+          <div class="note" id="confirmNote">This list will be saved on the campaign so you can see where it went later.</div>
+        </div>
+        <div class="saved-note" id="savedNote">✓ List saved on campaign (mock)</div>
+      </div>
+    </div>
+    <div class="sheet-ft">
+      <button type="button" class="btn-ghost" onclick="closeSheet()">Cancel</button>
+      <button type="button" class="btn-primary" id="primaryBtn" onclick="doPrimary()">Approve &amp; send</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+(function(){
+  var MODE = "radio"; // radio | dropdown | multi
+  var surface = "approvals"; // approvals | campaigns
+  var demo = "one"; // one | multi-need | multi-picked | phone
+  var listsMulti = [
+    { id: "general", name: "General", count: 842 },
+    { id: "corporate", name: "Corporate", count: 214 },
+    { id: "group", name: "Group", count: 156 }
+  ];
+  var listsOne = [
+    { id: "general", name: "General", count: 842 }
+  ];
+  var selected = []; // ids
+  var confirmStep = false;
+
+  function $(id){ return document.getElementById(id); }
+  function toast(msg){
+    var t = $("toast"); t.textContent = msg; t.classList.add("show");
+    clearTimeout(toast._tm); toast._tm = setTimeout(function(){ t.classList.remove("show"); }, 2600);
+  }
+  window.toast = toast;
+
+  function lists(){
+    return (demo === "one") ? listsOne : listsMulti;
+  }
+
+  function setDemo(name){
+    demo = name;
+    document.querySelectorAll(".demo-btn").forEach(function(b){
+      b.classList.toggle("on", b.getAttribute("data-demo") === name);
+    });
+    var notes = {
+      one: "One list is pre-selected and still visible. Approve / Send can proceed.",
+      "multi-need": "Several lists and nothing chosen yet. Primary button stays disabled with “Choose a list to continue.”",
+      "multi-picked": "A list is chosen. Confirmation restates the audience before send; list is saved on the campaign.",
+      phone: "Same sheet on a ~390px phone frame. Tap the primary button to open the bottom sheet."
+    };
+    $("demoNote").textContent = notes[name] || "";
+    $("layoutWrap").classList.toggle("phone-mode", name === "phone");
+    // reset selection for demo
+    confirmStep = false;
+    if (name === "one") selected = ["general"];
+    else if (name === "multi-need") selected = [];
+    else if (name === "multi-picked" || name === "phone") {
+      selected = MODE === "multi" ? ["corporate", "group"] : ["corporate"];
+      if (name === "multi-picked") confirmStep = true;
+    }
+    renderTable();
+    renderPicker();
+    updatePrimary();
+    // auto-open sheet for non-phone demos so the picker is visible
+    if (name !== "phone") openSheet();
+    else closeSheet();
+  }
+  window.setDemo = setDemo;
+
+  function setSurface(s){
+    surface = s;
+    $("tabApprov").classList.toggle("on", s === "approvals");
+    $("tabCamp").classList.toggle("on", s === "campaigns");
+    var isA = s === "approvals";
+    $("pageTitle").textContent = isA ? "Content approvals" : "Email Campaigns";
+    $("pageSub").textContent = isA
+      ? "Review queued email campaigns before they go out. Choose which list each campaign reaches on approve."
+      : "Draft, schedule, and send campaigns. Choose which list to reach when you send.";
+    $("headCta").textContent = isA ? "Approve & send…" : "Send campaign…";
+    $("phTitle").textContent = isA ? "Content approvals" : "Email Campaigns";
+    $("phMeta").textContent = isA ? "Waiting for approval · requested Oct 3, 2026" : "Ready to send · last edited Oct 5, 2026";
+    $("phPrimary").textContent = isA ? "Approve & send…" : "Send campaign…";
+    $("sheetKicker").textContent = isA ? "Content approvals" : "Email Campaigns";
+    $("sheetTitle").textContent = isA ? "Approve & send" : "Send campaign";
+    $("primaryBtn").textContent = confirmStep
+      ? (isA ? "Confirm & send" : "Confirm & send")
+      : (isA ? "Approve & send" : "Send now");
+    $("ctxLine").innerHTML = isA
+      ? "<strong>Atlantic Wealth Partners</strong> · Advisor workspace for Jordan Blake · lists: General, Corporate, Group"
+      : "<strong>Email Campaigns</strong> · Jordan Blake · Atlantic Wealth Partners";
+    renderTable();
+    updatePrimary();
+  }
+  window.setSurface = setSurface;
+
+  function renderTable(){
+    var isA = surface === "approvals";
+    var status = isA
+      ? '<span class="status pending"><span class="dot"></span>Needs approval</span>'
+      : '<span class="status ready"><span class="dot"></span>Ready to send</span>';
+    var primaryLabel = isA ? "Approve & send…" : "Send…";
+    var secondary = isA ? "Preview" : "Edit";
+    var requested = isA ? "Oct 3, 2026" : "—";
+    var listHint = "";
+    if (demo === "one") listHint = '<div class="camp-meta">Email list: General (your only list)</div>';
+    else if (demo === "multi-picked") listHint = MODE === "multi"
+      ? '<div class="camp-meta">Email lists: Corporate, Group (saved)</div>'
+      : '<div class="camp-meta">Email list: Corporate (saved)</div>';
+    else listHint = '<div class="camp-meta">Email list: not chosen yet</div>';
+
+    $("tableBody").innerHTML =
+      '<tr>' +
+        '<td><div class="camp-name">Q4 RRSP reminder</div><div class="camp-meta">Subject: Your RRSP checklist before the deadline</div>' + listHint + '</td>' +
+        '<td>' + status + '</td>' +
+        '<td>' + requested + '</td>' +
+        '<td><div class="row-actions">' +
+          '<button type="button" class="pri" onclick="openSheet()">' + primaryLabel + '</button>' +
+          '<button type="button" onclick="toast(\'' + secondary + ' (mock)\')">' + secondary + '</button>' +
+        '</div></td>' +
+      '</tr>' +
+      '<tr>' +
+        '<td><div class="camp-name">Year-end tax tips</div><div class="camp-meta">Draft · not ready</div></td>' +
+        '<td><span class="status draft"><span class="dot"></span>Draft</span></td>' +
+        '<td>—</td>' +
+        '<td><div class="row-actions"><button type="button" disabled style="opacity:.5">Not ready</button></div></td>' +
+      '</tr>';
+  }
+
+  function renderPicker(){
+    var box = $("sendToBox");
+    var L = lists();
+    var need = (L.length > 1 && selected.length === 0);
+    box.classList.toggle("need", need);
+    $("needAsk").classList.toggle("show", need);
+
+    if (MODE === "dropdown") {
+      var opts = '<option value="">' + (L.length > 1 ? "Choose a list…" : "") + '</option>';
+      L.forEach(function(l){
+        var sel = selected.indexOf(l.id) >= 0 ? " selected" : "";
+        var label = l.name + " (" + l.count.toLocaleString() + " contacts)";
+        if (L.length === 1) label = "Your only list · " + label;
+        opts += '<option value="' + l.id + '"' + sel + '>' + label + '</option>';
+      });
+      var banner = L.length === 1
+        ? '<div class="only-banner">Your only list · General (842 contacts) — pre-selected</div>'
+        : '';
+      box.innerHTML = banner +
+        '<div class="dd-wrap" style="padding:12px 14px">' +
+          '<label for="listDd">Send to</label>' +
+          '<select id="listDd" onchange="onDropdown(this.value)">' + opts + '</select>' +
+        '</div>';
+      // chip after pick
+      updateChipConfirm();
+      return;
+    }
+
+    // radio or multi (checkboxes)
+    var html = "";
+    if (L.length === 1) {
+      html += '<div class="only-banner">Your only list · General (842 contacts) — pre-selected</div>';
+    }
+    L.forEach(function(l){
+      var checked = selected.indexOf(l.id) >= 0;
+      var type = MODE === "multi" ? "checkbox" : "radio";
+      var name = MODE === "multi" ? "lists" : "list";
+      var hint = "";
+      if (L.length === 1) hint = '<div class="hint">Pre-selected · you can still see which list this goes to</div>';
+      html += '<label class="list-opt' + (checked ? ' selected' : '') + '">' +
+        '<input type="' + type + '" name="' + name + '" value="' + l.id + '"' + (checked ? ' checked' : '') +
+          ' onchange="onPick(\'' + l.id + '\', this.checked)" />' +
+        '<span><div class="name">' + l.name + '</div>' +
+        '<div class="meta">' + l.count.toLocaleString() + ' contacts</div>' + hint + '</span></label>';
+    });
+    box.innerHTML = html;
+    updateChipConfirm();
+  }
+
+  function updateChipConfirm(){
+    var L = lists();
+    var chosen = L.filter(function(l){ return selected.indexOf(l.id) >= 0; });
+    var chip = $("chipLine");
+    var conf = $("confirmBox");
+    var saved = $("savedNote");
+
+    if (MODE === "dropdown" && chosen.length) {
+      chip.classList.add("show");
+      $("chipText").textContent = chosen[0].name + " · " + chosen[0].count.toLocaleString() + " contacts";
+    } else {
+      chip.classList.remove("show");
+    }
+
+    if (confirmStep && chosen.length) {
+      conf.classList.add("show");
+      if (MODE === "multi" && chosen.length > 1) {
+        var parts = chosen.map(function(c){ return c.name + " (" + c.count.toLocaleString() + " contacts)"; });
+        $("confirmLine").textContent = "Sending to " + parts.join(" and ") + ".";
+        $("confirmNote").textContent = "These lists will be saved on the campaign so you can see where it went later.";
+      } else {
+        var c = chosen[0];
+        $("confirmLine").textContent = "Sending to " + c.name + " (" + c.count.toLocaleString() + " contacts).";
+        $("confirmNote").textContent = "This list will be saved on the campaign so you can see where it went later.";
+      }
+      saved.classList.add("show");
+    } else {
+      conf.classList.remove("show");
+      saved.classList.remove("show");
+    }
+  }
+
+  window.onPick = function(id, checked){
+    if (MODE === "multi") {
+      if (checked) { if (selected.indexOf(id) < 0) selected.push(id); }
+      else selected = selected.filter(function(x){ return x !== id; });
+    } else {
+      selected = [id];
+    }
+    confirmStep = false;
+    renderPicker();
+    updatePrimary();
+  };
+
+  window.onDropdown = function(val){
+    selected = val ? [val] : [];
+    confirmStep = false;
+    updateChipConfirm();
+    updatePrimary();
+    // restyle need
+    $("sendToBox").classList.toggle("need", lists().length > 1 && selected.length === 0);
+    $("needAsk").classList.toggle("show", lists().length > 1 && selected.length === 0);
+  };
+
+  function canProceed(){
+    var L = lists();
+    if (L.length === 1) return selected.length >= 1;
+    return selected.length >= 1;
+  }
+
+  function updatePrimary(){
+    var btn = $("primaryBtn");
+    var ok = canProceed();
+    btn.disabled = !ok;
+    var isA = surface === "approvals";
+    if (!ok) {
+      btn.textContent = "Choose a list to continue";
+    } else if (confirmStep) {
+      btn.textContent = "Confirm & send";
+    } else {
+      btn.textContent = isA ? "Approve & send" : "Send now";
+    }
+  }
+
+  window.openSheet = function(){
+    // phone uses bottom sheet; desktop centered
+    var bg = $("sheetBg");
+    if (demo === "phone" || window.matchMedia("(max-width:720px)").matches) {
+      bg.classList.remove("center");
+    } else {
+      bg.classList.add("center");
+    }
+    renderPicker();
+    updatePrimary();
+    bg.classList.add("open");
+  };
+  window.closeSheet = function(){
+    $("sheetBg").classList.remove("open");
+  };
+
+  window.doPrimary = function(){
+    if (!canProceed()) return;
+    if (!confirmStep) {
+      confirmStep = true;
+      updateChipConfirm();
+      updatePrimary();
+      toast("Confirmation ready — review the list, then Confirm & send");
+      return;
+    }
+    var L = lists().filter(function(l){ return selected.indexOf(l.id) >= 0; });
+    var names = L.map(function(l){ return l.name; }).join(", ");
+    closeSheet();
+    toast("Sent to " + names + " · list saved on campaign (mock)");
+    // flip demo to show saved on table
+    if (demo === "multi-need") {
+      // stay
+    } else {
+      renderTable();
+    }
+  };
+
+  $("sheetBg").addEventListener("click", function(e){
+    if (e.target === $("sheetBg")) closeSheet();
+  });
+
+  // init
+  selected = ["general"];
+  renderTable();
+  renderPicker();
+  updatePrimary();
+  // open sheet so picker is immediately visible on load
+  setTimeout(function(){ openSheet(); }, 200);
+})();
+</script>
+</body>
+</html>
