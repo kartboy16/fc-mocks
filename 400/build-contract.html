@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Build contract · #400 Infographic library</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    body { font-family: Inter, system-ui, sans-serif; max-width: 720px; margin: 0 auto; padding: 32px 20px 72px; line-height: 1.55; color: #1e2a4a; background: #f4f8fc; }
+    h1 { font-size: 1.4rem; margin-bottom: 8px; }
+    h2 { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.05em; color: #5b6572; margin: 28px 0 10px; }
+    .hold { background: #fef3c7; border: 1px solid #fcd34d; border-radius: 10px; padding: 12px 14px; font-size: 0.88rem; color: #92400e; margin: 16px 0; }
+    .box { background: #fff; border: 1px solid #d4e4f2; border-radius: 12px; padding: 16px 18px; margin-bottom: 14px; font-size: 0.9rem; }
+    ul, ol { padding-left: 1.2rem; margin: 8px 0 0; }
+    li { margin-bottom: 6px; }
+    a { color: #2b7de9; }
+    code { background: #eef2f6; padding: 0.1em 0.35em; border-radius: 4px; font-size: 0.85em; }
+    .meta { font-size: 0.8rem; color: #5b6572; margin-top: 24px; }
+  </style>
+</head>
+<body>
+  <p><a href="./">← Hub</a> · <a href="build-contract.md">Markdown</a></p>
+  <h1>Build contract · #400 Infographic library</h1>
+  <p><strong>PROVISIONAL.</strong> One recommended AFA-aligned direction. <strong>Alex has not locked.</strong></p>
+  <div class="hold"><strong>Soft Dev hold · Designer-first · not agent-ready.</strong> Do not wake Soft Dev. Do not mark <code>agent-ready</code> until Alex locks and the Pages URL is on the issue. Not #288.</div>
+
+  <div class="box">
+    <strong>One-liner</strong>
+    <p>Advisors upload/manage infographics (JPG/PNG/PDF), place logo/card + footer (AFA positioner), insert into Email Campaigns and Social from one library.</p>
+  </div>
+
+  <h2>Mocks</h2>
+  <div class="box">
+    <ul>
+      <li><a href="https://kartboy16.github.io/fc-mocks/400/">Hub</a></li>
+      <li><a href="https://kartboy16.github.io/fc-mocks/400/manage/">Manage</a></li>
+      <li><a href="https://kartboy16.github.io/fc-mocks/400/positioner/">Positioner</a></li>
+      <li><a href="https://kartboy16.github.io/fc-mocks/400/email-insert/">Email insert</a></li>
+      <li><a href="https://kartboy16.github.io/fc-mocks/400/social-insert/">Social insert</a></li>
+    </ul>
+  </div>
+
+  <h2>Acceptance criteria (provisional)</h2>
+  <div class="box">
+    <ol>
+      <li>Upload JPG / PNG / PDF; owner can remove.</li>
+      <li>Grid: thumbnail, title, date; rename, delete (confirm), replace, preview, Set branding.</li>
+      <li>Empty state CTA: “Upload your first infographic.”</li>
+      <li>Positioner: card type (default Logo Only), footer presets, paper Letter/A4/Custom, drag card (x,y snap 5px) + footer (y-only); AFA-like defaults.</li>
+      <li>Placement saved with infographic; defaults remembered (confirm dual-save like AFA).</li>
+      <li>“Email shown: …” uses display email (#393 pattern).</li>
+      <li>Email: Insert infographic → picker → body preview + caption/alt; Manage library link.</li>
+      <li>Social: Choose from infographics → same picker → image slot; remove/replace.</li>
+      <li>Plain advisor copy; no jargon in UI.</li>
+      <li>Not #288 / not agent-ready until lock.</li>
+    </ol>
+  </div>
+
+  <h2>Open decisions for Alex</h2>
+  <div class="box">
+    <ol>
+      <li>Per-infographic placement vs preference defaults (AFA saves both)?</li>
+      <li>PDF upload? (AFA yes)</li>
+      <li>Logo Only vs Full Card default? (AFA Logo Only)</li>
+      <li>Where Manage lives in nav?</li>
+      <li>Firm-shared vs per-advisor library?</li>
+      <li>Insert v1: Email+Social only, or Website too?</li>
+      <li>Max file size / dimensions guidance in UI?</li>
+    </ol>
+  </div>
+
+  <h2>Non-goals</h2>
+  <div class="box">
+    <ul>
+      <li>#288 AI builder · <code>288/</code> · <code>infographic-builder/</code></li>
+      <li>In-FC graphic editing</li>
+      <li>Soft Dev wake / agent-ready before lock</li>
+    </ul>
+  </div>
+
+  <div class="meta">Issue <a href="https://github.com/kartboy16/content-library/issues/400">#400</a> · Fictional advisor Jordan Blake · Pacific Ridge Wealth · Soft Dev hold</div>
+</body>
+</html>

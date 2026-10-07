@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>FC — #400 Infographic library · upload/manage + insert + branding</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #f4f8fc; --card: #fff; --ink: #1e2a4a; --muted: #5b6572;
+      --blue: #2b7de9; --border: #d4e4f2; --mint: #e6f1fb;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: Inter, system-ui, sans-serif; background: var(--bg); color: var(--ink); line-height: 1.55; }
+    .hero {
+      background: linear-gradient(135deg, #1e2a4a 0%, #2b7de9 100%);
+      color: #fff; padding: 40px 24px 36px;
+    }
+    .hero-inner { max-width: 920px; margin: 0 auto; }
+    .hero .eyebrow { font-size: 0.75rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; opacity: 0.85; margin-bottom: 10px; }
+    .hero h1 { font-size: 1.75rem; margin-bottom: 10px; }
+    .hero p { opacity: 0.92; max-width: 760px; font-size: 0.95rem; }
+    .rec {
+      display: inline-block; margin-top: 18px; background: #e8f5e9; color: #065f46;
+      font-weight: 700; font-size: 0.8rem; padding: 8px 14px; border-radius: 999px;
+    }
+    .wrap { max-width: 920px; margin: 0 auto; padding: 28px 24px 72px; }
+    .cta {
+      display: block; background: var(--blue); color: #fff !important; text-decoration: none;
+      text-align: center; padding: 16px 24px; border-radius: 12px; font-weight: 700;
+      font-size: 1rem; margin-bottom: 14px; box-shadow: 0 4px 16px rgba(43,125,233,0.35);
+    }
+    .cta:hover { filter: brightness(1.05); }
+    .cta small { display: block; font-weight: 500; opacity: 0.9; font-size: 0.8rem; margin-top: 4px; }
+    .cta.secondary { background: #fff; color: var(--blue) !important; border: 2px solid var(--blue); box-shadow: none; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 14px; margin-top: 8px; }
+    .card {
+      background: var(--card); border: 1px solid var(--border); border-radius: 12px;
+      padding: 18px; text-decoration: none; color: inherit; display: block;
+      transition: border-color 0.15s, box-shadow 0.15s;
+    }
+    .card:hover { border-color: var(--blue); box-shadow: 0 4px 16px rgba(30,42,74,0.08); }
+    .card h3 { font-size: 0.95rem; margin-bottom: 6px; color: var(--blue); }
+    .card p { font-size: 0.8rem; color: var(--muted); }
+    .card .tag {
+      display: inline-block; font-size: 0.65rem; font-weight: 700; background: var(--mint);
+      color: var(--blue); padding: 2px 8px; border-radius: 999px; margin-bottom: 8px;
+    }
+    h2 { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--muted); margin: 28px 0 12px; }
+    .problem {
+      margin: 0 0 20px; padding: 14px 16px; background: #fff8eb; border: 1px solid #f0d4a8;
+      border-radius: 10px; font-size: 0.85rem; color: #8a5a10;
+    }
+    .hold {
+      margin: 0 0 20px; padding: 14px 16px; background: #fef3c7; border: 1px solid #fcd34d;
+      border-radius: 10px; font-size: 0.85rem; color: #92400e;
+    }
+    .ac {
+      margin: 0 0 20px; padding: 14px 16px; background: #eff6ff; border: 1px solid #bfdbfe;
+      border-radius: 10px; font-size: 0.85rem; color: #1e40af;
+    }
+    .ac ul, .q ol, .oos ul, .walk ol { margin: 8px 0 0; padding-left: 1.2rem; }
+    .ac li, .q li, .oos li, .walk li { margin-bottom: 6px; }
+    .oos {
+      margin: 0 0 20px; padding: 14px 16px; background: #f3f4f6; border: 1px solid #e5e7eb;
+      border-radius: 10px; font-size: 0.85rem; color: #374151;
+    }
+    .q {
+      margin: 0 0 20px; padding: 14px 16px; background: #f5f3ff; border: 1px solid #c4b5fd;
+      border-radius: 10px; font-size: 0.85rem; color: #4c1d95;
+    }
+    .walk {
+      margin: 0 0 20px; padding: 14px 16px; background: #fff; border: 1px solid var(--border);
+      border-radius: 10px; font-size: 0.85rem; color: var(--ink);
+    }
+    .walk strong { color: #1e3a8a; }
+    .meta { margin-top: 32px; font-size: 0.8rem; color: var(--muted); }
+    .meta a { color: var(--blue); }
+    code { background: #eef2f6; padding: 0.1em 0.35em; border-radius: 4px; font-size: 0.85em; }
+    a { color: var(--blue); }
+  </style>
+</head>
+<body>
+  <header class="hero">
+    <div class="hero-inner">
+      <div class="eyebrow">FinancialContent · content-library #400 · Designer mocks</div>
+      <h1>Infographic library — upload, brand, insert</h1>
+      <p>Advisors upload and manage their own infographics (AFA-style), set logo/card + footer placement on each one, then insert from that library into <strong>Email Campaigns</strong> and <strong>Social</strong>. One recommended direction — not the shelved #288 AI builder.</p>
+      <span class="rec">Recommend · Single flow · AFA-aligned library + positioner + insert pickers</span>
+    </div>
+  </header>
+
+  <div class="wrap">
+    <a class="cta" href="manage/">
+      Open recommended flow · Manage library
+      <small>Upload (JPG / PNG / PDF) · grid · rename / delete / replace / preview · Set branding</small>
+    </a>
+    <a class="cta secondary" href="positioner/">
+      Positioner · “Position the business card and footer”
+      <small>Logo Only / Full Card · footer presets · Letter / A4 / Custom · drag placement</small>
+    </a>
+    <p style="text-align:center;margin:0 0 24px;font-size:0.8rem;color:var(--muted)">
+      <a href="email-insert/">Email insert</a> ·
+      <a href="social-insert/">Social insert</a> ·
+      <a href="build-contract.html">Build contract</a> ·
+      <a href="build-contract.md">Markdown</a>
+    </p>
+
+    <div class="problem">
+      <strong>Ask (Alex · live voice call · Wed Oct 7):</strong> Infographic management across three surfaces in FC, styled like Apps for Advisors — plus AFA’s brand positioner after upload. Not #288 zero-click AI builder.
+    </div>
+
+    <div class="hold">
+      <strong>Soft Dev hold · Designer-first · not agent-ready.</strong> Alex has <em>not</em> locked this direction. Do <em>not</em> wake Soft Dev. Do <em>not</em> mark <code>agent-ready</code>. Hold until a direction is locked and the Pages URL is on the issue.
+    </div>
+
+    <h2>Screens</h2>
+    <div class="grid">
+      <a class="card" href="manage/">
+        <span class="tag">1 · Manage</span>
+        <h3>Upload &amp; library</h3>
+        <p>Dropzone (JPG/PNG/PDF), grid of My Infographics, rename / delete / replace / preview, empty state, Set branding.</p>
+      </a>
+      <a class="card" href="positioner/">
+        <span class="tag">2 · Brand</span>
+        <h3>Positioner modal</h3>
+        <p>Business card type, footer type, paper size, draggable logo/card + footer on canvas. Defaults match AFA.</p>
+      </a>
+      <a class="card" href="email-insert/">
+        <span class="tag">3 · Email</span>
+        <h3>Insert in campaigns</h3>
+        <p>Compose toolbar → Insert infographic → library picker → preview in body. Link back to Manage.</p>
+      </a>
+      <a class="card" href="social-insert/">
+        <span class="tag">4 · Social</span>
+        <h3>Insert when adding images</h3>
+        <p>Choose from infographics beside upload. Same picker. Image slot with remove / replace.</p>
+      </a>
+    </div>
+
+    <h2>Walkthrough (recommended)</h2>
+    <div class="walk">
+      <ol>
+        <li><strong>Manage:</strong> Advisor opens Infographics (upload area). Sees a dropzone and a grid of their uploaded pieces (thumbnail, title, date). Empty state CTA: “Upload your first infographic.” Actions on each card: Preview, Rename, Replace, Delete (confirm), Set branding.</li>
+        <li><strong>After upload (or Set branding):</strong> Modal “Position the business card and footer.” Choose Logo Only (default) / Full Card / None, footer field order or None, paper Letter (default ~1054×1364) / A4 / Custom. Drag logo/card freely (5px snap); footer moves on Y only. Save → item lands in (or updates) the grid. Copy: branding saved with this infographic; defaults remembered for next time.</li>
+        <li><strong>Email Campaigns:</strong> While composing, “Insert infographic” opens the same library picker (search + grid). Selecting one drops a preview into the email body with a caption/alt line. “Manage library” links back to Manage.</li>
+        <li><strong>Social:</strong> When adding images, “Choose from infographics” opens the same picker. Selected piece fills the post image slot; remove / replace available.</li>
+      </ol>
+    </div>
+
+    <div class="q">
+      <strong>Open decisions for Alex</strong> — do not invent answers; flag only:
+      <ol>
+        <li><strong>Per-infographic placement vs preference defaults?</strong> AFA saves both (placement on content; card/footer/paper prefs as advisor defaults). Confirm for FC.</li>
+        <li><strong>Include PDF upload?</strong> AFA yes (JPG / PNG / PDF). Mock assumes yes.</li>
+        <li><strong>Logo Only vs Full Card default?</strong> AFA defaults Logo Only. Mock assumes that.</li>
+        <li><strong>Where does Manage live in nav?</strong> Content Library upload area, Settings, or its own “Infographics” item?</li>
+        <li><strong>Firm-shared library vs per-advisor uploads?</strong></li>
+        <li><strong>Insert v1: Email + Social only, or Website / posts too?</strong></li>
+        <li><strong>Max file size / dimensions guidance</strong> shown in the upload UI?</li>
+      </ol>
+    </div>
+
+    <div class="ac">
+      <strong>Why this direction</strong>
+      <ul>
+        <li>Mirrors AFA’s proven library + positioner instead of inventing a thinner FC-only version.</li>
+        <li>One library feeds Email and Social — same picker, no duplicate uploads.</li>
+        <li>Positioner after upload (or via Set branding) keeps branding deliberate without blocking a quick insert later.</li>
+        <li>Plain advisor copy throughout; no CDN / GridFS / stack jargon in the UI.</li>
+      </ul>
+    </div>
+
+    <div class="oos">
+      <strong>Out of scope</strong>
+      <ul>
+        <li>#288 zero-click AI / infographic builder — shelved; do not touch <code>288/</code> or <code>infographic-builder/</code></li>
+        <li>Building or editing the graphic itself inside FC</li>
+        <li>Firm-wide brand kits beyond card/logo/footer placement</li>
+        <li>Agent-ready / Soft Dev wake until Alex locks</li>
+      </ul>
+    </div>
+
+    <div class="meta">
+      Issue: <a href="https://github.com/kartboy16/content-library/issues/400">#400</a> ·
+      Hub: <a href="https://kartboy16.github.io/fc-mocks/400/">Pages</a> ·
+      Fictional advisor: Jordan Blake · Pacific Ridge Wealth · Soft Dev hold
+    </div>
+  </div>
+</body>
+</html>

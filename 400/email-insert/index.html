@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>#400 · Insert infographic in Email Campaigns · FC mocks</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #f4f8fc; --card: #fff; --ink: #1e2a4a; --muted: #5b6572;
+      --blue: #2b7de9; --blue-dark: #1e5bb8; --border: #d4e4f2; --mint: #e6f1fb;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: Inter, system-ui, sans-serif; background: var(--bg); color: var(--ink); font-size: 14px; line-height: 1.45; }
+    a { color: var(--blue); }
+    .thesis { background: linear-gradient(135deg, #1e2a4a, #2b7de9); color: #fff; padding: 14px 24px; }
+    .thesis .rec { display: inline-block; background: #fff; color: var(--blue); font-size: 0.68rem; font-weight: 700; padding: 3px 10px; border-radius: 999px; margin-bottom: 6px; }
+    .thesis h1 { font-size: 1.05rem; margin-bottom: 2px; }
+    .thesis p { opacity: 0.9; font-size: 0.82rem; max-width: 900px; }
+    .nav { padding: 8px 24px; font-size: 0.8rem; background: #fafafa; border-bottom: 1px solid var(--border); display: flex; gap: 12px; flex-wrap: wrap; align-items: center; }
+    .nav a { text-decoration: none; font-weight: 500; }
+    .nav .on { font-weight: 700; color: var(--ink); }
+    .nav .sep { color: #c0c8d4; }
+    .app { display: flex; min-height: calc(100vh - 110px); }
+    .rail { width: 52px; background: #1e2a4a; flex-shrink: 0; display: flex; flex-direction: column; align-items: center; padding: 12px 0; gap: 8px; }
+    .rail .ri { width: 32px; height: 32px; border-radius: 8px; background: rgba(255,255,255,0.08); color: rgba(255,255,255,0.7); font-size: 0.6rem; font-weight: 700; display: flex; align-items: center; justify-content: center; }
+    .rail .ri.on { background: var(--blue); color: #fff; }
+    .main { flex: 1; min-width: 0; padding: 16px 20px 48px; }
+    .demo-bar { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 14px; align-items: center; }
+    .demo-bar span { font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; color: var(--muted); margin-right: 4px; }
+    .chip { padding: 7px 12px; border-radius: 999px; border: 1px solid var(--border); background: #fff; font-family: inherit; font-size: 0.8rem; font-weight: 600; color: var(--ink); cursor: pointer; }
+    .chip.on { background: var(--blue); color: #fff; border-color: var(--blue); }
+    .callout { margin-bottom: 14px; padding: 12px 14px; background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 10px; font-size: 0.82rem; color: #1e40af; }
+    .page-head { margin-bottom: 12px; }
+    .page-head h2 { font-size: 1.35rem; font-weight: 700; }
+    .page-head .sub { color: var(--muted); font-size: 0.85rem; margin-top: 2px; }
+    .compose {
+      background: #fff; border: 1px solid var(--border); border-radius: 12px; overflow: hidden;
+      box-shadow: 0 1px 3px rgba(30,42,74,0.04); max-width: 720px;
+    }
+    .compose-meta { padding: 14px 16px; border-bottom: 1px solid #eef2f6; font-size: 0.85rem; }
+    .compose-meta .row { display: flex; gap: 8px; margin-bottom: 6px; }
+    .compose-meta .k { color: var(--muted); width: 56px; flex-shrink: 0; }
+    .toolbar {
+      display: flex; flex-wrap: wrap; gap: 4px; padding: 8px 12px; border-bottom: 1px solid var(--border);
+      background: #fafbfd;
+    }
+    .tb {
+      padding: 8px 12px; border-radius: 8px; border: 1px solid transparent; background: transparent;
+      font-family: inherit; font-size: 0.8rem; font-weight: 600; color: var(--ink); cursor: pointer;
+    }
+    .tb:hover { background: var(--mint); border-color: var(--border); }
+    .tb.hl { background: var(--mint); border-color: var(--blue); color: var(--blue); }
+    .body { padding: 20px 22px 28px; min-height: 320px; }
+    .body h3 { font-size: 1.15rem; margin-bottom: 10px; }
+    .body p { font-size: 0.92rem; color: var(--ink); margin-bottom: 12px; max-width: 560px; }
+    .inserted {
+      display: none; margin: 16px 0; max-width: 360px; border: 1px solid var(--border);
+      border-radius: 10px; overflow: hidden; background: #fff;
+    }
+    .inserted.show { display: block; }
+    .inserted .pic {
+      aspect-ratio: 3/4; background: linear-gradient(145deg, #1e3a5f 0%, #2b7de9 55%, #7dd3fc 100%);
+      display: flex; align-items: flex-end; padding: 12px; color: #fff; font-weight: 700; font-size: 0.85rem;
+    }
+    .inserted .cap { padding: 10px 12px; font-size: 0.78rem; color: var(--muted); border-top: 1px solid var(--border); }
+    .inserted .cap strong { color: var(--ink); display: block; margin-bottom: 2px; }
+    .btn { font-family: inherit; font-size: 0.88rem; font-weight: 600; padding: 10px 16px; border-radius: 10px; border: none; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; min-height: 44px; text-decoration: none; }
+    .btn-primary { background: var(--blue); color: #fff; }
+    .btn-ghost { background: #fff; border: 1px solid var(--border); color: var(--ink); }
+    .btn-sm { padding: 7px 10px; min-height: 36px; font-size: 0.78rem; }
+    .overlay { display: none; position: fixed; inset: 0; background: rgba(15,23,42,0.45); z-index: 100; align-items: center; justify-content: center; padding: 16px; }
+    .overlay.open { display: flex; }
+    .picker { background: #fff; border-radius: 14px; max-width: 640px; width: 100%; max-height: 90vh; overflow: auto; box-shadow: 0 20px 50px rgba(0,0,0,0.2); }
+    .picker-head { padding: 18px 20px 12px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; flex-wrap: wrap; }
+    .picker-head h3 { font-size: 1.1rem; }
+    .picker-head .sub { font-size: 0.8rem; color: var(--muted); margin-top: 2px; }
+    .picker-tools { padding: 12px 20px; display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+    .picker-tools input { flex: 1; min-width: 160px; padding: 10px 12px; border: 1px solid var(--border); border-radius: 10px; font-family: inherit; font-size: 0.9rem; }
+    .picker-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 12px; padding: 4px 20px 20px; }
+    .pick {
+      border: 2px solid var(--border); border-radius: 10px; overflow: hidden; cursor: pointer; background: #fff; text-align: left; padding: 0; font-family: inherit;
+    }
+    .pick:hover, .pick.on { border-color: var(--blue); box-shadow: 0 0 0 2px rgba(43,125,233,0.2); }
+    .pick .th { aspect-ratio: 3/4; background: linear-gradient(145deg, #1e3a5f, #2b7de9, #7dd3fc); }
+    .pick .th.t2 { background: linear-gradient(145deg, #064e3b, #059669, #a7f3d0); }
+    .pick .th.t3 { background: linear-gradient(145deg, #4c1d95, #7c3aed, #ddd6fe); }
+    .pick .th.t4 { background: linear-gradient(145deg, #7c2d12, #ea580c, #fed7aa); }
+    .pick .nm { padding: 8px 10px; font-size: 0.75rem; font-weight: 600; }
+    .picker-foot { padding: 12px 20px 18px; border-top: 1px solid var(--border); display: flex; justify-content: space-between; gap: 8px; flex-wrap: wrap; }
+  </style>
+</head>
+<body>
+  <header class="thesis">
+    <span class="rec">#400 · Surface 3 · Email Campaigns</span>
+    <h1>Insert infographic while composing</h1>
+    <p>Toolbar → Insert infographic → library picker → preview in body. Same library as Manage. Soft Dev hold.</p>
+  </header>
+  <nav class="nav">
+    <a href="../">Hub</a><span class="sep">·</span>
+    <a href="../manage/">Manage</a><span class="sep">·</span>
+    <a href="../positioner/">Positioner</a><span class="sep">·</span>
+    <span class="on">Email insert</span><span class="sep">·</span>
+    <a href="../social-insert/">Social insert</a>
+  </nav>
+  <div class="app">
+    <aside class="rail" aria-hidden="true">
+      <div class="ri">FC</div><div class="ri">CL</div><div class="ri">IG</div><div class="ri on">EM</div><div class="ri">SO</div>
+    </aside>
+    <main class="main">
+      <div class="demo-bar">
+        <span>Demo</span>
+        <button type="button" class="chip on" id="chipBefore" onclick="setInserted(false)">Before insert</button>
+        <button type="button" class="chip" id="chipAfter" onclick="setInserted(true)">After insert</button>
+        <button type="button" class="chip" onclick="openPicker()">Open picker</button>
+      </div>
+      <div class="callout">
+        <strong>Same library</strong> as Manage / Social. Selecting one inserts a preview image into the email body with a caption / alt line. “Manage library” opens the Manage surface.
+      </div>
+      <div class="page-head">
+        <h2>Email Campaigns · Compose</h2>
+        <div class="sub">Draft · Fall TFSA reminder · Jordan Blake · Pacific Ridge Wealth</div>
+      </div>
+      <div class="compose">
+        <div class="compose-meta">
+          <div class="row"><span class="k">To</span><span>General list (842 contacts)</span></div>
+          <div class="row"><span class="k">Subject</span><span>Have you used this year’s TFSA room?</span></div>
+        </div>
+        <div class="toolbar">
+          <button type="button" class="tb">B</button>
+          <button type="button" class="tb">I</button>
+          <button type="button" class="tb">Link</button>
+          <button type="button" class="tb">Image</button>
+          <button type="button" class="tb hl" onclick="openPicker()">Insert infographic</button>
+          <button type="button" class="tb">Footer</button>
+        </div>
+        <div class="body">
+          <h3>Have you used this year’s TFSA room?</h3>
+          <p>Hi {{first_name}},</p>
+          <p>Contribution room resets every January. Here’s a simple one-pager you can keep on hand when we talk next.</p>
+          <div class="inserted" id="inserted">
+            <div class="pic" id="insPic">TFSA contribution room</div>
+            <div class="cap">
+              <strong id="insTitle">TFSA contribution room</strong>
+              Alt / caption: One-page overview of TFSA contribution room for 2026.
+              <div style="margin-top:8px"><button type="button" class="btn btn-ghost btn-sm" onclick="openPicker()">Replace</button>
+              <button type="button" class="btn btn-ghost btn-sm" onclick="setInserted(false)">Remove</button></div>
+            </div>
+          </div>
+          <p>Reply to this email if you’d like to book a short review.</p>
+          <p>— Jordan</p>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <div class="overlay" id="picker" role="dialog" aria-modal="true" aria-labelledby="pickerTitle">
+    <div class="picker">
+      <div class="picker-head">
+        <div>
+          <h3 id="pickerTitle">Insert an infographic</h3>
+          <div class="sub">From your library · branded pieces ready to send</div>
+        </div>
+        <button type="button" class="btn btn-ghost btn-sm" onclick="closePicker()">Close</button>
+      </div>
+      <div class="picker-tools">
+        <input type="search" placeholder="Search your infographics…" aria-label="Search" />
+        <a class="btn btn-ghost btn-sm" href="../manage/">Manage library</a>
+      </div>
+      <div class="picker-grid">
+        <button type="button" class="pick" onclick="choose('TFSA contribution room','')">
+          <div class="th"></div><div class="nm">TFSA contribution room</div>
+        </button>
+        <button type="button" class="pick" onclick="choose('CPP at 60 vs 65','t2')">
+          <div class="th t2"></div><div class="nm">CPP at 60 vs 65</div>
+        </button>
+        <button type="button" class="pick" onclick="choose('RRSP vs TFSA at a glance','t3')">
+          <div class="th t3"></div><div class="nm">RRSP vs TFSA</div>
+        </button>
+        <button type="button" class="pick" onclick="choose('Mortgage stress test basics','t4')">
+          <div class="th t4"></div><div class="nm">Mortgage stress test</div>
+        </button>
+      </div>
+      <div class="picker-foot">
+        <span style="font-size:0.78rem;color:var(--muted)">Tip: set branding on a piece in Manage before you insert it often.</span>
+        <button type="button" class="btn btn-ghost" onclick="closePicker()">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function setInserted(on) {
+      document.getElementById('inserted').classList.toggle('show', on);
+      document.getElementById('chipBefore').classList.toggle('on', !on);
+      document.getElementById('chipAfter').classList.toggle('on', on);
+    }
+    function openPicker() { document.getElementById('picker').classList.add('open'); }
+    function closePicker() { document.getElementById('picker').classList.remove('open'); }
+    function choose(name, cls) {
+      document.getElementById('insTitle').textContent = name;
+      const pic = document.getElementById('insPic');
+      pic.textContent = name;
+      pic.className = 'pic ' + (cls || '');
+      if (cls === 't2') pic.style.background = 'linear-gradient(145deg,#064e3b,#059669,#a7f3d0)';
+      else if (cls === 't3') pic.style.background = 'linear-gradient(145deg,#4c1d95,#7c3aed,#ddd6fe)';
+      else if (cls === 't4') pic.style.background = 'linear-gradient(145deg,#7c2d12,#ea580c,#fed7aa)';
+      else pic.style.background = '';
+      setInserted(true);
+      closePicker();
+    }
+    document.getElementById('picker').addEventListener('click', e => { if (e.target.id === 'picker') closePicker(); });
+  </script>
+</body>
+</html>

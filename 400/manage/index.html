@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>#400 · Manage infographics · FC mocks</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #f4f8fc; --card: #fff; --ink: #1e2a4a; --muted: #5b6572;
+      --blue: #2b7de9; --blue-dark: #1e5bb8; --border: #d4e4f2; --mint: #e6f1fb;
+      --danger: #c62828; --ok: #047857; --ok-bg: #e8f5e9;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: Inter, system-ui, sans-serif; background: var(--bg); color: var(--ink); font-size: 14px; line-height: 1.45; }
+    a { color: var(--blue); }
+    .thesis { background: linear-gradient(135deg, #1e2a4a, #2b7de9); color: #fff; padding: 14px 24px; }
+    .thesis .rec { display: inline-block; background: #fff; color: var(--blue); font-size: 0.68rem; font-weight: 700; padding: 3px 10px; border-radius: 999px; margin-bottom: 6px; }
+    .thesis h1 { font-size: 1.05rem; margin-bottom: 2px; }
+    .thesis p { opacity: 0.9; font-size: 0.82rem; max-width: 900px; }
+    .nav { padding: 8px 24px; font-size: 0.8rem; background: #fafafa; border-bottom: 1px solid var(--border); display: flex; gap: 12px; flex-wrap: wrap; align-items: center; }
+    .nav a { text-decoration: none; font-weight: 500; }
+    .nav .on { font-weight: 700; color: var(--ink); }
+    .nav .sep { color: #c0c8d4; }
+    .app { display: flex; min-height: calc(100vh - 110px); }
+    .rail { width: 52px; background: #1e2a4a; flex-shrink: 0; display: flex; flex-direction: column; align-items: center; padding: 12px 0; gap: 8px; }
+    .rail .ri { width: 32px; height: 32px; border-radius: 8px; background: rgba(255,255,255,0.08); color: rgba(255,255,255,0.7); font-size: 0.6rem; font-weight: 700; display: flex; align-items: center; justify-content: center; }
+    .rail .ri.on { background: var(--blue); color: #fff; }
+    .main { flex: 1; min-width: 0; padding: 16px 20px 48px; }
+    .demo-bar { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 14px; align-items: center; }
+    .demo-bar span { font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; color: var(--muted); margin-right: 4px; }
+    .chip { padding: 7px 12px; border-radius: 999px; border: 1px solid var(--border); background: #fff; font-family: inherit; font-size: 0.8rem; font-weight: 600; color: var(--ink); cursor: pointer; }
+    .chip.on { background: var(--blue); color: #fff; border-color: var(--blue); }
+    .page-head { display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 12px; margin-bottom: 16px; }
+    .page-head h2 { font-size: 1.4rem; font-weight: 700; }
+    .page-head .sub { color: var(--muted); font-size: 0.85rem; margin-top: 2px; }
+    .btn { font-family: inherit; font-size: 0.88rem; font-weight: 600; padding: 10px 16px; border-radius: 10px; border: none; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; min-height: 44px; }
+    .btn-primary { background: var(--blue); color: #fff; }
+    .btn-primary:hover { background: var(--blue-dark); }
+    .btn-ghost { background: #fff; border: 1px solid var(--border); color: var(--ink); }
+    .btn-danger { background: #fff; border: 1px solid var(--danger); color: var(--danger); }
+    .btn-sm { padding: 7px 10px; min-height: 36px; font-size: 0.78rem; }
+    .drop {
+      border: 2px dashed #9ec0e8; background: #f0f7ff; border-radius: 14px; padding: 28px 20px;
+      text-align: center; margin-bottom: 20px; cursor: pointer; transition: background 0.15s;
+    }
+    .drop:hover, .drop.drag { background: var(--mint); border-color: var(--blue); }
+    .drop .ico { font-size: 1.8rem; margin-bottom: 8px; }
+    .drop h3 { font-size: 1rem; margin-bottom: 4px; }
+    .drop p { font-size: 0.82rem; color: var(--muted); }
+    .drop .types { margin-top: 10px; font-size: 0.75rem; color: var(--blue); font-weight: 600; }
+    .toolbar { display: flex; gap: 8px; align-items: center; margin-bottom: 14px; flex-wrap: wrap; }
+    .search { flex: 1; min-width: 180px; max-width: 280px; padding: 10px 12px; border: 1px solid var(--border); border-radius: 10px; font-family: inherit; font-size: 0.9rem; background: #fff; min-height: 44px; }
+    .view-toggle { display: flex; border: 1px solid var(--border); border-radius: 10px; overflow: hidden; background: #fff; }
+    .view-toggle button { border: none; background: transparent; padding: 10px 14px; font-family: inherit; font-size: 0.8rem; font-weight: 600; color: var(--muted); cursor: pointer; min-height: 44px; }
+    .view-toggle button.on { background: var(--mint); color: var(--blue); }
+    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 14px; }
+    .grid.list { grid-template-columns: 1fr; }
+    .card {
+      background: var(--card); border: 1px solid var(--border); border-radius: 12px; overflow: hidden;
+      box-shadow: 0 1px 3px rgba(30,42,74,0.04); display: flex; flex-direction: column;
+    }
+    .grid.list .card { flex-direction: row; align-items: stretch; }
+    .thumb {
+      aspect-ratio: 3/4; background: linear-gradient(145deg, #1e3a5f 0%, #2b7de9 55%, #7dd3fc 100%);
+      position: relative; display: flex; align-items: flex-end; padding: 12px;
+    }
+    .grid.list .thumb { width: 96px; aspect-ratio: auto; height: auto; flex-shrink: 0; }
+    .thumb.t2 { background: linear-gradient(145deg, #064e3b 0%, #059669 50%, #a7f3d0 100%); }
+    .thumb.t3 { background: linear-gradient(145deg, #4c1d95 0%, #7c3aed 50%, #ddd6fe 100%); }
+    .thumb.t4 { background: linear-gradient(145deg, #7c2d12 0%, #ea580c 50%, #fed7aa 100%); }
+    .thumb.t5 { background: linear-gradient(145deg, #0c4a6e 0%, #0284c7 50%, #bae6fd 100%); }
+    .thumb .label {
+      background: rgba(255,255,255,0.92); color: var(--ink); font-size: 0.68rem; font-weight: 700;
+      padding: 5px 8px; border-radius: 6px; line-height: 1.25; max-width: 100%;
+    }
+    .card-body { padding: 12px 14px 14px; flex: 1; display: flex; flex-direction: column; gap: 8px; }
+    .card-body h3 { font-size: 0.9rem; font-weight: 700; }
+    .card-body .meta { font-size: 0.75rem; color: var(--muted); }
+    .badge { display: inline-block; font-size: 0.65rem; font-weight: 700; background: var(--ok-bg); color: var(--ok); padding: 2px 8px; border-radius: 999px; }
+    .badge.pdf { background: #fef3c7; color: #92400e; }
+    .actions { display: flex; flex-wrap: wrap; gap: 6px; margin-top: auto; }
+    .empty {
+      text-align: center; padding: 48px 24px; background: #fff; border: 1px solid var(--border);
+      border-radius: 14px; display: none;
+    }
+    .empty.show { display: block; }
+    .empty h3 { font-size: 1.1rem; margin: 12px 0 6px; }
+    .empty p { color: var(--muted); font-size: 0.9rem; margin-bottom: 16px; }
+    .lib.hide { display: none; }
+    /* Modals */
+    .overlay { display: none; position: fixed; inset: 0; background: rgba(15,23,42,0.45); z-index: 100; align-items: center; justify-content: center; padding: 16px; }
+    .overlay.open { display: flex; }
+    .modal { background: #fff; border-radius: 14px; max-width: 480px; width: 100%; padding: 22px; box-shadow: 0 20px 50px rgba(0,0,0,0.2); }
+    .modal.wide { max-width: 560px; }
+    .modal h3 { font-size: 1.1rem; margin-bottom: 8px; }
+    .modal p { font-size: 0.88rem; color: var(--muted); margin-bottom: 14px; }
+    .modal label { display: block; font-size: 0.78rem; font-weight: 600; color: var(--muted); margin-bottom: 4px; }
+    .modal input[type=text] { width: 100%; padding: 10px 12px; border: 1px solid var(--border); border-radius: 10px; font-family: inherit; font-size: 0.95rem; margin-bottom: 14px; }
+    .modal-actions { display: flex; gap: 8px; justify-content: flex-end; flex-wrap: wrap; }
+    .preview-img {
+      width: 100%; aspect-ratio: 3/4; max-height: 420px; border-radius: 10px; margin-bottom: 14px;
+      background: linear-gradient(145deg, #1e3a5f 0%, #2b7de9 55%, #7dd3fc 100%);
+      display: flex; align-items: center; justify-content: center; color: #fff; font-weight: 700; text-align: center; padding: 20px;
+    }
+    .toast {
+      display: none; position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
+      background: #1e2a4a; color: #fff; padding: 12px 18px; border-radius: 10px; font-size: 0.85rem;
+      z-index: 200; box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+    }
+    .toast.show { display: block; }
+    .callout { margin-bottom: 14px; padding: 12px 14px; background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 10px; font-size: 0.82rem; color: #1e40af; }
+  </style>
+</head>
+<body>
+  <header class="thesis">
+    <span class="rec">#400 · Surface 1 · Manage</span>
+    <h1>My Infographics — upload &amp; library</h1>
+    <p>AFA-aligned: JPG / PNG / PDF upload, grid of thumbnails, rename / delete / replace / preview, Set branding → positioner. Soft Dev hold.</p>
+  </header>
+  <nav class="nav">
+    <a href="../">Hub</a><span class="sep">·</span>
+    <span class="on">Manage</span><span class="sep">·</span>
+    <a href="../positioner/">Positioner</a><span class="sep">·</span>
+    <a href="../email-insert/">Email insert</a><span class="sep">·</span>
+    <a href="../social-insert/">Social insert</a><span class="sep">·</span>
+    <a href="../build-contract.html">Contract</a>
+  </nav>
+  <div class="app">
+    <aside class="rail" aria-hidden="true">
+      <div class="ri">FC</div>
+      <div class="ri">CL</div>
+      <div class="ri on">IG</div>
+      <div class="ri">EM</div>
+      <div class="ri">SO</div>
+    </aside>
+    <main class="main">
+      <div class="demo-bar">
+        <span>Demo</span>
+        <button type="button" class="chip on" data-demo="populated" onclick="setDemo('populated')">Library with items</button>
+        <button type="button" class="chip" data-demo="empty" onclick="setDemo('empty')">Empty state</button>
+        <button type="button" class="chip" data-demo="upload" onclick="simulateUpload()">Simulate upload → positioner</button>
+      </div>
+
+      <div class="callout">
+        <strong>Nav note (open decision):</strong> Mock places Infographics under the Content Library upload area (rail item IG). Confirm whether Manage lives here, under Settings, or as its own nav item.
+      </div>
+
+      <div class="page-head">
+        <div>
+          <h2>Infographics</h2>
+          <div class="sub">Upload charts and one-pagers, set your branding on each, then insert them in Email and Social.</div>
+        </div>
+        <button type="button" class="btn btn-primary" onclick="document.getElementById('fileHint').focus(); document.querySelector('.drop').classList.add('drag'); setTimeout(()=>document.querySelector('.drop').classList.remove('drag'),800)">Upload infographic</button>
+      </div>
+
+      <div class="drop" id="dropzone" onclick="simulateUpload()" ondragover="event.preventDefault();this.classList.add('drag')" ondragleave="this.classList.remove('drag')" ondrop="event.preventDefault();this.classList.remove('drag');simulateUpload()">
+        <div class="ico">⬆</div>
+        <h3>Drop an infographic here</h3>
+        <p>or click to choose a file from your computer</p>
+        <div class="types">JPG, PNG, or PDF · Open decision: max size / dimensions</div>
+        <input id="fileHint" tabindex="-1" style="position:absolute;opacity:0;pointer-events:none" aria-hidden="true" />
+      </div>
+
+      <div id="lib" class="lib">
+        <div class="toolbar">
+          <input class="search" type="search" placeholder="Search your infographics…" aria-label="Search" />
+          <div class="view-toggle" role="group" aria-label="View">
+            <button type="button" class="on" id="btnGrid" onclick="setView('grid')">Grid</button>
+            <button type="button" id="btnList" onclick="setView('list')">List</button>
+          </div>
+        </div>
+        <div class="grid" id="cardGrid">
+          <article class="card" data-id="1">
+            <div class="thumb"><span class="label">TFSA contribution room</span></div>
+            <div class="card-body">
+              <h3>TFSA contribution room</h3>
+              <div class="meta">Uploaded Sep 12, 2026 · <span class="badge">Branded</span></div>
+              <div class="actions">
+                <button type="button" class="btn btn-ghost btn-sm" onclick="openPreview('TFSA contribution room','t1')">Preview</button>
+                <button type="button" class="btn btn-ghost btn-sm" onclick="openRename(this)">Rename</button>
+                <button type="button" class="btn btn-ghost btn-sm" onclick="toast('Replace file picker (mock)')">Replace</button>
+                <a class="btn btn-primary btn-sm" href="../positioner/?from=tfsa">Set branding</a>
+                <button type="button" class="btn btn-danger btn-sm" onclick="openDelete('TFSA contribution room')">Delete</button>
+              </div>
+            </div>
+          </article>
+          <article class="card" data-id="2">
+            <div class="thumb t2"><span class="label">CPP at 60 vs 65</span></div>
+            <div class="card-body">
+              <h3>CPP at 60 vs 65</h3>
+              <div class="meta">Uploaded Aug 28, 2026 · <span class="badge">Branded</span></div>
+              <div class="actions">
+                <button type="button" class="btn btn-ghost btn-sm" onclick="openPreview('CPP at 60 vs 65','t2')">Preview</button>
+                <button type="button" class="btn btn-ghost btn-sm" onclick="openRename(this)">Rename</button>
+                <button type="button" class="btn btn-ghost btn-sm" onclick="toast('Replace file picker (mock)')">Replace</button>
+                <a class="btn btn-primary btn-sm" href="../positioner/?from=cpp">Set branding</a>
+                <button type="button" class="btn btn-danger btn-sm" onclick="openDelete('CPP at 60 vs 65')">Delete</button>
+              </div>
+            </div>
+          </article>
+          <article class="card" data-id="3">
+            <div class="thumb t3"><span class="label">RRSP vs TFSA</span></div>
+            <div class="card-body">
+              <h3>RRSP vs TFSA at a glance</h3>
+              <div class="meta">Uploaded Jul 3, 2026 · <span class="badge pdf">PDF</span></div>
+              <div class="actions">
+                <button type="button" class="btn btn-ghost btn-sm" onclick="openPreview('RRSP vs TFSA at a glance','t3')">Preview</button>
+                <button type="button" class="btn btn-ghost btn-sm" onclick="openRename(this)">Rename</button>
+                <button type="button" class="btn btn-ghost btn-sm" onclick="toast('Replace file picker (mock)')">Replace</button>
+                <a class="btn btn-primary btn-sm" href="../positioner/?from=rrsp">Set branding</a>
+                <button type="button" class="btn btn-danger btn-sm" onclick="openDelete('RRSP vs TFSA at a glance')">Delete</button>
+              </div>
+            </div>
+          </article>
+          <article class="card" data-id="4">
+            <div class="thumb t4"><span class="label">Mortgage stress test</span></div>
+            <div class="card-body">
+              <h3>Mortgage stress test basics</h3>
+              <div class="meta">Uploaded Jun 18, 2026 · <span class="badge">Branded</span></div>
+              <div class="actions">
+                <button type="button" class="btn btn-ghost btn-sm" onclick="openPreview('Mortgage stress test basics','t4')">Preview</button>
+                <button type="button" class="btn btn-ghost btn-sm" onclick="openRename(this)">Rename</button>
+                <button type="button" class="btn btn-ghost btn-sm" onclick="toast('Replace file picker (mock)')">Replace</button>
+                <a class="btn btn-primary btn-sm" href="../positioner/?from=mortgage">Set branding</a>
+                <button type="button" class="btn btn-danger btn-sm" onclick="openDelete('Mortgage stress test basics')">Delete</button>
+              </div>
+            </div>
+          </article>
+          <article class="card" data-id="5">
+            <div class="thumb t5"><span class="label">Emergency fund</span></div>
+            <div class="card-body">
+              <h3>Building an emergency fund</h3>
+              <div class="meta">Uploaded May 2, 2026 · needs branding</div>
+              <div class="actions">
+                <button type="button" class="btn btn-ghost btn-sm" onclick="openPreview('Building an emergency fund','t5')">Preview</button>
+                <button type="button" class="btn btn-ghost btn-sm" onclick="openRename(this)">Rename</button>
+                <button type="button" class="btn btn-ghost btn-sm" onclick="toast('Replace file picker (mock)')">Replace</button>
+                <a class="btn btn-primary btn-sm" href="../positioner/?from=emergency">Set branding</a>
+                <button type="button" class="btn btn-danger btn-sm" onclick="openDelete('Building an emergency fund')">Delete</button>
+              </div>
+            </div>
+          </article>
+        </div>
+      </div>
+
+      <div id="empty" class="empty">
+        <div style="font-size:2.4rem">🖼</div>
+        <h3>Upload your first infographic</h3>
+        <p>Add a chart or one-pager from your computer. You can place your logo and footer on it next, then use it in Email and Social.</p>
+        <button type="button" class="btn btn-primary" onclick="simulateUpload()">Upload infographic</button>
+      </div>
+    </main>
+  </div>
+
+  <div class="overlay" id="renameModal" role="dialog" aria-modal="true" aria-labelledby="renameTitle">
+    <div class="modal">
+      <h3 id="renameTitle">Rename infographic</h3>
+      <p>This name shows in your library and in the insert picker.</p>
+      <label for="renameInput">Name</label>
+      <input id="renameInput" type="text" value="" />
+      <div class="modal-actions">
+        <button type="button" class="btn btn-ghost" onclick="closeModal('renameModal')">Cancel</button>
+        <button type="button" class="btn btn-primary" onclick="closeModal('renameModal');toast('Name saved (mock)')">Save name</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="overlay" id="deleteModal" role="dialog" aria-modal="true">
+    <div class="modal">
+      <h3>Delete this infographic?</h3>
+      <p id="deleteMsg">It will be removed from your library. Emails or posts that already used it are not changed.</p>
+      <div class="modal-actions">
+        <button type="button" class="btn btn-ghost" onclick="closeModal('deleteModal')">Keep it</button>
+        <button type="button" class="btn btn-danger" onclick="closeModal('deleteModal');toast('Deleted (mock)')">Delete</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="overlay" id="previewModal" role="dialog" aria-modal="true">
+    <div class="modal wide">
+      <h3 id="previewTitle">Preview</h3>
+      <div class="preview-img" id="previewImg">Placeholder infographic</div>
+      <div class="modal-actions">
+        <button type="button" class="btn btn-ghost" onclick="closeModal('previewModal')">Close</button>
+        <a class="btn btn-primary" id="previewBrand" href="../positioner/">Set branding</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script>
+    function setDemo(mode) {
+      document.querySelectorAll('.demo-bar .chip').forEach(c => c.classList.toggle('on', c.dataset.demo === mode));
+      const empty = mode === 'empty';
+      document.getElementById('lib').classList.toggle('hide', empty);
+      document.getElementById('empty').classList.toggle('show', empty);
+      document.getElementById('dropzone').style.display = empty ? 'none' : '';
+    }
+    function setView(v) {
+      document.getElementById('cardGrid').classList.toggle('list', v === 'list');
+      document.getElementById('btnGrid').classList.toggle('on', v === 'grid');
+      document.getElementById('btnList').classList.toggle('on', v === 'list');
+    }
+    function simulateUpload() {
+      toast('Upload received — opening positioner…');
+      setTimeout(() => { location.href = '../positioner/?from=upload'; }, 700);
+    }
+    function openRename(btn) {
+      const title = btn.closest('.card').querySelector('h3').textContent;
+      document.getElementById('renameInput').value = title;
+      document.getElementById('renameModal').classList.add('open');
+    }
+    function openDelete(name) {
+      document.getElementById('deleteMsg').textContent = '“' + name + '” will be removed from your library. Emails or posts that already used it are not changed.';
+      document.getElementById('deleteModal').classList.add('open');
+    }
+    function openPreview(name, cls) {
+      document.getElementById('previewTitle').textContent = name;
+      const el = document.getElementById('previewImg');
+      el.className = 'preview-img ' + (cls || '');
+      el.textContent = name;
+      document.getElementById('previewBrand').href = '../positioner/?from=preview';
+      document.getElementById('previewModal').classList.add('open');
+    }
+    function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+    function toast(msg) {
+      const t = document.getElementById('toast');
+      t.textContent = msg; t.classList.add('show');
+      setTimeout(() => t.classList.remove('show'), 2200);
+    }
+    document.querySelectorAll('.overlay').forEach(o => o.addEventListener('click', e => { if (e.target === o) o.classList.remove('open'); }));
+  </script>
+</body>
+</html>

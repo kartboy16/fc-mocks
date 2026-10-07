@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>#400 · Position business card &amp; footer · FC mocks</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #f4f8fc; --card: #fff; --ink: #1e2a4a; --muted: #5b6572;
+      --blue: #2b7de9; --blue-dark: #1e5bb8; --border: #d4e4f2; --mint: #e6f1fb;
+      --snap: 5;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: Inter, system-ui, sans-serif; background: var(--bg); color: var(--ink); font-size: 14px; line-height: 1.45; }
+    a { color: var(--blue); }
+    .thesis { background: linear-gradient(135deg, #1e2a4a, #2b7de9); color: #fff; padding: 14px 24px; }
+    .thesis .rec { display: inline-block; background: #fff; color: var(--blue); font-size: 0.68rem; font-weight: 700; padding: 3px 10px; border-radius: 999px; margin-bottom: 6px; }
+    .thesis h1 { font-size: 1.05rem; margin-bottom: 2px; }
+    .thesis p { opacity: 0.9; font-size: 0.82rem; max-width: 920px; }
+    .nav { padding: 8px 24px; font-size: 0.8rem; background: #fafafa; border-bottom: 1px solid var(--border); display: flex; gap: 12px; flex-wrap: wrap; align-items: center; }
+    .nav a { text-decoration: none; font-weight: 500; }
+    .nav .on { font-weight: 700; color: var(--ink); }
+    .nav .sep { color: #c0c8d4; }
+    .shell { max-width: 1100px; margin: 0 auto; padding: 20px 20px 64px; }
+    .callout { margin-bottom: 14px; padding: 12px 14px; background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 10px; font-size: 0.82rem; color: #1e40af; }
+    .note { margin-bottom: 14px; padding: 12px 14px; background: #f5f3ff; border: 1px solid #c4b5fd; border-radius: 10px; font-size: 0.82rem; color: #4c1d95; }
+    .modal-frame {
+      background: #fff; border: 1px solid var(--border); border-radius: 16px;
+      box-shadow: 0 12px 40px rgba(30,42,74,0.12); overflow: hidden;
+    }
+    .modal-head {
+      padding: 18px 22px; border-bottom: 1px solid var(--border);
+      display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; flex-wrap: wrap;
+    }
+    .modal-head h2 { font-size: 1.2rem; font-weight: 700; }
+    .modal-head .sub { font-size: 0.82rem; color: var(--muted); margin-top: 4px; }
+    .modal-body { display: grid; grid-template-columns: 300px 1fr; gap: 0; min-height: 560px; }
+    @media (max-width: 840px) { .modal-body { grid-template-columns: 1fr; } }
+    .controls { padding: 18px 20px; border-right: 1px solid var(--border); background: #fafbfd; }
+    @media (max-width: 840px) { .controls { border-right: none; border-bottom: 1px solid var(--border); } }
+    .field { margin-bottom: 16px; }
+    .field > label { display: block; font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; color: var(--muted); margin-bottom: 6px; }
+    .seg { display: flex; flex-wrap: wrap; gap: 6px; }
+    .seg button {
+      padding: 8px 12px; border-radius: 8px; border: 1px solid var(--border); background: #fff;
+      font-family: inherit; font-size: 0.8rem; font-weight: 600; color: var(--ink); cursor: pointer;
+    }
+    .seg button.on { background: var(--blue); color: #fff; border-color: var(--blue); }
+    select, .custom-row input {
+      width: 100%; padding: 9px 11px; border: 1px solid var(--border); border-radius: 8px;
+      font-family: inherit; font-size: 0.85rem; background: #fff;
+    }
+    .custom-row { display: none; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 8px; }
+    .custom-row.show { display: grid; }
+    .email-line { font-size: 0.8rem; color: var(--muted); background: #fff; border: 1px solid var(--border); border-radius: 8px; padding: 8px 10px; }
+    .email-line strong { color: var(--ink); }
+    .hint { font-size: 0.75rem; color: var(--muted); margin-top: 6px; line-height: 1.4; }
+    .canvas-wrap { padding: 18px 20px; display: flex; flex-direction: column; gap: 12px; }
+    .canvas-meta { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; font-size: 0.78rem; color: var(--muted); }
+    .canvas-meta code { background: #eef2f6; padding: 2px 6px; border-radius: 4px; font-size: 0.75rem; color: var(--ink); }
+    .stage {
+      position: relative; margin: 0 auto; background: #e8eef5;
+      border: 1px solid var(--border); border-radius: 8px; overflow: hidden;
+      width: min(100%, 420px); aspect-ratio: 1054 / 1364;
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,0.4);
+      touch-action: none; user-select: none;
+    }
+    .infographic-bg {
+      position: absolute; inset: 0;
+      background: linear-gradient(160deg, #1e3a5f 0%, #2b7de9 45%, #7dd3fc 100%);
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      color: rgba(255,255,255,0.95); text-align: center; padding: 24px; pointer-events: none;
+    }
+    .infographic-bg .t { font-size: clamp(0.9rem, 3.2vw, 1.15rem); font-weight: 700; margin-bottom: 8px; }
+    .infographic-bg .s { font-size: 0.72rem; opacity: 0.85; max-width: 80%; }
+    .draggable {
+      position: absolute; cursor: grab; z-index: 5;
+      border: 2px solid transparent; border-radius: 4px;
+    }
+    .draggable:active { cursor: grabbing; }
+    .draggable.dragging { border-color: #fff; box-shadow: 0 0 0 2px var(--blue); z-index: 10; }
+    .card-piece {
+      width: 28%; min-width: 72px; background: rgba(255,255,255,0.96); color: var(--ink);
+      padding: 6px 8px; border-radius: 4px; font-size: 0.58rem; line-height: 1.25;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    }
+    .card-piece.logo-only {
+      width: 18%; min-width: 56px; padding: 8px; text-align: center; font-weight: 800;
+      font-size: 0.7rem; letter-spacing: 0.02em; color: var(--blue);
+    }
+    .card-piece.full .co { font-weight: 700; font-size: 0.62rem; }
+    .card-piece.full .nm { font-weight: 600; }
+    .card-piece.hidden { display: none; }
+    .footer-piece {
+      left: 0 !important; width: 100%; background: rgba(15,23,42,0.88); color: #fff;
+      padding: 7px 10px; font-size: 0.58rem; display: flex; flex-wrap: wrap; gap: 4px 10px;
+      justify-content: center; text-align: center; border-radius: 0;
+    }
+    .footer-piece.hidden { display: none; }
+    .footer-piece span { white-space: nowrap; }
+    .modal-foot {
+      padding: 14px 22px; border-top: 1px solid var(--border);
+      display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap;
+      background: #fafbfd;
+    }
+    .modal-foot .save-note { font-size: 0.78rem; color: var(--muted); max-width: 420px; }
+    .btn { font-family: inherit; font-size: 0.88rem; font-weight: 600; padding: 10px 16px; border-radius: 10px; border: none; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; min-height: 44px; text-decoration: none; }
+    .btn-primary { background: var(--blue); color: #fff; }
+    .btn-primary:hover { background: var(--blue-dark); }
+    .btn-ghost { background: #fff; border: 1px solid var(--border); color: var(--ink); }
+    .toast {
+      display: none; position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
+      background: #1e2a4a; color: #fff; padding: 12px 18px; border-radius: 10px; font-size: 0.85rem; z-index: 200;
+    }
+    .toast.show { display: block; }
+  </style>
+</head>
+<body>
+  <header class="thesis">
+    <span class="rec">#400 · Surface 2 · Brand positioner (AFA)</span>
+    <h1>Position the business card and footer</h1>
+    <p>Mirrors AFA <code>post_infographic_setup</code>: card type, footer presets, paper size, draggable placement. Soft Dev hold.</p>
+  </header>
+  <nav class="nav">
+    <a href="../">Hub</a><span class="sep">·</span>
+    <a href="../manage/">Manage</a><span class="sep">·</span>
+    <span class="on">Positioner</span><span class="sep">·</span>
+    <a href="../email-insert/">Email insert</a><span class="sep">·</span>
+    <a href="../social-insert/">Social insert</a>
+  </nav>
+
+  <div class="shell">
+    <div class="callout">
+      <strong>Flow:</strong> Opens after upload (or from <em>Set branding</em> on a library card). Drag the logo/card freely (snaps every 5px). Footer moves up/down only. Defaults start near AFA: card ≈ (700, 0), footer ≈ (0, 1330) on Letter.
+    </div>
+    <div class="note">
+      <strong>Saved as (plain words on UI):</strong> placement is <em>saved with this infographic</em>; card / footer / paper choices are remembered as <em>your default branding</em> for next time.
+      <br /><span style="opacity:0.85;font-size:0.78rem">(Under the hood AFA: content holds footerPosition, businessCardPosition, desiredDimensions; AdvisorPreferences holds businessCardType, letterSize, footerType — open decision whether FC mirrors both.)</span>
+    </div>
+
+    <div class="modal-frame" role="dialog" aria-labelledby="posTitle">
+      <div class="modal-head">
+        <div>
+          <h2 id="posTitle">Position the business card and footer</h2>
+          <div class="sub">Infographic: <strong id="pieceName">TFSA contribution room</strong></div>
+        </div>
+        <a class="btn btn-ghost" href="../manage/">← Back to library</a>
+      </div>
+
+      <div class="modal-body">
+        <aside class="controls">
+          <div class="field">
+            <label>Business card</label>
+            <div class="seg" id="cardType">
+              <button type="button" data-v="none">None</button>
+              <button type="button" data-v="full">Full Card</button>
+              <button type="button" class="on" data-v="logo">Logo Only</button>
+            </div>
+            <div class="hint">AFA default: Logo Only. Open decision for FC.</div>
+          </div>
+
+          <div class="field">
+            <label>Footer</label>
+            <select id="footerType" aria-label="Footer type">
+              <option value="none">None</option>
+              <option value="n-t-e-w" selected>Name · Tel · Email · Website</option>
+              <option value="n-t-w-e">Name · Tel · Website · Email</option>
+              <option value="n-w-e-t">Name · Website · Email · Tel</option>
+              <option value="c-w-e-t">Company · Website · Email · Tel</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label>Email shown</label>
+            <div class="email-line">Email shown: <strong>jordan@pacificridgewealth.example</strong></div>
+            <div class="hint">Uses the email you display to clients (same idea as FC #393). Falls back to your account email if unset.</div>
+          </div>
+
+          <div class="field">
+            <label>Paper size</label>
+            <div class="seg" id="paperSize">
+              <button type="button" class="on" data-v="letter">Letter</button>
+              <button type="button" data-v="a4">A4</button>
+              <button type="button" data-v="custom">Custom</button>
+            </div>
+            <div class="custom-row" id="customDims">
+              <input type="number" id="custW" value="1054" aria-label="Width" placeholder="Width" />
+              <input type="number" id="custH" value="1364" aria-label="Height" placeholder="Height" />
+            </div>
+            <div class="hint">Letter default ≈ 1054 × 1364 (AFA).</div>
+          </div>
+
+          <div class="field">
+            <label>Positions (live)</label>
+            <div class="hint" id="posReadout">Card (700, 0) · Footer Y 1330 · snap 5px</div>
+          </div>
+        </aside>
+
+        <div class="canvas-wrap">
+          <div class="canvas-meta">
+            <span>Drag logo/card anywhere · footer up/down only</span>
+            <span>Paper: <code id="paperLabel">Letter · 1054 × 1364</code></span>
+          </div>
+          <div class="stage" id="stage" aria-label="Infographic canvas">
+            <div class="infographic-bg">
+              <div class="t" id="bgTitle">TFSA contribution room</div>
+              <div class="s">Placeholder graphic — fictional advisor content only</div>
+            </div>
+            <div class="draggable card-piece logo-only" id="cardPiece" style="left:66.4%; top:0%;" title="Drag to place">
+              <div class="logo-mark">PRW</div>
+            </div>
+            <div class="draggable footer-piece" id="footerPiece" style="top:97.5%;" title="Drag up or down">
+              <span id="ftName">Jordan Blake</span>
+              <span id="ftTel">604-555-0142</span>
+              <span id="ftEmail">jordan@pacificridgewealth.example</span>
+              <span id="ftWeb">pacificridgewealth.example</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-foot">
+        <div class="save-note">Placement is saved with this infographic. Your card, footer, and paper choices become your default branding for next time.</div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <a class="btn btn-ghost" href="../manage/">Cancel</a>
+          <button type="button" class="btn btn-primary" onclick="saveBranding()">Save branding</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script>
+    const SNAP = 5;
+    const stage = document.getElementById('stage');
+    const card = document.getElementById('cardPiece');
+    const footer = document.getElementById('footerPiece');
+    const papers = { letter: [1054, 1364], a4: [1000, 1414], custom: [1054, 1364] };
+    let paper = 'letter';
+    let dims = papers.letter.slice();
+
+    // Map AFA-ish defaults onto % of stage
+    function setCardXY(x, y) {
+      const r = stage.getBoundingClientRect();
+      const left = (x / dims[0]) * 100;
+      const top = (y / dims[1]) * 100;
+      card.style.left = Math.max(0, Math.min(100 - 18, left)) + '%';
+      card.style.top = Math.max(0, Math.min(90, top)) + '%';
+      updateReadout();
+    }
+    function setFooterY(y) {
+      const top = (y / dims[1]) * 100;
+      footer.style.top = Math.max(70, Math.min(97.5, top)) + '%';
+      updateReadout();
+    }
+    function updateReadout() {
+      const cx = Math.round(parseFloat(card.style.left) / 100 * dims[0] / SNAP) * SNAP;
+      const cy = Math.round(parseFloat(card.style.top) / 100 * dims[1] / SNAP) * SNAP;
+      const fy = Math.round(parseFloat(footer.style.top) / 100 * dims[1] / SNAP) * SNAP;
+      document.getElementById('posReadout').textContent =
+        'Card (' + cx + ', ' + cy + ') · Footer Y ' + fy + ' · snap ' + SNAP + 'px';
+    }
+    setCardXY(700, 0);
+    setFooterY(1330);
+
+    function makeDrag(el, { yOnly = false } = {}) {
+      let startX, startY, origL, origT;
+      function onDown(e) {
+        e.preventDefault();
+        const pt = e.touches ? e.touches[0] : e;
+        startX = pt.clientX; startY = pt.clientY;
+        origL = parseFloat(el.style.left) || 0;
+        origT = parseFloat(el.style.top) || 0;
+        el.classList.add('dragging');
+        window.addEventListener('mousemove', onMove);
+        window.addEventListener('mouseup', onUp);
+        window.addEventListener('touchmove', onMove, { passive: false });
+        window.addEventListener('touchend', onUp);
+      }
+      function onMove(e) {
+        e.preventDefault();
+        const pt = e.touches ? e.touches[0] : e;
+        const r = stage.getBoundingClientRect();
+        let dx = ((pt.clientX - startX) / r.width) * 100;
+        let dy = ((pt.clientY - startY) / r.height) * 100;
+        // snap in paper px space
+        const snapPctX = (SNAP / dims[0]) * 100;
+        const snapPctY = (SNAP / dims[1]) * 100;
+        if (!yOnly) {
+          let nl = origL + dx;
+          nl = Math.round(nl / snapPctX) * snapPctX;
+          el.style.left = Math.max(0, Math.min(82, nl)) + '%';
+        }
+        let nt = origT + dy;
+        nt = Math.round(nt / snapPctY) * snapPctY;
+        if (yOnly) el.style.top = Math.max(70, Math.min(97.5, nt)) + '%';
+        else el.style.top = Math.max(0, Math.min(90, nt)) + '%';
+        updateReadout();
+      }
+      function onUp() {
+        el.classList.remove('dragging');
+        window.removeEventListener('mousemove', onMove);
+        window.removeEventListener('mouseup', onUp);
+        window.removeEventListener('touchmove', onMove);
+        window.removeEventListener('touchend', onUp);
+      }
+      el.addEventListener('mousedown', onDown);
+      el.addEventListener('touchstart', onDown, { passive: false });
+    }
+    makeDrag(card, { yOnly: false });
+    makeDrag(footer, { yOnly: true });
+
+    // Card type
+    document.querySelectorAll('#cardType button').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('#cardType button').forEach(b => b.classList.remove('on'));
+        btn.classList.add('on');
+        const v = btn.dataset.v;
+        card.classList.toggle('hidden', v === 'none');
+        card.classList.toggle('logo-only', v === 'logo');
+        card.classList.toggle('full', v === 'full');
+        if (v === 'logo') {
+          card.innerHTML = '<div class="logo-mark">PRW</div>';
+        } else if (v === 'full') {
+          card.innerHTML = '<div class="co">Pacific Ridge Wealth</div><div class="nm">Jordan Blake</div><div>Advisor</div>';
+        }
+      });
+    });
+
+    // Footer
+    const footerMap = {
+      none: [],
+      'n-t-e-w': ['ftName','ftTel','ftEmail','ftWeb'],
+      'n-t-w-e': ['ftName','ftTel','ftWeb','ftEmail'],
+      'n-w-e-t': ['ftName','ftWeb','ftEmail','ftTel'],
+      'c-w-e-t': ['ftCo','ftWeb','ftEmail','ftTel']
+    };
+    // ensure company span exists
+    (function(){
+      const s = document.createElement('span');
+      s.id = 'ftCo'; s.textContent = 'Pacific Ridge Wealth';
+      footer.insertBefore(s, footer.firstChild);
+    })();
+    document.getElementById('footerType').addEventListener('change', (e) => {
+      const v = e.target.value;
+      footer.classList.toggle('hidden', v === 'none');
+      ['ftName','ftTel','ftEmail','ftWeb','ftCo'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.style.display = 'none';
+      });
+      (footerMap[v] || []).forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.style.display = '';
+      });
+    });
+    document.getElementById('footerType').dispatchEvent(new Event('change'));
+
+    // Paper
+    document.querySelectorAll('#paperSize button').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('#paperSize button').forEach(b => b.classList.remove('on'));
+        btn.classList.add('on');
+        paper = btn.dataset.v;
+        document.getElementById('customDims').classList.toggle('show', paper === 'custom');
+        if (paper !== 'custom') dims = papers[paper].slice();
+        else dims = [ +document.getElementById('custW').value || 1054, +document.getElementById('custH').value || 1364 ];
+        stage.style.aspectRatio = dims[0] + ' / ' + dims[1];
+        const label = paper === 'letter' ? 'Letter' : paper === 'a4' ? 'A4' : 'Custom';
+        document.getElementById('paperLabel').textContent = label + ' · ' + dims[0] + ' × ' + dims[1];
+        updateReadout();
+      });
+    });
+    ['custW','custH'].forEach(id => {
+      document.getElementById(id).addEventListener('change', () => {
+        if (paper !== 'custom') return;
+        dims = [ +document.getElementById('custW').value || 1054, +document.getElementById('custH').value || 1364 ];
+        stage.style.aspectRatio = dims[0] + ' / ' + dims[1];
+        document.getElementById('paperLabel').textContent = 'Custom · ' + dims[0] + ' × ' + dims[1];
+        updateReadout();
+      });
+    });
+
+    const names = { upload: 'New upload', tfsa: 'TFSA contribution room', cpp: 'CPP at 60 vs 65', rrsp: 'RRSP vs TFSA at a glance', mortgage: 'Mortgage stress test basics', emergency: 'Building an emergency fund', preview: 'TFSA contribution room' };
+    const q = new URLSearchParams(location.search).get('from');
+    if (q && names[q]) {
+      document.getElementById('pieceName').textContent = names[q];
+      document.getElementById('bgTitle').textContent = names[q];
+    }
+
+    function saveBranding() {
+      const t = document.getElementById('toast');
+      t.textContent = 'Branding saved with this infographic · defaults remembered';
+      t.classList.add('show');
+      setTimeout(() => { location.href = '../manage/'; }, 900);
+    }
+  </script>
+</body>
+</html>
