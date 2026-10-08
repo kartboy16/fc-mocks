@@ -1,0 +1,701 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Direction A — Compliance is the final approver · #415</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<style>
+:root{--bg:#f4f8fc;--card:#fff;--ink:#1e2a4a;--muted:#5b6572;--blue:#2b7de9;--blue-dark:#1e5bb8;--border:#d4e4f2;--mint:#e6f1fb;--ok:#047857;--ok-bg:#e8f5e9;--warn:#92400e;--warn-bg:#fef3c7;--err:#b42318;--err-bg:#fef3f2;--decl-bg:#f3f4f6;--comp:#6d28d9;--comp-bg:#f1ebff}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Inter,system-ui,sans-serif;background:var(--bg);color:var(--ink);font-size:14px;line-height:1.45}
+a{color:var(--blue)}
+.thesis{background:linear-gradient(135deg,#1e2a4a,#2b7de9);color:#fff;padding:16px 24px}
+.thesis .rec{display:inline-block;background:#fff;color:var(--blue);font-size:.68rem;font-weight:700;padding:3px 10px;border-radius:999px;margin-bottom:8px}
+.thesis .rec.alt{background:rgba(255,255,255,.2);color:#fff}
+.thesis h1{font-size:1.05rem;margin-bottom:4px}
+.thesis p{opacity:.92;font-size:.8rem;max-width:980px}
+.nav{padding:8px 24px;font-size:.75rem;background:#fafafa;border-bottom:1px solid var(--border);display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+.nav a{color:var(--blue);text-decoration:none;font-weight:500}
+.nav .sep{color:#c0c8d4}.nav .on{font-weight:700;color:var(--ink)}
+.nav .hold{margin-left:auto;background:#fef3c7;color:#92400e;border:1px solid #fcd34d;border-radius:999px;padding:2px 10px;font-weight:600;font-size:.68rem}
+.demo-bar{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:12px 24px 6px;padding:10px 12px;background:#fff;border:1px dashed #b9c7d8;border-radius:10px}
+.demo-bar .lbl{font-size:.65rem;font-weight:700;text-transform:uppercase;color:var(--muted);margin-right:4px}
+.demo-btn{padding:5px 10px;border:1px solid var(--border);border-radius:8px;background:#fff;font-family:inherit;font-size:.72rem;font-weight:600;color:var(--ink);cursor:pointer}
+.demo-btn:hover,.demo-btn.on{border-color:var(--blue);color:var(--blue);background:var(--mint)}
+.demo-btn.reset{color:var(--muted)}
+.demo-note{margin:0 24px 10px;font-size:.76rem;color:var(--muted);min-height:1.2em}
+.stage{padding:4px 16px 40px;display:flex;flex-wrap:wrap;gap:24px;justify-content:center;align-items:flex-start}
+.phone-wrap{display:flex;flex-direction:column;align-items:center}
+.phone-label,.panel-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);margin-bottom:8px}
+.phone{width:390px;height:min(800px,calc(100vh - 210px));min-height:640px;background:#0e1730;border-radius:40px;padding:12px;box-shadow:0 28px 70px rgba(30,42,74,.28);flex-shrink:0}
+.screen{background:var(--bg);border-radius:30px;height:100%;overflow:hidden;display:flex;flex-direction:column;position:relative}
+.screen.mail{background:#fff}
+.statusbar{display:flex;justify-content:space-between;align-items:center;padding:10px 18px 4px;font-size:12px;font-weight:700}
+.statusbar .sigs{display:flex;gap:4px;align-items:flex-end;height:12px}
+.statusbar .sigs i{display:block;width:3px;background:var(--ink);border-radius:1px}
+.statusbar .sigs i:nth-child(1){height:4px}.statusbar .sigs i:nth-child(2){height:7px}.statusbar .sigs i:nth-child(3){height:10px}.statusbar .sigs i:nth-child(4){height:12px;opacity:.35}
+.appbar{padding:4px 16px 10px}
+.appbar .kicker{font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--blue)}
+.appbar h2{font-size:20px;font-weight:700;line-height:1.2}
+.appbar .sub{font-size:13px;color:var(--muted);margin-top:2px}
+.scroll{flex:1;overflow-y:auto;padding:0 16px 24px}
+.mailhead{padding:6px 16px 10px;border-bottom:1px solid #eef2f6}
+.mailhead .back{font-size:13px;color:var(--blue);font-weight:600;margin-bottom:8px}
+.mailhead .subj{font-size:16px;font-weight:700;line-height:1.3;margin-bottom:8px}
+.mailhead .from{display:flex;gap:10px;align-items:center;font-size:12px;color:var(--muted)}
+.mailhead .from .av{width:32px;height:32px;border-radius:999px;background:var(--blue);color:#fff;font-weight:700;font-size:11px;display:grid;place-items:center}
+.mailhead .from b{color:var(--ink)}
+.mailscroll{flex:1;overflow-y:auto;padding:12px 12px 24px;background:#f6f8fb}
+.em{background:#fff;border:1px solid var(--border);border-radius:12px;overflow:hidden;max-width:600px;margin:0 auto}
+.em-top{background:#1e2a4a;color:#fff;padding:12px 16px;display:flex;justify-content:space-between;align-items:center}
+.em-logo{font-weight:700;font-size:14px}.em-logo span{color:#8ec1ff}
+.em-kind{font-size:11px;font-weight:700;background:rgba(255,255,255,.15);padding:3px 8px;border-radius:999px}
+.em-in{padding:16px}
+.em-in p{font-size:13px;color:#3a4558;margin-bottom:10px}
+.em-in .em-hi{font-weight:600;color:var(--ink)}
+.em-chain{font-size:12px;background:var(--ok-bg);color:var(--ok);border-radius:8px;padding:8px 10px;margin-bottom:10px;font-weight:600}
+.em-note{font-size:12px;background:#fffbeb;border:1px solid #fde68a;border-left:4px solid #f59e0b;border-radius:8px;padding:8px 10px;margin-bottom:10px;color:#78350f}
+.em-btns{display:flex;gap:8px;margin:14px 0 10px;flex-wrap:wrap}
+.em-btn{flex:1 1 120px;text-align:center;padding:12px 14px;border-radius:10px;font-weight:700;font-size:14px;text-decoration:none;cursor:pointer;border:1px solid transparent}
+.em-btn.pri{background:var(--blue);color:#fff}
+.em-btn.sec{background:#fff;color:var(--ink);border-color:var(--border)}
+.em-small{font-size:11px!important;color:var(--muted)!important}
+.em-foot{padding:10px 16px;background:#f8fafc;border-top:1px solid #eef2f6;font-size:10.5px;color:var(--muted)}
+.em-list{border:1px solid var(--border);border-radius:10px;overflow:hidden;margin:8px 0 12px}
+.em-row{display:flex;gap:8px;align-items:center;padding:9px 10px;border-bottom:1px solid #eef2f6;font-size:12px}
+.em-row:last-child{border-bottom:none}
+.em-row .t{flex:1;min-width:0}.em-row .t b{display:block;font-size:12.5px;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.em-row .t span{color:var(--muted);font-size:11px}
+.em-row a{font-weight:700;font-size:12px;cursor:pointer;text-decoration:none}
+.desk-email{flex:1;min-width:320px;max-width:640px}
+.desk-email .win{background:#fff;border:1px solid var(--border);border-radius:14px;overflow:hidden;box-shadow:0 1px 3px rgba(30,42,74,.06)}
+.desk-email .hdr{padding:12px 16px;border-bottom:1px solid var(--border);background:#fafafa;font-size:12px;color:var(--muted)}
+.desk-email .hdr div{margin-bottom:2px}.desk-email .hdr b{color:var(--ink)}
+.desk-email .hdr .s{font-size:15px;font-weight:700;color:var(--ink);margin-top:6px}
+.desk-email .body{padding:16px;background:#f6f8fb}
+.pill{display:inline-flex;align-items:center;gap:4px;font-size:10.5px;font-weight:700;padding:3px 8px;border-radius:999px;letter-spacing:.02em;white-space:nowrap}
+.pill.campaign{background:#e0edff;color:#1e5bb8}
+.pill.social{background:#fce7f3;color:#9d174d}
+.pill.approvals{background:#dcfce7;color:#166534}
+.pill.comp{background:var(--comp-bg);color:var(--comp)}
+.piece-card{background:#fff;border:1px solid var(--border);border-radius:16px;overflow:hidden;margin-bottom:12px}
+.pv{padding:12px;border-bottom:1px solid var(--border)}
+.pv-camp{background:#f8fbff}
+.pv-camp .bar{background:#1e3a8a;color:#fff;font-size:11px;font-weight:700;padding:6px 10px;border-radius:8px 8px 0 0}
+.pv-camp .mail{background:#fff;border:1px solid var(--border);border-top:none;border-radius:0 0 8px 8px;padding:10px;font-size:12px;color:#3a4558}
+.pv-camp .mail b{display:block;color:var(--ink);font-size:13px;margin-bottom:4px}
+.pv-camp .mail .cta{display:inline-block;margin-top:8px;background:var(--blue);color:#fff;font-size:11px;font-weight:700;padding:5px 10px;border-radius:6px}
+.pv-soc{background:#fdf7fb}
+.pv-soc .post{background:#fff;border:1px solid #f3d3e4;border-radius:10px;padding:10px}
+.pv-soc .who{display:flex;gap:8px;align-items:center;font-size:12px;margin-bottom:6px}
+.pv-soc .who .av{width:28px;height:28px;border-radius:999px;background:#fbcfe8;color:#9d174d;font-weight:700;font-size:10px;display:grid;place-items:center}
+.pv-soc .txt{font-size:12.5px;color:#3a4558;margin-bottom:8px}
+.pv-soc .img{height:90px;border-radius:8px;background:linear-gradient(135deg,#fbcfe8,#c4b5fd);display:flex;align-items:flex-end;padding:8px;font-size:11px;font-weight:700;color:#4c1d95}
+.pv-soc .nets{display:flex;gap:6px;margin-top:8px}
+.pv-soc .nets span{font-size:10px;font-weight:700;padding:2px 7px;border-radius:6px;background:#eef2f6;color:#334155}
+.pv-blog{height:110px;background:linear-gradient(135deg,#bbf7d0,#86efac);display:flex;align-items:flex-end;padding:12px;color:#14532d;font-size:11px;font-weight:700}
+.piece-body{padding:14px}
+.piece-body h3{font-size:16px;font-weight:700;margin:6px 0;line-height:1.3}
+.piece-body .meta{font-size:12px;color:var(--muted);margin-bottom:10px}
+.piece-body .meta b{color:var(--ink)}
+.actions{display:flex;flex-direction:column;gap:8px}
+.btn{min-height:48px;border-radius:12px;font-family:inherit;font-size:15px;font-weight:700;cursor:pointer;border:1px solid transparent;padding:12px 16px;width:100%}
+.btn-primary{background:var(--blue);color:#fff;border-color:var(--blue)}
+.btn-primary:hover{filter:brightness(1.05)}
+.btn-ok{background:var(--ok);color:#fff;border-color:var(--ok)}
+.btn-secondary{background:#fff;color:var(--ink);border-color:var(--border)}
+.btn-secondary:hover{border-color:#9ca3af;background:#f9fafb}
+.btn-ghost{background:transparent;color:var(--blue);border:none;font-weight:600;min-height:40px}
+.btn-danger-soft{background:#fff;color:#7f1d1d;border-color:#f2a7a7}
+.btn-sm{min-height:34px;font-size:12.5px;padding:6px 12px;border-radius:9px;width:auto}
+.remind-note{margin-top:10px;padding:10px 12px;background:#eef4fb;border:1px solid var(--border);border-radius:10px;font-size:12px;color:var(--blue-dark)}
+.remind-note.comp{background:var(--comp-bg);border-color:#ddd0fb;color:#4c1d95}
+.notebox{width:100%;font-family:inherit;font-size:13.5px;padding:10px 12px;border:1px solid var(--border);border-radius:10px;resize:vertical;min-height:60px;margin:4px 0 10px}
+.notebox:focus{outline:3px solid #bfdbfe;border-color:var(--blue)}
+.fl{font-size:12px;font-weight:600;color:var(--ink);display:block;margin-top:2px}
+.fl span{font-weight:500;color:var(--muted)}
+.tracker{display:flex;align-items:flex-start;gap:0;margin:8px 0 12px;background:#fff;border:1px solid var(--border);border-radius:12px;padding:10px 8px}
+.tracker .st{flex:1;text-align:center;position:relative;font-size:10.5px;font-weight:600;color:var(--muted);padding:0 2px}
+.tracker .st .dot{width:22px;height:22px;border-radius:999px;margin:0 auto 4px;display:grid;place-items:center;font-size:11px;font-weight:700;background:#eef2f6;color:#94a3b8;border:2px solid #e2e8f0;position:relative;z-index:1}
+.tracker .st:not(:last-child)::after{content:"";position:absolute;top:11px;left:calc(50% + 13px);right:calc(-50% + 13px);height:2px;background:#e2e8f0}
+.tracker .st.done .dot{background:var(--ok);border-color:var(--ok);color:#fff}
+.tracker .st.done{color:var(--ok)}
+.tracker .st.done:not(:last-child)::after{background:var(--ok)}
+.tracker .st.cur .dot{background:#fff;border-color:var(--comp);color:var(--comp)}
+.tracker .st.cur{color:var(--comp)}
+.tracker .st.cur.adv .dot{border-color:#d97706;color:#d97706}.tracker .st.cur.adv{color:#b45309}
+.tracker .st.dec .dot{background:#fee2e2;border-color:#f87171;color:#b91c1c}.tracker .st.dec{color:#b91c1c}
+.tracker .st.skip .dot{background:#f8fafc;border-style:dashed}.tracker .st.skip{color:#94a3b8;text-decoration:line-through}
+.audit{font-size:11.5px;color:#334155;background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:7px 9px;margin:6px 0}
+.audit div+div{margin-top:3px}
+.audit .ok{color:var(--ok);font-weight:600}.audit .no{color:#b91c1c;font-weight:600}
+.badge{display:inline-block;font-size:10px;font-weight:700;padding:2px 8px;border-radius:999px;text-transform:uppercase;letter-spacing:.03em;white-space:nowrap}
+.badge.aw_adv{background:#fef3c7;color:#92400e}
+.badge.aw_comp{background:var(--comp-bg);color:var(--comp)}
+.badge.ok{background:var(--ok-bg);color:var(--ok)}
+.badge.dec_adv{background:var(--decl-bg);color:#374151}
+.badge.dec_comp{background:#fee2e2;color:#991b1b}
+.list-item{background:#fff;border:1px solid var(--border);border-radius:14px;padding:12px 14px;margin-bottom:8px}
+.list-item .ttl{font-weight:700;font-size:14px;line-height:1.3;margin:4px 0 2px}
+.list-item .sub{font-size:12px;color:var(--muted)}
+.list-item.live{border-color:var(--blue);box-shadow:0 0 0 2px rgba(43,125,233,.12)}
+.overlay{position:absolute;inset:0;background:rgba(14,23,48,.45);z-index:20;display:flex;align-items:center;justify-content:center}
+.overlay.fixed{position:fixed;z-index:150}
+.dialog{background:#fff;border-radius:16px;margin:auto 16px;padding:18px;max-width:350px;width:100%;box-shadow:0 16px 40px rgba(14,23,48,.3);max-height:92%;overflow-y:auto}
+.dialog h3{font-size:16px;margin-bottom:6px}
+.dialog .lead{font-size:13px;color:var(--muted);margin-bottom:12px}
+.reason-list{display:flex;flex-direction:column;gap:7px;margin-bottom:10px}
+.reason{display:flex;align-items:flex-start;gap:10px;padding:10px 12px;border:1px solid var(--border);border-radius:12px;cursor:pointer;background:#fff;text-align:left;font-family:inherit;font-size:13px;color:var(--ink);width:100%}
+.reason:hover{border-color:var(--blue)}
+.reason.on{border-color:var(--blue);background:var(--mint)}
+.reason input{margin-top:2px;accent-color:var(--blue)}
+.reason .lab{font-weight:600}
+.sheet-actions{display:flex;flex-direction:column;gap:8px;margin-top:4px}
+.confirm-state{text-align:center;padding:22px 4px 8px}
+.confirm-state .icon{width:56px;height:56px;border-radius:999px;display:grid;place-items:center;font-size:26px;margin:0 auto 12px;font-weight:700}
+.confirm-state .icon.ok{background:var(--ok-bg);color:var(--ok)}
+.confirm-state .icon.no{background:var(--decl-bg);color:#374151}
+.confirm-state .icon.fwd{background:var(--comp-bg);color:var(--comp)}
+.confirm-state h3{font-size:18px;margin-bottom:6px}
+.confirm-state p{font-size:13px;color:var(--muted);margin:0 auto 8px;max-width:300px}
+.confirm-state p strong{color:var(--ink)}
+.undo-bar{margin:12px 0;padding:10px 12px;background:var(--warn-bg);border:1px solid #fcd34d;border-radius:12px;font-size:12px;color:var(--warn);display:flex;align-items:center;gap:8px;justify-content:space-between}
+.undo-bar button{background:#fff;border:1px solid #fcd34d;border-radius:8px;padding:6px 12px;font-family:inherit;font-size:12px;font-weight:700;color:var(--warn);cursor:pointer}
+.panel{flex:1;min-width:320px;max-width:820px;background:#fff;border:1px solid var(--border);border-radius:14px;overflow:hidden;box-shadow:0 1px 3px rgba(30,42,74,.06)}
+.panel .ah{padding:14px 16px;border-bottom:1px solid var(--border);background:#fafafa;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.panel .ah h3{font-size:15px;font-weight:700}
+.panel .ah .sub{font-size:12px;color:var(--muted);flex-basis:100%}
+.panel .pb{padding:14px 16px}
+.chrome{display:flex;align-items:center;gap:14px;background:#1e2a4a;color:#fff;padding:10px 16px;font-size:12px}
+.chrome b{font-size:13px}.chrome b span{color:#8ec1ff}
+.chrome .tab{opacity:.75}.chrome .tab.on{opacity:1;font-weight:700;border-bottom:2px solid #8ec1ff;padding-bottom:2px}
+.chrome .me{margin-left:auto;opacity:.8}
+table.t{width:100%;border-collapse:collapse;font-size:12.5px}
+table.t th{text-align:left;font-size:10.5px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);padding:8px 10px;border-bottom:1px solid var(--border);background:#fbfcfe}
+table.t td{padding:10px;border-bottom:1px solid #eef2f6;vertical-align:top}
+table.t tr.live td{background:#f5f9ff}
+table.t .nm{font-weight:700}.t .firm{font-size:11px;color:var(--muted)}
+table.t .aud{font-size:11px;color:var(--muted);margin-top:3px}
+.chips{display:flex;gap:6px;flex-wrap:wrap}
+.chip{font-size:11px;font-weight:600;padding:4px 10px;border-radius:999px;border:1px solid var(--border);background:#fff;color:var(--ink)}
+.chip.on{background:var(--mint);border-color:var(--blue);color:var(--blue)}
+.set-row{padding:14px 0;border-bottom:1px solid #eef2f6;display:flex;gap:14px;align-items:flex-start}
+.set-row:last-child{border-bottom:none}
+.set-row .k{width:200px;flex-shrink:0;font-weight:700;font-size:13px}
+.set-row .k span{display:block;font-weight:500;font-size:11.5px;color:var(--muted);margin-top:2px}
+.set-row .v{flex:1;font-size:13px}
+.toggle{display:inline-flex;align-items:center;gap:8px;cursor:pointer;font-weight:600}
+.toggle i{width:38px;height:22px;border-radius:999px;background:#cbd5e1;position:relative;display:inline-block}
+.toggle i::after{content:"";position:absolute;top:3px;left:3px;width:16px;height:16px;border-radius:999px;background:#fff;transition:left .15s}
+.toggle.on i{background:var(--ok)}.toggle.on i::after{left:19px}
+.inp{font-family:inherit;font-size:13px;padding:8px 10px;border:1px solid var(--border);border-radius:8px;width:100%;max-width:340px;margin-bottom:6px;background:#fff}
+.opt{display:flex;gap:10px;align-items:flex-start;padding:10px 12px;border:1px solid var(--border);border-radius:10px;margin-bottom:6px;cursor:pointer;background:#fff}
+.opt.on{border-color:var(--blue);background:var(--mint)}
+.opt b{display:block;font-size:13px}.opt span{font-size:12px;color:var(--muted)}
+.opt input{margin-top:3px;accent-color:var(--blue)}
+.cbx{display:flex;gap:8px;align-items:center;margin-bottom:6px;font-size:13px}
+.cbx input{accent-color:var(--blue)}
+.qrow{display:flex;gap:10px;align-items:center;padding:10px 12px;border:1px solid var(--border);border-radius:12px;margin-bottom:8px;background:#fff;flex-wrap:wrap}
+.qrow .qt{flex:1;min-width:180px}
+.qrow .qt b{display:block;font-size:13.5px}
+.qrow .qt span{font-size:11.5px;color:var(--muted)}
+.qrow .qa{display:flex;gap:6px}
+.qrow.done{background:#fbfcfe}
+.legend{max-width:980px;margin:0 auto;padding:0 24px 40px;font-size:.76rem;color:var(--muted)}
+.legend p+p{margin-top:6px}
+.toast{position:fixed;bottom:24px;right:24px;background:#1e2a4a;color:#fff;padding:10px 16px;border-radius:8px;font-size:.8rem;display:none;z-index:200;max-width:380px;box-shadow:0 8px 24px rgba(0,0,0,.2)}
+.toast.show{display:block}
+.who-chip{display:inline-flex;gap:6px;align-items:center;font-size:11px;font-weight:700;padding:3px 9px;border-radius:999px;background:#fff;border:1px solid var(--border);color:var(--ink);margin-bottom:6px}
+.who-chip.comp{border-color:#ddd0fb;color:var(--comp);background:var(--comp-bg)}
+.who-chip.adv{border-color:#fde68a;color:#92400e;background:#fffbeb}
+.tag-note{font-size:11px;color:var(--muted);margin-top:6px}
+@media(max-width:860px){.panel,.desk-email{max-width:390px;width:100%;min-width:0}.set-row{flex-direction:column}.set-row .k{width:auto}}
+@media(max-width:440px){.phone{width:calc(100vw - 24px)}.stage{padding:4px 8px 40px}}
+
+</style>
+</head>
+<body>
+<header class="thesis">
+  <span class="rec alt">OPTION · compliance alone signs off</span>
+  <h1>A — Compliance is the final approver (advisor gets a copy)</h1>
+  <p>For advisors set to “compliance reviews my content”, the approval email goes to compliance; the advisor gets an FYI copy. Compliance taps Approve → FinancialContent marks it Approved and schedules it, no second step. Decline → optional reason, reminders stop, advisor told. Best for firms where compliance alone signs off. Soft Dev hold · not agent-ready.</p>
+</header>
+<nav class="nav"><a href="../../index.html">#415 hub</a><span class="sep">·</span><a href="../a/" class="on">A Compliance final</a><a href="../b/">B Advisor → compliance</a><a href="../c/">C Review queue</a><span class="sep">·</span><a href="../../build-contract.html">Build contract</a><span class="sep">·</span><a href="../../../416/">#416</a><span class="hold">Idea → playground · Soft Dev hold · not agent-ready</span></nav>
+<div class="demo-bar"><span class="lbl">Demo view</span><button type="button" class="demo-btn" data-view="comp_email">1 · Compliance email</button><button type="button" class="demo-btn" data-view="comp_landing">2 · Approve page / in-app</button><button type="button" class="demo-btn" data-view="comp_after">3 · After approve</button><button type="button" class="demo-btn" data-view="status">4 · Status flips to Approved</button><button type="button" class="demo-btn" data-view="comp_decline">5 · Decline path</button><button type="button" class="demo-btn" data-view="setup">6 · Setup</button><button type="button" class="demo-btn" data-view="phone">7 · Phone</button><button type="button" class="demo-btn reset" data-view="__reset">↺ Reset</button></div>
+<div class="demo-bar" style="margin-top:0"><span class="lbl">Item type</span><button type="button" class="demo-btn" data-type="campaign">✉ Email campaign</button><button type="button" class="demo-btn" data-type="social">◎ Social post</button><span style="font-size:.72rem;color:var(--muted);margin-left:6px">Open question: which types? The mock shows Email campaign / Social post.</span></div>
+<div class="demo-note" id="demoNote"></div>
+<div class="stage" id="stage"></div>
+<div class="legend"><p><strong>Direction A:</strong> one gate — compliance. Advisor is kept in the loop with an FYI copy and sees status in FinancialContent. Closest to the literal #415 ask, fewest clicks, but does <em>not</em> include the advisor-first order from <a href="../../../416/">#416</a>.</p><p><strong>AC check:</strong> compliance Approves like advisors (email + in-app) · Approve flips to Approved & scheduled automatically · decline clear + stops reminders · campaign and social both shown.</p><p>Fictional names only: Jordan Lee (advisor), Priya Shah (Compliance, Northgate Wealth), Maya Chen, Luis Ortega, Ava Thompson, Sam Okonkwo, Noah Patel, Dana Morales. Plain words, no jargon.</p></div>
+<div class="toast" id="toast"></div>
+<script>
+var CFG = {"issue": "415", "mode": "a", "chain": ["comp"], "fyi": true, "note": false, "queue": false, "showTracker": true, "types": ["campaign", "social"], "setupOrder": "comp_only", "landingView": "comp_landing", "phoneRole": "comp", "views": [{"id": "comp_email", "label": "1 · Compliance email", "note": "Priya gets the approval email (same look as advisor approval emails). <b>Jordan gets an FYI copy</b> (far right) — no action needed from him."}, {"id": "comp_landing", "label": "2 · Approve page / in-app", "note": "Email button opens this page; one tap approves. Same controls in-app if Priya is signed in. Tap <b>Approve — schedule it</b>."}, {"id": "comp_after", "label": "3 · After approve", "note": "Compliance sees “Approved and scheduled”. FTT admin row flips to <b>Approved · Scheduled</b> at the same moment — no second approve on our side."}, {"id": "status", "label": "4 · Status flips to Approved", "note": "Advisor side (left) and FTT admin (right). Audit line: “Approved by Priya Shah (Compliance) · Oct 8, 10:14 AM”."}, {"id": "comp_decline", "label": "5 · Decline path", "note": "Decline → optional reason + note for the advisor → reminders stop, advisor is told. Undo for ~10s (same as #389 A)."}, {"id": "setup", "label": "6 · Setup", "note": "Settings › Approvals: turn on compliance review, enter the compliance contact, choose the order. FTT admin can set a firm default."}, {"id": "phone", "label": "7 · Phone", "note": "Compliance email and approve page at phone width (~390px)."}]};
+/* Shared mock engine for #415 / #416 — config injected per page as CFG */
+var ADV = { name: "Jordan Lee", first: "Jordan", firm: "Northgate Wealth", init: "JL" };
+var COMP = { name: "Priya Shah", first: "Priya", firm: "Northgate Wealth", email: "priya.shah@northgatewealth.example", init: "PS" };
+var T = { sent: "Oct 8, 8:45 AM", advOk: "Oct 8, 9:02 AM", compOk: "Oct 8, 10:14 AM", decl: "Oct 8, 10:20 AM" };
+var TYPES = {
+  campaign: { label: "Email campaign", icon: "\u2709", noun: "email campaign", title: "October newsletter: Three questions before you retire",
+    excerpt: "A short note that helps clients pause and ask the right questions before they leave work for good.",
+    whenLabel: "Sends", when: "Mon Oct 12, 9:00 AM PT", to: "Clients (general list) \u00b7 412 people", surface: "Email Campaigns" },
+  social: { label: "Social post", icon: "\u25CE", noun: "social post", title: "RRSP deadline reminder",
+    excerpt: "The RRSP deadline is coming up. A quick check-in now can save a scramble in February. Book 15 minutes with me.",
+    whenLabel: "Posts", when: "Fri Oct 9, 8:30 AM PT", to: "LinkedIn + Facebook", surface: "Social posts" },
+  approvals: { label: "Content approvals \u00b7 Blog post", icon: "\u270E", noun: "blog post", title: "A year-end tax checklist",
+    excerpt: "Five things to check before December 31 so tax season is calmer for you and your family.",
+    whenLabel: "Publishes", when: "Wed Oct 14, 7:00 AM PT", to: "Your website + monthly email digest", surface: "Content approvals" }
+};
+var REASONS = {
+  adv: [
+    { id: "relevant", lab: "Not relevant to my clients" },
+    { id: "timing", lab: "Timing is not right" },
+    { id: "edit", lab: "I'd like changes first" },
+    { id: "other", lab: "Other" }
+  ],
+  comp: [
+    { id: "disclaimer", lab: "Needs a disclaimer" },
+    { id: "wording", lab: "Wording needs changes" },
+    { id: "fit", lab: "Not suitable for our clients" },
+    { id: "other", lab: "Other" }
+  ]
+};
+var BADGE = { aw_adv: "Waiting for advisor", aw_comp: "Waiting for compliance", ok: "Approved \u00b7 Scheduled", dec_adv: "Declined by advisor", dec_comp: "Declined by compliance" };
+var HAS_ADV = CFG.chain.indexOf("adv") >= 0;
+var START = HAS_ADV ? "aw_adv" : "aw_comp";
+
+var QSEED = [
+  { id: "q1", adv: "Jordan Lee", type: "campaign", title: "October newsletter: Three questions before you retire", when: "Mon Oct 12, 9:00 AM" },
+  { id: "q2", adv: "Jordan Lee", type: "social", title: "RRSP deadline reminder", when: "Fri Oct 9, 8:30 AM" },
+  { id: "q3", adv: "Maya Chen", type: "social", title: "Five ways to cut fees this year", when: "Fri Oct 9, 12:00 PM" },
+  { id: "q4", adv: "Maya Chen", type: "campaign", title: "Your fall portfolio check-in", when: "Tue Oct 13, 8:00 AM" },
+  { id: "q5", adv: "Luis Ortega", type: "social", title: "Is it time to review your insurance?", when: "Mon Oct 12, 7:30 AM" },
+  { id: "q6", adv: "Ava Thompson", type: "campaign", title: "Market update: October", when: "Wed Oct 14, 9:00 AM" }
+];
+
+var state = {
+  view: CFG.views[0].id, type: CFG.types[0], status: START, reason: null, reasonText: "", declineNote: "",
+  advNote: "Added the segregated fund disclaimer you asked for last time.", dialog: null, undo: 0, undoTimer: null, undoPrev: null,
+  q: {}, qReason: {}, setupOrder: CFG.setupOrder, setupDigest: CFG.queue ? "digest" : "each", setupOn: true
+};
+QSEED.forEach(function (i) { state.q[i.id] = "aw_comp"; });
+
+function esc(s) { return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); }
+function TY() { return TYPES[state.type]; }
+function toast(m) { var t = document.getElementById("toast"); t.textContent = m; t.classList.add("show"); clearTimeout(toast.x); toast.x = setTimeout(function () { t.classList.remove("show"); }, 2600); }
+function sb() { return '<div class="statusbar"><span>9:41</span><span class="sigs"><i></i><i></i><i></i><i></i></span></div>'; }
+function pill(type) { var t = TYPES[type]; return '<span class="pill ' + type + '">' + t.icon + " " + esc(t.label) + "</span>"; }
+function badge(st) { return '<span class="badge ' + st + '">' + BADGE[st] + "</span>"; }
+function reasonLabel() {
+  if (!state.reason) return "";
+  var role = state.status === "dec_adv" ? "adv" : "comp";
+  var r = (REASONS[role].concat(REASONS[role === "adv" ? "comp" : "adv"])).filter(function (x) { return x.id === state.reason; })[0];
+  if (state.reason === "other") return state.reasonText || "Other";
+  return r ? r.lab : "";
+}
+
+/* ---------- tracker + audit ---------- */
+function tracker(st) {
+  var steps = [];
+  if (HAS_ADV) {
+    var a = { k: "adv", lab: "Advisor", cls: "", sym: "1" };
+    if (st === "aw_adv") { a.cls = "cur adv"; a.lab = "Awaiting advisor"; }
+    else if (st === "dec_adv") { a.cls = "dec"; a.lab = "Declined by advisor"; a.sym = "\u2715"; }
+    else { a.cls = "done"; a.lab = "Advisor \u2713"; a.sym = "\u2713"; }
+    steps.push(a);
+  }
+  var c = { lab: "Compliance", cls: "", sym: HAS_ADV ? "2" : "1" };
+  if (st === "aw_comp") { c.cls = "cur"; c.lab = "Awaiting compliance"; }
+  else if (st === "ok") { c.cls = "done"; c.lab = "Compliance \u2713"; c.sym = "\u2713"; }
+  else if (st === "dec_comp") { c.cls = "dec"; c.lab = "Declined by compliance"; c.sym = "\u2715"; }
+  else if (st === "dec_adv") { c.cls = "skip"; c.lab = "Not asked"; }
+  else { c.lab = "Awaiting compliance"; }
+  steps.push(c);
+  var d = { lab: "Approved & scheduled", cls: "", sym: HAS_ADV ? "3" : "2" };
+  if (st === "ok") { d.cls = "done"; d.sym = "\u2713"; }
+  else if (st === "dec_adv" || st === "dec_comp") { d.cls = "skip"; d.lab = "Stopped"; }
+  steps.push(d);
+  return '<div class="tracker">' + steps.map(function (s) {
+    return '<div class="st ' + s.cls + '"><div class="dot">' + s.sym + "</div>" + esc(s.lab) + "</div>";
+  }).join("") + "</div>";
+}
+function auditLines(st) {
+  var t = TY(), L = [];
+  if (HAS_ADV) {
+    if (st === "dec_adv") L.push('<span class="no">Declined by ' + ADV.name + " (Advisor) \u00b7 " + T.decl + "</span> \u00b7 compliance not asked \u00b7 reminders stopped");
+    else if (st !== "aw_adv") L.push('<span class="ok">Approved by ' + ADV.name + " (Advisor) \u00b7 " + T.advOk + "</span>");
+    else L.push("Sent to " + ADV.name + " (Advisor) \u00b7 " + T.sent);
+    if (CFG.note && st !== "aw_adv" && st !== "dec_adv" && state.advNote) L.push("Note for compliance: \u201c" + esc(state.advNote) + "\u201d");
+  } else {
+    L.push("Sent to " + COMP.name + " (Compliance) \u00b7 " + T.sent + (CFG.fyi ? " \u00b7 " + ADV.first + " got a copy" : ""));
+  }
+  if (st === "aw_comp") L.push("Waiting for " + COMP.name + " (Compliance) \u00b7 reminder in 2 days");
+  if (st === "ok") { L.push('<span class="ok">Approved by ' + COMP.name + " (Compliance) \u00b7 " + T.compOk + "</span>"); L.push("Scheduled automatically \u00b7 " + t.whenLabel + " " + t.when + " \u00b7 no extra step"); }
+  if (st === "dec_comp") { L.push('<span class="no">Declined by ' + COMP.name + " (Compliance) \u00b7 " + T.decl + "</span> \u00b7 reminders stopped"); if (reasonLabel()) L.push("Reason: \u201c" + esc(reasonLabel()) + "\u201d"); }
+  if (st === "dec_adv" && reasonLabel()) L.push("Reason: \u201c" + esc(reasonLabel()) + "\u201d");
+  return '<div class="audit">' + L.map(function (x) { return "<div>" + x + "</div>"; }).join("") + "</div>";
+}
+
+/* ---------- piece preview ---------- */
+function preview(type) {
+  var t = TYPES[type];
+  if (type === "campaign") return '<div class="pv pv-camp"><div class="bar">Northgate Wealth \u00b7 Jordan Lee</div><div class="mail"><b>' + esc(t.title.replace("October newsletter: ", "")) + "</b>" + esc(t.excerpt) + '<br><span class="cta">Read the three questions</span></div></div>';
+  if (type === "social") return '<div class="pv pv-soc"><div class="post"><div class="who"><span class="av">JL</span><span><b>Jordan Lee</b> \u00b7 Northgate Wealth</span></div><div class="txt">' + esc(t.excerpt) + '</div><div class="img">RRSP deadline \u00b7 March 2</div><div class="nets"><span>in LinkedIn</span><span>f Facebook</span></div></div></div>';
+  return '<div class="pv-blog">Blog \u00b7 Tax planning</div>';
+}
+function pieceMeta(type) {
+  var t = TYPES[type];
+  return '<div class="meta"><b>' + t.whenLabel + ":</b> " + esc(t.when) + "<br><b>" + (type === "social" ? "Where" : "To") + ":</b> " + esc(t.to) + "</div>";
+}
+
+/* ---------- emails ---------- */
+function emailSubject(kind) {
+  var t = TY();
+  if (kind === "comp") return "Approval needed: " + ADV.name + "\u2019s " + t.noun + " \u2014 \u201c" + t.title + "\u201d";
+  if (kind === "adv") return "Ready for your OK: " + t.noun + " \u2014 \u201c" + t.title + "\u201d";
+  if (kind === "fyi") return "FYI: your " + t.noun + " is with " + COMP.name + " (Compliance) for approval";
+  return "6 items waiting for your approval \u00b7 Northgate Wealth";
+}
+function emailBody(kind) {
+  var t = TY(), h = '<div class="em"><div class="em-top"><span class="em-logo">Financial<span>Content</span></span><span class="em-kind">' +
+    (kind === "fyi" ? "FYI \u00b7 no action needed" : kind === "digest" ? "Weekly approvals" : "Approval needed") + '</span></div><div class="em-in">';
+  if (kind === "digest") {
+    var open = QSEED.filter(function (i) { return state.q[i.id] === "aw_comp"; });
+    h += '<p class="em-hi">Hi ' + COMP.first + ",</p><p><b>" + open.length + " items</b> from your advisors are waiting for your approval. When you approve, each one is scheduled automatically \u2014 no extra step in FinancialContent.</p>";
+    h += '<div class="em-list">' + QSEED.map(function (i) {
+      var st = state.q[i.id];
+      return '<div class="em-row">' + pill(i.type) + '<div class="t"><b>' + esc(i.title) + "</b><span>" + esc(i.adv) + " \u00b7 " + esc(i.when) + "</span></div>" +
+        (st === "aw_comp" ? '<a data-act="goto:' + CFG.landingView + '">Review</a>' : badge(st)) + "</div>";
+    }).join("") + "</div>";
+    h += '<div class="em-btns"><a class="em-btn pri" data-act="goto:' + CFG.landingView + '">Open review queue</a></div>';
+    h += '<p class="em-small">Sent Mondays at 8:00 AM. You can switch to one email per item in Settings \u203a Approvals.</p><p class="em-small">Items you haven\u2019t reviewed show up again next week. Declining stops reminders for that item.</p>';
+  } else if (kind === "fyi") {
+    h += '<p class="em-hi">Hi ' + ADV.first + ",</p><p>Your <b>" + t.noun + "</b> \u201c" + esc(t.title) + "\u201d is with <b>" + COMP.name + " (Compliance)</b> for approval. You don\u2019t need to do anything.</p>";
+    h += '<p>When ' + COMP.first + " approves, it\u2019s scheduled automatically (" + t.whenLabel.toLowerCase() + " " + esc(t.when) + "). If " + COMP.first + " declines, we\u2019ll tell you why.</p>";
+    h += '<div class="em-btns"><a class="em-btn sec" data-act="goto:status">See where it is</a></div>';
+  } else {
+    var isAdv = kind === "adv";
+    h += '<p class="em-hi">Hi ' + (isAdv ? ADV.first : COMP.first) + ",</p>";
+    if (isAdv) h += "<p>Your <b>" + t.noun + "</b> is ready for your OK. After you approve, it goes to <b>" + COMP.name + " (Compliance)</b> for the final OK, then it\u2019s scheduled automatically.</p>";
+    else h += "<p>" + ADV.name + " (" + ADV.firm + ") has an <b>" + t.noun + "</b> ready. <b>Your approval is the final step</b> \u2014 once you approve, it\u2019s scheduled automatically.</p>";
+    if (!isAdv && HAS_ADV) h += '<div class="em-chain">\u2713 ' + ADV.name + " approved it \u00b7 " + T.advOk + "</div>";
+    if (!isAdv && CFG.note && state.advNote) h += '<div class="em-note"><b>Note from ' + ADV.first + ":</b> \u201c" + esc(state.advNote) + "\u201d</div>";
+    h += '<div style="margin:6px 0 4px">' + pill(state.type) + "</div>";
+    h += '<div class="piece-card" style="margin:6px 0 0">' + preview(state.type) + '<div class="piece-body" style="padding:10px 12px"><b style="font-size:14px">' + esc(t.title) + "</b>" + pieceMeta(state.type).replace('class="meta"', 'class="meta" style="margin:6px 0 0"') + "</div></div>";
+    if (CFG.showTracker && HAS_ADV) h += tracker(state.status);
+    var role = isAdv ? "adv" : "comp";
+    h += '<div class="em-btns"><a class="em-btn pri" data-act="email-approve:' + role + '">Approve</a><a class="em-btn sec" data-act="email-decline:' + role + '">Decline</a></div>';
+    h += '<p class="em-small">Each button opens a page where one more tap confirms. That stops email security scanners from approving by accident.</p>';
+    h += '<p class="em-small">No answer? We\u2019ll send a reminder in 2 days. Declining stops reminders.</p>';
+  }
+  h += '</div><div class="em-foot">' + (kind === "adv" || kind === "fyi" ? "Sent by FinancialContent for " + ADV.name + ", " + ADV.firm + "." :
+    "You get this because " + ADV.firm + " named you as the compliance reviewer in FinancialContent. Questions? support@financialtechtools.ca") + "</div></div>";
+  return h;
+}
+function phoneEmail(kind) {
+  return '<div class="screen mail">' + sb() + '<div class="mailhead"><div class="back">\u2039 Inbox</div><div class="subj">' + esc(emailSubject(kind)) +
+    '</div><div class="from"><span class="av">FC</span><span><b>FinancialContent</b> &lt;approvals@financialcontent.ca&gt;<br>to ' +
+    (kind === "adv" || kind === "fyi" ? "jordan@northgatewealth.example" : COMP.email) + " \u00b7 9:05 AM</span></div></div>" +
+    '<div class="mailscroll">' + emailBody(kind) + "</div></div>";
+}
+function deskEmail(kind, label) {
+  return { kind: "raw", html: '<div class="desk-email"><div class="panel-label">' + esc(label) + '</div><div class="win"><div class="hdr"><div><b>From:</b> FinancialContent &lt;approvals@financialcontent.ca&gt;</div><div><b>To:</b> ' +
+    (kind === "adv" || kind === "fyi" ? ADV.name + " &lt;jordan@northgatewealth.example&gt;" : COMP.name + " &lt;" + COMP.email + "&gt;") + "</div>" +
+    '<div class="s">' + esc(emailSubject(kind)) + '</div></div><div class="body">' + emailBody(kind) + "</div></div></div>" };
+}
+
+/* ---------- landing / in-app ---------- */
+function landing(role, opts) {
+  opts = opts || {};
+  var t = TY(), isAdv = role === "adv", myTurn = state.status === (isAdv ? "aw_adv" : "aw_comp");
+  var h = '<div class="screen">' + sb() + '<div class="appbar"><div class="kicker">' + (opts.inapp ? "FinancialContent \u00b7 " + (isAdv ? t.surface : "Approvals") : "From your approval email") +
+    "</div><h2>" + (isAdv ? "Review and approve" : "Final approval") + '</h2><div class="sub">' +
+    (isAdv ? ADV.name + " \u00b7 " + ADV.firm : COMP.name + " \u00b7 Compliance, " + COMP.firm) + "</div></div>";
+  h += '<div class="scroll">';
+  h += '<span class="who-chip ' + role + '">' + (isAdv ? "You\u2019re the advisor" : "You\u2019re the compliance reviewer") + "</span> " + pill(state.type);
+  if (CFG.showTracker) h += tracker(state.status);
+  if (!isAdv && CFG.note && state.advNote && HAS_ADV) h += '<div class="em-note"><b>Note from ' + ADV.first + ":</b> \u201c" + esc(state.advNote) + "\u201d</div>";
+  h += '<div class="piece-card">' + preview(state.type) + '<div class="piece-body"><h3>' + esc(t.title) + "</h3>" + pieceMeta(state.type);
+  if (myTurn) {
+    if (isAdv && CFG.note) h += '<label class="fl" for="advNote">Note for compliance <span>(optional)</span></label><textarea class="notebox" id="advNote" placeholder="e.g. I added the disclaimer you asked for">' + esc(state.advNote) + "</textarea>";
+    var lab = isAdv ? (CFG.note ? "Approve & send to compliance" : "Approve") : "Approve \u2014 schedule it";
+    h += '<div class="actions"><button type="button" class="btn ' + (isAdv ? "btn-primary" : "btn-ok") + '" data-act="approve:' + role + '">' + lab + "</button>" +
+      '<button type="button" class="btn btn-secondary" data-act="decline-open:' + role + '">Decline</button></div>';
+    h += isAdv
+      ? '<div class="remind-note">Next: ' + COMP.name + " (Compliance) gets it for the final OK. If you decline, compliance is never asked and reminders stop.</div>"
+      : '<div class="remind-note comp">Your approval is final. FinancialContent schedules it right away \u2014 nobody on our side has to approve it again.' + (CFG.fyi ? " " + ADV.first + " gets a copy of the result." : "") + "</div>";
+  } else {
+    h += '<div style="margin:4px 0 8px">' + badge(state.status) + "</div>" + auditLines(state.status);
+    h += '<button type="button" class="btn btn-secondary" data-act="goto:status">See status</button>';
+  }
+  h += "</div></div></div>";
+  if (state.dialog === role) h += declineDialog(role, false);
+  h += "</div>";
+  return h;
+}
+function declineDialog(role, fixed) {
+  var t = TY(), isAdv = role === "adv";
+  var lead = isAdv ? "It won\u2019t go to compliance, it won\u2019t be scheduled, and reminder emails stop."
+    : "It won\u2019t be scheduled. " + ADV.name + " will be told, and reminder emails stop.";
+  var h = '<div class="overlay' + (fixed ? " fixed" : "") + '"><div class="dialog"><h3>Decline this ' + t.noun + "?</h3>" + '<p class="lead">' + lead + "</p>" +
+    '<p class="fl" style="margin-bottom:8px">Optional \u2014 why?</p><div class="reason-list">';
+  REASONS[role].forEach(function (r) {
+    var on = state.reason === r.id;
+    h += '<button type="button" class="reason' + (on ? " on" : "") + '" data-act="reason:' + r.id + '"><input type="radio" tabindex="-1" ' + (on ? "checked" : "") + '/><span class="lab">' + esc(r.lab) + "</span></button>";
+  });
+  h += "</div>";
+  if (state.reason === "other" || !isAdv) h += '<label class="fl" for="declText">' + (isAdv ? "Short note" : "Note for " + ADV.first) + ' <span>(optional)</span></label><textarea class="notebox" id="declText" placeholder="' + (isAdv ? "A sentence is enough" : "e.g. Please add the standard seg fund disclaimer") + '">' + esc(state.reasonText) + "</textarea>";
+  h += '<div class="sheet-actions"><button type="button" class="btn btn-danger-soft" data-act="decline-confirm:' + role + '">Decline</button><button type="button" class="btn btn-ghost" data-act="dialog-close">Cancel</button></div></div></div>';
+  return h;
+}
+function afterScreen(role) {
+  var t = TY(), isAdv = role === "adv", st = state.status, h = '<div class="screen">' + sb() + '<div class="appbar"><div class="kicker">FinancialContent</div><h2>Done</h2></div><div class="scroll">';
+  h += pill(state.type);
+  var declined = isAdv ? st === "dec_adv" : st === "dec_comp";
+  h += '<div class="confirm-state">';
+  if (declined) {
+    h += '<div class="icon no">\u2715</div><h3>Declined</h3>';
+    h += isAdv ? "<p><strong>Compliance won\u2019t be asked. No more reminders.</strong></p><p>\u201c" + esc(t.title) + "\u201d won\u2019t be scheduled.</p>"
+      : "<p><strong>" + ADV.name + " has been told. No more reminder emails for this " + t.noun + ".</strong></p><p>It won\u2019t be scheduled.</p>";
+    if (reasonLabel()) h += '<p style="font-size:12px">Reason: <strong>' + esc(reasonLabel()) + "</strong></p>";
+    if (state.undo > 0) h += '<div class="undo-bar"><span>Changed your mind? Undo for ' + state.undo + 's</span><button type="button" data-act="undo">Undo</button></div>';
+    if (isAdv && CFG.issue === "416") h += '<p class="tag-note">Later (#389): offer a replacement here \u2014 the replacement would then go to compliance. Note only.</p>';
+  } else if (isAdv) {
+    h += '<div class="icon fwd">\u2192</div><h3>Approved</h3><p><strong>Sent to ' + COMP.name + " (Compliance) for review.</strong></p><p>When compliance approves, it\u2019s scheduled automatically (" + t.whenLabel.toLowerCase() + " " + esc(t.when) + "). We\u2019ll let you know.</p>";
+    if (CFG.note && state.advNote) h += '<p style="font-size:12px">Your note to compliance: <strong>\u201c' + esc(state.advNote) + "\u201d</strong></p>";
+  } else {
+    h += '<div class="icon ok">\u2713</div><h3>Approved and scheduled</h3><p><strong>' + t.whenLabel + " " + esc(t.when) + "</strong> \u00b7 " + esc(t.to) + "</p><p>Nothing else to do. " + ADV.name + " has been told.</p>";
+  }
+  h += "</div>";
+  if (CFG.showTracker || !declined) h += tracker(st);
+  h += auditLines(st);
+  if (!isAdv && !declined) h += '<button type="button" class="btn btn-secondary" data-act="goto:status">See it in FinancialContent</button>';
+  if (isAdv && !declined) h += '<button type="button" class="btn btn-secondary" data-act="goto:comp_email">Next: what compliance gets \u2192</button>';
+  h += "</div></div>";
+  return h;
+}
+
+function afterPreviewDecline() {
+  var keep = state.status; state.status = "dec_comp"; var u = state.undo; state.undo = 0;
+  var h = afterScreen("comp"); state.status = keep; state.undo = u; return h;
+}
+/* ---------- advisor-side status + admin ---------- */
+function advisorList() {
+  var t = TY(), h = '<div class="screen">' + sb() + '<div class="appbar"><div class="kicker">FinancialContent \u00b7 ' + esc(t.surface) + "</div><h2>" +
+    (HAS_ADV ? "Content approvals" : "Your approvals") + '</h2><div class="sub">' + (HAS_ADV ? "What needs you, and where each item is" : "Compliance approves these for you \u2014 you just see where they are") + '</div></div><div class="scroll">';
+  h += '<div class="list-item live">' + pill(state.type) + '<div class="ttl">' + esc(t.title) + '</div><div class="sub">' + t.whenLabel + " " + esc(t.when) + '</div><div style="margin-top:6px">' + badge(state.status) + "</div>" + tracker(state.status) + auditLines(state.status);
+  if (state.status === "aw_adv") h += '<button type="button" class="btn btn-primary btn-sm" data-act="goto:adv_landing" style="width:100%">Review now</button>';
+  h += "</div>";
+  var others = [
+    { type: "social", title: "Five ways to cut fees this year", st: "ok", line: "Approved by " + COMP.name + " (Compliance) \u00b7 Oct 7, 2:31 PM \u00b7 posts Oct 9" },
+    { type: "campaign", title: "Your fall portfolio check-in", st: "dec_comp", line: "Declined by " + COMP.name + " (Compliance) \u00b7 Oct 6 \u00b7 \u201cNeeds a disclaimer\u201d" }
+  ];
+  if (HAS_ADV) others.push({ type: "social", title: "Is it time to review your insurance?", st: "dec_adv", line: "You declined \u00b7 Oct 6 \u00b7 compliance not asked" });
+  if (CFG.types.indexOf("approvals") >= 0) others.push({ type: "approvals", title: "Estate documents to review this year", st: "aw_comp", line: "You approved \u00b7 Oct 7 \u00b7 waiting for " + COMP.name });
+  others.forEach(function (o) { h += '<div class="list-item">' + pill(o.type) + '<div class="ttl">' + esc(o.title) + '</div><div style="margin:4px 0">' + badge(o.st) + '</div><div class="sub">' + esc(o.line) + "</div></div>"; });
+  return h + "</div></div>";
+}
+function adminPanel() {
+  var t = TY();
+  var rows = [
+    { adv: "Maya Chen", firm: "Northgate Wealth", type: "social", title: "Five ways to cut fees this year", st: "aw_adv", aud: "Sent to Maya Chen \u00b7 Oct 8, 8:45 AM \u00b7 reminder Oct 10" },
+    { adv: "Luis Ortega", firm: "Northgate Wealth", type: "campaign", title: "Market update: October", st: "aw_comp", aud: HAS_ADV ? "Approved by Luis Ortega (Advisor) \u00b7 Oct 7, 4:10 PM" : "Sent to Priya Shah (Compliance) \u00b7 Oct 7, 4:10 PM" },
+    { adv: "Ava Thompson", firm: "Lakeside Financial", type: "social", title: "TFSA vs RRSP in one minute", st: "ok", aud: "Approved by Dana Morales (Compliance) \u00b7 Oct 7, 2:31 PM \u00b7 posts Oct 9, 8:30 AM" },
+    { adv: "Sam Okonkwo", firm: "Lakeside Financial", type: CFG.types.indexOf("approvals") >= 0 ? "approvals" : "campaign", title: "Estate documents to review this year", st: "dec_adv", aud: "Declined by Sam Okonkwo (Advisor) \u00b7 Oct 6 \u00b7 compliance not asked \u00b7 reminders stopped" },
+    { adv: "Noah Patel", firm: "Northgate Wealth", type: "social", title: "Is it time to review your insurance?", st: "dec_comp", aud: "Declined by Priya Shah (Compliance) \u00b7 Oct 6 \u00b7 \u201cNeeds a disclaimer\u201d \u00b7 reminders stopped" }
+  ].filter(function (r) { return HAS_ADV || (r.st !== "aw_adv" && r.st !== "dec_adv"); });
+  var counts = {}; rows.forEach(function (r) { counts[r.st] = (counts[r.st] || 0) + 1; }); counts[state.status] = (counts[state.status] || 0) + 1;
+  var order = HAS_ADV ? ["aw_adv", "aw_comp", "ok", "dec_adv", "dec_comp"] : ["aw_comp", "ok", "dec_comp"];
+  var h = '<div class="chrome"><b>Financial<span>Content</span></b><span class="tab">Content</span><span class="tab on">Manage Advisor Posts</span><span class="tab">Email Campaigns</span><span class="me">FTT admin</span></div>';
+  h += '<div class="pb"><div class="chips" style="margin-bottom:10px"><span class="chip on">All</span>' + order.map(function (k) { return '<span class="chip">' + BADGE[k] + " (" + (counts[k] || 0) + ")</span>"; }).join("") + "</div>";
+  h += '<table class="t"><thead><tr><th>Advisor</th><th>Item</th><th>Status</th><th>Who approved / latest</th></tr></thead><tbody>';
+  var live = '<tr class="live"><td><div class="nm">' + ADV.name + '</div><div class="firm">' + ADV.firm + "</div></td><td>" + pill(state.type) + '<div style="margin-top:4px;font-weight:600">' + esc(t.title) + '</div><div class="aud">' + t.whenLabel + " " + esc(t.when) + "</div></td><td>" + badge(state.status) + '</td><td><div class="aud" style="margin-top:0">' + auditLines(state.status).replace('class="audit"', 'style="font-size:11px;color:#334155"') + "</div></td></tr>";
+  h += live + rows.map(function (r) {
+    return '<tr><td><div class="nm">' + r.adv + '</div><div class="firm">' + r.firm + "</div></td><td>" + pill(r.type) + '<div style="margin-top:4px;font-weight:600">' + esc(r.title) + "</div></td><td>" + badge(r.st) + '</td><td><div class="aud" style="margin-top:0">' + r.aud + "</div></td></tr>";
+  }).join("") + "</tbody></table>";
+  h += '<p class="tag-note">Highlighted row is the live demo item \u2014 it changes as you approve/decline. Status only: no extra approve button for FTT. Reminders stop on any decline.</p></div>';
+  return h;
+}
+
+/* ---------- setup ---------- */
+function setupPanel() {
+  var h = '<div class="chrome"><b>Financial<span>Content</span></b><span class="tab">Content</span><span class="tab">Email Campaigns</span><span class="tab on">Settings</span><span class="me">' + ADV.name + "</span></div>";
+  h += '<div class="pb"><div style="font-size:12px;color:var(--muted);margin-bottom:4px">Settings \u203a <b style="color:var(--ink)">Approvals</b></div>';
+  h += '<div class="set-row"><div class="k">Compliance reviews my content<span>Turn on if your firm\u2019s compliance must OK what goes out.</span></div><div class="v"><span class="toggle' + (state.setupOn ? " on" : "") + '" data-act="setup-toggle"><i></i>' + (state.setupOn ? "On" : "Off") + "</span></div></div>";
+  if (state.setupOn) {
+    h += '<div class="set-row"><div class="k">Send approvals to compliance<span>Who gets the Approve / Decline email.</span></div><div class="v"><input class="inp" value="' + COMP.name + '" aria-label="Compliance name"/><input class="inp" value="' + COMP.email + '" aria-label="Compliance email"/><div class="tag-note">We\u2019ll send a one-time \u201cyou\u2019ve been added\u201d email to ' + COMP.first + ".</div></div></div>";
+    var opts = [
+      { id: "comp_only", b: "Compliance only \u2014 I get a copy", s: "Compliance\u2019s Approve schedules it. I\u2019m kept in the loop but don\u2019t need to approve." },
+      { id: "adv_first", b: "Me first, then compliance", s: "I approve first. Then compliance gets it. Compliance\u2019s Approve schedules it. If I decline, compliance isn\u2019t asked." }
+    ];
+    h += '<div class="set-row"><div class="k">Who approves, in what order</div><div class="v">' + opts.map(function (o) {
+      return '<div class="opt' + (state.setupOrder === o.id ? " on" : "") + '" data-act="setup-order:' + o.id + '"><input type="radio" tabindex="-1" ' + (state.setupOrder === o.id ? "checked" : "") + "/><div><b>" + o.b + "</b><span>" + o.s + "</span></div></div>";
+    }).join("") + "</div></div>";
+    h += '<div class="set-row"><div class="k">How compliance hears about it</div><div class="v">' + [
+      { id: "each", b: "One email per item", s: "Fastest. Approve / Decline right from the email." },
+      { id: "digest", b: "Weekly summary + review queue", s: "One email on Mondays 8:00 AM with everything waiting. Approve one by one or Approve all." }
+    ].map(function (o) {
+      return '<div class="opt' + (state.setupDigest === o.id ? " on" : "") + '" data-act="setup-digest:' + o.id + '"><input type="radio" tabindex="-1" ' + (state.setupDigest === o.id ? "checked" : "") + "/><div><b>" + o.b + "</b><span>" + o.s + "</span></div></div>";
+    }).join("") + "</div></div>";
+    h += '<div class="set-row"><div class="k">Applies to<span>Open question: campaigns, social, or both?</span></div><div class="v">' +
+      (CFG.types.indexOf("approvals") >= 0 ? '<label class="cbx"><input type="checkbox" checked/> Content approvals (blog posts)</label>' : "") +
+      '<label class="cbx"><input type="checkbox" checked/> Email campaigns</label><label class="cbx"><input type="checkbox" checked/> Social posts</label></div></div>';
+    h += '<div class="set-row"><div class="k">FTT admin: firm default<span>Admin-only. Open question: per advisor or per firm?</span></div><div class="v"><label class="cbx"><input type="checkbox" checked/> Use ' + COMP.name + " for everyone at " + ADV.firm + " (6 advisors)</label><div class=\"tag-note\">Advisors can see this but only FTT admin changes it when it\u2019s set at firm level.</div></div></div>";
+  }
+  h += '<div style="margin-top:12px"><button type="button" class="btn btn-primary btn-sm" data-act="toast:Saved \u00b7 new items follow these settings">Save</button></div></div>';
+  return h;
+}
+
+/* ---------- queue (C) ---------- */
+function queueList(compact) {
+  var open = QSEED.filter(function (i) { return state.q[i.id] === "aw_comp"; }).length;
+  var h = '<div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:10px"><b style="font-size:14px">Waiting for compliance (' + open + ")</b>" +
+    (open ? '<button type="button" class="btn btn-ok btn-sm" data-act="qall-open" style="margin-left:auto">Approve all (' + open + ")</button>" : "") + "</div>";
+  QSEED.forEach(function (i) {
+    var st = state.q[i.id];
+    h += '<div class="qrow' + (st !== "aw_comp" ? " done" : "") + '">' + pill(i.type) + '<div class="qt"><b>' + esc(i.title) + "</b><span>" + esc(i.adv) + " \u00b7 " + (i.type === "social" ? "posts " : "sends ") + esc(i.when) + "</span>";
+    if (st === "ok") h += '<div class="aud" style="font-size:11px;color:var(--ok);font-weight:600">Approved by ' + COMP.name + " (Compliance) \u00b7 scheduled</div>";
+    if (st === "dec_comp") h += '<div style="font-size:11px;color:#b91c1c;font-weight:600">Declined \u00b7 ' + esc(i.adv) + " told \u00b7 reminders stopped" + (state.qReason[i.id] ? " \u00b7 \u201c" + esc(state.qReason[i.id]) + "\u201d" : "") + "</div>";
+    h += "</div>";
+    h += st === "aw_comp" ? '<div class="qa"><button type="button" class="btn btn-ok btn-sm" data-act="q-approve:' + i.id + '">Approve</button><button type="button" class="btn btn-secondary btn-sm" data-act="q-decline:' + i.id + '">Decline</button></div>' : badge(st);
+    h += "</div>";
+  });
+  return h;
+}
+function queuePhone() {
+  var h = '<div class="screen">' + sb() + '<div class="appbar"><div class="kicker">FinancialContent \u00b7 Approvals</div><h2>Review queue</h2><div class="sub">' + COMP.name + " \u00b7 Compliance, " + COMP.firm + '</div></div><div class="scroll">' + queueList(true) +
+    '<div class="remind-note comp">Your Approve is final. Each item is scheduled right away \u2014 nobody on our side approves it again.</div></div>';
+  if (state.dialog === "comp") h += declineDialog("comp", false);
+  if (state.dialog === "qall") h += qallDialog();
+  return h + "</div>";
+}
+function qallDialog() {
+  var open = QSEED.filter(function (i) { return state.q[i.id] === "aw_comp"; }).length;
+  return '<div class="overlay"><div class="dialog"><h3>Approve all ' + open + ' items?</h3><p class="lead">Each one is scheduled right away for its date. Advisors are told. You can\u2019t undo this from here.</p><div class="sheet-actions"><button type="button" class="btn btn-ok" data-act="qall-confirm">Approve all ' + open + '</button><button type="button" class="btn btn-ghost" data-act="dialog-close">Cancel</button></div></div></div>';
+}
+function queueAfterPhone() {
+  var ok = QSEED.filter(function (i) { return state.q[i.id] === "ok"; }), dec = QSEED.filter(function (i) { return state.q[i.id] === "dec_comp"; });
+  var h = '<div class="screen">' + sb() + '<div class="appbar"><div class="kicker">FinancialContent</div><h2>Done for this week</h2></div><div class="scroll"><div class="confirm-state"><div class="icon ok">\u2713</div><h3>' + ok.length + " approved and scheduled</h3><p><strong>Nothing else to do.</strong> Advisors have been told.</p>" +
+    (dec.length ? "<p>" + dec.length + " declined \u2014 reminders stopped.</p>" : "") + "</div>";
+  h += '<div class="audit">' + ok.map(function (i) { return '<div><span class="ok">\u2713 ' + esc(i.title) + "</span> \u00b7 " + esc(i.adv) + " \u00b7 " + esc(i.when) + "</div>"; }).join("") +
+    dec.map(function (i) { return '<div><span class="no">\u2715 ' + esc(i.title) + "</span> \u00b7 " + esc(i.adv) + "</div>"; }).join("") + "</div>";
+  return h + '<button type="button" class="btn btn-secondary" data-act="goto:status">See it in FinancialContent</button></div></div>';
+}
+
+/* ---------- view assembly ---------- */
+function phoneBlock(label, html) { return '<div class="phone-wrap"><div class="phone-label">' + esc(label) + '</div><div class="phone">' + html + "</div></div>"; }
+function panelBlock(label, html, maxw) { return '<div class="panel" style="' + (maxw ? "max-width:" + maxw + "px" : "") + '"><div class="ah"><h3>' + esc(label) + "</h3></div>" + html + "</div>"; }
+function deskEmailBlock(kind, label) { return deskEmail(kind, label).html; }
+
+var VIEWS = {
+  setup: function () { return panelBlock("Setup \u00b7 where the compliance contact is set", setupPanel(), 820); },
+  adv_email: function () { return phoneBlock("Advisor \u00b7 approval email \u00b7 phone", phoneEmail("adv")) + deskEmailBlock("adv", "Advisor \u00b7 same email on desktop"); },
+  adv_landing: function () { return phoneBlock("Advisor \u00b7 approve page \u00b7 phone", landing("adv")) + phoneBlock("Advisor \u00b7 in-app " + TY().surface, landing("adv", { inapp: true })); },
+  adv_after: function () { return phoneBlock("Advisor \u00b7 after " + (state.status === "dec_adv" ? "decline" : "approve"), afterScreen("adv")) + panelBlock("FTT admin \u00b7 Manage Advisor Posts", adminPanel()); },
+  adv_afterok: function () { return VIEWS.adv_after(); },
+  adv_decline: function () { if (state.status === "dec_adv") return VIEWS.adv_after(); return phoneBlock("Advisor \u00b7 decline (reason optional)", landing("adv")); },
+  comp_email: function () {
+    var h = phoneBlock("Compliance \u00b7 approval email \u00b7 phone", phoneEmail("comp")) + deskEmailBlock("comp", "Compliance \u00b7 same email on desktop");
+    if (CFG.fyi) h += deskEmailBlock("fyi", "Advisor \u00b7 FYI copy (no action needed)");
+    return h;
+  },
+  comp_landing: function () { return phoneBlock("Compliance \u00b7 approve page from email \u00b7 phone", landing("comp")) + phoneBlock("Compliance \u00b7 in-app review (signed in)", landing("comp", { inapp: true })); },
+  comp_after: function () { return phoneBlock("Compliance \u00b7 after " + (state.status === "dec_comp" ? "decline" : "approve"), afterScreen("comp")) + panelBlock("FTT admin \u00b7 flips to Approved automatically", adminPanel()); },
+  comp_decline: function () { if (CFG.queue) return VIEWS.queue(); if (state.status === "dec_comp") return VIEWS.comp_after(); return phoneBlock("Compliance \u00b7 decline (reason optional)", landing("comp")) + phoneBlock("Compliance \u00b7 after decline (preview)", afterPreviewDecline()); },
+  status: function () { return phoneBlock("Advisor \u00b7 status in FinancialContent", advisorList()) + panelBlock("FTT admin \u00b7 Manage Advisor Posts \u00b7 approvals", adminPanel()); },
+  phone: function () {
+    if (CFG.queue) return phoneBlock("Phone \u00b7 weekly email", phoneEmail("digest")) + phoneBlock("Phone \u00b7 review queue", queuePhone());
+    var r = CFG.phoneRole;
+    return phoneBlock("Phone \u00b7 " + (r === "adv" ? "advisor" : "compliance") + " email", phoneEmail(r)) + phoneBlock("Phone \u00b7 approve page", landing(r)) + (CFG.phoneRole2 ? phoneBlock("Phone \u00b7 compliance approve page", landing(CFG.phoneRole2)) : "");
+  },
+  digest: function () { return phoneBlock("Compliance \u00b7 weekly email \u00b7 phone", phoneEmail("digest")) + deskEmailBlock("digest", "Compliance \u00b7 same email on desktop"); },
+  queue: function () { return panelBlock("Compliance \u00b7 in-app \u201cWaiting for compliance\u201d queue \u00b7 desktop", '<div class="chrome"><b>Financial<span>Content</span></b><span class="tab on">Approvals</span><span class="me">' + COMP.name + ' \u00b7 Compliance</span></div><div class="pb">' + queueList(false) + (state.dialog ? '<p class="remind-note comp" style="margin-top:8px">Finish the step on the phone preview \u2192</p>' : "") + "</div>", 760) + phoneBlock("Compliance \u00b7 same queue on phone", queuePhone()); },
+  queue_after: function () { return phoneBlock("Compliance \u00b7 after approving", queueAfterPhone()) + panelBlock("FTT admin \u00b7 flips to Approved automatically", adminPanel()); }
+};
+
+/* coercion when jumping via the demo bar */
+function coerce(v) {
+  clearUndo();
+  state.dialog = null;
+  if (v === "adv_email" || v === "adv_landing") { state.status = "aw_adv"; }
+  if (v === "adv_decline") { state.status = "aw_adv"; state.reason = null; state.reasonText = ""; state.dialog = "adv"; }
+  if ((v === "adv_after" || v === "adv_afterok") && state.status === "aw_adv") state.status = "aw_comp";
+  if (v === "adv_afterok" && state.status !== "aw_comp") state.status = "aw_comp";
+  if (v === "comp_email" || v === "comp_landing") state.status = "aw_comp";
+  if (v === "comp_decline") { state.status = "aw_comp"; state.reason = null; state.reasonText = ""; if (CFG.queue) { state.dialog = "comp"; state.qTarget = "q1"; } else state.dialog = "comp"; }
+  if (v === "comp_after" && state.status !== "ok" && state.status !== "dec_comp") state.status = "ok";
+  if (v === "queue_after" && QSEED.every(function (i) { return state.q[i.id] === "aw_comp"; })) { QSEED.forEach(function (i) { state.q[i.id] = "ok"; }); state.status = "ok"; }
+  if (v === "phone" && !CFG.queue) state.status = CFG.phoneRole === "adv" ? "aw_adv" : "aw_comp";
+}
+function clearUndo() { if (state.undoTimer) clearInterval(state.undoTimer); state.undoTimer = null; state.undo = 0; }
+function startUndo(prevStatus, backView) {
+  clearUndo(); state.undoPrev = prevStatus; state.undoView = backView; state.undo = 10;
+  state.undoTimer = setInterval(function () { state.undo -= 1; if (state.undo <= 0) clearUndo(); render(); }, 1000);
+}
+function hasView(id) { return CFG.views.some(function (x) { return x.id === id; }); }
+function go(v) { state.view = v; render(); }
+
+function render() {
+  var vdef = CFG.views.filter(function (x) { return x.id === state.view; })[0] || { note: state.view === "adv_after" ? "Advisor approved &rarr; FinancialContent sent it to compliance automatically. Tap <b>Next: what compliance gets</b>." : "" };
+  var stage = document.getElementById("stage");
+  var keep = document.activeElement && document.activeElement.id;
+  stage.innerHTML = VIEWS[state.view]();
+  document.getElementById("demoNote").innerHTML = vdef.note || "";
+  document.querySelectorAll(".demo-btn[data-view]").forEach(function (b) { b.classList.toggle("on", b.getAttribute("data-view") === state.view); });
+  document.querySelectorAll(".demo-btn[data-type]").forEach(function (b) { b.classList.toggle("on", b.getAttribute("data-type") === state.type); });
+  var an = document.getElementById("advNote"); if (an) an.oninput = function () { state.advNote = an.value; };
+  var dt = document.getElementById("declText"); if (dt) dt.oninput = function () { state.reasonText = dt.value; };
+  if (keep) { var k = document.getElementById(keep); if (k && k.focus) { k.focus(); if (k.setSelectionRange) k.setSelectionRange(k.value.length, k.value.length); } }
+}
+
+document.addEventListener("click", function (e) {
+  var el = e.target.closest("[data-act],[data-view],[data-type]");
+  if (!el) return;
+  if (el.hasAttribute("data-view")) { var v = el.getAttribute("data-view"); if (v === "__reset") { resetAll(); return; } coerce(v); go(v); return; }
+  if (el.hasAttribute("data-type")) { state.type = el.getAttribute("data-type"); render(); return; }
+  e.preventDefault();
+  var act = el.getAttribute("data-act"), p = act.split(":"), cmd = p[0], arg = p.slice(1).join(":");
+  if (cmd === "goto") { if (arg === "comp_email" || arg === "comp_landing") { if (state.status === "aw_adv") state.status = "aw_comp"; } go(arg); return; }
+  if (cmd === "toast") { toast(arg); return; }
+  if (cmd === "email-approve") { go(arg === "adv" ? "adv_landing" : CFG.landingView); toast("Opened the approve page \u2014 one tap confirms."); return; }
+  if (cmd === "email-decline") { state.reason = null; state.reasonText = ""; state.dialog = arg; state.view = arg === "adv" ? "adv_landing" : CFG.landingView; render(); return; }
+  if (cmd === "approve") {
+    clearUndo();
+    if (arg === "adv") { state.status = "aw_comp"; go(CFG.views.some(function (x) { return x.id === "adv_afterok"; }) ? "adv_afterok" : "adv_after"); toast("Approved \u00b7 sent to " + COMP.name + " (Compliance)"); }
+    else { state.status = "ok"; go("comp_after"); toast("Approved by compliance \u00b7 scheduled automatically in FinancialContent"); }
+    return;
+  }
+  if (cmd === "decline-open") { state.reason = null; state.reasonText = ""; state.dialog = arg; render(); return; }
+  if (cmd === "dialog-close") { state.dialog = null; render(); return; }
+  if (cmd === "reason") { state.reason = arg; render(); return; }
+  if (cmd === "decline-confirm") {
+    var dt = document.getElementById("declText"); if (dt) state.reasonText = dt.value;
+    if (CFG.queue && state.qTarget) {
+      state.q[state.qTarget] = "dec_comp"; state.qReason[state.qTarget] = state.reason === "other" ? state.reasonText : (REASONS.comp.filter(function (r) { return r.id === state.reason; })[0] || {}).lab || state.reasonText;
+      if (state.qTarget === "q1") state.status = "dec_comp";
+      state.qTarget = null; state.dialog = null; render(); toast("Declined \u00b7 advisor told \u00b7 reminders stopped"); return;
+    }
+    var prev = state.status; state.dialog = null;
+    if (arg === "adv") { state.status = "dec_adv"; startUndo(prev, "adv_landing"); go(hasView("adv_decline") ? "adv_decline" : "adv_after"); toast("Declined \u00b7 compliance won\u2019t be asked \u00b7 no more reminders"); }
+    else { state.status = "dec_comp"; startUndo(prev, CFG.landingView); go(hasView("comp_decline") ? "comp_decline" : "comp_after"); toast("Declined \u00b7 " + ADV.name + " told \u00b7 no more reminders"); }
+    return;
+  }
+  if (cmd === "undo") { var bv = state.undoView; state.status = state.undoPrev; state.reason = null; state.reasonText = ""; clearUndo(); go(bv); toast("Undone \u2014 it\u2019s waiting for a decision again."); return; }
+  if (cmd === "q-approve") { state.q[arg] = "ok"; if (arg === "q1") state.status = "ok"; render(); toast("Approved \u00b7 scheduled automatically"); return; }
+  if (cmd === "q-decline") { state.qTarget = arg; state.reason = null; state.reasonText = ""; state.dialog = "comp"; render(); return; }
+  if (cmd === "qall-open") { state.dialog = "qall"; render(); return; }
+  if (cmd === "qall-confirm") { QSEED.forEach(function (i) { if (state.q[i.id] === "aw_comp") state.q[i.id] = "ok"; }); if (state.q.q1 === "ok") state.status = "ok"; state.dialog = null; go("queue_after"); toast("All approved \u00b7 each scheduled automatically"); return; }
+  if (cmd === "setup-toggle") { state.setupOn = !state.setupOn; render(); return; }
+  if (cmd === "setup-order") { state.setupOrder = arg; render(); toast(arg === CFG.setupOrder ? "This is how this direction works." : "That\u2019s the other direction \u2014 see the hub."); return; }
+  if (cmd === "setup-digest") { state.setupDigest = arg; render(); return; }
+});
+function resetAll() {
+  clearUndo();
+  state.status = START; state.reason = null; state.reasonText = ""; state.dialog = null; state.qTarget = null;
+  QSEED.forEach(function (i) { state.q[i.id] = "aw_comp"; }); state.qReason = {};
+  state.view = CFG.views[0].id; render(); toast("Reset");
+}
+render();
+
+</script>
+</body>
+</html>

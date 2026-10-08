@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Build contract · #415 Compliance approve → auto-approved + replacement</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<style>
+body{font-family:Inter,system-ui,sans-serif;max-width:780px;margin:40px auto;padding:0 24px 80px;color:#1e2a4a;line-height:1.55}
+h1{font-size:22px}h2{font-size:16px;margin-top:28px}
+p,li{font-size:14px;color:#3a4558}
+.warn{background:#fff7ed;color:#9a3412;padding:12px 14px;border-radius:8px;font-size:13px;margin:12px 0}
+.hold{background:#fef3c7;color:#92400e;padding:12px 14px;border-radius:8px;font-size:13px;margin:12px 0}
+.navl{font-size:13px;margin-bottom:8px}
+code{background:#eef2f6;padding:1px 6px;border-radius:4px;font-size:12px}
+a{color:#2b7de9}ul,ol{padding-left:1.2em}li{margin-bottom:4px}
+.ac7{background:#ecfdf5;border:1px solid #a7f3d0;border-radius:8px;padding:2px 14px 8px;margin:12px 0}
+</style>
+</head>
+<body>
+<p class="navl"><a href="index.html">← Hub #415</a> · <a href="directions/a/index.html">A</a> · <a href="directions/b/index.html">B (recommend)</a> · <a href="directions/c/index.html">C</a> · <a href="build-contract.md">Markdown</a> · <a href="../416/">#416</a></p>
+<h1>Build contract · #415 Compliance approve like advisors → auto-approved in FC</h1>
+<p><strong>PROVISIONAL.</strong> Recommend Direction <strong>B</strong> (advisor approves, then compliance; compliance’s Approve is final and auto-approves) — <strong>works with #416</strong>. <strong>Alex has not picked a direction.</strong></p>
+<p><strong>Idea → playground first, hold main. Soft Dev hold · not agent-ready.</strong> Do <strong>not</strong> wake Soft Dev. Do <strong>not</strong> add <code>agent-ready</code> until Alex picks a direction and the Pages URL is on the issue.</p>
+<p>Issue: <a href="https://github.com/kartboy16/content-library/issues/415">https://github.com/kartboy16/content-library/issues/415</a><br />
+Sibling: <a href="https://github.com/kartboy16/content-library/issues/416">https://github.com/kartboy16/content-library/issues/416</a> (advisor first) · mocks <a href="https://kartboy16.github.io/fc-mocks/416/">https://kartboy16.github.io/fc-mocks/416/</a><br />
+Related: #148 / PR #151 (social post approval), #389 (Decline), #127 (Red Oak / external — out of scope)<br />
+Slack: <a href="https://financialtechtools.slack.com/archives/C0C265G996G/p1791481898763159">https://financialtechtools.slack.com/archives/C0C265G996G/p1791481898763159</a></p>
+<h2>One-liner</h2>
+<p>For advisors with a compliance contact, compliance <strong>Approves the same way advisors do</strong> (email button → approve page, or in-app). That Approve marks the item <strong>approved and scheduled/sendable automatically</strong> — no second internal approve step. Decline (optional reason) stops reminders and tells the advisor.</p>
+<h2>How #415 and #416 fit</h2>
+<h1>415 = what compliance’s Approve does (auto-approve, no extra FC step). #416 = the order (advisor first). <strong>Together: #415 B + #416 A.</strong></h1>
+<h2>Recommend</h2>
+<p><strong>B — Advisor then compliance.</strong> Advisor approves first (#416). FC then sends compliance the same approval email. Compliance’s Approve is final → item flips to <strong>Approved · Scheduled</strong> with audit lines “Approved by Jordan Lee (Advisor) · …” and “Approved by Priya Shah (Compliance) · Oct 8, 10:14 AM”. 3-step tracker (Advisor ✓ → Compliance ✓ → Approved &amp; scheduled). Decline at either step stops reminders.</p>
+<ul>
+<li><strong>A — Compliance is the final approver:</strong> approval email goes to compliance only; advisor gets an FYI copy. Keep as a setting for firms where compliance alone signs off.</li>
+<li><strong>C — Compliance review queue:</strong> weekly summary email → in-app “Waiting for compliance” queue with per-item Approve / Decline and Approve all. Can sit on top of A or B.</li>
+</ul>
+<h2>Mocks</h2>
+<ul>
+<li>Hub: <a href="https://kartboy16.github.io/fc-mocks/415/">https://kartboy16.github.io/fc-mocks/415/</a></li>
+<li>A: <a href="https://kartboy16.github.io/fc-mocks/415/directions/a/">https://kartboy16.github.io/fc-mocks/415/directions/a/</a></li>
+<li>B (recommend): <a href="https://kartboy16.github.io/fc-mocks/415/directions/b/">https://kartboy16.github.io/fc-mocks/415/directions/b/</a></li>
+<li>C: <a href="https://kartboy16.github.io/fc-mocks/415/directions/c/">https://kartboy16.github.io/fc-mocks/415/directions/c/</a></li>
+</ul>
+<p>Each direction demos: 1 compliance email · 2 approve page / in-app · 3 after approve · 4 advisor + FTT admin status flipping to Approved &amp; scheduled with the “approved by compliance” line · 5 decline path · 6 setup (Settings › Approvals) · 7 phone. Item type toggle: email campaign / social post.</p>
+<h2>Acceptance criteria (from the issue · provisional)</h2>
+<ul>
+<li><strong>AC-1:</strong> For advisors in a compliance workflow, a compliance reviewer can <strong>Approve</strong> with the same experience as the advisor approve path: approval email with Approve / Decline → approve page (one tap confirms), and in-app review when signed in.</li>
+<li><strong>AC-2:</strong> When compliance Approves, FC marks the item <strong>approved</strong> automatically and it becomes scheduled / ready / sendable as appropriate (campaign: scheduled send; social: scheduled post). <strong>No second internal approve step.</strong></li>
+<li><strong>AC-3:</strong> Decline is clear: optional reason (Needs a disclaimer / Wording needs changes / Not suitable for our clients / Other) + optional note to the advisor. Decline <strong>stops approval-reminder emails</strong> for that item and tells the advisor. Undo ~10s.</li>
+<li><strong>AC-4:</strong> Works for <strong>email campaigns and social posts</strong> (mock shows both; final scope is an open question).</li>
+<li><strong>AC-5:</strong> Status is visible to the advisor and FTT admin (Manage Advisor Posts): Waiting for compliance · Approved · Scheduled · Declined by compliance, with an audit line naming who approved and when.</li>
+<li><strong>AC-6:</strong> Setup: Settings › Approvals — “Compliance reviews my content” on/off, compliance name + email, order (compliance only / me first, then compliance), email per item vs weekly summary; FTT admin can set a firm default.</li>
+<li><strong>AC-7:</strong> Playground build first; <strong>hold main</strong> until Alex says yes.</li>
+</ul>
+<h2>Direction-specific behavior</h2>
+<ul>
+<li><strong>A:</strong> compliance only; advisor FYI copy; one gate.</li>
+<li><strong>B (recommend):</strong> advisor → compliance; compliance’s Approve final; tracker; both audit lines.</li>
+<li><strong>C:</strong> weekly summary + queue + Approve all (confirm dialog); each Approve auto-schedules.</li>
+</ul>
+<h2>Open questions for Alex / Alana</h2>
+<ol>
+<li>Campaigns, social, or both? (mock shows both)</li>
+<li>Does the advisor still need to approve too? (A: no; B: yes — #416 says yes)</li>
+<li>One compliance contact per advisor, or per firm?</li>
+<li>Who is told on decline (advisor, FTT, both)? Mock: advisor by email; FTT status-only.</li>
+<li>External tools like Red Oak (#127) stay out of scope? Mock: yes.</li>
+</ol>
+<h2>Copy (plain words)</h2>
+<ul>
+<li>Email subject: “Approval needed: Jordan Lee’s email campaign — “…””</li>
+<li>Email: “Your approval is the final step — once you approve, it’s scheduled automatically.”</li>
+<li>Approve page button: “Approve — schedule it” · “Decline”</li>
+<li>After approve: “Approved and scheduled · Nothing else to do. Jordan Lee has been told.”</li>
+<li>After decline: “Declined · Jordan Lee has been told. No more reminder emails for this …”</li>
+<li>Audit: “Approved by Priya Shah (Compliance) · Oct 8, 10:14 AM” · “Scheduled automatically”</li>
+<li>Badges: Waiting for advisor · Waiting for compliance · Approved · Scheduled · Declined by advisor · Declined by compliance</li>
+</ul>
+<h2>Non-goals</h2>
+<ul>
+<li>Red Oak / external compliance (#127)</li>
+<li>Editing content on the approve page</li>
+<li>Changing approvals for advisors without a compliance contact</li>
+<li>content-library / Meteor work now · waking Soft Dev · agent-ready · main</li>
+<li>Real names as rows — fictional only</li>
+</ul>
+<h2>Status</h2>
+<p>Soft Dev <strong>hold</strong>. <strong>Not agent-ready.</strong> Waiting for Alex (with Alana) to pick A / B / C and answer the open questions. Pages URL must be on the issue before Soft Dev. Build path after pick: Software developer → playground → FC Tester.</p>
+</body>
+</html>

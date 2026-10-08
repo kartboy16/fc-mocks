@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>FC — #416 Advisor approve/deny before compliance</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #f4f8fc; --card: #fff; --ink: #1e2a4a; --muted: #5b6572;
+      --blue: #2b7de9; --border: #d4e4f2; --mint: #e6f1fb;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: Inter, system-ui, sans-serif; background: var(--bg); color: var(--ink); line-height: 1.55; }
+    .hero {
+      background: linear-gradient(135deg, #1e2a4a 0%, #2b7de9 100%);
+      color: #fff; padding: 40px 24px 36px;
+    }
+    .hero-inner { max-width: 880px; margin: 0 auto; }
+    .hero .eyebrow { font-size: 0.75rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; opacity: 0.85; margin-bottom: 10px; }
+    .hero h1 { font-size: 1.75rem; margin-bottom: 10px; }
+    .hero p { opacity: 0.92; max-width: 720px; font-size: 0.95rem; }
+    .rec {
+      display: inline-block; margin-top: 18px; background: #e8f5e9; color: #065f46;
+      font-weight: 700; font-size: 0.8rem; padding: 8px 14px; border-radius: 999px;
+    }
+    .wrap { max-width: 880px; margin: 0 auto; padding: 28px 24px 72px; }
+    .cta {
+      display: block; background: var(--blue); color: #fff !important; text-decoration: none;
+      text-align: center; padding: 16px 24px; border-radius: 12px; font-weight: 700;
+      font-size: 1rem; margin-bottom: 28px; box-shadow: 0 4px 16px rgba(43,125,233,0.35);
+    }
+    .cta:hover { filter: brightness(1.05); }
+    .cta small { display: block; font-weight: 500; opacity: 0.9; font-size: 0.8rem; margin-top: 4px; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 14px; }
+    .card {
+      background: var(--card); border: 1px solid var(--border); border-radius: 12px;
+      padding: 18px; text-decoration: none; color: inherit; display: block;
+      transition: border-color 0.15s, box-shadow 0.15s;
+    }
+    .card:hover { border-color: var(--blue); box-shadow: 0 4px 16px rgba(30,42,74,0.08); }
+    .card.recd { border-color: #2b7de9; box-shadow: 0 4px 16px rgba(43,125,233,0.12); }
+    .card.alt-dim { opacity: 0.85; }
+    .card h3 { font-size: 0.95rem; margin-bottom: 6px; color: var(--blue); }
+    .card p { font-size: 0.8rem; color: var(--muted); }
+    .card .tag {
+      display: inline-block; font-size: 0.65rem; font-weight: 700; background: var(--mint);
+      color: var(--blue); padding: 2px 8px; border-radius: 999px; margin-bottom: 8px;
+    }
+    .card .tag.rec-tag { background: var(--blue); color: #fff; }
+    .card .tag.dim-tag { background: #e5e7eb; color: #6b7280; }
+    h2 { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--muted); margin: 28px 0 12px; }
+    .problem {
+      margin: 0 0 20px; padding: 14px 16px; background: #fff8eb; border: 1px solid #f0d4a8;
+      border-radius: 10px; font-size: 0.85rem; color: #8a5a10;
+    }
+    .problem strong { color: #6b4408; }
+    .hold {
+      margin: 0 0 20px; padding: 14px 16px; background: #fef3c7; border: 1px solid #fcd34d;
+      border-radius: 10px; font-size: 0.85rem; color: #92400e;
+    }
+    .ac {
+      margin: 0 0 20px; padding: 14px 16px; background: #eff6ff; border: 1px solid #bfdbfe;
+      border-radius: 10px; font-size: 0.85rem; color: #1e40af;
+    }
+    .ac strong { color: #1e3a8a; }
+    .ac ul { margin: 8px 0 0; padding-left: 1.2rem; }
+    .ac li { margin-bottom: 4px; }
+    .oos {
+      margin: 0 0 20px; padding: 14px 16px; background: #f3f4f6; border: 1px solid #e5e7eb;
+      border-radius: 10px; font-size: 0.85rem; color: #374151;
+    }
+    .oos ul { margin: 8px 0 0; padding-left: 1.2rem; }
+    .note {
+      margin: 16px 0 0; padding: 12px 14px; background: #eef4fb; border: 1px solid var(--border);
+      border-radius: 10px; font-size: 0.85rem; color: var(--ink);
+    }
+    .meta { margin-top: 32px; font-size: 0.8rem; color: var(--muted); }
+    .meta a { color: var(--blue); }
+    code { background: #eef2f6; padding: 0.1em 0.35em; border-radius: 4px; font-size: 0.85em; }
+    a { color: var(--blue); }
+    .q{margin:0 0 20px;padding:14px 16px;background:#f5f3ff;border:1px solid #c4b5fd;border-radius:10px;font-size:.85rem;color:#4c1d95}
+    .q ol{margin:8px 0 0;padding-left:1.2rem}.q li{margin-bottom:6px}
+    .new{display:inline-block;font-size:.62rem;font-weight:700;background:#16a34a;color:#fff;padding:1px 7px;border-radius:999px;margin-left:6px;vertical-align:middle}
+    .scope{margin:0 0 20px;padding:14px 16px;background:#ecfdf5;border:1px solid #a7f3d0;border-radius:10px;font-size:.85rem;color:#065f46}
+    .scope strong{color:#064e3b}
+    table.fork{width:100%;border-collapse:collapse;background:#fff;border:1px solid var(--border);border-radius:10px;overflow:hidden;font-size:.8rem;margin:0 0 20px}
+    table.fork th,table.fork td{padding:9px 10px;border-bottom:1px solid #eef2f6;text-align:left;vertical-align:top}
+    table.fork th{background:#f8fafc;font-size:.7rem;text-transform:uppercase;letter-spacing:.04em;color:var(--muted)}
+    table.fork tr:last-child td{border-bottom:none}
+    .steps{font-size:.72rem;margin-top:10px;display:flex;gap:6px;flex-wrap:wrap}
+    .steps a{background:var(--mint);padding:2px 8px;border-radius:999px;text-decoration:none;font-weight:600}
+    .cardwrap{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:18px}
+    .cardwrap.recd{border-color:#2b7de9;box-shadow:0 4px 16px rgba(43,125,233,0.12)}
+    .cardwrap h3{font-size:.95rem;margin-bottom:6px}
+    .cardwrap h3 a{color:var(--blue);text-decoration:none}
+    .cardwrap p{font-size:.8rem;color:var(--muted)}
+    .cardwrap .tag{display:inline-block;font-size:.65rem;font-weight:700;background:var(--mint);color:var(--blue);padding:2px 8px;border-radius:999px;margin-bottom:8px}
+    .cardwrap .tag.rec-tag{background:var(--blue);color:#fff}
+    .cardwrap .tag.dim-tag{background:#e5e7eb;color:#6b7280}
+  
+    .combo{margin:0 0 20px;padding:14px 16px;background:#ecfdf5;border:1px solid #6ee7b7;border-radius:10px;font-size:.88rem;color:#065f46}
+    .combo a{color:#047857;font-weight:700}
+  </style>
+</head>
+<body>
+  <header class="hero"><div class="hero-inner">
+    <div class="eyebrow">FinancialContent · content-library #416 · Designer mocks · Idea / playground</div>
+    <h1>Advisor first, then compliance</h1>
+    <p>For compliance advisors, the item goes to the <strong>advisor first</strong> to Approve or Decline. Only after the advisor approves does FinancialContent send the <strong>compliance approval request</strong>. If the advisor declines, compliance is never asked and reminders stop. Compliance’s Approve then auto-approves and schedules it (<a href="../415/">#415</a>). Shown on <strong>Content approvals, Email Campaigns, and social posts</strong>.</p>
+    <span class="rec">Recommend · Direction A: automatic chain</span>
+  </div></header>
+  <div class="wrap">
+    <a class="cta" href="directions/a/index.html">Open the recommended direction<small>Advisor Approve → “Approved. Sent to Priya Shah (Compliance) for review.” · Decline → “Declined. Compliance won’t be asked. No more reminders.” (Undo ~10s) · 3-step tracker everywhere</small></a>
+    <p style="text-align:center;margin:-18px 0 24px;font-size:0.8rem;color:var(--muted)"><a href="build-contract.html">Build contract</a> · <a href="build-contract.md">Markdown</a></p>
+    <div class="problem"><strong>Ask (Alana Read, #fc-bugs, Oct 8):</strong> send to the advisor first to approve or deny; only after advisor approval should the compliance approval request go out. Advisor deny → stop, compliance never asked, reminders stop. Related: sibling <a href="https://github.com/kartboy16/content-library/issues/415">#415</a> · <a href="https://github.com/kartboy16/content-library/issues/389">#389</a> Decline · <a href="https://github.com/kartboy16/content-library/issues/148">#148</a> social approval · <a href="https://github.com/kartboy16/content-library/issues/127">#127</a> Red Oak (different problem).</div>
+    <div class="combo"><strong>How #415 and #416 fit together.</strong> <a href="../415/">#415</a> = what compliance’s Approve does (auto-approves and schedules, no extra FinancialContent step). #416 = the order (advisor first, then compliance). <strong>Together: #415 B + #416 A.</strong></div>
+    <div class="hold"><strong>Idea → playground first, hold main · Soft Dev hold · not agent-ready.</strong> Alex has <em>not</em> picked a direction. Do <em>not</em> wake Soft Dev. Do <em>not</em> add <code>agent-ready</code> until Alex picks and this Pages URL is on the issue.</div>
+    <div class="ac"><strong>Why the recommendation</strong><ul><li>No extra work for the advisor compared with today — they tap Approve or Decline once, and the hand-off to compliance just happens.</li><li>Decline reuses the #389 A pattern (optional reason, Undo ~10s), so advisors see one consistent Decline everywhere.</li><li>The 3-step tracker (Awaiting advisor → Awaiting compliance → Approved &amp; scheduled) shows in emails, approve pages, Content approvals, and the admin list, so nobody has to ask “where is it?”.</li><li><strong>B</strong> adds an optional “Note for compliance” box. Useful, but it’s an extra field most advisors will skip — easy to add later on top of A.</li></ul></div>
+    <div class="q"><strong>Open questions for Alex / Alana</strong><ol><li><strong>Which surfaces?</strong> Mock shows Content approvals, Email Campaigns and social posts. Recommend: all compliance-gated sends.</li><li><strong>Can the advisor change their mind</strong> after declining, or pull it back after approving but before compliance answers? Mock: Undo for ~10s only.</li><li><strong>Does an advisor decline notify FTT</strong>, or is it status-only in admin? Mock: status-only (“Declined by advisor” badge, reminders stopped).</li><li><strong>How does the #389 replacement pick fit?</strong> An advisor who declines could pick a replacement, which would then go to compliance. Noted only — not in this mock.</li><li><strong>Composes with <a href="../415/">#415</a>?</strong> Yes — compliance’s Approve auto-approves (no internal gate). Together = #415 B + #416 A.</li></ol></div>
+    <div class="ac" style="background:#f8fafc;border-color:#e2e8f0;color:#334155"><strong>What every direction shows (use the Demo view bar + Item type bar)</strong><ul><li><strong>1 · Advisor email</strong> + <strong>2 · approve page / in-app</strong> (phone + in-app)</li><li><strong>3 · After advisor approves</strong> — “Approved. Sent to Priya Shah (Compliance) for review.”</li><li><strong>4 · Advisor declines</strong> — reason optional · “Compliance won’t be asked. No more reminders.” · Undo ~10s</li><li><strong>5 · Compliance email</strong> and <strong>6 · compliance approves</strong> → auto-approved &amp; scheduled</li><li><strong>7 · Status</strong> — advisor’s Content approvals + FTT admin / MAP list with badges for every state: Waiting for advisor · Waiting for compliance · Approved · Declined by advisor · Declined by compliance</li><li><strong>8 · Setup</strong> (“Me first, then compliance”) · <strong>9 · Phone</strong> (~390px)</li></ul></div>
+    <div class="oos"><strong>Out of scope</strong><ul><li>External / offline compliance tools such as Red Oak (<a href="https://github.com/kartboy16/content-library/issues/127">#127</a>)</li><li>#389 replacement pick after decline (noted only)</li><li>Advisor pull-back after approving (beyond Undo ~10s) — open question</li><li>content-library / Meteor work · waking Soft Dev · agent-ready · main (playground first)</li></ul></div>
+    <h2>Directions</h2>
+    <div class="grid"><a class="card recd" href="directions/a/index.html"><span class="tag rec-tag">RECOMMEND</span><h3>A · Automatic chain</h3><p>Advisor Approve / Decline (#389 style). Approve sends the compliance request automatically. Decline stops everything. 3-step tracker everywhere.</p></a><a class="card alt-dim" href="directions/b/index.html"><span class="tag dim-tag">OPTION</span><h3>B · Approve with a note to compliance</h3><p>Same order, plus an optional “Note for compliance” box and an “Approve &amp; send to compliance” button. Compliance sees the note.</p></a></div>
+    <h2>Build contract (provisional)</h2>
+    <div class="note" style="margin-top:0">Advisor is the first gate · advisor decline stops it (no compliance request, reminders stop) · advisor approve sends the compliance request · clear statuses in admin/MAP and to the advisor · surfaces called out. Full AC: <a href="build-contract.html">build-contract.html</a>. Playground first, hold main. Soft Dev hold until Alex picks + Pages URL on the issue.</div>
+    <div class="meta"><p>Issue: <a href="https://github.com/kartboy16/content-library/issues/416">content-library #416</a> · sibling <a href="https://github.com/kartboy16/content-library/issues/415">#415</a> (<a href="../415/">mocks</a>) · related <a href="https://github.com/kartboy16/content-library/issues/389">#389</a>, <a href="https://github.com/kartboy16/content-library/issues/148">#148</a>, <a href="https://github.com/kartboy16/content-library/issues/127">#127</a> · Slack: <a href="https://financialtechtools.slack.com/archives/C0C265G996G/p1791481923111849">#fc-bugs</a></p><p>Repo: <a href="https://github.com/kartboy16/fc-mocks">kartboy16/fc-mocks</a> · path <code>/416/</code> · Live: <a href="https://kartboy16.github.io/fc-mocks/416/">kartboy16.github.io/fc-mocks/416/</a></p><p>Fictional people only (Jordan Lee, Priya Shah, Maya Chen, Luis Ortega, Ava Thompson, Sam Okonkwo, Noah Patel, Dana Morales).</p></div>
+  </div>
+</body>
+</html>
