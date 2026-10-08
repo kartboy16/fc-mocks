@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Direction B — One-tap Decline, confirm only · #389 Content approvals Decline</title>
+<title>Direction B — One-tap Decline, confirm only · replacement needs Approve · #389 Content approvals Decline</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
 <style>
 :root{--bg:#f4f8fc;--card:#fff;--ink:#1e2a4a;--muted:#5b6572;--blue:#2b7de9;--blue-dark:#1e5bb8;--border:#d4e4f2;--mint:#e6f1fb;--ok:#047857;--ok-bg:#e8f5e9;--warn:#92400e;--warn-bg:#fef3c7;--err:#b42318;--err-bg:#fef3f2;--decl:#6b7280;--decl-bg:#f3f4f6}
@@ -110,13 +110,55 @@ a{color:var(--blue)}
 .phone-wrap{display:flex;flex-direction:column;align-items:center}
 .phone-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);margin-bottom:8px}
 @media(max-width:860px){.admin-panel{max-width:390px;width:100%}}
+.rep-q{font-size:16px;font-weight:700;margin:6px 0 4px;line-height:1.3}
+.rep-lead{font-size:13px;color:var(--muted);margin-bottom:10px}
+.approve-line{font-size:12px;background:var(--ok-bg);color:var(--ok);border:1px solid #a7f3d0;border-radius:10px;padding:8px 10px;margin-bottom:12px}
+.approve-line.pend{background:var(--warn-bg);color:var(--warn);border-color:#fcd34d}
+.src-pill{display:inline-block;font-size:11px;font-weight:700;background:var(--mint);color:var(--blue);padding:3px 10px;border-radius:999px;margin-bottom:8px}
+.alt-card{background:#fff;border:1px solid var(--border);border-radius:14px;padding:12px;margin-bottom:10px;box-shadow:0 1px 2px rgba(30,42,74,.04)}
+.alt-top{display:flex;gap:12px;align-items:flex-start}
+.alt-thumb{width:64px;height:64px;border-radius:10px;flex-shrink:0;display:flex;align-items:flex-end;padding:6px;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.03em}
+.alt-cat{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--blue)}
+.alt-ttl{font-weight:700;font-size:14px;line-height:1.3;margin:2px 0}
+.alt-blurb{font-size:12px;color:#3a4558}
+.alt-slot{font-size:11px;color:var(--muted);margin:8px 0 8px;padding-left:2px}
+.alt-slot b{color:var(--ink)}
+.btn-sm{min-height:42px;font-size:14px;padding:8px 12px}
+.fine{font-size:11px;color:var(--muted);text-align:center;margin-top:6px}
+.declined-mini{display:flex;gap:10px;align-items:center;padding:10px 12px;background:var(--decl-bg);border-radius:12px;margin-bottom:12px;font-size:12px;color:#374151}
+.declined-mini .x{width:28px;height:28px;border-radius:999px;background:#e5e7eb;display:grid;place-items:center;font-weight:700;flex-shrink:0}
+.confirm-state .icon.ok{background:var(--ok-bg);color:var(--ok)}
+.confirm-state .icon.pend{background:var(--warn-bg);color:var(--warn)}
+.mini{display:flex;gap:10px;align-items:center;text-align:left;background:#fff;border:1px solid var(--border);border-radius:12px;padding:10px;margin:12px 0}
+.mini .alt-thumb{width:48px;height:48px;font-size:8px}
+.mini .t{font-weight:700;font-size:13px;line-height:1.3}
+.badge.replaced{background:#dbeafe;color:#1e40af;text-transform:none;letter-spacing:0}
+s.old{color:var(--muted)}
+.link-btn{background:none;border:none;color:var(--blue);font-family:inherit;font-size:12px;font-weight:600;cursor:pointer;padding:6px 0 0}
+.search{width:100%;font-family:inherit;font-size:14px;padding:10px 12px;border:1px solid var(--border);border-radius:10px;margin-bottom:10px}
+.chips{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px}
+.chip{border:1px solid var(--border);background:#fff;border-radius:999px;padding:4px 10px;font-family:inherit;font-size:12px;font-weight:600;color:var(--ink);cursor:pointer}
+.chip.on{background:var(--blue);border-color:var(--blue);color:#fff}
+.browse-row{display:flex;gap:10px;align-items:center;padding:10px 0;border-bottom:1px solid #eef2f6}
+.browse-row .alt-thumb{width:44px;height:44px;font-size:8px}
+.browse-row .t{font-weight:700;font-size:13px;line-height:1.3}
+.browse-row .c{font-size:11px;color:var(--muted)}
+.browse-row .use{margin-left:auto;flex-shrink:0;border:1px solid var(--blue);background:#fff;color:var(--blue);border-radius:8px;padding:6px 10px;font-family:inherit;font-size:12px;font-weight:700;cursor:pointer}
+.admin-toggle{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap}
+.admin-toggle button{border:1px solid var(--border);background:#fff;border-radius:999px;padding:3px 10px;font-family:inherit;font-size:11px;font-weight:600;cursor:pointer;color:var(--ink)}
+.admin-toggle button.on{border-color:var(--blue);color:var(--blue);background:var(--mint)}
+.rep-line{margin-top:6px;font-size:12px;color:#374151;display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.arrow{color:var(--muted);font-size:12px}
+.demo-btn.reset{border-style:dashed;color:var(--muted)}
+.demo-btn.step{border-color:#93c5fd}
+.list-item .alt-thumb{width:48px;height:48px;font-size:8px}
 </style>
 </head>
 <body>
 <header class="thesis">
   <span class="rec alt">ALT</span>
-  <h1>B — One-tap Decline, confirm only</h1>
-  <p>Decline → one confirm dialog (“Stop reminders and skip this piece?”) → done. No reason, no undo. Fastest; less insight for FTT. Soft Dev hold · not agent-ready.</p>
+  <h1>B — One-tap Decline, confirm only · replacement needs its own Approve</h1>
+  <p>Decline → one confirm (“Stop reminders and skip this piece?”) → pick a replacement. Your pick lands back in Content approvals as <strong>pending and still needs Approve</strong> (keeps the approval gate strict); it takes the Tue Oct 14 date once approved. No reason, no undo. Soft Dev hold · not agent-ready.</p>
 </header>
 <nav class="nav">
   <a href="../../index.html">#389 hub</a>
@@ -133,9 +175,12 @@ a{color:var(--blue)}
   <span class="lbl">Demo view</span>
   <button type="button" class="demo-btn on" data-view="email">1 · Email landing</button>
   <button type="button" class="demo-btn" data-view="inapp">2 · In-app approvals</button>
-  <button type="button" class="demo-btn" data-view="after">3 · After decline</button>
-  <button type="button" class="demo-btn" data-view="admin">4 · Admin (MAP)</button>
-  <span class="demo-note" id="demoNote">Approval page from the reminder email. Approve stays primary. Decline is secondary.</span>
+  <button type="button" class="demo-btn step" data-view="replace">3 · Declined → pick a replacement</button>
+  <button type="button" class="demo-btn step" data-view="replaced">4 · Replaced</button>
+  <button type="button" class="demo-btn step" data-view="skipped">5 · Skipped (just declined)</button>
+  <button type="button" class="demo-btn" data-view="admin">6 · Admin (MAP)</button>
+  <button type="button" class="demo-btn reset" data-view="reset">↺ Start over</button>
+  <span class="demo-note" id="demoNote"></span>
 </div>
 
 <div class="stage">
@@ -149,6 +194,7 @@ a{color:var(--blue)}
     <div class="ah">
       <h3>Manage Advisor Posts · Approvals</h3>
       <div class="sub">FTT admin view · Declined is distinct from Pending and Approved · reminders stop for declined pieces</div>
+      <div class="admin-toggle" id="adminToggle"></div>
     </div>
     <div id="adminBody"></div>
   </div>
@@ -159,6 +205,7 @@ a{color:var(--blue)}
 
 <script>
 const MODE = "b";
+const SLOT = "Tue Oct 14";
 const PIECE = {
   id: "p1",
   title: "Three questions before you retire",
@@ -167,51 +214,93 @@ const PIECE = {
   sent: "Oct 3, 2026",
   from: "FinancialContent"
 };
-const PENDING = [
-  { id: "p1", title: "Three questions before you retire", sub: "Retirement · reminder sent Oct 3", status: "pending" },
-  { id: "p2", title: "A year-end tax checklist", sub: "Tax · waiting since Oct 1", status: "pending" },
-  { id: "p3", title: "Estate documents to review this year", sub: "Estate · waiting since Sep 28", status: "pending" }
+const OTHERS = [
+  { id: "p2", title: "A year-end tax checklist", sub: "Tax · goes out Oct 21 if approved" },
+  { id: "p3", title: "Estate documents to review this year", sub: "Estate · goes out Oct 28 if approved" }
 ];
+const SUGGEST = [
+  { id: "s1", title: "Five ways to make your retirement savings last", blurb: "Simple habits that help savings stretch through a longer retirement.", cat: "Retirement planning", group: "Retirement", thumb: "Retirement", bg: "linear-gradient(135deg,#bbf7d0,#86efac)", ink: "#14532d" },
+  { id: "s2", title: "Taking CPP early: what to weigh first", blurb: "A plain look at starting CPP at 60 versus waiting a few years.", cat: "Retirement income", group: "Retirement", thumb: "Income", bg: "linear-gradient(135deg,#fde68a,#fcd34d)", ink: "#713f12" },
+  { id: "s3", title: "Downsizing in retirement: a quick checklist", blurb: "Questions to ask before selling the family home.", cat: "Retirement planning", group: "Retirement", thumb: "Housing", bg: "linear-gradient(135deg,#ddd6fe,#c4b5fd)", ink: "#4c1d95" }
+];
+const MORE = [
+  { id: "m1", title: "Planning income for your first year of retirement", blurb: "How to turn savings into a steady paycheque.", cat: "Retirement income", group: "Retirement", thumb: "Income", bg: "linear-gradient(135deg,#fed7aa,#fdba74)", ink: "#7c2d12" },
+  { id: "m2", title: "RRSP or TFSA: which comes first?", blurb: "A simple way to decide where the next dollar goes.", cat: "Tax", group: "Tax", thumb: "Tax", bg: "linear-gradient(135deg,#bae6fd,#7dd3fc)", ink: "#0c4a6e" },
+  { id: "m3", title: "A simple guide to year-end giving", blurb: "Give to causes you care about and keep more at tax time.", cat: "Tax", group: "Tax", thumb: "Giving", bg: "linear-gradient(135deg,#bae6fd,#a5b4fc)", ink: "#1e3a8a" },
+  { id: "m4", title: "Talking to your family about your estate", blurb: "Easy ways to start a conversation most families put off.", cat: "Estate", group: "Estate", thumb: "Estate", bg: "linear-gradient(135deg,#e9d5ff,#d8b4fe)", ink: "#581c87" },
+  { id: "m5", title: "How critical illness cover works", blurb: "What it pays for, and who it tends to help most.", cat: "Insurance", group: "Insurance", thumb: "Insurance", bg: "linear-gradient(135deg,#fecaca,#fca5a5)", ink: "#7f1d1d" },
+  { id: "m6", title: "Market dips: why staying the course helps", blurb: "A calm look at what usually happens after a drop.", cat: "Investing", group: "Investing", thumb: "Investing", bg: "linear-gradient(135deg,#a7f3d0,#6ee7b7)", ink: "#064e3b" }
+];
+const LIBRARY = SUGGEST.concat(MORE);
+const CATS = ["All", "Retirement", "Tax", "Estate", "Insurance", "Investing"];
 const REASONS = [
   { id: "relevant", lab: "Not relevant to my clients", hint: "Does not fit who I work with" },
   { id: "timing", lab: "Timing is not right", hint: "Maybe later, not now" },
   { id: "compliance", lab: "Compliance concern", hint: "I would rather not use this one" },
   { id: "other", lab: "Other", hint: "Short note (optional in A, required in C)" }
 ];
+const ONE_TAP = MODE !== "b";
 
 const state = {
   view: "email",
   declined: false,
+  replacementId: null,
+  skipped: false,
+  newApproved: false,
   reasonId: null,
   reasonText: "",
   undoLeft: 0,
   undoTimer: null,
   detailOpen: false,
+  detailId: "p1",
   dialogOpen: false,
+  browseOpen: false,
+  browseCat: "All",
+  browseQ: "",
   source: "email"
 };
+var toastTimer = null;
 
-const notes = {
-  email: "Approval page from the reminder email. Approve stays primary. Decline is secondary.",
-  inapp: "In-app Content approvals list. Open a piece, then Approve or Decline — same controls as the email landing.",
-  after: "After decline: plain confirmation. Reminders stop for this piece. Direction-specific undo / reason.",
-  admin: "FTT admin sees Declined (and reason where collected). Status-only — no email/Slack notify unless you ask."
-};
+function notesFor(v) {
+  var n = {
+    email: "Approval page from the reminder email. Shows the date it would go out. Approve stays primary; Decline is secondary.",
+    inapp: "In-app Content approvals. Open a piece: same Approve / Decline as the email page. After a decline, the same replacement step appears.",
+    replace: ONE_TAP
+      ? "Replacement step: 3 suggestions one tap away, Browse, or Skip. Choosing a post approves it for " + SLOT + " (no second step)." + (MODE === "c" ? " Reason was required first." : "")
+      : "Replacement step: 3 suggestions one tap away, Browse, or Skip. Your pick lands in Content approvals as pending and still needs Approve.",
+    replaced: ONE_TAP
+      ? "Replaced: new post goes out " + SLOT + " in the declined post\u2019s spot. No more reminders about the old one." + (MODE === "a" ? " Undo covers decline + swap for ~10s." : "")
+      : "Swapped in: new post waits in Content approvals for Approve. Tap \u201cReview and approve now\u201d to finish.",
+    skipped: "Skip = plain decline (AC-2/AC-3): not published, no reminders. \u201cChoose another post instead\u201d stays available.",
+    admin: "FTT admin: declined post struck through, Declined \u2192 Replaced with \u2018new title\u2019, or just Declined if skipped. Use the toggle to compare."
+  };
+  return n[v] || "";
+}
 
 function esc(s) {
   return String(s).replace(/[&<>"']/g, function (c) {
     return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
   });
 }
+function q(s) { return "\u201c" + esc(s) + "\u201d"; }
 function toast(msg) {
   var t = document.getElementById("toast");
   t.textContent = msg;
   t.classList.add("show");
-  clearTimeout(toast._x);
-  toast._x = setTimeout(function () { t.classList.remove("show"); }, 2400);
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(function () { t.classList.remove("show"); }, 2800);
 }
 function statusbar() {
   return '<div class="statusbar"><span>9:41</span><span class="sigs"><i></i><i></i><i></i><i></i></span></div>';
+}
+function findItem(id) {
+  return LIBRARY.filter(function (x) { return x.id === id; })[0] || null;
+}
+function thumb(it) {
+  return '<div class="alt-thumb" style="background:' + it.bg + ';color:' + it.ink + '">' + esc(it.thumb) + "</div>";
+}
+function kicker() {
+  return state.source === "inapp" ? "Content approvals" : "From your approval email";
 }
 
 function renderReasons() {
@@ -220,7 +309,7 @@ function renderReasons() {
     var on = state.reasonId === r.id ? " on" : "";
     html += '<button type="button" class="reason' + on + '" data-reason="' + r.id + '">' +
       '<input type="radio" name="reason" ' + (state.reasonId === r.id ? "checked" : "") + ' tabindex="-1" />' +
-      '<span><span class="lab">' + esc(r.lab) + '</span><span class="hint">' + esc(r.hint) + '</span></span></button>';
+      '<span><span class="lab">' + esc(r.lab) + '</span><span class="hint">' + esc(r.hint) + "</span></span></button>";
   });
   html += "</div>";
   if (state.reasonId === "other") {
@@ -228,13 +317,31 @@ function renderReasons() {
   }
   return html;
 }
+function reasonLabel() {
+  if (!state.reasonId) return "";
+  var r = REASONS.filter(function (x) { return x.id === state.reasonId; })[0];
+  if (!r) return "";
+  if (state.reasonId === "other" && state.reasonText) return state.reasonText;
+  return r.lab;
+}
+function reasonLine() {
+  if ((MODE === "a" || MODE === "c") && state.reasonId) {
+    return '<p style="font-size:12px;color:var(--muted);margin-bottom:8px">Reason: <strong style="color:var(--ink)">' + esc(reasonLabel()) + "</strong></p>";
+  }
+  return "";
+}
+function undoBar(label) {
+  if (MODE !== "a" || state.undoLeft <= 0) return "";
+  return '<div class="undo-bar"><span>' + label + ' \u2014 Undo for <b id="undoLeft">' + state.undoLeft + "</b>s</span>" +
+    '<button type="button" id="btnUndo">Undo</button></div>';
+}
 
 function pieceActions() {
   return '<div class="actions">' +
     '<button type="button" class="btn btn-primary" id="btnApprove">Approve</button>' +
     '<button type="button" class="btn btn-secondary" id="btnDecline">Decline</button>' +
     "</div>" +
-    '<div class="remind-note">If you ignore this piece, reminder emails keep coming. Decline stops them. Approve is unchanged.</div>';
+    '<div class="remind-note">If you ignore this piece, reminder emails keep coming. Decline stops them, and you can pick something else to send instead. Approve is unchanged.</div>';
 }
 
 function renderEmail() {
@@ -244,110 +351,214 @@ function renderEmail() {
     '<div class="scroll"><div class="piece-card">' +
     '<div class="piece-img">Blog · Retirement</div>' +
     '<div class="piece-body"><h3>' + esc(PIECE.title) + "</h3>" +
-    '<div class="meta">Sent ' + esc(PIECE.sent) + " · " + esc(PIECE.from) + "</div>" +
+    '<div class="meta">Sent ' + esc(PIECE.sent) + " · Goes out <strong>" + SLOT + "</strong> if approved</div>" +
     '<p class="excerpt">' + esc(PIECE.excerpt) + "</p>" +
     pieceActions() +
     "</div></div></div>";
 }
 
+function listRow(id, title, sub, badge, it, extra) {
+  return '<div class="list-item" data-open="' + id + '">' +
+    (it ? thumb(it) : '<div class="thumb"></div>') +
+    '<div style="flex:1;min-width:0">' +
+    '<div class="ttl">' + title + "</div>" +
+    '<div class="sub">' + sub + "</div>" +
+    '<div style="margin-top:6px;display:flex;gap:6px;flex-wrap:wrap">' + badge + "</div>" + (extra || "") + "</div></div>";
+}
+
 function renderInappList() {
-  var items = PENDING.map(function (p) {
-    var st = (state.declined && p.id === "p1") ? "declined" : p.status;
-    var badge = st === "declined"
-      ? '<span class="badge declined">Declined</span>'
-      : '<span class="badge pending">Needs approval</span>';
-    return '<div class="list-item" data-open="' + p.id + '">' +
-      '<div class="thumb"></div><div style="flex:1;min-width:0">' +
-      '<div class="ttl">' + esc(p.title) + "</div>" +
-      '<div class="sub">' + esc(p.sub) + "</div>" +
-      '<div style="margin-top:6px">' + badge + "</div></div></div>";
-  }).join("");
+  var rows = "";
+  var it = state.replacementId ? findItem(state.replacementId) : null;
+  if (it) {
+    rows += listRow("new", esc(it.title), SLOT + " · in place of " + q(PIECE.title),
+      state.newApproved ? '<span class="badge approved">Approved · ' + SLOT + "</span>" : '<span class="badge pending">Needs approval</span>', it);
+  }
+  if (!state.declined) {
+    rows += listRow("p1", esc(PIECE.title), "Retirement · goes out " + SLOT + " if approved", '<span class="badge pending">Needs approval</span>');
+  } else if (it) {
+    rows += listRow("p1", '<s class="old">' + esc(PIECE.title) + "</s>", "Retirement · was set for " + SLOT,
+      '<span class="badge declined">Declined</span><span class="badge replaced">Replaced</span>');
+  } else {
+    rows += listRow("p1", esc(PIECE.title), "Retirement · no reminders", '<span class="badge declined">Declined</span>', null,
+      '<button type="button" class="link-btn" data-reopen="1">Choose another post instead \u2192</button>');
+  }
+  OTHERS.forEach(function (p) {
+    rows += listRow(p.id, esc(p.title), esc(p.sub), '<span class="badge pending">Needs approval</span>');
+  });
   return statusbar() +
     '<div class="appbar"><div class="kicker">FinancialContent</div><h2>Content approvals</h2>' +
     '<div class="sub">Pieces waiting for your OK</div></div>' +
-    '<div class="scroll">' + items + "</div>";
+    '<div class="scroll">' + rows + "</div>";
 }
 
 function renderInappDetail() {
-  return statusbar() +
-    '<div class="appbar"><div class="kicker"><button type="button" class="btn-ghost" id="btnBack" style="padding:0;min-height:auto;font-size:12px">← Content approvals</button></div>' +
+  var back = '<div class="appbar"><div class="kicker"><button type="button" class="btn-ghost" id="btnBack" style="padding:0;min-height:auto;font-size:12px">\u2190 Content approvals</button></div>';
+  if (state.detailId === "new") {
+    var it = findItem(state.replacementId);
+    return statusbar() + back +
+      "<h2>Review</h2><div class=\"sub\">Jordan Lee · Harbour Wealth</div></div>" +
+      '<div class="scroll"><div class="piece-card">' +
+      '<div class="piece-img" style="background:' + it.bg + ';color:' + it.ink + '">Your pick · ' + esc(it.cat) + "</div>" +
+      '<div class="piece-body"><h3>' + esc(it.title) + "</h3>" +
+      '<div class="meta">Goes out <strong>' + SLOT + "</strong> once approved · in place of " + q(PIECE.title) + "</div>" +
+      '<p class="excerpt">' + esc(it.blurb) + "</p>" +
+      '<div class="actions"><button type="button" class="btn btn-primary" id="btnApproveNew">Approve</button>' +
+      '<button type="button" class="btn btn-secondary" id="btnDeclineNew">Decline</button></div>' +
+      '<div class="remind-note">You picked this to replace the post you declined. Approve it and it goes out ' + SLOT + ".</div>" +
+      "</div></div></div>";
+  }
+  return statusbar() + back +
     '<h2>Review</h2><div class="sub">Jordan Lee · Harbour Wealth</div></div>' +
     '<div class="scroll"><div class="piece-card">' +
     '<div class="piece-img">Blog · Retirement</div>' +
     '<div class="piece-body"><h3>' + esc(PIECE.title) + "</h3>" +
-    '<div class="meta">' + esc(PIECE.topic) + " · from your approval list</div>" +
+    '<div class="meta">' + esc(PIECE.topic) + " · goes out <strong>" + SLOT + "</strong> if approved</div>" +
     '<p class="excerpt">' + esc(PIECE.excerpt) + "</p>" +
     pieceActions() +
     "</div></div></div>";
 }
 
-function reasonLabel() {
-  if (!state.reasonId) return "";
-  var r = REASONS.filter(function (x) { return x.id === state.reasonId; })[0];
-  if (!r) return "";
-  if (state.reasonId === "other" && state.reasonText) return state.reasonText;
-  return r.lab;
+function altCard(it) {
+  var slot = ONE_TAP
+    ? "Will go out <b>" + SLOT + "</b>, in place of " + q(PIECE.title)
+    : "Takes the <b>" + SLOT + "</b> spot once you approve it";
+  return '<div class="alt-card"><div class="alt-top">' + thumb(it) +
+    '<div style="flex:1;min-width:0"><div class="alt-cat">' + esc(it.cat) + '</div><div class="alt-ttl">' + esc(it.title) + "</div>" +
+    '<div class="alt-blurb">' + esc(it.blurb) + "</div></div></div>" +
+    '<div class="alt-slot">' + slot + "</div>" +
+    '<button type="button" class="btn btn-primary btn-sm" data-use="' + it.id + '">Use this instead</button></div>';
 }
 
-function renderAfter() {
-  var undo = "";
-  if (MODE === "a" && state.undoLeft > 0) {
-    undo = '<div class="undo-bar"><span>Changed your mind? Undo for ' + state.undoLeft + "s</span>" +
-      '<button type="button" id="btnUndo">Undo</button></div>';
-  }
-  var reasonLine = "";
-  if ((MODE === "a" || MODE === "c") && state.reasonId) {
-    reasonLine = '<p style="font-size:12px;color:var(--muted)">Reason: <strong style="color:var(--ink)">' + esc(reasonLabel()) + "</strong></p>";
-  }
-  var later = MODE === "a"
-    ? '<button type="button" class="btn btn-ghost" id="btnLater">Approve later from Content approvals</button>'
-    : '<button type="button" class="btn btn-ghost" id="btnLater">Back to Content approvals</button>';
-  var undoHint = MODE === "a"
-    ? " (or tap Undo while it is available)."
-    : ".";
+function renderReplaceStep() {
+  var approveLine = ONE_TAP
+    ? '<div class="approve-line">One tap: <strong>choosing a post approves it for ' + SLOT + ".</strong> No second step.</div>"
+    : '<div class="approve-line pend">Your pick goes into Content approvals. You\u2019ll still need to <strong>Approve</strong> it before it goes out.</div>';
   return statusbar() +
-    '<div class="appbar"><div class="kicker">FinancialContent</div><h2>Done</h2></div>' +
-    '<div class="scroll"><div class="confirm-state">' +
-    '<div class="icon">✕</div>' +
-    "<h3>Declined</h3>" +
-    "<p><strong>No more reminder emails for this piece.</strong></p>" +
-    "<p>\u201c" + esc(PIECE.title) + "\u201d will not be published or scheduled for you.</p>" +
-    reasonLine +
-    undo +
-    later +
-    "</div>" +
-    '<div class="remind-note">Approve is unchanged for other pieces. You can still approve this one later from Content approvals' +
-    undoHint +
+    '<div class="appbar"><div class="kicker">' + kicker() + "</div><h2>Declined</h2>" +
+    '<div class="sub">No more reminder emails for ' + q(PIECE.title) + ".</div></div>" +
+    '<div class="scroll">' +
+    undoBar("Declined") +
+    reasonLine() +
+    '<div class="rep-q">Send something else on ' + SLOT + " instead?</div>" +
+    '<p class="rep-lead">Pick one and it takes the ' + SLOT + " spot in place of the post you declined.</p>" +
+    approveLine +
+    '<span class="src-pill">Suggested for your clients</span>' +
+    SUGGEST.map(altCard).join("") +
+    '<button type="button" class="btn btn-ghost" id="btnBrowse">Browse the library for more \u2192</button>' +
+    '<button type="button" class="btn btn-secondary" id="btnSkip">Skip, just decline</button>' +
+    '<p class="fine">Skip works like a plain decline: it won\u2019t be published and reminder emails stay off.</p>' +
+    "</div>";
+}
+
+function browseListHtml() {
+  var qy = state.browseQ.trim().toLowerCase();
+  var items = LIBRARY.filter(function (it) {
+    var catOk = state.browseCat === "All" || it.group === state.browseCat;
+    var qOk = !qy || (it.title + " " + it.cat + " " + it.blurb).toLowerCase().indexOf(qy) >= 0;
+    return catOk && qOk;
+  });
+  if (!items.length) return '<p class="fine" style="padding:16px 0">No posts match. Try another word or category.</p>';
+  return items.map(function (it) {
+    return '<div class="browse-row">' + thumb(it) +
+      '<div style="min-width:0"><div class="t">' + esc(it.title) + '</div><div class="c">' + esc(it.cat) + "</div></div>" +
+      '<button type="button" class="use" data-use="' + it.id + '">Use</button></div>';
+  }).join("");
+}
+function renderBrowse() {
+  var chips = CATS.map(function (c) {
+    return '<button type="button" class="chip' + (state.browseCat === c ? " on" : "") + '" data-cat="' + c + '">' + c + "</button>";
+  }).join("");
+  return '<div class="overlay open" id="overlay"><div class="sheet">' +
+    '<div class="grab"></div><h3>Browse the library</h3>' +
+    '<p class="lead">Pick any post to send on ' + SLOT + " instead of " + q(PIECE.title) + "." +
+    (ONE_TAP ? " Choosing it approves it." : " You\u2019ll approve it next.") + "</p>" +
+    '<input class="search" id="browseQ" type="search" placeholder="Search posts" value="' + esc(state.browseQ) + '" />' +
+    '<div class="chips">' + chips + "</div>" +
+    '<div id="browseList">' + browseListHtml() + "</div>" +
+    '<div class="sheet-actions" style="margin-top:12px"><button type="button" class="btn btn-ghost" id="btnBrowseClose">Back to suggestions</button></div>' +
     "</div></div>";
 }
 
-function renderDialogA() {
-  return '<div class="overlay center open" id="overlay"><div class="dialog">' +
-    '<h3 style="font-size:16px;margin-bottom:6px">Decline this piece?</h3>' +
-    '<p style="font-size:13px;color:var(--muted);margin-bottom:12px">We will stop reminder emails. You can still approve it later from Content approvals.</p>' +
-    '<p style="font-size:12px;font-weight:600;margin-bottom:8px;color:var(--ink)">Optional \u2014 why? (helps our team)</p>' +
-    renderReasons() +
-    '<div class="sheet-actions">' +
-    '<button type="button" class="btn btn-danger-soft" id="btnConfirmDecline">Decline</button>' +
-    '<button type="button" class="btn btn-ghost" id="btnCancel">Cancel</button>' +
-    "</div></div></div>";
+function miniCard(it, line) {
+  return '<div class="mini">' + thumb(it) + '<div style="min-width:0"><div class="t">' + esc(it.title) + '</div><div class="fine" style="text-align:left;margin:2px 0 0">' + line + "</div></div></div>";
 }
 
-function renderDialogB() {
-  return '<div class="overlay center open" id="overlay"><div class="dialog">' +
-    '<h3 style="font-size:16px;margin-bottom:6px">Stop reminders and skip this piece?</h3>' +
-    '<p style="font-size:13px;color:var(--muted);margin-bottom:14px">We will mark it declined and stop reminder emails. It will not be published for you.</p>' +
-    '<div class="sheet-actions">' +
-    '<button type="button" class="btn btn-danger-soft" id="btnConfirmDecline">Decline</button>' +
-    '<button type="button" class="btn btn-ghost" id="btnCancel">Cancel</button>' +
-    "</div></div></div>";
+function renderReplaced() {
+  var it = findItem(state.replacementId);
+  if (!ONE_TAP && !state.newApproved) {
+    return statusbar() +
+      '<div class="appbar"><div class="kicker">' + kicker() + "</div><h2>Swapped in</h2></div>" +
+      '<div class="scroll"><div class="confirm-state">' +
+      '<div class="icon pend">\u21bb</div>' +
+      "<h3>Waiting for your Approve</h3>" +
+      "<p>" + q(it.title) + " is now in Content approvals. Approve it and it goes out <strong>" + SLOT + "</strong> in place of " + q(PIECE.title) + ".</p>" +
+      "<p><strong>No more reminders about " + q(PIECE.title) + ".</strong></p>" +
+      miniCard(it, '<span class="badge pending">Needs approval</span> · ' + SLOT) +
+      '<div class="actions"><button type="button" class="btn btn-primary" id="btnReviewNew">Review and approve now</button>' +
+      '<button type="button" class="btn btn-ghost" id="btnLater">Later \u2014 back to Content approvals</button></div>' +
+      '<p class="fine">Until you approve it, the usual reminder emails apply to your new pick.</p>' +
+      "</div></div>";
+  }
+  var how = ONE_TAP ? "Choosing it approved it. Nothing else to do." : "You approved it. Nothing else to do.";
+  return statusbar() +
+    '<div class="appbar"><div class="kicker">' + kicker() + "</div><h2>Done</h2></div>" +
+    '<div class="scroll"><div class="confirm-state">' +
+    '<div class="icon ok">\u2713</div>' +
+    "<h3>Replaced</h3>" +
+    "<p>" + q(it.title) + " goes out <strong>" + SLOT + "</strong>.</p>" +
+    "<p><strong>No more reminders about " + q(PIECE.title) + ".</strong></p>" +
+    miniCard(it, '<span class="badge approved">Approved</span> · goes out ' + SLOT) +
+    '<p style="font-size:12px">' + how + "</p>" +
+    reasonLine() +
+    undoBar("Decline and swap done") +
+    '<button type="button" class="btn btn-ghost" id="btnLater">Back to Content approvals</button>' +
+    "</div></div>";
 }
 
-function renderSheetC() {
+function renderSkipped() {
+  var later = MODE === "a"
+    ? '<button type="button" class="btn btn-ghost" id="btnLater">Approve later from Content approvals</button>'
+    : '<button type="button" class="btn btn-ghost" id="btnLater">Back to Content approvals</button>';
+  return statusbar() +
+    '<div class="appbar"><div class="kicker">' + kicker() + "</div><h2>Done</h2></div>" +
+    '<div class="scroll"><div class="confirm-state">' +
+    '<div class="icon">\u2715</div>' +
+    "<h3>Declined</h3>" +
+    "<p><strong>No more reminder emails for this piece.</strong></p>" +
+    "<p>" + q(PIECE.title) + " will not be published or scheduled for you. Nothing was swapped in for " + SLOT + ".</p>" +
+    reasonLine() +
+    undoBar("Declined") +
+    '<button type="button" class="btn btn-secondary btn-sm" id="btnReopen" style="margin-top:6px">Choose another post instead</button>' +
+    later +
+    "</div>" +
+    '<div class="remind-note">Approve is unchanged for other pieces.' + (MODE === "a" ? " You can still approve this one later from Content approvals." : "") + "</div></div>";
+}
+
+function renderDialog() {
+  if (MODE === "a") {
+    return '<div class="overlay center open" id="overlay"><div class="dialog">' +
+      '<h3 style="font-size:16px;margin-bottom:6px">Decline this piece?</h3>' +
+      '<p style="font-size:13px;color:var(--muted);margin-bottom:12px">We will stop reminder emails. Next, you can pick something else to send on ' + SLOT + " \u2014 or skip.</p>" +
+      '<p style="font-size:12px;font-weight:600;margin-bottom:8px;color:var(--ink)">Optional \u2014 why? (helps our team)</p>' +
+      renderReasons() +
+      '<div class="sheet-actions">' +
+      '<button type="button" class="btn btn-danger-soft" id="btnConfirmDecline">Decline</button>' +
+      '<button type="button" class="btn btn-ghost" id="btnCancel">Cancel</button>' +
+      "</div></div></div>";
+  }
+  if (MODE === "b") {
+    return '<div class="overlay center open" id="overlay"><div class="dialog">' +
+      '<h3 style="font-size:16px;margin-bottom:6px">Stop reminders and skip this piece?</h3>' +
+      '<p style="font-size:13px;color:var(--muted);margin-bottom:14px">We will mark it declined and stop reminder emails. It will not be published for you. Next, you can pick something else for ' + SLOT + ".</p>" +
+      '<div class="sheet-actions">' +
+      '<button type="button" class="btn btn-danger-soft" id="btnConfirmDecline">Decline</button>' +
+      '<button type="button" class="btn btn-ghost" id="btnCancel">Cancel</button>' +
+      "</div></div></div>";
+  }
   return '<div class="overlay open" id="overlay"><div class="sheet">' +
     '<div class="grab"></div>' +
     "<h3>Decline this piece</h3>" +
-    '<p class="lead">Tell us why so we know not to chase it. Reminder emails will stop. Approve stays available for other pieces.</p>' +
+    '<p class="lead">Tell us why so we know not to chase it. Reminder emails will stop. Next, you can pick something else for ' + SLOT + " \u2014 or skip.</p>" +
     '<div class="errline" id="reasonErr">Pick a reason (or Other with a short note) to continue.</div>' +
     renderReasons() +
     '<div class="sheet-actions">' +
@@ -356,6 +567,9 @@ function renderSheetC() {
     "</div></div></div>";
 }
 
+function adminMode() {
+  return state.replacementId ? "replaced" : "skipped";
+}
 function renderAdmin() {
   var reason = reasonLabel();
   var tip = reason
@@ -365,85 +579,115 @@ function renderAdmin() {
   if (MODE === "c" && reason) {
     reasonBlock = '<div style="margin-top:6px;font-size:12px;color:#374151;background:#f3f4f6;padding:6px 8px;border-radius:8px"><strong>Reason:</strong> ' + esc(reason) + "</div>";
   } else if (MODE === "a" && reason) {
-    reasonBlock = '<div style="margin-top:4px;font-size:11px;color:var(--muted)">Hover / focus the badge for reason</div>';
+    reasonBlock = '<div style="margin-top:4px;font-size:11px;color:var(--muted)">Hover / focus the Declined badge for reason</div>';
+  }
+  var it = state.replacementId ? findItem(state.replacementId) : null;
+  var pieceLine, badges, extra;
+  if (it) {
+    pieceLine = '<s class="old">' + esc(PIECE.title) + "</s>";
+    badges = tip + '<span class="arrow">\u2192</span><span class="badge replaced">Replaced with ' + q(it.title) + "</span>";
+    extra = '<div class="rep-line">' +
+      (state.newApproved
+        ? '<span class="badge approved">Approved</span> ' + esc(it.title) + " goes out " + SLOT + " (same spot)" + (ONE_TAP ? " · approved by choosing it" : "")
+        : '<span class="badge pending">Pending approval</span> ' + esc(it.title) + " · goes out " + SLOT + " once approved") +
+      '</div><div style="margin-top:4px;font-size:11px;color:var(--muted)">Reminders stopped for the declined post</div>';
+  } else {
+    pieceLine = esc(PIECE.title);
+    badges = tip + '<span style="font-size:11px;color:var(--muted)">Reminders stopped</span>';
+    extra = '<div style="margin-top:4px;font-size:11px;color:var(--muted)">No replacement chosen \u00b7 ' + SLOT + " · nothing goes out that day</div>";
   }
   var body =
-    '<div class="admin-row">' +
-    '<div class="av">JL</div><div style="flex:1">' +
+    '<div class="admin-row"><div class="av">JL</div><div style="flex:1">' +
     '<div class="nm">Jordan Lee</div><div class="firm">Harbour Wealth</div>' +
-    '<div class="piece">' + esc(PIECE.title) + "</div>" +
-    '<div class="badges">' + tip + '<span style="font-size:11px;color:var(--muted)">Reminders stopped</span></div>' +
-    reasonBlock +
+    '<div class="piece">' + pieceLine + ' <span style="color:var(--muted);font-size:11px">· ' + SLOT + "</span></div>" +
+    '<div class="badges">' + badges + "</div>" + extra + reasonBlock +
     "</div></div>" +
-    '<div class="admin-row">' +
-    '<div class="av">PS</div><div style="flex:1">' +
+    '<div class="admin-row"><div class="av">PS</div><div style="flex:1">' +
     '<div class="nm">Priya Shah</div><div class="firm">Cedar Peak Advisory</div>' +
     '<div class="piece">A year-end tax checklist</div>' +
     '<div class="badges"><span class="badge pending">Pending</span></div>' +
     "</div></div>" +
-    '<div class="admin-row">' +
-    '<div class="av">SO</div><div style="flex:1">' +
+    '<div class="admin-row"><div class="av">SO</div><div style="flex:1">' +
     '<div class="nm">Sam Okonkwo</div><div class="firm">Lakeside Financial</div>' +
     '<div class="piece">Estate documents to review this year</div>' +
     '<div class="badges"><span class="badge approved">Approved</span></div>' +
     "</div></div>";
   document.getElementById("adminBody").innerHTML = body;
+  var m = adminMode();
+  document.getElementById("adminToggle").innerHTML =
+    '<span style="font-size:11px;color:var(--muted);align-self:center">Jordan\u2019s row:</span>' +
+    '<button type="button" data-adm="replaced" class="' + (m === "replaced" ? "on" : "") + '">Replaced</button>' +
+    (ONE_TAP ? "" : '<button type="button" data-adm="pending" class="' + (m === "replaced" && !state.newApproved ? "on" : "") + '">Replaced, not yet approved</button>') +
+    '<button type="button" data-adm="skipped" class="' + (m === "skipped" ? "on" : "") + '">Skipped (just declined)</button>';
+  document.querySelectorAll("[data-adm]").forEach(function (b) {
+    b.onclick = function () {
+      var v = b.getAttribute("data-adm");
+      if (v === "skipped") { state.replacementId = null; state.skipped = true; state.newApproved = false; }
+      else { state.replacementId = state.replacementId || "s1"; state.skipped = false; state.newApproved = v !== "pending"; }
+      renderAdmin();
+    };
+  });
 }
 
 function clearUndo() {
   if (state.undoTimer) { clearInterval(state.undoTimer); state.undoTimer = null; }
   state.undoLeft = 0;
 }
-
 function startUndo() {
   clearUndo();
   if (MODE !== "a") return;
   state.undoLeft = 10;
   state.undoTimer = setInterval(function () {
     state.undoLeft -= 1;
-    if (state.undoLeft <= 0) clearUndo();
-    if (state.view === "after") render();
+    var el = document.getElementById("undoLeft");
+    if (el) el.textContent = state.undoLeft;
+    if (state.undoLeft <= 0) {
+      clearUndo();
+      var bar = document.querySelector(".undo-bar");
+      if (bar) bar.parentNode.removeChild(bar);
+    }
   }, 1000);
 }
 
 function doDecline() {
   if (MODE === "c") {
-    if (!state.reasonId) {
-      var err = document.getElementById("reasonErr");
-      if (err) err.classList.add("show");
-      return;
-    }
+    var err = document.getElementById("reasonErr");
+    if (!state.reasonId) { if (err) err.classList.add("show"); return; }
     if (state.reasonId === "other" && !state.reasonText.trim()) {
-      var err2 = document.getElementById("reasonErr");
-      if (err2) {
-        err2.textContent = "Add a short note for Other, or pick another reason.";
-        err2.classList.add("show");
-      }
+      if (err) { err.textContent = "Add a short note for Other, or pick another reason."; err.classList.add("show"); }
       return;
     }
   }
-  var ft = document.getElementById("freeText");
-  if (ft) state.reasonText = ft.value;
   state.declined = true;
+  state.replacementId = null;
+  state.skipped = false;
   state.dialogOpen = false;
-  state.view = "after";
+  state.view = "replace";
   startUndo();
   syncDemoButtons();
   render();
-  toast("Declined · no more reminder emails for this piece");
+  toast("Declined \u00b7 no more reminder emails for this piece");
 }
 
-function openDeclineUI() {
-  state.dialogOpen = true;
+function useReplacement(id) {
+  var it = findItem(id);
+  state.replacementId = id;
+  state.skipped = false;
+  state.newApproved = ONE_TAP;
+  state.browseOpen = false;
+  state.view = "replaced";
+  startUndo();
+  syncDemoButtons();
   render();
+  if (ONE_TAP) toast("Replaced \u00b7 \u201c" + it.title + "\u201d goes out " + SLOT + ". No more reminders about \u201c" + PIECE.title + "\u201d.");
+  else toast("Added to Content approvals \u00b7 approve it to send on " + SLOT + ".");
 }
 
 function render() {
   var screen = document.getElementById("screen");
   var phoneWrap = document.getElementById("phoneWrap");
   var adminPanel = document.getElementById("adminPanel");
-  document.getElementById("demoNote").textContent = notes[state.view] || "";
-
+  document.getElementById("demoNote").textContent = notesFor(state.view);
   if (state.view === "admin") {
     phoneWrap.classList.add("hidden");
     adminPanel.classList.remove("hidden");
@@ -452,92 +696,123 @@ function render() {
     phoneWrap.classList.remove("hidden");
     adminPanel.classList.add("hidden");
     var html = "";
-    if (state.view === "email") {
-      state.source = "email";
-      html = renderEmail();
-    } else if (state.view === "inapp") {
-      state.source = "inapp";
-      html = state.detailOpen ? renderInappDetail() : renderInappList();
-    } else if (state.view === "after") {
-      html = renderAfter();
-    }
-    if (state.dialogOpen) {
-      if (MODE === "a") html += renderDialogA();
-      else if (MODE === "b") html += renderDialogB();
-      else html += renderSheetC();
-    }
+    if (state.view === "email") { state.source = "email"; html = renderEmail(); }
+    else if (state.view === "inapp") { state.source = "inapp"; html = state.detailOpen ? renderInappDetail() : renderInappList(); }
+    else if (state.view === "replace") html = renderReplaceStep();
+    else if (state.view === "replaced") html = renderReplaced();
+    else if (state.view === "skipped") html = renderSkipped();
+    if (state.dialogOpen) html += renderDialog();
+    if (state.browseOpen && state.view === "replace") html += renderBrowse();
     screen.innerHTML = html;
     bind();
   }
   renderLegend();
 }
 
+function bindUse() {
+  document.querySelectorAll("[data-use]").forEach(function (b) {
+    b.onclick = function () { useReplacement(b.getAttribute("data-use")); };
+  });
+}
+function on(id, fn) { var el = document.getElementById(id); if (el) el.onclick = fn; }
+
+function goInappList() {
+  state.view = "inapp";
+  state.detailOpen = false;
+  syncDemoButtons();
+  render();
+}
+
 function bind() {
-  var approve = document.getElementById("btnApprove");
-  if (approve) approve.onclick = function () {
-    toast("Approve is unchanged in this mock — gate and publish flow stay as today.");
-  };
-  var decline = document.getElementById("btnDecline");
-  if (decline) decline.onclick = function () { openDeclineUI(); };
-  var cancel = document.getElementById("btnCancel");
-  if (cancel) cancel.onclick = function () {
-    state.dialogOpen = false;
-    render();
-  };
-  var confirm = document.getElementById("btnConfirmDecline");
-  if (confirm) confirm.onclick = function () {
+  on("btnApprove", function () { toast("Approve is unchanged in this mock \u2014 gate and publish flow stay as today."); });
+  on("btnDecline", function () { state.dialogOpen = true; render(); });
+  on("btnCancel", function () { state.dialogOpen = false; render(); });
+  on("btnConfirmDecline", function () {
     var ft = document.getElementById("freeText");
     if (ft) state.reasonText = ft.value;
     doDecline();
-  };
+  });
   document.querySelectorAll("[data-reason]").forEach(function (btn) {
     btn.onclick = function () {
-      state.reasonId = btn.getAttribute("data-reason");
       var ft = document.getElementById("freeText");
       if (ft) state.reasonText = ft.value;
+      state.reasonId = btn.getAttribute("data-reason");
       render();
     };
   });
   var ft = document.getElementById("freeText");
   if (ft) ft.oninput = function () { state.reasonText = ft.value; };
-  var undo = document.getElementById("btnUndo");
-  if (undo) undo.onclick = function () {
+  bindUse();
+  on("btnBrowse", function () { state.browseOpen = true; render(); });
+  on("btnBrowseClose", function () { state.browseOpen = false; render(); });
+  document.querySelectorAll("[data-cat]").forEach(function (c) {
+    c.onclick = function () { state.browseCat = c.getAttribute("data-cat"); render(); };
+  });
+  var bq = document.getElementById("browseQ");
+  if (bq) bq.oninput = function () {
+    state.browseQ = bq.value;
+    document.getElementById("browseList").innerHTML = browseListHtml();
+    bindUse();
+  };
+  on("btnSkip", function () {
+    state.skipped = true;
+    state.replacementId = null;
+    state.view = "skipped";
+    syncDemoButtons();
+    render();
+    toast("Declined \u00b7 nothing swapped in. No more reminder emails for this piece.");
+  });
+  on("btnReopen", function () { state.view = "replace"; state.skipped = false; syncDemoButtons(); render(); });
+  on("btnUndo", function () {
     state.declined = false;
+    state.replacementId = null;
+    state.skipped = false;
+    state.newApproved = false;
     clearUndo();
     state.reasonId = null;
     state.reasonText = "";
     state.view = state.source === "inapp" ? "inapp" : "email";
     state.detailOpen = state.source === "inapp";
+    state.detailId = "p1";
     syncDemoButtons();
     render();
-    toast("Undone — piece is pending again. Reminders can resume.");
-  };
-  var later = document.getElementById("btnLater");
-  if (later) later.onclick = function () {
-    state.view = "inapp";
-    state.detailOpen = false;
+    toast("Undone \u2014 \u201c" + PIECE.title + "\u201d is waiting for your OK again. Nothing was swapped in.");
+  });
+  on("btnLater", goInappList);
+  on("btnBack", function () { state.detailOpen = false; render(); });
+  on("btnReviewNew", function () {
+    state.view = "inapp"; state.source = "inapp"; state.detailOpen = true; state.detailId = "new";
+    syncDemoButtons(); render();
+  });
+  on("btnApproveNew", function () {
+    state.newApproved = true;
+    state.view = "replaced";
     syncDemoButtons();
     render();
-  };
-  var back = document.getElementById("btnBack");
-  if (back) back.onclick = function () {
-    state.detailOpen = false;
-    render();
-  };
+    var it = findItem(state.replacementId);
+    toast("Replaced \u00b7 \u201c" + it.title + "\u201d goes out " + SLOT + ". No more reminders about \u201c" + PIECE.title + "\u201d.");
+  });
+  on("btnDeclineNew", function () { toast("Declining your pick works like any other decline (same step again). Not shown in this mock."); });
+  document.querySelectorAll("[data-reopen]").forEach(function (b) {
+    b.onclick = function (e) { e.stopPropagation(); state.view = "replace"; syncDemoButtons(); render(); };
+  });
   document.querySelectorAll("[data-open]").forEach(function (el) {
     el.onclick = function () {
       var id = el.getAttribute("data-open");
+      if (id === "new") {
+        if (!state.newApproved) { state.detailOpen = true; state.detailId = "new"; render(); }
+        else { state.view = "replaced"; syncDemoButtons(); render(); }
+        return;
+      }
       if (id === "p1" && state.declined) {
-        state.view = "after";
+        state.view = state.replacementId ? "replaced" : (state.skipped ? "skipped" : "replace");
         syncDemoButtons();
         render();
         return;
       }
-      if (id !== "p1") {
-        toast("Other pieces keep today\u2019s Approve-only flow in this mock.");
-        return;
-      }
+      if (id !== "p1") { toast("Other pieces work the same way in this mock."); return; }
       state.detailOpen = true;
+      state.detailId = "p1";
       render();
     };
   });
@@ -547,37 +822,69 @@ function syncDemoButtons() {
   document.querySelectorAll(".demo-btn").forEach(function (b) {
     b.classList.toggle("on", b.getAttribute("data-view") === state.view);
   });
+  if (history.replaceState) history.replaceState(null, "", "#" + state.view);
 }
 
 function renderLegend() {
   var el = document.getElementById("legend");
   var lines = {
-    a: "<p><strong>Direction A:</strong> Decline opens a short confirm. Optional quick picks (Not relevant / Timing / Compliance / Other). After decline: \u201cDeclined · No more reminder emails for this piece\u201d with <strong>Undo for ~10 seconds</strong>, then Approve later. Admin: Declined badge + reason tooltip. Soft Dev hold.</p>",
-    b: "<p><strong>Direction B:</strong> Decline → one confirm dialog → done. No reason, no undo. Fastest path; admin sees Declined only. Soft Dev hold.</p>",
-    c: "<p><strong>Direction C:</strong> Decline opens a sheet; reason is required before confirming. No undo. Admin shows reason prominently under the Declined badge. Soft Dev hold.</p>"
+    a: "<p><strong>Direction A (recommended):</strong> Decline opens a short confirm with optional quick-pick reason. Then the replacement step: 3 suggestions one tap away + Browse + \u201cSkip, just decline\u201d. <strong>Choosing a post approves it</strong> for the declined post\u2019s date (" + SLOT + "). Undo for ~10s covers the whole decline + swap. Admin: Declined \u2192 Replaced with \u2018new title\u2019 (reason in tooltip). Soft Dev hold.</p>",
+    b: "<p><strong>Direction B:</strong> Decline \u2192 one confirm \u2192 replacement step. Your pick lands in Content approvals as <strong>pending and still needs Approve</strong> (strict approval gate); it takes " + SLOT + " once approved. No reason, no undo. Admin: Declined \u2192 Replaced with \u2018new title\u2019 + Pending/Approved. Soft Dev hold.</p>",
+    c: "<p><strong>Direction C:</strong> Required reason sheet \u2192 replacement step with A\u2019s one-tap pattern (<strong>choosing approves it</strong> for " + SLOT + "). No undo. Admin shows reason prominently plus Declined \u2192 Replaced. Soft Dev hold.</p>"
   };
   el.innerHTML = lines[MODE] +
-    "<p><strong>AC check:</strong> Decline on email landing and in-app · declined ≠ approved ≠ pending · not published · reminders stop · plain confirmation · admin can see declined · Approve unchanged.</p>" +
-    "<p>Fictional names only (Jordan Lee, Priya Shah, Sam Okonkwo). Plain words — no jargon.</p>";
+    "<p><strong>AC check:</strong> Decline on email landing and in-app \u00b7 declined \u2260 approved \u2260 pending \u00b7 not published \u00b7 reminders stop \u00b7 plain confirmation \u00b7 admin can see declined \u00b7 Approve unchanged \u00b7 <strong>AC-7</strong> replacement offered after decline (suggestions + browse + skip; pick fills the same date; skip = plain decline).</p>" +
+    "<p><strong>Mock assumptions to confirm:</strong> replacement keeps the declined post\u2019s date \u00b7 suggestions come from Suggest Posts / Pick for Me (\u201cSuggested for your clients\u201d), not just same category \u00b7 approval fork (A/C: choosing = approval \u00b7 B: needs Approve).</p>" +
+    "<p>Fictional names and posts only (Jordan Lee, Priya Shah, Sam Okonkwo). Plain words \u2014 no jargon. Step links: <a href=\"#replace\">#replace</a> \u00b7 <a href=\"#replaced\">#replaced</a> \u00b7 <a href=\"#skipped\">#skipped</a> \u00b7 <a href=\"#admin\">#admin</a>.</p>";
+}
+
+function setupView(v) {
+  state.dialogOpen = false;
+  state.browseOpen = false;
+  if (v === "reset" || v === "email") {
+    clearUndo();
+    state.declined = false; state.replacementId = null; state.skipped = false; state.newApproved = false;
+    state.reasonId = null; state.reasonText = ""; state.detailOpen = false; state.detailId = "p1";
+    state.view = "email";
+    return;
+  }
+  function demoDecline() {
+    if (!state.declined) {
+      state.declined = true;
+      if (MODE === "a") state.reasonId = "timing";
+      if (MODE === "c") state.reasonId = "relevant";
+    }
+  }
+  if (v === "inapp") { state.detailOpen = false; }
+  if (v === "replace") { demoDecline(); state.replacementId = null; state.skipped = false; state.newApproved = false; startUndo(); }
+  if (v === "replaced") { demoDecline(); state.replacementId = state.replacementId || "s1"; state.skipped = false; state.newApproved = ONE_TAP; startUndo(); }
+  if (v === "skipped") { demoDecline(); state.replacementId = null; state.skipped = true; state.newApproved = false; startUndo(); }
+  if (v === "admin" && !state.declined) { demoDecline(); state.replacementId = "s1"; state.newApproved = true; }
+  state.view = v;
 }
 
 document.querySelectorAll(".demo-btn").forEach(function (b) {
   b.onclick = function () {
-    state.view = b.getAttribute("data-view");
-    state.dialogOpen = false;
-    if (state.view === "inapp") state.detailOpen = false;
-    if (state.view === "after" && !state.declined) {
-      state.declined = true;
-      if (MODE === "a") { state.reasonId = "timing"; startUndo(); }
-      if (MODE === "c") { state.reasonId = "relevant"; }
-    }
+    setupView(b.getAttribute("data-view"));
     syncDemoButtons();
     render();
   };
 });
 
-render();
-
+(function init() {
+  var h = (location.hash || "").replace("#", "");
+  if (["inapp", "replace", "replaced", "skipped", "admin"].indexOf(h) >= 0) {
+    setupView(h);
+    syncDemoButtons();
+  }
+  window.addEventListener("hashchange", function () {
+    var x = (location.hash || "").replace("#", "");
+    if (x !== state.view && ["email", "inapp", "replace", "replaced", "skipped", "admin"].indexOf(x) >= 0) {
+      setupView(x); syncDemoButtons(); render();
+    }
+  });
+  render();
+})();
 </script>
 </body>
 </html>

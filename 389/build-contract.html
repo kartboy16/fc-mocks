@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Build contract · #389 Content approvals Decline</title>
+<title>Build contract · #389 Content approvals Decline + replacement</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
 <style>
 body{font-family:Inter,system-ui,sans-serif;max-width:780px;margin:40px auto;padding:0 24px 80px;color:#1e2a4a;line-height:1.55}
@@ -14,75 +14,95 @@ p,li{font-size:14px;color:#3a4558}
 .navl{font-size:13px;margin-bottom:8px}
 code{background:#eef2f6;padding:1px 6px;border-radius:4px;font-size:12px}
 a{color:#2b7de9}ul,ol{padding-left:1.2em}li{margin-bottom:4px}
+.ac7{background:#ecfdf5;border:1px solid #a7f3d0;border-radius:8px;padding:2px 14px 8px;margin:12px 0}
 </style>
 </head>
 <body>
 <p class="navl"><a href="index.html">← Hub #389</a> · <a href="directions/a/index.html">A (recommend)</a> · <a href="directions/b/index.html">B</a> · <a href="directions/c/index.html">C</a> · <a href="build-contract.md">Markdown</a></p>
-<h1>Build contract · #389 Content approvals — Decline option</h1>
-<p class="warn"><strong>PROVISIONAL.</strong> Recommend Direction <strong>A</strong> (light confirm + optional quick-pick reason + Undo ~10s). <strong>Alex / Angelina have not locked a direction.</strong></p>
+<h1>Build contract · #389 Content approvals — Decline + pick a replacement</h1>
+<p class="warn"><strong>PROVISIONAL.</strong> Recommend Direction <strong>A</strong> (light confirm + optional quick-pick reason + Undo ~10s, with a one-tap replacement step). <strong>Alex / Angelina have not locked a direction.</strong></p>
 <p class="hold"><strong>Soft Dev hold · Designer-first · not agent-ready.</strong> Soft Dev not woken. Do <strong>not</strong> mark <code>agent-ready</code>. No content-library / Meteor work until a direction is locked and the Pages URL is on the issue.</p>
-<p>Issue: <a href="https://github.com/kartboy16/content-library/issues/389">https://github.com/kartboy16/content-library/issues/389</a><br>
-Related: <a href="https://github.com/kartboy16/content-library/issues/124">#124</a> (not a duplicate)<br>
-Slack thread ts: <code>1791314953.247289</code></p>
+<p>Issue: <a href="https://github.com/kartboy16/content-library/issues/389">https://github.com/kartboy16/content-library/issues/389</a><br />
+Oct 8 scope add (AC-7): <a href="https://github.com/kartboy16/content-library/issues/389#issuecomment-6065820728">https://github.com/kartboy16/content-library/issues/389#issuecomment-6065820728</a><br />
+Related: #124 (not a duplicate)<br />
+Slack thread ts: <code>1791314953.247289</code> (original) · <code>1791481870206459</code> (Oct 8 scope add, Alana Read)</p>
 <h2>One-liner</h2>
-<p>Advisors can <strong>Decline</strong> a piece in Content approvals (email landing and in-app). Declined pieces are not published/scheduled, reminder-to-approve emails stop, and FTT admin can see Declined status. <strong>Approve and the approval gate stay unchanged.</strong></p>
+<p>Advisors can <strong>Decline</strong> a piece in Content approvals (email landing and in-app). Declined pieces are not published/scheduled, reminder-to-approve emails stop, and FTT admin can see Declined status. <strong>New (Oct 8):</strong> right after declining, the advisor can <strong>pick a replacement</strong> post that takes the declined post's date, or skip. <strong>Approve and the approval gate stay unchanged</strong> for the original post.</p>
 <h2>Recommend</h2>
-<p><strong>A: Light confirm + optional reason + Undo.</strong> Primary Approve stays as today. Secondary Decline opens a short confirm: “Decline this piece? We will stop reminder emails. You can still approve it later from Content approvals.” Optional quick picks: Not relevant to my clients / Timing is not right / Compliance concern / Other (short free text). After decline: “Declined · No more reminder emails for this piece” with <strong>Undo for ~10 seconds</strong>, then <strong>Approve later</strong> into Content approvals. Admin list/MAP shows a <strong>Declined</strong> badge + optional reason tooltip.</p>
+<p><strong>A: Light confirm + optional reason + Undo, with one-tap replacement.</strong> Primary Approve stays as today. Secondary Decline opens a short confirm: “Decline this piece? We will stop reminder emails. Next, you can pick something else to send on Tue Oct 14 — or skip.” Optional quick picks: Not relevant to my clients / Timing is not right / Compliance concern / Other (short free text).</p>
+<p>After decline, the same screen shows “Declined · No more reminder emails for ‘Old title’” and the <strong>replacement step</strong>: 3 suggestions (“Suggested for your clients”) each with <strong>Use this instead</strong>, a <strong>Browse the library</strong> link, and <strong>Skip, just decline</strong>. In A, <strong>tapping “Use this instead” approves the replacement</strong> for the declined post's date (“Choosing a post approves it for Tue Oct 14. No second step.”). Confirmation: “Replaced · ‘New title’ goes out Tue Oct 14. No more reminders about ‘Old title’.” <strong>Undo for ~10 seconds</strong> reverses the whole decline + swap. Admin list/MAP shows the declined post struck through with <strong>Declined → Replaced with ‘New title’</strong> (+ reason tooltip), or just <strong>Declined</strong> if skipped.</p>
 <ul>
-<li><strong>B</strong> (one confirm, no reason, no undo) is fastest but gives FTT no insight and no soft undo.</li>
-<li><strong>C</strong> (required reason sheet, no undo) gives the strongest admin signal but is heavier for advisors who only want reminders to stop.</li>
+<li><strong>B</strong> (one confirm, no reason, no undo; replacement lands as pending and <strong>needs its own Approve</strong>) keeps the approval gate strictest, but it adds a step and the usual reminders come back for the new pick until it's approved.</li>
+<li><strong>C</strong> (required reason, no undo; one-tap replacement like A) gives the strongest admin signal but adds friction before the swap.</li>
 </ul>
 <h2>Mocks</h2>
 <ul>
 <li>Hub: <a href="https://kartboy16.github.io/fc-mocks/389/">https://kartboy16.github.io/fc-mocks/389/</a></li>
-<li>A (recommend): <a href="https://kartboy16.github.io/fc-mocks/389/directions/a/">https://kartboy16.github.io/fc-mocks/389/directions/a/</a></li>
-<li>B: <a href="https://kartboy16.github.io/fc-mocks/389/directions/b/">https://kartboy16.github.io/fc-mocks/389/directions/b/</a></li>
-<li>C: <a href="https://kartboy16.github.io/fc-mocks/389/directions/c/">https://kartboy16.github.io/fc-mocks/389/directions/c/</a></li>
+<li>A (recommend): <a href="https://kartboy16.github.io/fc-mocks/389/directions/a/">https://kartboy16.github.io/fc-mocks/389/directions/a/</a> (replacement step: <a href="https://kartboy16.github.io/fc-mocks/389/directions/a/#replace">https://kartboy16.github.io/fc-mocks/389/directions/a/#replace</a>)</li>
+<li>B: <a href="https://kartboy16.github.io/fc-mocks/389/directions/b/">https://kartboy16.github.io/fc-mocks/389/directions/b/</a> (replacement step: <a href="https://kartboy16.github.io/fc-mocks/389/directions/b/#replace">https://kartboy16.github.io/fc-mocks/389/directions/b/#replace</a>)</li>
+<li>C: <a href="https://kartboy16.github.io/fc-mocks/389/directions/c/">https://kartboy16.github.io/fc-mocks/389/directions/c/</a> (replacement step: <a href="https://kartboy16.github.io/fc-mocks/389/directions/c/#replace">https://kartboy16.github.io/fc-mocks/389/directions/c/#replace</a>)</li>
 </ul>
-<p>Each page shows four views: 1 Email landing · 2 In-app Content approvals · 3 After decline · 4 Admin (MAP / approvals). Advisor screens use a phone layout (~390px).</p>
+<p>Each page shows six views: 1 Email landing · 2 In-app Content approvals · 3 Declined → pick a replacement · 4 Replaced · 5 Skipped (just declined) · 6 Admin (MAP / approvals). Advisor screens use a phone layout (~390px). Step links: <code>#replace</code>, <code>#replaced</code>, <code>#skipped</code>, <code>#admin</code>.</p>
 <h2>Acceptance criteria (provisional · not locked)</h2>
 <ul>
 <li><strong>AC-1:</strong> Every place an advisor can Approve a content piece (approval page / landing from the approval email, and in-app Content approvals) also offers <strong>Decline</strong>.</li>
 <li><strong>AC-2:</strong> Declining marks that piece as <strong>declined</strong> for that advisor (distinct from approved and from pending). It is <strong>not</strong> published or scheduled for them.</li>
 <li><strong>AC-3:</strong> Once declined, <strong>no further reminder-to-approve emails</strong> go out for that piece.</li>
 <li><strong>AC-4:</strong> The advisor sees a clear confirmation in plain words (e.g. “Declined · No more reminder emails for this piece”). No jargon.</li>
-<li><strong>AC-5:</strong> FTT/admin can see the declined status (MAP row or approvals list), including optional reason when collected (A tooltip / C prominent).</li>
-<li><strong>AC-6:</strong> Existing <strong>Approve</strong> flow and the approval gate are <strong>unchanged</strong>. Decline is additive.</li>
+<li><strong>AC-5:</strong> FTT/admin can see the declined status (MAP row or approvals list), including optional reason when collected (A tooltip / C prominent), and the replacement when one was chosen (“Declined → Replaced with ‘New title’”).</li>
+<li><strong>AC-6:</strong> Existing <strong>Approve</strong> flow and the approval gate are <strong>unchanged</strong> for the original post. Decline is additive.</li>
+<li><strong>AC-7 (new, Oct 8):</strong> After declining, from <strong>both</strong> the email landing and in-app Content approvals, the advisor is offered a replacement: <strong>2–3 suggested posts</strong> one tap away (thumbnail, title, short plain blurb, category; labelled in plain words, e.g. “Suggested for your clients”), a <strong>Browse the library</strong> option, and a clear <strong>“Skip, just decline”</strong>. Picking a post puts it into the <strong>same slot / date</strong> as the declined post (“Will go out Tue Oct 14, in place of ‘Old title’”). Skipping behaves exactly like a plain decline (AC-2 / AC-3). After a pick, the advisor sees “Replaced · ‘New title’ goes out Tue Oct 14. No more reminders about ‘Old title’.” A skipped decline can still offer “Choose another post instead” later from Content approvals.</li>
 </ul>
+<div class="ac7"><h3>AC-7 approval fork (decide before build)</h3>
+<ul>
+<li><strong>A / C: picking = approval.</strong> Tapping “Use this instead” approves the replacement for that date. No second Approve step. Copy: “Choosing a post approves it for Tue Oct 14.” In A, Undo (~10s) reverses the decline and the swap together.</li>
+<li><strong>B: replacement needs its own Approve.</strong> The pick lands in Content approvals as <strong>Needs approval</strong> with “in place of ‘Old title’” and the same date. “Review and approve now” is one tap away. Until it's approved, the usual reminder emails apply to the new pick. The approval gate stays strict.</li>
+</ul>
+</div>
 <h2>Direction-specific behavior (provisional)</h2>
 <ul>
-<li><strong>A:</strong> Light confirm · optional quick-pick reason · Undo ~10s · Approve later link · admin Declined + reason tooltip.</li>
-<li><strong>B:</strong> Confirm only · no reason · no undo · admin Declined badge only.</li>
-<li><strong>C:</strong> Reason required (quick pick or free text) before confirm · no undo · admin Declined + reason shown prominently.</li>
+<li><strong>A:</strong> Light confirm · optional quick-pick reason · replacement step (one tap = approval) · Undo ~10s covering decline + swap · Approve later link on a skipped decline · admin Declined → Replaced + reason tooltip.</li>
+<li><strong>B:</strong> Confirm only · no reason · no undo · replacement lands pending and needs Approve · admin Declined → Replaced + Pending approval / Approved.</li>
+<li><strong>C:</strong> Reason required (quick pick or free text) before confirm · replacement step (one tap = approval) · no undo · admin Declined → Replaced + reason shown prominently.</li>
 </ul>
 <h2>Open questions for Alex / Angelina</h2>
 <ol>
+<li><strong>Replacement keeps the declined post's date / slot?</strong> Mock: yes.</li>
+<li><strong>Is picking a replacement the approval, or does it need its own Approve?</strong> A/C: picking = approval · B: needs Approve.</li>
+<li><strong>Where do suggestions come from?</strong> Mock assumes Suggest Posts / Pick for Me logic (“Suggested for your clients”). Or same category as the declined post?</li>
 <li><strong>Confirm step?</strong> All mocks include at least a light one. Keep it?</li>
 <li><strong>Optional vs required reason?</strong> A optional · B none · C required.</li>
-<li><strong>Undo / approve later?</strong> A offers Undo ~10s + Approve later. Keep soft undo?</li>
+<li><strong>Undo / approve later?</strong> A offers Undo ~10s (covering decline + swap) + Approve later. Keep soft undo?</li>
 <li><strong>Notify FTT?</strong> Mock assumes <strong>status-only in admin</strong>. Email/Slack notify only if you ask.</li>
-<li><strong>Suggest Posts / Pick for Me avoidance?</strong> Out of scope for v1 unless you say yes. Decline does not change Suggest / Pick in these mocks.</li>
+<li><strong>Should a decline teach Suggest Posts / Pick for Me to avoid similar posts?</strong> Out of scope for v1 unless you say yes.</li>
 </ol>
 <h2>Copy (plain words)</h2>
 <ul>
-<li>Buttons: “Approve” · “Decline” · “Cancel” · “Undo” · “Approve later from Content approvals”</li>
-<li>Confirm A: “Decline this piece? We will stop reminder emails. You can still approve it later from Content approvals.”</li>
+<li>Buttons: “Approve” · “Decline” · “Cancel” · “Undo” · “Use this instead” · “Browse the library for more” · “Skip, just decline” · “Choose another post instead” · “Review and approve now” (B) · “Approve later from Content approvals”</li>
+<li>Confirm A: “Decline this piece? We will stop reminder emails. Next, you can pick something else to send on Tue Oct 14 — or skip.”</li>
 <li>Confirm B: “Stop reminders and skip this piece?”</li>
 <li>Sheet C: “Decline this piece” · “Decline and stop reminders”</li>
 <li>Reasons: “Not relevant to my clients” · “Timing is not right” · “Compliance concern” · “Other”</li>
-<li>Confirmation: “Declined” · “No more reminder emails for this piece” · “will not be published or scheduled for you”</li>
-<li>Admin: “Declined” · “Pending” · “Approved” · “Reminders stopped”</li>
+<li>Replacement step: “Send something else on Tue Oct 14 instead?” · “Pick one and it takes the Tue Oct 14 spot in place of the post you declined.” · “Suggested for your clients” · “Will go out Tue Oct 14, in place of ‘Old title’”</li>
+<li>Approval line A/C: “One tap: choosing a post approves it for Tue Oct 14. No second step.”</li>
+<li>Approval line B: “Your pick goes into Content approvals. You'll still need to Approve it before it goes out.”</li>
+<li>Replaced: “Replaced · ‘New title’ goes out Tue Oct 14. No more reminders about ‘Old title’.”</li>
+<li>Swapped in (B): “Waiting for your Approve · ‘New title’ is now in Content approvals. Approve it and it goes out Tue Oct 14 in place of ‘Old title’.”</li>
+<li>Skipped: “Declined” · “No more reminder emails for this piece” · “will not be published or scheduled for you. Nothing was swapped in for Tue Oct 14.”</li>
+<li>Admin: “Declined” · “Replaced with ‘New title’” · “Pending” · “Pending approval” · “Approved” · “Reminders stopped” · “No replacement chosen”</li>
 </ul>
 <h2>Non-goals</h2>
 <ul>
-<li>Changing Approve or the approval gate</li>
-<li>Suggest Posts / Pick for Me avoidance from decline (v1 out of scope unless asked)</li>
-<li>#124 alternate approval channels (related area, not this mock)</li>
-<li>Email/Slack notify to FTT on decline (unless asked — mock is status-only)</li>
+<li>Changing Approve or the approval gate for the original post</li>
+<li>Suggest Posts / Pick for Me learning from declines (v1 out of scope unless asked)</li>
+<li>
+<h1>124 alternate approval channels (related area, not this mock)</h1>
+</li>
+<li>Email/Slack notify to FTT on decline or replacement (unless asked; mock is status-only)</li>
 <li>content-library / Meteor · waking Soft Dev · agent-ready</li>
-<li>Real names as rows — fictional only (Jordan Lee, Priya Shah, Sam Okonkwo)</li>
+<li>Real names as rows: fictional only (Jordan Lee, Priya Shah, Sam Okonkwo)</li>
 </ul>
 <h2>Status</h2>
-<p>Soft Dev <strong>hold</strong>. <strong>Not agent-ready.</strong> Waiting for Alex / Angelina to pick A / B / C and answer the open questions. Pages URL must be attached to the issue before Soft Dev.</p>
+<p>Soft Dev <strong>hold</strong>. <strong>Not agent-ready.</strong> Waiting for Alex / Angelina to pick A / B / C, settle the AC-7 approval fork, and answer the open questions. Pages URL must be attached to the issue before Soft Dev.</p>
 </body>
 </html>

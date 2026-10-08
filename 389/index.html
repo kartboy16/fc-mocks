@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>FC — #389 Content approvals · Decline option</title>
+  <title>FC — #389 Content approvals · Decline + pick a replacement</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <style>
     :root {
@@ -81,107 +81,151 @@
     a { color: var(--blue); }
     .q{margin:0 0 20px;padding:14px 16px;background:#f5f3ff;border:1px solid #c4b5fd;border-radius:10px;font-size:.85rem;color:#4c1d95}
     .q ol{margin:8px 0 0;padding-left:1.2rem}.q li{margin-bottom:6px}
+    .new{display:inline-block;font-size:.62rem;font-weight:700;background:#16a34a;color:#fff;padding:1px 7px;border-radius:999px;margin-left:6px;vertical-align:middle}
+    .scope{margin:0 0 20px;padding:14px 16px;background:#ecfdf5;border:1px solid #a7f3d0;border-radius:10px;font-size:.85rem;color:#065f46}
+    .scope strong{color:#064e3b}
+    table.fork{width:100%;border-collapse:collapse;background:#fff;border:1px solid var(--border);border-radius:10px;overflow:hidden;font-size:.8rem;margin:0 0 20px}
+    table.fork th,table.fork td{padding:9px 10px;border-bottom:1px solid #eef2f6;text-align:left;vertical-align:top}
+    table.fork th{background:#f8fafc;font-size:.7rem;text-transform:uppercase;letter-spacing:.04em;color:var(--muted)}
+    table.fork tr:last-child td{border-bottom:none}
+    .steps{font-size:.72rem;margin-top:10px;display:flex;gap:6px;flex-wrap:wrap}
+    .steps a{background:var(--mint);padding:2px 8px;border-radius:999px;text-decoration:none;font-weight:600}
+    .cardwrap{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:18px}
+    .cardwrap.recd{border-color:#2b7de9;box-shadow:0 4px 16px rgba(43,125,233,0.12)}
+    .cardwrap h3{font-size:.95rem;margin-bottom:6px}
+    .cardwrap h3 a{color:var(--blue);text-decoration:none}
+    .cardwrap p{font-size:.8rem;color:var(--muted)}
+    .cardwrap .tag{display:inline-block;font-size:.65rem;font-weight:700;background:var(--mint);color:var(--blue);padding:2px 8px;border-radius:999px;margin-bottom:8px}
+    .cardwrap .tag.rec-tag{background:var(--blue);color:#fff}
+    .cardwrap .tag.dim-tag{background:#e5e7eb;color:#6b7280}
   </style>
 </head>
 <body>
   <header class="hero">
     <div class="hero-inner">
-      <div class="eyebrow">FinancialContent · content-library #389 · Designer mocks</div>
-      <h1>Content approvals: add Decline so reminders stop</h1>
-      <p>Advisors reviewing a piece only have <strong>Approve</strong> today. If they don’t want it, they ignore it and keep getting reminder emails. Add <strong>Decline</strong> so they can say no and the reminders stop. Approve stays exactly as it is. Alex and Angelina have not locked a direction.</p>
-      <span class="rec">Recommend · Direction A: light confirm + optional reason + Undo 10s</span>
+      <div class="eyebrow">FinancialContent · content-library #389 · Designer mocks · updated Oct 8</div>
+      <h1>Content approvals: Decline so reminders stop, then pick a replacement</h1>
+      <p>Advisors reviewing a piece only have <strong>Approve</strong> today. If they don’t want it, they ignore it and keep getting reminder emails. Add <strong>Decline</strong> so they can say no and the reminders stop. <strong>New (Oct 8):</strong> right after declining, they can pick a different post to send instead, in one tap, or skip. Approve stays exactly as it is. Alex and Angelina have not locked a direction.</p>
+      <span class="rec">Recommend · Direction A: light confirm + optional reason + Undo 10s · one-tap replacement</span>
     </div>
   </header>
 
   <div class="wrap">
     <a class="cta" href="directions/a/index.html">
       Open Direction A (recommended)
-      <small>Decline → short confirm · optional quick-pick reason · “Declined · No more reminder emails” with Undo for ~10 seconds</small>
+      <small>Decline → short confirm · optional reason → 3 suggested replacements one tap away (choosing approves it for the same date) · Browse · “Skip, just decline” · Undo ~10s</small>
     </a>
     <p style="text-align:center;margin:-18px 0 24px;font-size:0.8rem;color:var(--muted)">
-      <a href="build-contract.html">Build contract</a> ·
-      <a href="build-contract.md">Markdown</a>
+      Jump straight to the replacement step:
+      <a href="directions/a/#replace">A</a> ·
+      <a href="directions/b/#replace">B</a> ·
+      <a href="directions/c/#replace">C</a>
+      &nbsp;|&nbsp; <a href="build-contract.html">Build contract</a> · <a href="build-contract.md">Markdown</a>
     </p>
 
+    <div class="scope">
+      <strong>Scope add · Thu Oct 8 (Alana Read, #fc-bugs):</strong> “advisors have option to decline the post, not only approve. If they decline, can choose another article/post instead.” Folded into #389 as <strong>AC-7</strong>: after declining, offer a way to choose a different post to take its place (a few suggestions plus browse). Picking one puts it into the same slot. Skipping is allowed and works exactly like a plain decline (AC-2 / AC-3). See the <a href="https://github.com/kartboy16/content-library/issues/389#issuecomment-6065820728">Oct 8 comment on #389</a>. Designed for Alex’s <strong>“no clicks”</strong> goal: the suggestions show up on the same screen as the decline confirmation, so the swap is one tap.
+    </div>
+
     <div class="problem">
-      <strong>Ask (Angelina / Atlantic Wealth–Sabrina, Tue Oct 6):</strong> Advisors need a <strong>Decline</strong> option in Content approvals. Ignoring a piece keeps reminder-to-approve emails coming. Decline should stop those reminders, leave Approve unchanged, and show declined status to FTT admin. Related: <a href="https://github.com/kartboy16/content-library/issues/124">#124</a> (not a duplicate).
+      <strong>Original ask (Angelina / Atlantic Wealth–Sabrina, Tue Oct 6):</strong> Advisors need a <strong>Decline</strong> option in Content approvals. Ignoring a piece keeps reminder-to-approve emails coming. Decline should stop those reminders, leave Approve unchanged, and show declined status to FTT admin. Related: <a href="https://github.com/kartboy16/content-library/issues/124">#124</a> (not a duplicate).
     </div>
 
     <div class="hold">
       <strong>Soft Dev hold · Designer-first · not agent-ready.</strong> Alex / Angelina have <em>not</em> locked A, B, or C. Do <em>not</em> wake Soft Dev. Do <em>not</em> mark <code>agent-ready</code>.
     </div>
 
+    <h2 style="margin-top:8px">The replacement step: what’s the same, what forks</h2>
+    <table class="fork">
+      <tr><th></th><th>A · recommended</th><th>B</th><th>C</th></tr>
+      <tr><td><strong>Decline</strong></td><td>Light confirm · optional reason</td><td>One confirm · no reason</td><td>Reason required</td></tr>
+      <tr><td><strong>Suggestions</strong></td><td colspan="3">Same in all three: 3 cards (“Suggested for your clients”) one tap away on the decline screen · Browse the library · “Skip, just decline”</td></tr>
+      <tr><td><strong>Date / slot</strong></td><td colspan="3">Same in all three (mock assumption): the replacement takes the declined post’s date, e.g. “Will go out Tue Oct 14, in place of ‘Three questions before you retire’”</td></tr>
+      <tr><td><strong>Does it need its own Approve?</strong></td><td><strong>No.</strong> Tapping “Use this instead” approves it. “Choosing a post approves it for Tue Oct 14. No second step.”</td><td><strong>Yes.</strong> It lands in Content approvals as <em>Needs approval</em>. “Review and approve now” is one tap away. Usual reminders apply until approved. Approval stays strict.</td><td><strong>No.</strong> Same one-tap as A, after the required reason.</td></tr>
+      <tr><td><strong>Undo</strong></td><td>~10s, covers the whole decline + swap</td><td>None</td><td>None</td></tr>
+      <tr><td><strong>Skip</strong></td><td colspan="3">Same in all three: a plain decline. Not published, no reminders, nothing goes out that day. “Choose another post instead” stays available from the confirmation and the Content approvals list.</td></tr>
+      <tr><td><strong>Admin (MAP)</strong></td><td colspan="3">Declined post struck through · <strong>Declined → Replaced with ‘New title’</strong> + Approved (A/C) or Pending approval (B) · just <strong>Declined</strong> if skipped</td></tr>
+    </table>
+
     <div class="ac">
-      <strong>Why A</strong>
+      <strong>Why A is still the pick</strong>
       <ul>
-        <li>Stops reminders safely with a light confirm, so an accidental tap doesn’t bury a piece.</li>
-        <li>Optional quick-pick reason (Not relevant / Timing / Compliance / Other) helps FTT without blocking advisors who just want reminders to stop.</li>
-        <li>Soft <strong>Undo for ~10 seconds</strong> plus an <strong>Approve later</strong> link into Content approvals keeps a way back without a heavy undo forever.</li>
-        <li>B is faster but gives FTT no insight and no undo. C requires a reason every time, which is heavier for advisors who only want the emails to stop.</li>
+        <li>Fits “no clicks” best: decline, then <strong>one tap</strong> on a suggestion, and you’re done. No second Approve screen.</li>
+        <li>The ~10s <strong>Undo</strong> is what makes one-tap approval safe: a wrong tap undoes the decline and the swap together.</li>
+        <li>Optional reason helps FTT without slowing advisors who just want the reminders to stop.</li>
+        <li>B keeps the approval gate strictest but adds a step and brings back reminders for the new pick. C’s required reason adds friction before the swap. Pick B if “choosing = approving” is a compliance concern.</li>
       </ul>
     </div>
 
     <div class="q">
       <strong>Open questions for Alex / Angelina</strong>
       <ol>
+        <li><strong>Replacement keeps the declined post’s date / slot?</strong> <span class="new">NEW</span> Mock: yes (Tue Oct 14 → same day).</li>
+        <li><strong>Is picking a replacement the approval, or does it need its own Approve?</strong> <span class="new">NEW</span> A/C: picking = approval · B: lands as pending and needs Approve.</li>
+        <li><strong>Where do suggestions come from?</strong> <span class="new">NEW</span> Mock assumes Suggest Posts / Pick for Me logic (“Suggested for your clients”). Or just same category as the declined post?</li>
         <li><strong>Confirm step?</strong> All three mocks include at least a light confirm. Keep it?</li>
-        <li><strong>Optional vs required reason?</strong> A = optional quick picks (+ short free text for Other). B = none. C = required. Which?</li>
-        <li><strong>Undo / approve later?</strong> A offers Undo ~10s + “Approve later”. B/C have no undo (C can still approve later from the list if you re-open). Keep soft undo?</li>
-        <li><strong>Notify FTT?</strong> Mock assumes <strong>status-only in admin</strong> (Declined badge + optional reason tooltip). Email/Slack notify only if you ask.</li>
-        <li><strong>Suggest Posts / Pick for Me avoidance?</strong> Out of scope for v1 unless you say yes — noted on the contract. Decline does not change Suggest / Pick in these mocks.</li>
+        <li><strong>Optional vs required reason?</strong> A = optional quick picks (+ short note for Other). B = none. C = required.</li>
+        <li><strong>Undo / approve later?</strong> A offers Undo ~10s (now covering decline + swap) + “Approve later”. B/C have no undo.</li>
+        <li><strong>Notify FTT?</strong> Mock assumes <strong>status-only in admin</strong> (Declined / Replaced badges, reason tooltip). Email/Slack only if you ask.</li>
+        <li><strong>Should a decline teach Suggest Posts / Pick for Me to avoid similar posts?</strong> Still out of scope for v1 unless you say yes.</li>
       </ol>
     </div>
 
     <div class="ac" style="background:#f8fafc;border-color:#e2e8f0;color:#334155">
-      <strong>What every direction shows (use the Demo view bar)</strong>
+      <strong>What every direction shows (Demo view bar, or the step links below)</strong>
       <ul>
-        <li><strong>1 · Email landing:</strong> the approval page from the reminder email — Approve (unchanged) + Decline.</li>
-        <li><strong>2 · In-app Content approvals:</strong> list / detail with Decline beside Approve.</li>
-        <li><strong>3 · After decline:</strong> plain confirmation (“Declined · No more reminder emails for this piece”) plus direction-specific undo / reason UI.</li>
-        <li><strong>4 · Admin (MAP / approvals):</strong> Declined badge (and reason where applicable). Reminders stop note.</li>
+        <li><strong>1 · Email landing:</strong> the approval page from the reminder email, showing the date it would go out. Approve (unchanged) + Decline.</li>
+        <li><strong>2 · In-app Content approvals:</strong> list / detail with Decline beside Approve. After a swap, the new post shows with its date and “in place of …”.</li>
+        <li><strong>3 · Declined → pick a replacement:</strong> “Declined · No more reminder emails” plus 3 suggestions, Browse, and Skip. Reached from both the email page and in-app.</li>
+        <li><strong>4 · Replaced:</strong> “Replaced · ‘New title’ goes out Tue Oct 14. No more reminders about ‘Old title’.” (B: “Waiting for your Approve” first.)</li>
+        <li><strong>5 · Skipped:</strong> plain decline, with “Choose another post instead”.</li>
+        <li><strong>6 · Admin (MAP / approvals):</strong> Declined → Replaced with ‘New title’, or just Declined. A toggle switches between the two.</li>
       </ul>
-      Advisor-facing screens use a phone layout (~390px). Approve flow and the approval gate stay unchanged.
+      Advisor-facing screens use a phone layout (~390px). Approve flow and the approval gate stay unchanged for the original post.
     </div>
 
     <div class="oos">
       <strong>Out of scope</strong>
       <ul>
-        <li>Changing Approve or the approval gate</li>
-        <li>Suggest Posts / Pick for Me avoidance from decline (v1 out of scope unless asked)</li>
-        <li><a href="https://github.com/kartboy16/content-library/issues/124">#124</a> alternate approval channels — related area, not this mock</li>
+        <li>Changing Approve or the approval gate for the original post</li>
+        <li>Suggest Posts / Pick for Me learning from declines (v1 out of scope unless asked)</li>
+        <li><a href="https://github.com/kartboy16/content-library/issues/124">#124</a> alternate approval channels: related area, not this mock</li>
         <li>content-library / Meteor · waking Soft Dev · agent-ready</li>
       </ul>
     </div>
 
     <h2>Directions</h2>
     <div class="grid">
-      <a class="card recd" href="directions/a/index.html">
+      <div class="cardwrap recd">
         <span class="tag rec-tag">RECOMMEND</span>
-        <h3>A · Light confirm + optional reason + Undo</h3>
-        <p>Decline opens a short confirm. Optional quick picks. After decline: confirmation with Undo for ~10s, then Approve later. Admin shows Declined + reason tooltip.</p>
-      </a>
-      <a class="card alt-dim" href="directions/b/index.html">
+        <h3><a href="directions/a/index.html">A · Light confirm + optional reason + Undo</a></h3>
+        <p>Short confirm, optional quick picks. Then 3 one-tap replacements: <strong>choosing approves it</strong> for the same date. Undo ~10s covers decline + swap. Admin: Declined → Replaced + reason tooltip.</p>
+        <div class="steps"><a href="directions/a/#replace">Replace step</a><a href="directions/a/#replaced">Replaced</a><a href="directions/a/#skipped">Skipped</a><a href="directions/a/#admin">Admin</a></div>
+      </div>
+      <div class="cardwrap">
         <span class="tag dim-tag">ALT</span>
-        <h3>B · One-tap Decline, confirm only</h3>
-        <p>Decline → one confirm (“Stop reminders and skip this piece?”) → done. No reason, no undo. Fastest; less insight for FTT.</p>
-      </a>
-      <a class="card alt-dim" href="directions/c/index.html">
+        <h3><a href="directions/b/index.html">B · One-tap Decline, confirm only</a></h3>
+        <p>One confirm, no reason, no undo. Replacement lands in Content approvals as <strong>pending and needs Approve</strong> (strict gate), then takes the same date.</p>
+        <div class="steps"><a href="directions/b/#replace">Replace step</a><a href="directions/b/#replaced">Swapped in</a><a href="directions/b/#skipped">Skipped</a><a href="directions/b/#admin">Admin</a></div>
+      </div>
+      <div class="cardwrap">
         <span class="tag dim-tag">ALT</span>
-        <h3>C · Required reason sheet, no undo</h3>
-        <p>Decline opens a sheet; reason required (quick pick or free text) before confirming. Admin sees reason prominently. Heavier for advisors.</p>
-      </a>
+        <h3><a href="directions/c/index.html">C · Required reason sheet, no undo</a></h3>
+        <p>Reason required first. Then A’s one-tap replacement (<strong>choosing approves it</strong>, same date). No undo. Admin shows reason prominently.</p>
+        <div class="steps"><a href="directions/c/#replace">Replace step</a><a href="directions/c/#replaced">Replaced</a><a href="directions/c/#skipped">Skipped</a><a href="directions/c/#admin">Admin</a></div>
+      </div>
     </div>
 
     <h2>Build contract (provisional · recommend A)</h2>
     <div class="note" style="margin-top:0">
-      Decline everywhere Approve exists; declined ≠ approved ≠ pending; not published/scheduled; no further reminder emails; clear advisor confirmation; admin can see declined; Approve unchanged. Full AC: <a href="build-contract.html">build-contract.html</a>. Soft Dev hold until a pick + Pages URL on the issue.
+      Decline everywhere Approve exists; declined ≠ approved ≠ pending; not published/scheduled; no further reminder emails; clear advisor confirmation; admin can see declined; Approve unchanged; <strong>AC-7</strong>: offer a replacement after decline (2–3 suggestions + browse + skip; picking fills the same slot; skip = plain decline), with the approval fork (A/C: picking = approval · B: needs Approve). Full AC: <a href="build-contract.html">build-contract.html</a>. Soft Dev hold until a pick + Pages URL on the issue.
     </div>
 
     <div class="meta">
-      <p>Issue: <a href="https://github.com/kartboy16/content-library/issues/389">content-library #389</a> · related <a href="https://github.com/kartboy16/content-library/issues/124">#124</a> · Slack thread ts <code>1791314953.247289</code></p>
+      <p>Issue: <a href="https://github.com/kartboy16/content-library/issues/389">content-library #389</a> · related <a href="https://github.com/kartboy16/content-library/issues/124">#124</a> · Slack thread ts <code>1791314953.247289</code> (original) · <code>1791481870206459</code> (Oct 8 scope add)</p>
       <p>Repo: <a href="https://github.com/kartboy16/fc-mocks">kartboy16/fc-mocks</a> · path <code>/389/</code></p>
       <p>Live: <a href="https://kartboy16.github.io/fc-mocks/389/">kartboy16.github.io/fc-mocks/389/</a></p>
-      <p>Fictional advisor / content only (Jordan Lee · Priya Shah · “Three questions before you retire”). Never real names as rows.</p>
+      <p>Fictional advisors and posts only (Jordan Lee · Priya Shah · Sam Okonkwo · “Three questions before you retire” · “Five ways to make your retirement savings last”). Never real names as rows.</p>
     </div>
   </div>
 </body>
