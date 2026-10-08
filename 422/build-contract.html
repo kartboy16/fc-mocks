@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Build contract · #422 admin-fsb</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<style>
+body{font-family:Inter,system-ui,sans-serif;max-width:900px;margin:0 auto;padding:24px;line-height:1.55;color:#1e2a4a;background:#f4f8fc}
+pre{white-space:pre-wrap;background:#fff;border:1px solid #d4e4f2;border-radius:12px;padding:20px;font-size:0.82rem}
+a{color:#2b7de9}
+.top{margin-bottom:16px;font-size:0.85rem}
+.hold{background:#fef3c7;border:1px solid #fcd34d;color:#92400e;padding:10px 14px;border-radius:8px;font-size:0.85rem;margin-bottom:16px}
+</style>
+</head>
+<body>
+<div class="top"><a href="./">#422 hub</a> · <a href="directions/a/">Dir A</a> · <a href="directions/b/">Dir B</a> · <a href="directions/c/">Dir C</a> · <a href="build-contract.md">.md</a> · <a href="https://github.com/kartboy16/content-library/issues/422">Issue</a></div>
+<div class="hold"><strong>Soft Dev hold · not agent-ready.</strong> Provisional until Alex picks.</div>
+<pre># Build contract · #422 admin-fsb role: FSB partner scoped Content Library
+
+**PROVISIONAL.** Three directions (A recommended, B alternate, C optional later). **Alex has not picked.**
+
+**Soft Dev hold · Designer-first · not agent-ready.** Software developer not woken. Do **not** mark `agent-ready`. No content-library / Meteor / Galaxy work until Alex picks and the Pages URL is on the issue.
+
+- Issue: https://github.com/kartboy16/content-library/issues/422
+- Reporter: Alex Hung (Oct 8 2026)
+- Related: AdvisorSource / `availableToAdvisorSourceIds`, `ContentLibrary.jsx`, `CreateHtmlPostPage.jsx`
+
+## Mocks
+- Hub: https://kartboy16.github.io/fc-mocks/422/
+- Direction A (recommended): https://kartboy16.github.io/fc-mocks/422/directions/a/
+- Direction B: https://kartboy16.github.io/fc-mocks/422/directions/b/
+- Direction C: https://kartboy16.github.io/fc-mocks/422/directions/c/
+- This contract: https://kartboy16.github.io/fc-mocks/422/build-contract.html
+
+## Recommend: Direction A
+Separate scoped workspace (`FsbContentLibrary` / own routes), FC chrome + **FSB partner** label, minimal nav (Library · Create · My advisors). New items go to an **FTT review queue** before FSB advisors see them. **Write-only in v1** (no schedule/send, no billing, no all-advisor MAP).
+
+**Why not B first:** reusing full-admin `ContentLibrary.jsx` is inviting unless every `isAdminUserId` / `userRoles.isAdmin` call site is split. Today admin = see everything.
+
+**Why not C first:** white-label + schedule expands the method surface (queues, tokens) before the partner can even author safely.
+
+## Role definition
+| Role | Who | Sees | Can |
+|---|---|---|---|
+| `admin` | FTT staff | All content, all advisors | Full admin (unchanged) |
+| `admin-fsb` | FSB partner staff | Only HTMLPosts with source `fsb-content`; only advisors with that source on prefs | Create/edit (per open Q) own FSB content; list FSB advisors; **not** full admin |
+| `advisor` | Advisors | Per existing visibility | Unchanged |
+| `support` | Support | Existing support scopes | Unchanged — do not conflate with admin-fsb |
+
+Ensure AdvisorSource document exists: name **FSB-Content**, slug **`fsb-content`** (`imports/collections/advisor_source.js` slugify).
+
+Optional user field: `profile.fsbSourceId` or role-assignment scope pointing at that source id (do not trust client-supplied source on writes).
+
+## Surfaces
+| Surface | Who | Notes |
+|---|---|---|
+| FSB login → Library | admin-fsb | Header: FC + FSB partner badge + “Showing FSB content only” |
+| Create / edit | admin-fsb | Post body, email template/body, featured image; source chip locked |
+| My advisors | admin-fsb | List/picker filtered to prefs with fsb-content category |
+| Hidden | admin-fsb | MAP-all, Billing, Global settings, other sources — absent or “not available” |
+| FTT · Admin users | admin | Create `admin-fsb` + locked source |
+| FTT · FSB submissions | admin | Review queue (A) or unpublish feed (B) |
+| Phone | both | Side nav collapses; demo 📱 chip |
+
+## Data model
+- **HTMLPosts:** keep `advisorCategories[]` / `availableToAdvisorSourceIds`; for admin-fsb inserts server sets both to FSB-Content only. Reject client attempts to set another source.
+- **Status (A):** e.g. `fsbReviewStatus: &#x27;draft&#x27; | &#x27;pending&#x27; | &#x27;approved&#x27; | &#x27;rejected&#x27;` (or reuse `isPublic` carefully — prefer explicit field so private library chrome stays clear). Approved → visible to advisors whose prefs include fsb-content (existing visibility OR).
+- **AdvisorPreferences.advisorCategories:** FSB advisors already (or will be) tagged with that source id — same mechanism as today.
+- **Users:** role `admin-fsb` via alanning:roles (+ user.roles array compat as today).
+
+## Server-side enforcement (UI hiding ≠ security)
+
+### Predicate helpers (new)
+- `isAdminUserId` — **must remain** role `admin` only (`server/support-impersonation.js`).
+- Add `isFsbAdminUserId(userId)` → role `admin-fsb`.
+- Add `isFullOrFsbAdmin` only where intentional; never use for billing/MAP/global.
+- `userRoles.isAdmin` must stay full-admin-only. Add `userRoles.isFsbAdmin` / `userRoles.hasRole(&#x27;admin-fsb&#x27;)` (hasRole already exists).
+- `userRolesIncludeAdmin` / `userDocumentHasRole(..., &#x27;admin&#x27;)` in `imports/utils/userRoles.js` — do not treat admin-fsb as admin.
+
+### Publications that must scope or deny admin-fsb
+| Publication | File | Action for admin-fsb |
+|---|---|---|
+| `HTMLPosts` | `imports/server/publications.js` + `htmlPostsLibrary.js` | Query: only posts with FSB source id (not `{}` admin bypass) |
+| `HTMLPostsByIds` | same | Same visibility; no admin bypass |
+| `carouselHTMLPosts` | same | Scope via visibility context |
+| `advisorSource` | `advisor_source.js` | Return only FSB-Content doc (today: any logged-in user gets all) |
+| `allUsersBasic` | publications.js | Deny or return only advisors with fsb-content prefs (today: all advisors to any admin) |
+| `emailTemplates` | publications.js | Deny, or templates owned/tagged FSB only |
+| `contentThumbnails` / `contentMasters` `includePrivate` | publications.js | Deny private-all; admin-fsb ≠ `isAdminUser` |
+| `socialPostQueue` / `advisorSocialTokens` / `advisorPostHistory` / `scheduledSocialPostsForAdvisor` | publications.js | Deny cross-advisor; if C later, only fsb-content advisors |
+| `advisorConfigs` | publications.js | Already self-only — OK |
+| `categories` / `masterCategories` | publications.js | Open Q: shared vs FSB-only; if shared, read-only OK |
+
+### Methods that must scope, auto-set source, or deny
+| Method area | File / pattern | Action |
+|---|---|---|
+| `HTMLPosts.create` / `update` / `updateContent` / email connect | `server/api/html-posts-api.js` (and collection methods) | Allow admin-fsb; **server-set** source to fsb-content; reject other sources; (A) force pending review |
+| `HTMLPosts.get` | same | Only if in scope |
+| `addAdvisorSource` / `updateAdvisorSource` / `removeAdvisorSource` | `advisor_source.js` | **Deny** admin-fsb (`ensureAdmin` today uses `userRoles.isAdmin` — keep it full-admin only) |
+| `getAdvisorSources` / `getAdvisorSource*` | advisor_source.js | Scope to FSB or deny list-all (today: **no auth**) |
+| `userRoles.addAdmin` / `getAllUsers` / approve/reject/revoke/delete | `server/user-methods.js` | **Deny** admin-fsb |
+| `admin.*` | user-methods / admin-methods | **Deny** |
+| Billing / Stripe | `server/stripe-billing.js`, firm billing UI | **Deny** |
+| MAP / ManageAdvisorPosts bulk distribute | admin UI + related methods | **Deny** (C later: scoped schedule only) |
+| Website publisher admin setup | `server/website-publisher/admin-access.js` `isAdminUser` | **Deny** admin-fsb |
+| Images / media upload on behalf of any advisor | `server/user-methods.js` `targetAdvisorId` admin paths | Only fsb-content advisors if needed; else deny |
+
+### Create flow (code today)
+`imports/ui/admin/CreateHtmlPostPage.jsx` loads all `advisorSource`, lets multi-select Advisor Sources, calls `HTMLPosts.create` with `advisorCategories`. For admin-fsb: hide select, show locked chip; server overwrites categories/source ids.
+
+### Content library (code today)
+`imports/ui/ContentLibrary.jsx` — Direction A prefers a separate component/route so full-admin chrome (MAP entry points, all-source filters) never mounts. Direction B branches inside the same file — higher audit cost.
+
+## Acceptance criteria (provisional)
+1. `admin-fsb` signs in → FSB Content Library (scope obvious in header).
+2. Create post + email + featured image; stored with source `fsb-content` only.
+3. Cannot read/mutate non-fsb content or non-fsb advisors via pubs/methods (test with direct Meteor.call / subscribe).
+4. Cannot access billing, global settings, all-advisor MAP, source CRUD.
+5. Full `admin` unchanged; can create admin-fsb users and (A) review queue.
+6. Phone usable. Mock on Pages. Soft Dev hold until Alex picks.
+
+## Open decisions (Alex)
+1. FTT approve before advisors see FSB content? (A yes / B no + unpublish / C optional)
+2. Can FSB edit/delete after publish?
+3. Schedule/send to FSB advisors in v1, or write-only?
+4. Multiple FSB logins — FTT-created only, or FSB can invite?
+5. FC + FSB label vs light white-label?
+6. Shared categories vs FSB-only?
+
+## Out of scope
+Soft Dev implementation, agent-ready label, Galaxy deploy, Slack automation, non-fsb partner roles.
+</pre>
+</body>
+</html>

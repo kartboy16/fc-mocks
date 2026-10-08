@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>FC — #422 admin-fsb partner role · FSB Content Library</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root { --bg:#f4f8fc; --card:#fff; --ink:#1e2a4a; --muted:#5b6572; --blue:#2b7de9; --border:#d4e4f2; --mint:#e6f1fb; }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: Inter, system-ui, sans-serif; background: var(--bg); color: var(--ink); line-height: 1.55; }
+    .hero { background: linear-gradient(135deg, #1e2a4a 0%, #2b7de9 100%); color: #fff; padding: 40px 24px 36px; }
+    .hero-inner { max-width: 920px; margin: 0 auto; }
+    .hero .eyebrow { font-size: 0.75rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; opacity: 0.85; margin-bottom: 10px; }
+    .hero h1 { font-size: 1.75rem; margin-bottom: 10px; }
+    .hero p { opacity: 0.92; max-width: 760px; font-size: 0.95rem; }
+    .rec { display: inline-block; margin-top: 18px; background: #e8f5e9; color: #065f46; font-weight: 700; font-size: 0.8rem; padding: 8px 14px; border-radius: 999px; }
+    .wrap { max-width: 920px; margin: 0 auto; padding: 28px 24px 72px; }
+    .cta { display: block; background: var(--blue); color: #fff !important; text-decoration: none; text-align: center; padding: 16px 24px; border-radius: 12px; font-weight: 700; font-size: 1rem; margin-bottom: 14px; box-shadow: 0 4px 16px rgba(43,125,233,0.35); }
+    .cta:hover { filter: brightness(1.05); }
+    .cta small { display: block; font-weight: 500; opacity: 0.9; font-size: 0.8rem; margin-top: 4px; }
+    .cta.secondary { background: #fff; color: var(--blue) !important; border: 2px solid var(--blue); box-shadow: none; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 14px; margin-top: 8px; }
+    .card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 18px; text-decoration: none; color: inherit; display: block; transition: border-color 0.15s, box-shadow 0.15s; }
+    .card:hover { border-color: var(--blue); box-shadow: 0 4px 16px rgba(30,42,74,0.08); }
+    .card h3 { font-size: 0.95rem; margin-bottom: 6px; color: var(--blue); }
+    .card p { font-size: 0.8rem; color: var(--muted); }
+    .card .tag { display: inline-block; font-size: 0.65rem; font-weight: 700; background: var(--mint); color: var(--blue); padding: 2px 8px; border-radius: 999px; margin-bottom: 8px; }
+    h2 { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--muted); margin: 28px 0 12px; }
+    .problem, .hold, .ac, .q, .oos, .code { margin: 0 0 20px; padding: 14px 16px; border-radius: 10px; font-size: 0.85rem; }
+    .problem { background: #fff8eb; border: 1px solid #f0d4a8; color: #8a5a10; }
+    .hold { background: #fef3c7; border: 1px solid #fcd34d; color: #92400e; }
+    .ac { background: #eff6ff; border: 1px solid #bfdbfe; color: #1e40af; }
+    .q { background: #f5f3ff; border: 1px solid #c4b5fd; color: #4c1d95; }
+    .oos { background: #f3f4f6; border: 1px solid #e5e7eb; color: #374151; }
+    .code { background: #0f172a; border: 1px solid #1e293b; color: #e2e8f0; font-family: ui-monospace, Menlo, monospace; font-size: 0.78rem; }
+    .ac ul, .q ol, .oos ul, .code ul { margin: 8px 0 0; padding-left: 1.2rem; }
+    .ac li, .q li, .oos li, .code li { margin-bottom: 6px; }
+    .meta { margin-top: 32px; font-size: 0.8rem; color: var(--muted); }
+    .meta a { color: var(--blue); }
+    code { background: #eef2f6; padding: 0.1em 0.35em; border-radius: 4px; font-size: 0.85em; color: #1e2a4a; }
+    .code code { background: #1e293b; color: #93c5fd; }
+    a { color: var(--blue); }
+  </style>
+</head>
+<body>
+  <header class="hero">
+    <div class="hero-inner">
+      <div class="eyebrow">FinancialContent · content-library #422 · Designer mocks</div>
+      <h1>admin-fsb · FSB partner uploads their own content</h1>
+      <p>A new partner role so FSB can sign in, upload website posts / email / featured images, and use a Content Library that shows <strong>only</strong> AdvisorSource <code>fsb-content</code> — and only advisors with that source. Same shared library model as today; not a third product.</p>
+      <span class="rec">Recommend · Direction A · separate scoped workspace + FTT review + write-only v1</span>
+    </div>
+  </header>
+
+  <div class="wrap">
+    <a class="cta" href="directions/a/#login">
+      Open Direction A (recommended)
+      <small>FSB login → scoped library → create with locked source → FTT review queue</small>
+    </a>
+    <a class="cta secondary" href="directions/b/#login">
+      Direction B · same ContentLibrary, publish direct
+      <small>Role filter + locked chip · FTT can unpublish</small>
+    </a>
+    <a class="cta secondary" href="directions/c/#login">
+      Direction C · white-label + schedule/send
+      <small>Partner chrome · thin MAP for FSB advisors</small>
+    </a>
+    <p style="text-align:center;margin:0 0 24px;font-size:0.8rem;color:var(--muted)">
+      <a href="build-contract.html">Build contract</a> ·
+      <a href="build-contract.md">Markdown</a> ·
+      <a href="https://github.com/kartboy16/content-library/issues/422">Issue #422</a>
+    </p>
+
+    <div class="problem">
+      <strong>Ask (Alex · Oct 8):</strong> new admin type <code>admin-fsb</code> so the FSB partner can log in and upload their own content (website post, email to the user, featured image). Their Content Library shows ONLY content with AdvisorSource FSB-Content (<code>fsb-content</code>), and ONLY advisors with that source.
+    </div>
+
+    <div class="hold">
+      <strong>Soft Dev hold · Designer-first · not agent-ready.</strong> Do <em>not</em> wake Software developer. Do <em>not</em> mark <code>agent-ready</code>. Waiting for Alex to review and pick a direction.
+    </div>
+
+    <h2>Direction A screens (recommended)</h2>
+    <div class="grid">
+      <a class="card" href="directions/a/#login"><span class="tag">FSB</span><h3>Login landing</h3><p>Partner sign-in → scoped library, never full admin home.</p></a>
+      <a class="card" href="directions/a/#library"><span class="tag">FSB</span><h3>Scoped library</h3><p>FSB badge + “Showing FSB content only”. Pending / live statuses.</p></a>
+      <a class="card" href="directions/a/#create"><span class="tag">FSB</span><h3>Create / upload</h3><p>Post + email + featured image. Source locked to fsb-content.</p></a>
+      <a class="card" href="directions/a/#advisors"><span class="tag">FSB</span><h3>My advisors</h3><p>Only fsb-content advisors. Read-only in v1.</p></a>
+      <a class="card" href="directions/a/#hidden"><span class="tag">FSB</span><h3>What's hidden</h3><p>MAP-all, billing, settings, other sources — blocked.</p></a>
+      <a class="card" href="directions/a/#ftt_users"><span class="tag">FTT</span><h3>Create admin-fsb</h3><p>FTT invites partner logins with locked source scope.</p></a>
+      <a class="card" href="directions/a/#ftt_review"><span class="tag">FTT</span><h3>Review queue</h3><p>Approve / reject / unpublish FSB submissions.</p></a>
+      <a class="card" href="directions/a/#library"><span class="tag">Phone</span><h3>Phone width</h3><p>Use the 📱 chip in any direction demo.</p></a>
+    </div>
+
+    <h2>Acceptance (draft)</h2>
+    <div class="ac">
+      <ul>
+        <li><code>admin-fsb</code> signs in and lands on the FSB Content Library.</li>
+        <li>Can create post + email + featured image; saved items carry AdvisorSource <code>fsb-content</code>.</li>
+        <li>Sees ONLY fsb-content content and ONLY fsb-content advisors.</li>
+        <li><strong>Server-side enforcement</strong> on publications/methods — UI hiding is not security.</li>
+        <li>Full admins unaffected. Mock on Pages; Soft Dev held until Alex picks.</li>
+      </ul>
+    </div>
+
+    <h2>Open questions for Alex</h2>
+    <div class="q">
+      <ol>
+        <li>Does FTT approve before FSB content reaches advisors? <em>(A = yes · B = no, FTT can unpublish · C = optional)</em></li>
+        <li>Can FSB edit/delete their own items after publishing?</li>
+        <li>Can they schedule/send to their advisors, or only write content? <em>(A/B write-only · C includes schedule)</em></li>
+        <li>Multiple FSB logins — who creates accounts (FTT only vs FSB invites)?</li>
+        <li>FC branding + FSB label vs light white-label?</li>
+        <li>Shared categories vs FSB-only categories?</li>
+      </ol>
+    </div>
+
+    <h2>Key code findings (server enforcement)</h2>
+    <div class="code">
+      <ul>
+        <li>Roles via <code>alanning:roles</code>. Today only <code>admin</code>, <code>advisor</code>, <code>support</code>. <code>isAdminUserId</code> (server/support-impersonation.js) and <code>userRoles.isAdmin</code> check role <code>admin</code> only — <code>admin-fsb</code> must NOT pass these.</li>
+        <li>AdvisorSource collection <code>imports/collections/advisor_source.js</code> (slug e.g. <code>fsb-content</code>). Content tied by <code>availableToAdvisorSourceIds</code> / <code>advisorCategories</code> on HTMLPosts; advisors via <code>AdvisorPreferences.advisorCategories</code>.</li>
+        <li>Admins get empty visibility filter (see all HTMLPosts) in <code>imports/server/htmlPostsLibrary.js</code> + <code>htmlPostsLibraryQuery.js</code>. Scoped role needs its own branch.</li>
+        <li>Create flow: <code>imports/ui/admin/CreateHtmlPostPage.jsx</code> → <code>HTMLPosts.create</code> with multi-select Advisor Sources — must lock + server-set source for admin-fsb.</li>
+        <li>Leak risks if treated as admin: pubs <code>HTMLPosts</code>, <code>HTMLPostsByIds</code>, <code>allUsersBasic</code>, <code>emailTemplates</code>, <code>advisorSource</code> (currently any logged-in user), <code>socialPostQueue</code>/<code>advisorSocialTokens</code> for any advisor; methods under <code>userRoles.*</code>, <code>admin.*</code>, billing, MAP, source CRUD.</li>
+      </ul>
+    </div>
+
+    <div class="oos">
+      <strong>Out of scope for this mock:</strong> Meteor/Galaxy deploy, labeling agent-ready, Soft Dev implementation, Slack posts.
+    </div>
+
+    <p class="meta">
+      Issue <a href="https://github.com/kartboy16/content-library/issues/422">#422</a> ·
+      Mocks repo <a href="https://github.com/kartboy16/fc-mocks">kartboy16/fc-mocks</a>
+    </p>
+  </div>
+</body>
+</html>

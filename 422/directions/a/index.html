@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Direction A · Scoped FSB workspace + FTT review · #422</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="../../assets/mock.css" />
+</head>
+<body>
+<header class="thesis">
+  <span class="rec">RECOMMEND · Direction A</span>
+  <h1>A · Separate FSB workspace, FTT review before advisors see it, write-only</h1>
+  <p>Own route/component (<code>FsbContentLibrary</code>), minimal nav (Library · Create · My advisors), FC chrome with an FSB partner label. New items wait for FTT approval. No billing, MAP-for-all, or schedule/send in v1. Soft Dev hold until Alex picks.</p>
+</header>
+<nav class="nav">
+  <a href="../../index.html">#422 hub</a><span class="sep">·</span>
+  <a href="../a/" class="on">A Scoped + FTT review</a>
+  <a href="../b/">B Same library, direct publish</a>
+  <a href="../c/">C White-label + schedule</a>
+  <span class="sep">·</span>
+  <a href="../../build-contract.html">Build contract</a>
+  <span class="sep">·</span>
+  <a href="https://github.com/kartboy16/content-library/issues/422">Issue #422</a>
+  <span class="hold">Designer-first · Soft Dev hold · not agent-ready</span>
+</nav>
+<div class="demo-bar">
+  <span class="lbl">Demo view</span>
+  <button type="button" class="demo-btn" data-view="login">1 · FSB login</button>
+  <button type="button" class="demo-btn" data-view="library">2 · Scoped library</button>
+  <button type="button" class="demo-btn" data-view="create">3 · Create (locked source)</button>
+  <button type="button" class="demo-btn" data-view="advisors">4 · FSB advisors</button>
+  <button type="button" class="demo-btn" data-view="hidden">5 · Hidden areas</button>
+  <button type="button" class="demo-btn" data-view="ftt_users">6 · FTT: create admin-fsb</button>
+  <button type="button" class="demo-btn" data-view="ftt_review">7 · FTT: review queue</button>
+  <button type="button" class="demo-btn" data-view="__phone">📱 Phone</button>
+  <button type="button" class="demo-btn reset" data-view="__reset">↺ Reset</button>
+</div>
+<div class="demo-note" id="demoNote"></div>
+<div class="stage" id="stage"></div>
+<div class="legend">
+  <p><strong>Direction A (recommended):</strong> separate scoped workspace so <code>admin-fsb</code> never shares the full-admin <code>ContentLibrary.jsx</code> code path. FTT reviews before advisors see items. Write-only in v1 (no schedule/send). FC branding + FSB partner label.</p>
+  <p><strong>Why A:</strong> Today every <code>isAdminUserId</code> / <code>userRoles.isAdmin</code> check treats “admin” as full access (all HTMLPosts, allUsersBasic, billing, MAP). A separate role + component + server scope is safer than bolting a filter onto the full admin shell.</p>
+  <p>All names (Riley Khan, Priya Desai, Marcus Lee, …) are fictional.</p>
+</div>
+<div class="toast" id="toast"></div>
+<script>window.DIR = "a";</script>
+<script src="../../assets/mock.js"></script>
+</body>
+</html>

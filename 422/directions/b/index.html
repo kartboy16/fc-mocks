@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Direction B · Same ContentLibrary + direct publish · #422</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="../../assets/mock.css" />
+</head>
+<body>
+<header class="thesis fsb">
+  <span class="rec alt">ALTERNATE · Direction B</span>
+  <h1>B · Same ContentLibrary.jsx with a role-driven scope filter · publish direct</h1>
+  <p>Reuse the existing library UI. Role <code>admin-fsb</code> forces a locked FSB-Content chip and filters lists client+server. Items go live when FSB publishes; FTT can unpublish. Still no billing / all-advisor MAP. Faster to ship, easier to leak if a method still treats them as full admin.</p>
+</header>
+<nav class="nav">
+  <a href="../../index.html">#422 hub</a><span class="sep">·</span>
+  <a href="../a/">A Scoped + FTT review</a>
+  <a href="../b/" class="on">B Same library, direct publish</a>
+  <a href="../c/">C White-label + schedule</a>
+  <span class="sep">·</span>
+  <a href="../../build-contract.html">Build contract</a>
+  <span class="sep">·</span>
+  <a href="https://github.com/kartboy16/content-library/issues/422">Issue #422</a>
+  <span class="hold">Designer-first · Soft Dev hold · not agent-ready</span>
+</nav>
+<div class="demo-bar">
+  <span class="lbl">Demo view</span>
+  <button type="button" class="demo-btn" data-view="login">1 · FSB login</button>
+  <button type="button" class="demo-btn" data-view="library">2 · Scoped library (direct)</button>
+  <button type="button" class="demo-btn" data-view="create">3 · Create → publish</button>
+  <button type="button" class="demo-btn" data-view="advisors">4 · FSB advisors</button>
+  <button type="button" class="demo-btn" data-view="hidden">5 · Hidden areas</button>
+  <button type="button" class="demo-btn" data-view="ftt_users">6 · FTT: create admin-fsb</button>
+  <button type="button" class="demo-btn" data-view="ftt_review">7 · FTT: unpublish feed</button>
+  <button type="button" class="demo-btn" data-view="__phone">📱 Phone</button>
+  <button type="button" class="demo-btn reset" data-view="__reset">↺ Reset</button>
+</div>
+<div class="demo-note" id="demoNote"></div>
+<div class="stage" id="stage"></div>
+<div class="legend">
+  <p><strong>Direction B:</strong> less UI work (reuse <code>ContentLibrary.jsx</code> + <code>CreateHtmlPostPage.jsx</code> with role branches), but every <code>isAdmin</code> call site must be audited so <code>admin-fsb</code> is never treated as full admin. Direct publish is faster for the partner; FTT relies on unpublish.</p>
+  <p>All names are fictional.</p>
+</div>
+<div class="toast" id="toast"></div>
+<script>window.DIR = "b";</script>
+<script src="../../assets/mock.js"></script>
+</body>
+</html>
