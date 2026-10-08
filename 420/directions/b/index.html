@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Direction B · What-to-do column · #420</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="../../assets/mock.css" />
+</head>
+<body>
+<header class="thesis">
+  <span class="rec alt">OPTION · lightest build</span>
+  <h1>B · Keep today's table, add a “What to do” column + ⓘ explainers</h1>
+  <p>Smallest change: the Bounces table keeps its columns and gets a What to do column with the recommended next step and an inline Edit subscriber link. A one-line legend and ⓘ popovers explain Permanent vs Transient. No banner, no grouping. Good if we want guidance live fast and revisit later.</p>
+</header>
+<nav class="nav"><a href="../../index.html">#420 hub</a><span class="sep">·</span><a href="../a/">A Guided groups</a><a href="../b/" class="on">B What-to-do column</a><a href="../c/">C Details + Fix list</a><span class="sep">·</span><a href="../../build-contract.html">Build contract</a><span class="sep">·</span><a href="https://github.com/kartboy16/content-library/issues/420">Issue #420</a><span class="hold">Designer-first · Soft Dev hold · not agent-ready</span></nav>
+<div class="demo-bar"><span class="lbl">Demo view</span><button type="button" class="demo-btn" data-view="list">1 · Reports list</button><button type="button" class="demo-btn" data-view="bounces">2 · Bounces tab</button><button type="button" class="demo-btn" data-view="pop">3 · ⓘ on Bounce type</button><button type="button" class="demo-btn" data-view="explain">4 · “What do these mean?”</button><button type="button" class="demo-btn" data-view="edit_perm">Edit: permanent bounce</button><button type="button" class="demo-btn" data-view="edit_new">Edit: new email → Subscribed</button><button type="button" class="demo-btn" data-view="edit_dup">Edit: email already a subscriber</button><button type="button" class="demo-btn" data-view="subs">Subscribers › Bounced</button><button type="button" class="demo-btn" data-view="temp_only">State: temporary only</button><button type="button" class="demo-btn" data-view="none">State: no bounces</button><button type="button" class="demo-btn" data-view="__phone">📱 Phone</button><button type="button" class="demo-btn reset" data-view="__reset">↺ Reset</button></div>
+<div class="demo-note" id="demoNote"></div>
+<div class="stage" id="stage"></div>
+<div class="legend"><p><strong>Direction B:</strong> fastest to ship and least surprising. Trade-off: with 20 rows the advisor still has to read every line to learn that 16 need attention. There's no summary, and Permanent and Temporary rows stay mixed together by date.</p><p><strong>AC check:</strong> 1 ⓘ + legend · 2 What to do on each row · 3 Edit link + duplicate check · 4 same guard as A · 5 plain copy · 6 mock on Pages.</p><p>All subscribers, emails and the advisor (Jordan Lee) are made up. Numbers mirror a real campaign shape (20 of 759 bounced, about 2.6%: 16 permanent, 4 temporary) with no real data.</p></div>
+<div class="toast" id="toast"></div>
+<script>
+window.DIR = "b";
+window.VIEWS = [{"id": "list", "label": "1 · Reports list", "state": {"screen": "list"}, "note": "Reports tab unchanged. Click <b>View Report</b>."}, {"id": "bounces", "label": "2 · Bounces tab", "state": {"screen": "bounces"}, "note": "Same table as today (Email · Bounce type · Sub-type · Date) plus a <b>What to do</b> column and a one-line legend. Plain-word sub-type label under the raw value. Smallest change."}, {"id": "pop", "label": "3 · ⓘ on Bounce type", "state": {"screen": "bounces", "pop": "type"}, "note": "The <b>?</b> next to the column headers explains Permanent vs Transient (and each sub-type) without leaving the report."}, {"id": "explain", "label": "4 · “What do these mean?”", "state": {"screen": "bounces", "explain": true}, "note": "Same explainer panel as A, opened from the legend strip."}, {"id": "edit_perm", "label": "Edit: permanent bounce", "state": {"screen": "bounces", "edit": "b1"}, "note": "<b>Edit subscriber</b> from a Permanent row opens the <em>existing</em> subscriber. Status <b>Subscribed</b> is locked while the email is unchanged: re-subscribing the same address would only bounce again (AC-4)."}, {"id": "edit_new", "label": "Edit: new email → Subscribed", "state": {"screen": "bounces", "edit": "b1", "editEmail": "dana.morales@example.com"}, "note": "Type a new address and Status flips to <b>Subscribed</b> automatically. Lists, tags and history stay on the same record, so there's no duplicate (AC-3). Click <b>Save</b>: the row shows “✓ Updated to …”."}, {"id": "edit_dup", "label": "Edit: email already a subscriber", "state": {"screen": "bounces", "edit": "b5", "editEmail": "amy.chen@example.com"}, "note": "If the new address already belongs to another subscriber, Save is blocked and we point to that record instead of creating a second copy."}, {"id": "subs", "label": "Subscribers › Bounced", "state": {"screen": "subs", "subFilter": "bounced"}, "note": "One-click path from the report: <b>Subscribers</b> tab opens already filtered to <b>Bounced</b>, with a one-line “what to do” hint and the same Edit dialog."}, {"id": "temp_only", "label": "State: temporary only", "state": {"screen": "bounces", "scen": "temp"}, "note": "Only temporary bounces: the guidance says there's nothing to fix."}, {"id": "none", "label": "State: no bounces", "state": {"screen": "bounces", "scen": "none"}, "note": "Empty state, worded plainly."}];
+</script>
+<script src="../../assets/mock.js"></script>
+</body>
+</html>

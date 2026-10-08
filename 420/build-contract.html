@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>#420 · Build contract · FC mocks</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<style>
+body{font-family:Inter,system-ui,sans-serif;background:#f4f8fc;color:#1e2a4a;line-height:1.55;margin:0}
+.top{background:linear-gradient(135deg,#1e2a4a,#2b7de9);color:#fff;padding:14px 24px;font-size:.85rem}
+.top a{color:#fff;font-weight:600;margin-right:14px}
+.wrap{max-width:900px;margin:0 auto;padding:24px 20px 72px;background:#fff;border:1px solid #d4e4f2;border-radius:14px;margin-top:20px;margin-bottom:40px}
+h1{font-size:1.4rem;line-height:1.3}h2{font-size:1.05rem;margin-top:28px;border-bottom:1px solid #d4e4f2;padding-bottom:4px}
+a{color:#2b7de9;overflow-wrap:anywhere}code{background:#eef4fb;padding:1px 5px;border-radius:4px;font-size:.85em;overflow-wrap:anywhere}
+table{border-collapse:collapse;width:100%;font-size:.85rem;display:block;overflow-x:auto}th,td{border:1px solid #d4e4f2;padding:8px;text-align:left;vertical-align:top}th{background:#f0f7ff}
+li{margin-bottom:6px}
+@media(max-width:640px){.wrap{margin:0;border-radius:0;padding:16px 14px 48px}}
+</style>
+</head>
+<body>
+<div class="top"><a href="./">← Hub</a><a href="directions/a/">Direction A (recommended)</a><a href="directions/b/">Direction B</a><a href="directions/c/">Direction C</a><a href="build-contract.md">Markdown</a></div>
+<div class="wrap">
+<h1>#420 Bounce guidance in Campaign Report: build contract (draft)</h1>
+<ul>
+<li><strong>Status:</strong> Designer-first. <strong>Soft Dev hold.</strong> Not agent-ready until Alex picks a direction.</li>
+<li><strong>Mocks:</strong> <a href="https://kartboy16.github.io/fc-mocks/420/">https://kartboy16.github.io/fc-mocks/420/</a> (A recommended · B lightest · C most guided)</li>
+<li><strong>Issue:</strong> <a href="https://github.com/kartboy16/content-library/issues/420">https://github.com/kartboy16/content-library/issues/420</a></li>
+</ul>
+<h2>Where</h2>
+<ul>
+<li><code>imports/ui/EmailCampaigns/SESReports.jsx</code> → Report Detail Dialog → <code>reportTab === 2</code> (Bounces). Today: Email · Bounce type · Sub-type · Date, nothing else.</li>
+<li><code>imports/ui/EmailCampaigns/SESContacts.jsx</code> → Edit Subscriber dialog (status guard) and Subscribers tab (accept an initial <code>status=bounced</code> filter).</li>
+<li><code>imports/ui/EmailCampaigns/EmailCampaigns.jsx</code> → switch to the Subscribers tab (index 3) with that filter when the report asks for it.</li>
+<li>No server/schema change for A or B. C's bulk "Fix addresses" needs one new method (below).</li>
+</ul>
+<h2>Current behavior (don't change it, explain it)</h2>
+<ul>
+<li>Permanent → contact <code>status: 'bounced'</code> + sender-level block (<code>addToSuppressionList(email,'BOUNCE')</code>), skipped on next send.</li>
+<li>Transient → <code>softBounceCount += 1</code>; at <strong>3 in a row</strong> (<code>SOFT_BOUNCE_THRESHOLD</code>) → <code>status: 'bounced'</code> + same sender-level block. A delivery resets the count.</li>
+<li>Because both paths add the address to the sender-level block, <strong>re-subscribing the same address does not work.</strong> It is silently skipped or bounces again. That's why AC-4 is a hard guard, not just copy.</li>
+</ul>
+<h2>Copy (single source; put in one helper, e.g. <code>imports/utils/bounceGuidance.js</code>)</h2>
+<table>
+<thead>
+<tr>
+<th>Type / Sub-type</th>
+<th>Plain label</th>
+<th>Next step (row)</th>
+<th>Action</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Permanent / General</td>
+<td>Address rejected</td>
+<td>Won't be emailed again until you update the address. Edit this subscriber and change Status to Subscribed if you have a new email.</td>
+<td>Edit subscriber</td>
+</tr>
+<tr>
+<td>Permanent / NoEmail</td>
+<td>Address doesn't exist</td>
+<td>(same as above)</td>
+<td>Edit subscriber</td>
+</tr>
+<tr>
+<td>Permanent / Suppressed, OnAccountSuppressionList</td>
+<td>Bounced before</td>
+<td>(same as above)</td>
+<td>Edit subscriber</td>
+</tr>
+<tr>
+<td>Transient / MailboxFull</td>
+<td>Inbox full</td>
+<td>Temporary. We'll try again next campaign. Their inbox may be full.</td>
+<td>none</td>
+</tr>
+<tr>
+<td>Transient / General (and MessageTooLarge, ContentRejected, AttachmentRejected)</td>
+<td>Temporarily refused</td>
+<td>Temporary refusal. Worth double-checking the address is still current.</td>
+<td>Check address (opens Edit)</td>
+</tr>
+<tr>
+<td>Transient, contact now <code>bounced</code> (3rd in a row)</td>
+<td>Paused</td>
+<td>Paused after 3 temporary bounces in a row, so it won't get your next campaign. Check the address is still current. If you have a new one, edit this subscriber.</td>
+<td>Check address</td>
+</tr>
+<tr>
+<td>Undetermined / unknown</td>
+<td>Unknown reason</td>
+<td>Treat as Transient / General.</td>
+<td>Check address</td>
+</tr>
+</tbody>
+</table>
+<p>Type explainers:
+- <strong>Permanent · Won't be emailed again:</strong> The address doesn't work: the account was closed, there's a typo, or it never existed. We stop sending to it automatically, so it won't get your next campaign.
+- <strong>Transient · Temporary:</strong> The address exists but couldn't take the email this time (for example, a full inbox). It stays subscribed and we try again next campaign. After 3 temporary bounces in a row, we pause the address.</p>
+<p>Banned words in advisor UI: SES, AWS, suppression list, SNS, hard/soft bounce (use Permanent/Temporary). Keep the raw <code>bounceType · bounceSubType</code> in small grey text for support.</p>
+<h2>Direction A (recommended)</h2>
+<ol>
+<li><strong>Banner</strong> above the table when bounces &gt; 0: <code>{n} bounced ({pct}% of {sent}) · {perm} won't be emailed again · {temp} temporary — here's what to do</code>, plus "What do these mean?" toggle. Two cards:</li>
+<li>Permanent: explainer + <code>Show these {perm}</code> (filter) + <code>Open Subscribers › Bounced</code>.</li>
+<li>Temporary: "Still subscribed. We'll try again next campaign." + paused count if &gt; 0.</li>
+<li><strong>Filter chips:</strong> All / Won't be emailed again / Temporary.</li>
+<li><strong>Grouped table:</strong> group rows "Won't be emailed again (n)" then "Temporary (n)". Columns: Subscriber (email + name) · What happened (chip + plain label + raw grey) · What to do · action button · Date.</li>
+<li><strong>Reports list:</strong> under the Bounces chip, <code>{needs} need an update</code> (permanent + paused, not yet fixed) in red.</li>
+<li>After a successful edit from the report: the row shows <code>✓ Updated to {new} · Subscribed</code> (local state is fine; on reload derive it from the contact, see Data).</li>
+</ol>
+<h2>Direction B</h2>
+<ul>
+<li>Keep columns. Add <code>What to do</code> column (copy table + inline <code>Edit subscriber</code> link). One-line legend strip + "What do these mean?" panel. ⓘ popovers on the Bounce type and Sub-type headers. Footer link <code>View all bounced subscribers ›</code>.</li>
+</ul>
+<h2>Direction C</h2>
+<ul>
+<li>Status line <code>{n} bounced. {needs} addresses need an update…</code> + <code>Fix {needs} addresses</code> + <code>Subscribers › Bounced</code>.</li>
+<li>Row click → right details panel: What happened / What happens next / What to do / Edit subscriber / History.</li>
+<li><strong>Fix addresses</strong> view: one row per permanent + paused bounce, inline <code>New email</code> + Save / Skip / Undo, progress <code>x of y updated</code>. Save = same server method as Edit (in-place update, status → subscribed, same checks).</li>
+</ul>
+<h2>Edit Subscriber guard (all directions, AC-3 + AC-4)</h2>
+<ul>
+<li>Context alert at the top when the contact is <code>bounced</code> (what happened + "enter their new email address and set Status to Subscribed").</li>
+<li>While the email is <strong>unchanged</strong> and the contact is <code>bounced</code>: disable the <code>Subscribed</code> option ("Subscribed (enter a new email first)") + help text.</li>
+<li>When the email changes to a valid, unused address: auto-set Status to <code>Subscribed</code> and show "New address. Lists, tags and history stay with {first}."</li>
+<li>If the new email already belongs to another contact of this advisor: inline error + link to open that contact. <strong>Save disabled.</strong> Never create a second record.</li>
+<li>Server (<code>sesContacts.update</code> or equivalent) enforces the same rules: reject <code>bounced → subscribed</code> with an unchanged email; reject an email that collides with another contact (case-insensitive) for the same advisor; on email change, reset <code>softBounceCount</code> and clear <code>lastSoftBounceAt</code>.</li>
+</ul>
+<h2>Data</h2>
+<ul>
+<li>Report rows already carry <code>email, bounceType, bounceSubType, timestamp</code>. To show "Paused" and "Updated", look up the current contact by email at report load (one query for the bounced emails). If not found by the old email and an edit happened in this session, use local state. Optional later: store <code>previousEmails[]</code> on the contact so "Updated" survives reloads.</li>
+<li>Soft count per row: show <code>n of 3</code> only when available. Don't add new tracking for it.</li>
+</ul>
+<h2>Out of scope</h2>
+<ul>
+<li>Removing addresses from the sender-level block (support/admin only). Open question below.</li>
+<li>Changing bounce thresholds or the webhook.</li>
+<li>Auto-emailing advisors about bounces (existing bounce alert emails stay as they are).</li>
+</ul>
+<h2>Open decisions for Alex</h2>
+<ol>
+<li>Direction: A (recommended), B, or C? Or A now and C's Fix list later?</li>
+<li>Paused (3 temporary) addresses that are actually still valid: should the advisor get "Contact support to unblock", or should we build an admin unblock?</li>
+<li>Should the Edit guard also apply in the Subscribers tab generally (mocked: yes, same dialog)?</li>
+<li>Show "Updated" across reloads (needs <code>previousEmails[]</code>) or only in the session?</li>
+</ol>
+<h2>Tests (when unblocked)</h2>
+<ul>
+<li>Unit: copy helper maps every type/sub-type (including unknown) to label + next + action; no banned words.</li>
+<li>Unit/server: bounced + same email + subscribed → rejected; new email → subscribed and count reset; colliding email → rejected.</li>
+<li>UI: banner counts (perm, temp, paused, needs) match the rows; empty state; temporary-only state.</li>
+</ul>
+</div>
+</body>
+</html>

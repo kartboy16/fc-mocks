@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>FC — #420 Bounce guidance in Campaign Report</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #f4f8fc; --card: #fff; --ink: #1e2a4a; --muted: #5b6572;
+      --blue: #2b7de9; --border: #d4e4f2; --mint: #e6f1fb;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: Inter, system-ui, sans-serif; background: var(--bg); color: var(--ink); line-height: 1.55; }
+    .hero {
+      background: linear-gradient(135deg, #1e2a4a 0%, #2b7de9 100%);
+      color: #fff; padding: 40px 24px 36px;
+    }
+    .hero-inner { max-width: 920px; margin: 0 auto; }
+    .hero .eyebrow { font-size: 0.75rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; opacity: 0.85; margin-bottom: 10px; }
+    .hero h1 { font-size: 1.75rem; margin-bottom: 10px; }
+    .hero p { opacity: 0.92; max-width: 760px; font-size: 0.95rem; }
+    .rec {
+      display: inline-block; margin-top: 18px; background: #e8f5e9; color: #065f46;
+      font-weight: 700; font-size: 0.8rem; padding: 8px 14px; border-radius: 999px;
+    }
+    .wrap { max-width: 920px; margin: 0 auto; padding: 28px 24px 72px; }
+    .cta {
+      display: block; background: var(--blue); color: #fff !important; text-decoration: none;
+      text-align: center; padding: 16px 24px; border-radius: 12px; font-weight: 700;
+      font-size: 1rem; margin-bottom: 14px; box-shadow: 0 4px 16px rgba(43,125,233,0.35);
+    }
+    .cta:hover { filter: brightness(1.05); }
+    .cta small { display: block; font-weight: 500; opacity: 0.9; font-size: 0.8rem; margin-top: 4px; }
+    .cta.secondary { background: #fff; color: var(--blue) !important; border: 2px solid var(--blue); box-shadow: none; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 14px; margin-top: 8px; }
+    .card {
+      background: var(--card); border: 1px solid var(--border); border-radius: 12px;
+      padding: 18px; text-decoration: none; color: inherit; display: block;
+      transition: border-color 0.15s, box-shadow 0.15s;
+    }
+    .card:hover { border-color: var(--blue); box-shadow: 0 4px 16px rgba(30,42,74,0.08); }
+    .card h3 { font-size: 0.95rem; margin-bottom: 6px; color: var(--blue); }
+    .card p { font-size: 0.8rem; color: var(--muted); }
+    .card .tag {
+      display: inline-block; font-size: 0.65rem; font-weight: 700; background: var(--mint);
+      color: var(--blue); padding: 2px 8px; border-radius: 999px; margin-bottom: 8px;
+    }
+    h2 { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--muted); margin: 28px 0 12px; }
+    .problem {
+      margin: 0 0 20px; padding: 14px 16px; background: #fff8eb; border: 1px solid #f0d4a8;
+      border-radius: 10px; font-size: 0.85rem; color: #8a5a10;
+    }
+    .hold {
+      margin: 0 0 20px; padding: 14px 16px; background: #fef3c7; border: 1px solid #fcd34d;
+      border-radius: 10px; font-size: 0.85rem; color: #92400e;
+    }
+    .ac {
+      margin: 0 0 20px; padding: 14px 16px; background: #eff6ff; border: 1px solid #bfdbfe;
+      border-radius: 10px; font-size: 0.85rem; color: #1e40af;
+    }
+    .ac ul, .q ol, .oos ul, .walk ol { margin: 8px 0 0; padding-left: 1.2rem; }
+    .ac li, .q li, .oos li, .walk li { margin-bottom: 6px; }
+    .oos {
+      margin: 0 0 20px; padding: 14px 16px; background: #f3f4f6; border: 1px solid #e5e7eb;
+      border-radius: 10px; font-size: 0.85rem; color: #374151;
+    }
+    .q {
+      margin: 0 0 20px; padding: 14px 16px; background: #f5f3ff; border: 1px solid #c4b5fd;
+      border-radius: 10px; font-size: 0.85rem; color: #4c1d95;
+    }
+    .walk {
+      margin: 0 0 20px; padding: 14px 16px; background: #fff; border: 1px solid var(--border);
+      border-radius: 10px; font-size: 0.85rem; color: var(--ink);
+    }
+    .walk strong { color: #1e3a8a; }
+    .meta { margin-top: 32px; font-size: 0.8rem; color: var(--muted); }
+    .meta a { color: var(--blue); }
+    code { background: #eef2f6; padding: 0.1em 0.35em; border-radius: 4px; font-size: 0.85em; }
+    a { color: var(--blue); }
+  </style>
+</head>
+<body>
+  <header class="hero">
+    <div class="hero-inner">
+      <div class="eyebrow">FinancialContent · content-library #420 · Designer mocks</div>
+      <h1>Bounces that tell advisors what to do next</h1>
+      <p>Campaign Report → <strong>Bounces</strong> today shows Bounce type and Sub-type with no explanation. These mocks put plain-language explainers and a next step on every bounce, give a one-click path to fix the subscriber without creating a duplicate, and block re-subscribing an address that already bounced.</p>
+      <span class="rec">Recommend · Direction A · summary banner + grouped table with a next step on every row</span>
+    </div>
+  </header>
+
+  <div class="wrap">
+    <a class="cta" href="directions/a/#bounces">
+      Open Direction A (recommended)
+      <small>“20 bounced · 16 won’t be emailed again · 4 temporary — here’s what to do” · grouped rows · Edit subscriber</small>
+    </a>
+    <a class="cta secondary" href="directions/a/#edit_perm">
+      Try the Edit Subscriber guard
+      <small>Subscribed is locked until you enter a new email · duplicate check · same dialog in A, B and C</small>
+    </a>
+    <p style="text-align:center;margin:0 0 24px;font-size:0.8rem;color:var(--muted)">
+      <a href="directions/b/#bounces">Direction B · What-to-do column (lightest)</a> ·
+      <a href="directions/c/#bounces">Direction C · Details panel + Fix addresses list</a> ·
+      <a href="build-contract.html">Build contract</a> ·
+      <a href="build-contract.md">Markdown</a>
+    </p>
+
+    <div class="problem">
+      <strong>Why (from a client bounce question, Oct 8):</strong> an advisor saw Bounce type / Sub-type in the Campaign Report after a 759-recipient campaign (20 bounces, about 2.6%) and had to ask support what to do. We answered by email; these mocks put the same answer in the product for every advisor.
+    </div>
+
+    <div class="hold">
+      <strong>Soft Dev hold · Designer-first · not agent-ready.</strong> No direction picked yet. Do <em>not</em> wake Software developer or mark <code>agent-ready</code> until Alex picks.
+    </div>
+
+    <h2>Three directions</h2>
+    <div class="grid">
+      <a class="card" href="directions/a/#bounces">
+        <span class="tag">A · recommended</span>
+        <h3>Guided groups</h3>
+        <p>Summary banner with two cards (won’t be emailed again / temporary), filter chips, rows grouped by outcome, each with “what to do” + Edit subscriber / Check address.</p>
+      </a>
+      <a class="card" href="directions/b/#bounces">
+        <span class="tag">B · lightest</span>
+        <h3>What-to-do column</h3>
+        <p>Today’s table plus a What to do column, a one-line legend and ⓘ explainers on the headers. Fastest to ship, no summary.</p>
+      </a>
+      <a class="card" href="directions/c/#bounces">
+        <span class="tag">C · most guided</span>
+        <h3>Details panel + Fix list</h3>
+        <p>Click a bounce for a details panel. “Fix 17 addresses” lists every address that won’t be emailed with a New email box, all in one pass.</p>
+      </a>
+      <a class="card" href="directions/a/#edit_new">
+        <span class="tag">All directions</span>
+        <h3>Edit Subscriber guard</h3>
+        <p>Context banner, Subscribed locked on the same bounced address, auto-Subscribed on a new email, and a block on emails that already belong to another subscriber.</p>
+      </a>
+      <a class="card" href="directions/a/#subs">
+        <span class="tag">One click</span>
+        <h3>Subscribers › Bounced</h3>
+        <p>From the report straight to the Subscribers tab, already filtered to Bounced, with a one-line “what to do”.</p>
+      </a>
+      <a class="card" href="directions/a/#paused">
+        <span class="tag">Edge case</span>
+        <h3>Paused after 3 temporary</h3>
+        <p>A temporary bounce that was the 3rd in a row: the address is now paused, so it’s flagged like a permanent one.</p>
+      </a>
+      <div class="card">
+        <span class="tag">States</span>
+        <h3>Temporary only · none · phone</h3>
+        <p><a href="directions/a/#temp_only">Temporary only</a> · <a href="directions/a/#none">No bounces</a> · 📱 chip on every page</p>
+      </div>
+    </div>
+
+    <h2>The copy (same in every direction)</h2>
+    <div class="walk">
+      <ol>
+        <li><strong>Permanent · “Won’t be emailed again”:</strong> “Won’t be emailed again until you update the address. Edit this subscriber and change Status to Subscribed if you have a new email.”</li>
+        <li><strong>Transient / MailboxFull · “Inbox full”:</strong> “Temporary. We’ll try again next campaign. Their inbox may be full.”</li>
+        <li><strong>Transient / General · “Temporarily refused”:</strong> “Temporary refusal. Worth double-checking the address is still current.”</li>
+        <li><strong>3rd temporary in a row · “Paused”:</strong> “Paused after 3 temporary bounces in a row, so it won’t get your next campaign. Check the address is still current. If you have a new one, edit this subscriber.”</li>
+      </ol>
+      <p style="margin-top:8px;color:var(--muted)">No AWS/SES words. The raw type · sub-type stays in small grey text for support. Full mapping is in the <a href="build-contract.html">build contract</a>.</p>
+    </div>
+
+    <div class="ac">
+      <strong>Why A:</strong>
+      <ul>
+        <li>An advisor learns “16 need a new address, the rest will sort themselves out” before reading a single row. B makes them read all 20.</li>
+        <li>Covers all four parts of the ask (explainers, per-row next step, one-click edit, summary banner) without C’s extra bulk-edit flow.</li>
+        <li>Front-end only: <code>SESReports.jsx</code> + the Edit Subscriber guard. No schema change. C’s Fix list can be added later on top of A.</li>
+      </ul>
+    </div>
+
+    <div class="q">
+      <strong>Open decisions</strong> (flagged, not decided):
+      <ol>
+        <li><strong>Direction:</strong> A, B, or C? Or A now and C’s Fix list later?</li>
+        <li><strong>Re-subscribe guard:</strong> today an advisor <em>can</em> set a hard-bounced address back to Subscribed, and it’s still blocked by our sender, so it silently fails. Mocked: block it unless the email changes. OK?</li>
+        <li><strong>Paused but valid address</strong> (3 temporary bounces): show “contact support to unblock”, or build an admin unblock?</li>
+        <li><strong>“Updated” after reload:</strong> session only, or store previous emails so the report remembers?</li>
+      </ol>
+    </div>
+
+    <div class="oos">
+      <strong>Not in scope:</strong>
+      <ul>
+        <li>Changing bounce thresholds, the webhook, or the existing bounce alert emails.</li>
+        <li>Unblocking addresses at the sender level.</li>
+        <li>Agent-ready or Soft Dev work before a pick.</li>
+      </ul>
+      <p style="margin-top:8px">All subscribers, emails and the advisor are made up.</p>
+    </div>
+  </div>
+</body>
+</html>
