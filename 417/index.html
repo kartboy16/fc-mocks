@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>FC — #417 Advisor media library · copyable links</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #f4f8fc; --card: #fff; --ink: #1e2a4a; --muted: #5b6572;
+      --blue: #2b7de9; --border: #d4e4f2; --mint: #e6f1fb;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: Inter, system-ui, sans-serif; background: var(--bg); color: var(--ink); line-height: 1.55; }
+    .hero {
+      background: linear-gradient(135deg, #1e2a4a 0%, #2b7de9 100%);
+      color: #fff; padding: 40px 24px 36px;
+    }
+    .hero-inner { max-width: 920px; margin: 0 auto; }
+    .hero .eyebrow { font-size: 0.75rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; opacity: 0.85; margin-bottom: 10px; }
+    .hero h1 { font-size: 1.75rem; margin-bottom: 10px; }
+    .hero p { opacity: 0.92; max-width: 760px; font-size: 0.95rem; }
+    .rec {
+      display: inline-block; margin-top: 18px; background: #e8f5e9; color: #065f46;
+      font-weight: 700; font-size: 0.8rem; padding: 8px 14px; border-radius: 999px;
+    }
+    .wrap { max-width: 920px; margin: 0 auto; padding: 28px 24px 72px; }
+    .cta {
+      display: block; background: var(--blue); color: #fff !important; text-decoration: none;
+      text-align: center; padding: 16px 24px; border-radius: 12px; font-weight: 700;
+      font-size: 1rem; margin-bottom: 14px; box-shadow: 0 4px 16px rgba(43,125,233,0.35);
+    }
+    .cta:hover { filter: brightness(1.05); }
+    .cta small { display: block; font-weight: 500; opacity: 0.9; font-size: 0.8rem; margin-top: 4px; }
+    .cta.secondary { background: #fff; color: var(--blue) !important; border: 2px solid var(--blue); box-shadow: none; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 14px; margin-top: 8px; }
+    .card {
+      background: var(--card); border: 1px solid var(--border); border-radius: 12px;
+      padding: 18px; text-decoration: none; color: inherit; display: block;
+      transition: border-color 0.15s, box-shadow 0.15s;
+    }
+    .card:hover { border-color: var(--blue); box-shadow: 0 4px 16px rgba(30,42,74,0.08); }
+    .card h3 { font-size: 0.95rem; margin-bottom: 6px; color: var(--blue); }
+    .card p { font-size: 0.8rem; color: var(--muted); }
+    .card .tag {
+      display: inline-block; font-size: 0.65rem; font-weight: 700; background: var(--mint);
+      color: var(--blue); padding: 2px 8px; border-radius: 999px; margin-bottom: 8px;
+    }
+    h2 { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--muted); margin: 28px 0 12px; }
+    .problem {
+      margin: 0 0 20px; padding: 14px 16px; background: #fff8eb; border: 1px solid #f0d4a8;
+      border-radius: 10px; font-size: 0.85rem; color: #8a5a10;
+    }
+    .hold {
+      margin: 0 0 20px; padding: 14px 16px; background: #fef3c7; border: 1px solid #fcd34d;
+      border-radius: 10px; font-size: 0.85rem; color: #92400e;
+    }
+    .ac {
+      margin: 0 0 20px; padding: 14px 16px; background: #eff6ff; border: 1px solid #bfdbfe;
+      border-radius: 10px; font-size: 0.85rem; color: #1e40af;
+    }
+    .ac ul, .q ol, .oos ul, .walk ol { margin: 8px 0 0; padding-left: 1.2rem; }
+    .ac li, .q li, .oos li, .walk li { margin-bottom: 6px; }
+    .oos {
+      margin: 0 0 20px; padding: 14px 16px; background: #f3f4f6; border: 1px solid #e5e7eb;
+      border-radius: 10px; font-size: 0.85rem; color: #374151;
+    }
+    .q {
+      margin: 0 0 20px; padding: 14px 16px; background: #f5f3ff; border: 1px solid #c4b5fd;
+      border-radius: 10px; font-size: 0.85rem; color: #4c1d95;
+    }
+    .walk {
+      margin: 0 0 20px; padding: 14px 16px; background: #fff; border: 1px solid var(--border);
+      border-radius: 10px; font-size: 0.85rem; color: var(--ink);
+    }
+    .walk strong { color: #1e3a8a; }
+    .meta { margin-top: 32px; font-size: 0.8rem; color: var(--muted); }
+    .meta a { color: var(--blue); }
+    code { background: #eef2f6; padding: 0.1em 0.35em; border-radius: 4px; font-size: 0.85em; }
+    a { color: var(--blue); }
+  </style>
+</head>
+<body>
+  <header class="hero">
+    <div class="hero-inner">
+      <div class="eyebrow">FinancialContent · content-library #417 · Designer mocks</div>
+      <h1>My Media with a Copy link on every file</h1>
+      <p>Staff and advisors can see everything uploaded to FC for an advisor, headshots first, and copy each file's link. Staff can open any advisor and copy all their links at once. This is the <strong>same library</strong> as #260 (My Media) and #400 (Infographics), not a third screen.</p>
+      <span class="rec">Recommend · Direction A · links + Copy in the shared My Media library, Copy all for staff</span>
+    </div>
+  </header>
+
+  <div class="wrap">
+    <a class="cta" href="directions/a/#admin/library">
+      Open Direction A (recommended) as staff
+      <small>Pick an advisor · headshots first · Copy link on each file · Copy all links · Upload for advisor</small>
+    </a>
+    <a class="cta secondary" href="directions/a/#advisor/library">
+      Direction A as an advisor
+      <small>Own files only · tabs: Headshots, Logos, Infographics, Social, Email · Copy link</small>
+    </a>
+    <p style="text-align:center;margin:0 0 24px;font-size:0.8rem;color:var(--muted)">
+      <a href="directions/b/">Direction B · firm headshot sheet (optional staff add-on)</a> ·
+      <a href="build-contract.html">Build contract</a> ·
+      <a href="build-contract.md">Markdown</a>
+    </p>
+
+    <div class="problem">
+      <strong>Ask (Alana Read · #fc-bugs · Oct 8):</strong> "media library for the advisors so we can have the uploaded media urls. I'm uploading headshots for WWF and want to have all the correct urls for their headshots after uploading to FC."
+    </div>
+
+    <div class="hold">
+      <strong>Soft Dev hold · Designer-first · not agent-ready.</strong> Nobody has picked a direction yet. Do <em>not</em> wake Software developer. Do <em>not</em> mark <code>agent-ready</code>. Waiting for Alex and Alana to review and pick.
+    </div>
+
+    <h2>Direction A screens (recommended)</h2>
+    <div class="grid">
+      <a class="card" href="directions/a/#admin/library">
+        <span class="tag">Staff</span>
+        <h3>Advisor's media + Copy all</h3>
+        <p>Manage Advisors → Media. Advisor picker, headshots first, Copy link on each file, "Copy all N links" (one per line, optional file names).</p>
+      </a>
+      <a class="card" href="directions/a/#admin/upload3">
+        <span class="tag">After upload</span>
+        <h3>Batch upload → links ready</h3>
+        <p>Each new file with its link + Copy, "Copy all new links", and a clear reason for any file that failed.</p>
+      </a>
+      <a class="card" href="directions/a/#admin/upload1">
+        <span class="tag">After upload</span>
+        <h3>Single upload → link</h3>
+        <p>One file uploaded: link + Copy right away, new row highlighted in the list.</p>
+      </a>
+      <a class="card" href="directions/a/#advisor/branding">
+        <span class="tag">Settings</span>
+        <h3>Headshot upload shows its link</h3>
+        <p>Settings → Branding (and staff editing an advisor): "Link to this headshot" + Copy, then "See all files".</p>
+      </a>
+      <a class="card" href="directions/a/#advisor/entry">
+        <span class="tag">#260 · #400</span>
+        <h3>One library, four ways in</h3>
+        <p>My Media nav (#260), compose drawer (#260), Infographics tab (#400), Manage Advisors → Media (#417).</p>
+      </a>
+      <a class="card" href="directions/a/#advisor/library/phone">
+        <span class="tag">Phone</span>
+        <h3>Phone width</h3>
+        <p>Rows stack, full-width link + Copy, tabs scroll sideways. Use the 📱 chip on any screen.</p>
+      </a>
+      <div class="card">
+        <span class="tag">States</span>
+        <h3>Empty · loading · error</h3>
+        <p><a href="directions/a/#admin/library/empty">Empty</a> · <a href="directions/a/#admin/library/loading">Loading</a> · <a href="directions/a/#admin/library/error">Couldn't load</a></p>
+      </div>
+      <a class="card" href="directions/b/">
+        <span class="tag">B · optional</span>
+        <h3>Firm headshot sheet</h3>
+        <p>Staff-only: every advisor at a firm on one page, Copy all (name, link), batch upload matched by file name.</p>
+      </a>
+    </div>
+
+    <h2>Walkthrough (Alana's WWF case in Direction A)</h2>
+    <div class="walk">
+      <ol>
+        <li><strong>Open the advisor:</strong> Admin › Manage Advisors › Priya Desai › <strong>Media</strong>. This is Priya's own My Media library (the same one she sees, and the same one that holds her #400 infographics).</li>
+        <li><strong>Upload:</strong> "Upload for Priya" → choose Headshots → drop one or several files.</li>
+        <li><strong>Grab links:</strong> the success panel lists each file with its link and Copy. "Copy all new links" copies them one per line.</li>
+        <li><strong>Later:</strong> come back any time. Headshots sit at the top. "Copy all N headshot links" (on the Headshots tab) or "Copy all N links" on All. Tick "Include file names" to paste into a spreadsheet as two columns.</li>
+        <li><strong>Next advisor:</strong> switch advisors with the picker at the top. If firm batches are frequent, Direction B adds a single firm page.</li>
+      </ol>
+    </div>
+
+    <div class="ac">
+      <strong>Why A:</strong>
+      <ul>
+        <li>No new screen. It finishes the #260 library and adds a Copy link button, which is what Alana actually needs.</li>
+        <li>Works for advisors (single links) and staff (any advisor + Copy all) with one design.</li>
+        <li>Builds on what FC already does: staff can already upload a headshot for an advisor, and every file already has a public link. The missing pieces are a list and a Copy button.</li>
+      </ul>
+    </div>
+
+    <div class="q">
+      <strong>Open decisions</strong> (flagged, not decided):
+      <ol>
+        <li><strong>Link on replace:</strong> today, replacing a headshot gives it a <em>new</em> link and the old one breaks. Keep that (the mock warns), or keep the same link? Or add a permanent "current headshot" link per advisor?</li>
+        <li><strong>Copy all for advisors too</strong>, or staff only (as mocked)?</li>
+        <li><strong>Headshot: its own type or a tag?</strong> Mocked as a type, chosen on upload.</li>
+        <li><strong>Staff uploading for an advisor:</strong> is Manage Advisors → Media the right home? Should a staff upload also <em>set</em> the profile headshot, or only add it to the library?</li>
+        <li><strong>Group by firm (WWF):</strong> per-advisor is enough for v1, or include Direction B's firm sheet now?</li>
+        <li><strong>Delete a file that's in use on the profile:</strong> warn or block?</li>
+      </ol>
+    </div>
+
+    <div class="oos">
+      <strong>Not in scope:</strong>
+      <ul>
+        <li>Folders, team permissions, full asset management.</li>
+        <li>Changing the #260 / #400 insert pickers beyond a "Copy link" menu item.</li>
+        <li>Agent-ready or Soft Dev work before a pick.</li>
+      </ul>
+      <p style="margin-top:8px">All advisors and firms in these mocks are made up. Links use FC's real link format with fake file IDs, so they won't open.</p>
+    </div>
+  </div>
+</body>
+</html>

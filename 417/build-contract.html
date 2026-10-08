@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>#417 · Build contract · FC mocks</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<style>
+body{font-family:Inter,system-ui,sans-serif;background:#f4f8fc;color:#1e2a4a;line-height:1.55;margin:0}
+.top{background:linear-gradient(135deg,#1e2a4a,#2b7de9);color:#fff;padding:14px 24px;font-size:.85rem}
+.top a{color:#fff;font-weight:600;margin-right:14px}
+.wrap{max-width:900px;margin:0 auto;padding:24px 20px 72px;background:#fff;border:1px solid #d4e4f2;border-radius:14px;margin-top:20px;margin-bottom:40px}
+h1{font-size:1.4rem;line-height:1.3}h2{font-size:1.05rem;margin-top:28px;border-bottom:1px solid #d4e4f2;padding-bottom:4px}
+a{color:#2b7de9;overflow-wrap:anywhere}code{background:#eef4fb;padding:1px 5px;border-radius:4px;font-size:.85em;overflow-wrap:anywhere}
+table{border-collapse:collapse;width:100%;font-size:.85rem;display:block;overflow-x:auto}th,td{border:1px solid #d4e4f2;padding:8px;text-align:left;vertical-align:top}th{background:#f0f7ff}
+li{margin-bottom:6px}
+@media(max-width:640px){.wrap{margin:0;border-radius:0;padding:16px 14px 48px}}
+</style>
+</head>
+<body>
+<div class="top"><a href="./">← Hub</a><a href="directions/a/">Direction A (recommended)</a><a href="directions/b/">Direction B</a><a href="build-contract.md">Markdown</a></div>
+<div class="wrap">
+<h1>Build contract · #417 Advisor media library: list uploaded media with copyable links</h1>
+<p><strong>PROVISIONAL.</strong> One recommended direction (A), plus an optional staff add-on (B). <strong>Alex has not picked.</strong></p>
+<p><strong>Soft Dev hold · Designer-first · not agent-ready.</strong> Software developer not woken. Do <strong>not</strong> mark <code>agent-ready</code>. No content-library / Meteor / Galaxy work until Alex picks and the Pages URL is on the issue.</p>
+<ul>
+<li>Issue: <a href="https://github.com/kartboy16/content-library/issues/417">https://github.com/kartboy16/content-library/issues/417</a></li>
+<li>Reporter: Alana Read (#fc-bugs <code>1791482727.307279</code>): uploading WWF advisors' headshots and has nowhere to see them or grab the final links.</li>
+<li>Related: #260 (My Media Library), #400 (Infographic library). <strong>One shared per-advisor library, not a third screen.</strong></li>
+</ul>
+<h2>Mocks</h2>
+<ul>
+<li>Hub: <a href="https://kartboy16.github.io/fc-mocks/417/">https://kartboy16.github.io/fc-mocks/417/</a></li>
+<li>Direction A (recommended): <a href="https://kartboy16.github.io/fc-mocks/417/directions/a/">https://kartboy16.github.io/fc-mocks/417/directions/a/</a></li>
+<li>Direction B (staff add-on, optional): <a href="https://kartboy16.github.io/fc-mocks/417/directions/b/">https://kartboy16.github.io/fc-mocks/417/directions/b/</a></li>
+<li>This contract: <a href="https://kartboy16.github.io/fc-mocks/417/build-contract.html">https://kartboy16.github.io/fc-mocks/417/build-contract.html</a></li>
+</ul>
+<h2>Recommend: Direction A</h2>
+<p>Add a link and a <strong>Copy link</strong> button to every file in the #260 <strong>My Media</strong> library. Headshots are listed first. Staff open any advisor's library from <strong>Manage Advisors → Media</strong> and use <strong>Copy all links</strong>. Every upload (library, Settings → Branding headshot/logo, staff editing an advisor) shows the final link with Copy right away and lands in the library.</p>
+<p>Direction B (firm headshot sheet: one row per advisor at a firm, batch upload matched by file name) is a later add-on for batch jobs like WWF. It reads from the same library. It is not needed for v1.</p>
+<h2>Surfaces</h2>
+<table>
+<thead>
+<tr>
+<th>Surface</th>
+<th>Who</th>
+<th>What changes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>My Media</strong> page (#260 nav item)</td>
+<td>Advisor</td>
+<td>Rows with thumbnail, file name, type, upload date, size/format, link field + Copy link, ⋯ menu (Open, Replace, Use as profile headshot, Delete). Tabs: All · Headshots · Logos · Infographics · Social images &amp; video · Email images.</td>
+</tr>
+<tr>
+<td><strong>Manage Advisors → [advisor] → Media</strong></td>
+<td>Staff/admin only</td>
+<td>Same page plus an advisor picker, <strong>Upload for [first name]</strong>, <strong>Copy all N links</strong> (respects current tab and search) and an "Include file names" option.</td>
+</tr>
+<tr>
+<td><strong>Settings → Branding</strong> headshot and logo (<code>AdvisorConfigManager</code>), admin <strong>AdminUserEdit</strong></td>
+<td>Advisor / staff</td>
+<td>After upload: "Link to this headshot" + Copy link + "See all files in My Media".</td>
+</tr>
+<tr>
+<td><strong>#260 compose drawer</strong></td>
+<td>Advisor</td>
+<td>Same files. Tile menu gains "Copy link".</td>
+</tr>
+<tr>
+<td><strong>#400 Infographics manage</strong></td>
+<td>Advisor</td>
+<td>Becomes the Infographics tab of My Media (branding and insert extras stay).</td>
+</tr>
+<tr>
+<td><em>(B, optional)</em> <strong>Admin → Firms → [firm] → Headshots</strong></td>
+<td>Staff only</td>
+<td>One row per advisor with current headshot link + Copy; Copy all (name, link); batch upload with match-by-file-name.</td>
+</tr>
+</tbody>
+</table>
+<h2>Data shown per file</h2>
+<p>Thumbnail · file name · type (Headshot / Logo / Infographic / Social image / Social video / Email image) · upload date · size · format · "In use on profile" badge · full public link · where it came from (Infographics / Social / Email).</p>
+<p><strong>Sort:</strong> headshots first, then everything else newest first. Search filters by file name.</p>
+<h2>Links (verified pattern in code)</h2>
+<ul>
+<li>Format today: <code>https://financialcontent.ca/ufs/mediaLibrary/{fileId}/{filename}</code> (<code>uploadAdvisorMedia</code> in <code>server/user-methods.js</code>, and <code>server/images-methods.js</code>). The IDs in the mock are fake.</li>
+<li>Headshots and logos uploaded via <code>uploadAdvisorMedia</code> (<code>kind: 'photo' | 'companyLogo' | 'email'</code>) are saved to the file store with <code>metadata.ownerId</code> + <code>kind</code>, <strong>but are not added to the <code>MediaLibrary</code> collection</strong>. Builder: list from both (or write a <code>MediaLibrary</code> record on upload) so headshots show up. Map <code>kind: 'photo'</code> → Headshot, <code>companyLogo</code> → Logo.</li>
+<li><strong>Link stability today:</strong> replacing a headshot uploads a new file and <strong>deletes the old one</strong> (<code>previousPath</code>). The link changes, and anything pasted elsewhere breaks. The mock warns about this in the Replace dialog. See open decision 1.</li>
+<li>Delete: link stops working (mock warns).</li>
+<li>AC-5: the builder must open a copied link in a browser on staging and confirm the image loads.</li>
+</ul>
+<h2>Permissions</h2>
+<ul>
+<li><strong>Advisor:</strong> sees and copies only their own files. Single Copy link on each file. No advisor picker.</li>
+<li><strong>Staff/admin:</strong> opens any advisor's library, uploads on their behalf (<code>uploadAdvisorMedia</code> already accepts <code>targetAdvisorId</code> for admins), Copy all links.</li>
+<li>Copy all is <strong>staff-only in the mock</strong> (open decision 2).</li>
+</ul>
+<h2>Copy behaviour</h2>
+<ul>
+<li>Copy link → <code>navigator.clipboard.writeText</code>, fall back to a hidden textarea + <code>execCommand('copy')</code>. If both fail, select the link field and say "Press Ctrl+C (or ⌘C)". The button shows "✓ Copied" for 2 s, plus a toast.</li>
+<li>Copy all → one link per line, in the order shown (headshots first). The button shows the count ("Copy all 7 links" / "✓ Copied 7"). "Include file names" changes each line to <code>filename&lt;TAB&gt;link</code> so it pastes into a spreadsheet as two columns.</li>
+</ul>
+<h2>Upload states</h2>
+<ul>
+<li>One file: green success panel with the link + Copy, and the new row highlighted "New" in the list.</li>
+<li>Several files: one row per file with link + Copy, <strong>Copy all N new links</strong>, and failed files listed with a plain reason ("This file type isn't supported. Save it as JPG or PNG and try again.") plus "Try the failed file again".</li>
+<li>Limits match today's code: images under 5 MB (<code>MAX_UPLOAD_SIZE_BYTES</code>). Video limits follow #260.</li>
+</ul>
+<h2>Empty / loading / error</h2>
+<ul>
+<li>Empty (advisor): "No files yet" + Upload your first file. Empty (staff): "[Name] has no files yet" + Upload for [Name].</li>
+<li>Loading: skeleton rows + "Loading files…"; Copy all disabled.</li>
+<li>Error: "We couldn't load these files. Your files are safe…" + Try again; Copy all disabled.</li>
+</ul>
+<h2>Phone</h2>
+<p>Below ~640 px the side menu hides, rows stack (thumbnail + name, then a full-width link and a full-width Copy link button), tabs scroll sideways, and Copy all / Upload go full width. Use the "📱 Phone width" chip in the mock to preview.</p>
+<h2>Acceptance criteria (provisional, refines the issue's AC-1..6)</h2>
+<ul>
+<li><strong>AC-1:</strong> My Media lists every file stored for the advisor, including headshots and logos from Settings/admin edit. Headshots first, then newest first. Shows thumbnail, file name, date.</li>
+<li><strong>AC-2:</strong> Each file shows its full public link + Copy link with "✓ Copied" feedback and a clipboard fallback.</li>
+<li><strong>AC-3:</strong> Staff reach any advisor's library from Manage Advisors → Media, and <strong>Copy all links</strong> copies one per line with a count (optional file names).</li>
+<li><strong>AC-4:</strong> After any upload (library, Settings → Branding headshot/logo, admin advisor edit) the final link shows with Copy, and the file appears in the library.</li>
+<li><strong>AC-5:</strong> Empty / loading / error states as above. A copied link opens the image in a browser (check on staging).</li>
+<li><strong>AC-6:</strong> Same library as #260/#400: one data source, with tabs rather than separate screens.</li>
+<li><strong>AC-7:</strong> Plain advisor copy. No store names or technical terms in the UI.</li>
+</ul>
+<h2>Open decisions (for Alex / Alana)</h2>
+<ol>
+<li><strong>Link permanence on replace:</strong> keep today's behaviour (Replace = new link, old one breaks; the mock warns about this), or keep the same link when replacing? A related option: a permanent "current headshot" link per advisor that always shows the latest photo.</li>
+<li><strong>Bulk copy for advisors too?</strong> The mock gives Copy all to staff only.</li>
+<li><strong>Headshot: a type or a tag?</strong> The mock treats it as a type (from <code>kind: 'photo'</code>), with a "What are these?" choice on upload. A tag would let one file be both a headshot and a social image.</li>
+<li><strong>Staff uploading for an advisor:</strong> the mock puts it in Manage Advisors → Media ("Upload for Priya"), and it already exists in admin Edit advisor → Branding. Is that the right home, and should a staff upload also <strong>set</strong> the advisor's profile headshot or only add it to the library?</li>
+<li><strong>Group by firm (WWF):</strong> is per-advisor enough for v1 (A), or should Direction B's firm headshot sheet (Copy all for a whole firm, batch upload matched by file name) be included now?</li>
+<li><strong>Delete:</strong> should we warn when a file is in use on the profile, or block deleting it?</li>
+</ol>
+<h2>Non-goals</h2>
+<ul>
+<li>Full DAM: folders, team permissions, tags management (v1).</li>
+<li>Changing #260 compose or #400 insert pickers beyond adding "Copy link".</li>
+<li>Live social/email/WP actions during verification.</li>
+<li>Agent-ready or waking Soft Dev before Alex picks. No auto-merge.</li>
+<li>Rows use fictional advisors only (Priya Desai, Marcus Lee, Daniel Okafor, Elena Rossi, Sofia Hart, Tomás Rivera, Grace Whitfield; firms Harbourview Wealth, Northgate Advisory).</li>
+</ul>
+<h2>Test plan (after pick + staging build)</h2>
+<p>Staging (<code>financialcontent-staging.sandbox.galaxycloud.app</code>), as admin: upload a test headshot for a test advisor → link shown with Copy → library lists it first → Copy all on that advisor → paste and open one link and the image loads. Repeat as the advisor (own library only, no picker). No live social/email/WP.</p>
+<h2>Status</h2>
+<p>Soft Dev <strong>hold</strong>. <strong>Not agent-ready.</strong> Waiting for Alex/Alana to pick A (± B) and answer the open decisions.</p>
+</div>
+</body>
+</html>

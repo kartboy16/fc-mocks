@@ -1,0 +1,663 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>#417 · Direction A · My Media with copyable links · FC mocks</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #f4f8fc; --card: #fff; --ink: #1e2a4a; --muted: #5b6572;
+      --blue: #2b7de9; --blue-dark: #1e5bb8; --border: #d4e4f2; --mint: #e6f1fb;
+      --danger: #c62828; --ok: #047857; --ok-bg: #e8f5e9; --warn-bg: #fff8eb; --warn-border: #f0d4a8; --warn: #8a5a10;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: Inter, system-ui, sans-serif; background: var(--bg); color: var(--ink); font-size: 14px; line-height: 1.45; }
+    a { color: var(--blue); }
+    .thesis { background: linear-gradient(135deg, #1e2a4a, #2b7de9); color: #fff; padding: 14px 24px; }
+    .thesis .rec { display: inline-block; background: #fff; color: var(--blue); font-size: 0.68rem; font-weight: 700; padding: 3px 10px; border-radius: 999px; margin-bottom: 6px; }
+    .thesis h1 { font-size: 1.05rem; margin-bottom: 2px; }
+    .thesis p { opacity: 0.9; font-size: 0.82rem; max-width: 920px; }
+    .nav { padding: 8px 24px; font-size: 0.8rem; background: #fafafa; border-bottom: 1px solid var(--border); display: flex; gap: 12px; flex-wrap: wrap; align-items: center; }
+    .nav a { text-decoration: none; font-weight: 500; }
+    .nav .on { font-weight: 700; color: var(--ink); }
+    .nav .sep { color: #c0c8d4; }
+    .demo { background: #fff; border-bottom: 1px solid var(--border); padding: 10px 24px; display: flex; flex-direction: column; gap: 8px; }
+    .demo-row { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
+    .demo-row > span { font-size: 0.68rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; color: var(--muted); min-width: 64px; }
+    .chip { padding: 6px 11px; border-radius: 999px; border: 1px solid var(--border); background: #fff; font-family: inherit; font-size: 0.76rem; font-weight: 600; color: var(--ink); cursor: pointer; }
+    .chip:hover { border-color: var(--blue); color: var(--blue); }
+    .chip.on { background: var(--blue); color: #fff; border-color: var(--blue); }
+
+    .stage { padding: 16px; }
+    .stage.phone .frame { max-width: 390px; margin: 0 auto; border: 10px solid #1e2a4a; border-radius: 28px; overflow: hidden; box-shadow: 0 12px 40px rgba(30,42,74,0.25); }
+    .frame { background: var(--bg); container-type: inline-size; container-name: app; }
+    .app { display: flex; min-height: 640px; }
+    .rail { width: 56px; background: #1e2a4a; flex-shrink: 0; display: flex; flex-direction: column; align-items: center; padding: 12px 0; gap: 8px; }
+    .rail .ri { width: 36px; height: 36px; border-radius: 8px; background: rgba(255,255,255,0.08); color: rgba(255,255,255,0.75); font-size: 0.58rem; font-weight: 700; display: flex; align-items: center; justify-content: center; text-align: center; line-height: 1.1; }
+    .rail .ri.on { background: var(--blue); color: #fff; }
+    .main { flex: 1; min-width: 0; padding: 18px 20px 48px; }
+    .crumb { font-size: 0.78rem; color: var(--muted); margin-bottom: 6px; }
+    .crumb a { text-decoration: none; }
+    .page-head { display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 12px; margin-bottom: 14px; }
+    .page-head h2 { font-size: 1.4rem; font-weight: 700; }
+    .page-head .sub { color: var(--muted); font-size: 0.85rem; margin-top: 2px; max-width: 560px; }
+    .head-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+    .btn { font-family: inherit; font-size: 0.86rem; font-weight: 600; padding: 10px 16px; border-radius: 10px; border: none; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 6px; min-height: 44px; text-decoration: none; white-space: nowrap; }
+    .btn-primary { background: var(--blue); color: #fff; }
+    .btn-primary:hover { background: var(--blue-dark); }
+    .btn-ghost { background: #fff; border: 1px solid var(--border); color: var(--ink); }
+    .btn-ghost:hover { border-color: var(--blue); color: var(--blue); }
+    .btn-danger { background: #fff; border: 1px solid var(--danger); color: var(--danger); }
+    .btn-sm { padding: 7px 11px; min-height: 36px; font-size: 0.78rem; }
+    .btn.copied { background: var(--ok) !important; color: #fff !important; border-color: var(--ok) !important; }
+    .btn[disabled] { opacity: 0.5; cursor: not-allowed; }
+
+    .admin-bar { background: #fff; border: 1px solid var(--border); border-radius: 12px; padding: 12px 14px; margin-bottom: 14px; display: flex; gap: 12px; align-items: flex-end; flex-wrap: wrap; }
+    .admin-bar .tag { font-size: 0.62rem; font-weight: 700; background: #fef3c7; color: #92400e; padding: 2px 8px; border-radius: 999px; text-transform: uppercase; letter-spacing: 0.04em; }
+    .field { display: flex; flex-direction: column; gap: 4px; }
+    .field label { font-size: 0.74rem; font-weight: 600; color: var(--muted); }
+    select, .search { padding: 10px 12px; border: 1px solid var(--border); border-radius: 10px; font-family: inherit; font-size: 0.9rem; background: #fff; min-height: 44px; color: var(--ink); }
+    .admin-bar select { min-width: 240px; }
+    .bulk { margin-left: auto; display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+    .bulk .opt { font-size: 0.78rem; color: var(--muted); display: flex; gap: 6px; align-items: center; }
+
+    .tabs { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 12px; }
+    .tab { padding: 8px 12px; border-radius: 999px; border: 1px solid var(--border); background: #fff; font-family: inherit; font-size: 0.8rem; font-weight: 600; color: var(--muted); cursor: pointer; min-height: 38px; }
+    .tab .n { font-weight: 700; color: var(--ink); margin-left: 4px; }
+    .tab.on { background: var(--mint); color: var(--blue); border-color: #9ec0e8; }
+    .tab.on .n { color: var(--blue); }
+    .toolbar { display: flex; gap: 8px; align-items: center; margin-bottom: 12px; flex-wrap: wrap; }
+    .toolbar .search { flex: 1; min-width: 160px; max-width: 300px; }
+    .toolbar .sort { font-size: 0.78rem; color: var(--muted); }
+
+    .section-label { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--muted); font-weight: 700; margin: 14px 0 8px; }
+    .list { display: flex; flex-direction: column; gap: 8px; }
+    .row { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 10px 12px; display: grid; grid-template-columns: 64px minmax(160px, 1.1fr) minmax(220px, 1.6fr) auto; gap: 12px; align-items: center; }
+    .row.new { border-color: #86efac; box-shadow: 0 0 0 3px #dcfce7; }
+    .thumb { width: 64px; height: 64px; border-radius: 10px; display: flex; align-items: center; justify-content: center; color: #fff; font-weight: 700; font-size: 0.9rem; position: relative; overflow: hidden; flex-shrink: 0; }
+    .thumb.head { border-radius: 50%; background: radial-gradient(circle at 50% 38%, #f3d2b8 0 18%, transparent 19%), radial-gradient(ellipse at 50% 100%, #3b5b8c 0 46%, transparent 47%), linear-gradient(160deg, #dbeafe, #93c5fd); }
+    .thumb.head.h2 { background: radial-gradient(circle at 50% 38%, #c8946f 0 18%, transparent 19%), radial-gradient(ellipse at 50% 100%, #334155 0 46%, transparent 47%), linear-gradient(160deg, #e0e7ff, #a5b4fc); }
+    .thumb.head.h3 { background: radial-gradient(circle at 50% 38%, #8d5a3b 0 18%, transparent 19%), radial-gradient(ellipse at 50% 100%, #14532d 0 46%, transparent 47%), linear-gradient(160deg, #dcfce7, #86efac); }
+    .thumb.head.h4 { background: radial-gradient(circle at 50% 38%, #f1c9a5 0 18%, transparent 19%), radial-gradient(ellipse at 50% 100%, #7c2d12 0 46%, transparent 47%), linear-gradient(160deg, #ffedd5, #fdba74); }
+    .thumb.logo { background: #fff; border: 1px solid var(--border); color: #0f766e; font-size: 0.7rem; }
+    .thumb.info { background: linear-gradient(145deg, #1e3a5f 0%, #2b7de9 55%, #7dd3fc 100%); font-size: 0.6rem; padding: 4px; text-align: center; }
+    .thumb.social { background: linear-gradient(145deg, #064e3b 0%, #059669 50%, #a7f3d0 100%); }
+    .thumb.video { background: linear-gradient(145deg, #4c1d95 0%, #7c3aed 50%, #ddd6fe 100%); font-size: 1.2rem; }
+    .thumb.email { background: linear-gradient(145deg, #7c2d12 0%, #ea580c 50%, #fed7aa 100%); font-size: 0.6rem; }
+    .info-col { min-width: 0; }
+    .fname { font-weight: 700; font-size: 0.88rem; overflow-wrap: anywhere; }
+    .meta { font-size: 0.74rem; color: var(--muted); margin-top: 2px; display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
+    .badge { display: inline-block; font-size: 0.64rem; font-weight: 700; padding: 2px 8px; border-radius: 999px; background: var(--mint); color: var(--blue); }
+    .badge.head { background: #ede9fe; color: #5b21b6; }
+    .badge.inuse { background: var(--ok-bg); color: var(--ok); }
+    .badge.new { background: #dcfce7; color: #166534; }
+    .badge.from { background: #f3f4f6; color: #374151; }
+    .url-col { display: flex; gap: 6px; align-items: center; min-width: 0; }
+    .url { flex: 1; min-width: 0; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 0.72rem; padding: 9px 10px; border: 1px solid var(--border); border-radius: 8px; background: #f8fafc; color: #334155; min-height: 36px; }
+    .row-actions { display: flex; gap: 4px; }
+    .more { position: relative; }
+    .menu { display: none; position: absolute; right: 0; top: 40px; background: #fff; border: 1px solid var(--border); border-radius: 10px; box-shadow: 0 10px 30px rgba(30,42,74,0.15); min-width: 180px; z-index: 20; padding: 4px; }
+    .menu.open { display: block; }
+    .menu button, .menu a { display: block; width: 100%; text-align: left; background: none; border: none; font-family: inherit; font-size: 0.82rem; padding: 9px 10px; border-radius: 6px; cursor: pointer; color: var(--ink); text-decoration: none; }
+    .menu button:hover, .menu a:hover { background: var(--mint); }
+    .menu .del { color: var(--danger); }
+
+    .state { text-align: center; padding: 44px 24px; background: #fff; border: 1px solid var(--border); border-radius: 14px; }
+    .state .ico { font-size: 2.2rem; }
+    .state h3 { font-size: 1.05rem; margin: 10px 0 6px; }
+    .state p { color: var(--muted); font-size: 0.88rem; margin: 0 auto 16px; max-width: 420px; }
+    .state.err { background: #fef2f2; border-color: #fecaca; }
+    .skel { height: 84px; border-radius: 12px; background: linear-gradient(90deg, #e9eff6 25%, #f5f8fb 50%, #e9eff6 75%); background-size: 200% 100%; animation: sh 1.2s infinite; }
+    @keyframes sh { to { background-position: -200% 0; } }
+
+    .callout { margin-bottom: 14px; padding: 11px 14px; background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 10px; font-size: 0.8rem; color: #1e40af; }
+    .callout.warn { background: var(--warn-bg); border-color: var(--warn-border); color: var(--warn); }
+    .oq { font-size: 0.7rem; font-weight: 700; background: #f5f3ff; color: #5b21b6; border: 1px solid #c4b5fd; padding: 1px 7px; border-radius: 999px; margin-left: 4px; white-space: nowrap; }
+
+    /* Upload success panel */
+    .done { background: #fff; border: 2px solid #86efac; border-radius: 14px; padding: 16px; margin-bottom: 16px; }
+    .done h3 { font-size: 1rem; color: var(--ok); margin-bottom: 2px; }
+    .done .sub { font-size: 0.82rem; color: var(--muted); margin-bottom: 12px; }
+    .done-row { display: grid; grid-template-columns: 44px minmax(120px, 0.9fr) minmax(200px, 1.6fr); gap: 10px; align-items: center; padding: 8px 0; border-top: 1px solid #eef2f7; }
+    .done-row .thumb { width: 44px; height: 44px; font-size: 0.7rem; }
+    .done-row.fail .fname { color: var(--danger); }
+    .done-row .errmsg { font-size: 0.76rem; color: var(--danger); }
+    .done-foot { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px; align-items: center; }
+
+    /* Branding / entry views */
+    .panel { background: #fff; border: 1px solid var(--border); border-radius: 14px; padding: 18px; margin-bottom: 14px; }
+    .panel h3 { font-size: 1rem; margin-bottom: 4px; }
+    .panel .sub { font-size: 0.82rem; color: var(--muted); margin-bottom: 14px; }
+    .brand-row { display: flex; gap: 16px; align-items: flex-start; flex-wrap: wrap; }
+    .brand-row .thumb { width: 96px; height: 96px; }
+    .brand-body { flex: 1; min-width: 220px; }
+    .linkbox { margin-top: 12px; padding: 12px; background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 10px; }
+    .linkbox label { display: block; font-size: 0.74rem; font-weight: 700; color: var(--ok); margin-bottom: 6px; }
+    .entry-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 12px; }
+    .entry { background: #fff; border: 1px solid var(--border); border-radius: 12px; padding: 14px; }
+    .entry .k { display: inline-block; font-size: 0.62rem; font-weight: 700; background: var(--mint); color: var(--blue); padding: 2px 8px; border-radius: 999px; margin-bottom: 8px; }
+    .entry h4 { font-size: 0.92rem; margin-bottom: 6px; }
+    .entry p { font-size: 0.8rem; color: var(--muted); margin-bottom: 10px; }
+    .mini { background: #f8fafc; border: 1px dashed #c7d6e6; border-radius: 10px; padding: 10px; font-size: 0.74rem; margin-bottom: 10px; }
+    .mini .fake-btn { display: inline-block; padding: 4px 8px; border-radius: 6px; border: 1px solid var(--border); background: #fff; font-weight: 600; margin: 2px 2px 0 0; }
+    .mini .fake-btn.hl { border-color: var(--blue); background: var(--mint); color: var(--blue); }
+
+    .overlay { display: none; position: fixed; inset: 0; background: rgba(15,23,42,0.45); z-index: 100; align-items: center; justify-content: center; padding: 16px; }
+    .overlay.open { display: flex; }
+    .modal { background: #fff; border-radius: 14px; max-width: 500px; width: 100%; padding: 22px; box-shadow: 0 20px 50px rgba(0,0,0,0.2); max-height: 90vh; overflow: auto; }
+    .modal h3 { font-size: 1.1rem; margin-bottom: 8px; }
+    .modal p { font-size: 0.86rem; color: var(--muted); margin-bottom: 12px; }
+    .modal .drop { border: 2px dashed #9ec0e8; background: #f0f7ff; border-radius: 12px; padding: 22px; text-align: center; margin-bottom: 12px; cursor: pointer; }
+    .modal .drop:hover { background: var(--mint); border-color: var(--blue); }
+    .modal .drop small { display: block; color: var(--muted); margin-top: 4px; font-size: 0.76rem; }
+    .modal-actions { display: flex; gap: 8px; justify-content: flex-end; flex-wrap: wrap; margin-top: 8px; }
+    .radio { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 12px; }
+    .radio label { border: 1px solid var(--border); border-radius: 10px; padding: 8px 12px; font-size: 0.82rem; cursor: pointer; display: flex; gap: 6px; align-items: center; }
+    .toast { display: none; position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%); background: #1e2a4a; color: #fff; padding: 12px 18px; border-radius: 10px; font-size: 0.85rem; z-index: 200; box-shadow: 0 8px 24px rgba(0,0,0,0.2); max-width: 90vw; }
+    .toast.show { display: block; }
+    .hide { display: none !important; }
+
+    /* Phone width (real phones via container query; desktop reviewers via "Phone" chip) */
+    @container app (max-width: 640px) {
+      .rail { display: none; }
+      .main { padding: 14px 12px 40px; }
+      .page-head h2 { font-size: 1.2rem; }
+      .head-actions, .head-actions .btn { width: 100%; }
+      .admin-bar { flex-direction: column; align-items: stretch; }
+      .admin-bar select { min-width: 0; width: 100%; }
+      .bulk { margin-left: 0; flex-direction: column; align-items: stretch; }
+      .bulk .btn { width: 100%; }
+      .tabs { flex-wrap: nowrap; overflow-x: auto; padding-bottom: 4px; }
+      .tab { flex-shrink: 0; }
+      .toolbar .search { max-width: none; }
+      .row { grid-template-columns: 56px 1fr auto; gap: 10px; }
+      .toolbar .sort { flex-basis: 100%; }
+      .row .thumb { width: 56px; height: 56px; }
+      .row .url-col { grid-column: 1 / -1; flex-wrap: wrap; }
+      .row .url-col .url { flex-basis: 100%; }
+      .row .url-col .copy { flex: 1; }
+      .row .row-actions { grid-column: 3; grid-row: 1; align-self: start; }
+      .done-row { grid-template-columns: 44px 1fr; }
+      .done-row .url-col { grid-column: 1 / -1; flex-wrap: wrap; }
+      .done-row .url-col .url { flex-basis: 100%; }
+      .done-row .url-col .copy { flex: 1; }
+      .done-foot .btn { width: 100%; }
+    }
+    @media (max-width: 640px) { .stage { padding: 0; } .thesis, .nav, .demo { padding-left: 12px; padding-right: 12px; } }
+  </style>
+</head>
+<body>
+  <header class="thesis">
+    <span class="rec">#417 · Direction A · Recommended</span>
+    <h1>One My Media library, with a Copy link on every file</h1>
+    <p>The same per-advisor library as #260 (My Media) and #400 (Infographics). Headshots sit at the top, every file shows its link with a Copy button, and staff can pick any advisor and copy all their links at once. Mock only. Software developer on hold until Alex picks.</p>
+  </header>
+  <nav class="nav">
+    <a href="../../">Hub</a><span class="sep">·</span>
+    <span class="on">Direction A (recommended)</span><span class="sep">·</span>
+    <a href="../b/">Direction B (firm headshot sheet)</a><span class="sep">·</span>
+    <a href="../../build-contract.html">Build contract</a><span class="sep">·</span>
+    <a href="../../../260/">#260 mocks</a><span class="sep">·</span>
+    <a href="../../../400/manage/">#400 Infographics</a>
+  </nav>
+
+  <div class="demo">
+    <div class="demo-row"><span>Who</span>
+      <button class="chip" data-role="admin" onclick="setRole('admin')">Staff / admin</button>
+      <button class="chip" data-role="advisor" onclick="setRole('advisor')">Advisor (own library)</button>
+    </div>
+    <div class="demo-row"><span>Screen</span>
+      <button class="chip" data-view="library" onclick="setView('library')">Library</button>
+      <button class="chip" data-view="upload1" onclick="setView('upload1')">After 1 upload</button>
+      <button class="chip" data-view="upload3" onclick="setView('upload3')">After batch upload</button>
+      <button class="chip" data-view="branding" onclick="setView('branding')">Headshot in Settings / advisor profile</button>
+      <button class="chip" data-view="entry" onclick="setView('entry')">How you get here (#260 / #400)</button>
+    </div>
+    <div class="demo-row"><span>State</span>
+      <button class="chip" data-state="ok" onclick="setState('ok')">Has files</button>
+      <button class="chip" data-state="empty" onclick="setState('empty')">Empty</button>
+      <button class="chip" data-state="loading" onclick="setState('loading')">Loading</button>
+      <button class="chip" data-state="error" onclick="setState('error')">Couldn't load</button>
+      <span style="min-width:12px"></span>
+      <button class="chip" id="phoneChip" onclick="togglePhone()">📱 Phone width</button>
+    </div>
+  </div>
+
+  <div class="stage" id="stage">
+    <div class="frame">
+      <div class="app">
+        <aside class="rail" aria-hidden="true">
+          <div class="ri">FC</div>
+          <div class="ri">Posts</div>
+          <div class="ri on" id="railMedia">My Media</div>
+          <div class="ri">Email</div>
+          <div class="ri">Social</div>
+          <div class="ri" id="railAdmin">Admin</div>
+        </aside>
+        <main class="main">
+
+          <!-- ============ LIBRARY ============ -->
+          <section id="v-library">
+            <div class="crumb" id="crumb"></div>
+            <div class="page-head">
+              <div>
+                <h2 id="libTitle">My Media</h2>
+                <div class="sub" id="libSub">Everything you've uploaded to FinancialContent. Copy a link to use a file anywhere: your website, an email signature, a bio page.</div>
+              </div>
+              <div class="head-actions">
+                <button class="btn btn-primary" onclick="openUpload()" id="uploadBtn">Upload files</button>
+              </div>
+            </div>
+
+            <div class="admin-bar" id="adminBar">
+              <div class="field">
+                <label for="advPick">Advisor <span class="tag">Staff only</span></label>
+                <select id="advPick" onchange="pickAdvisor(this.value)"></select>
+              </div>
+              <div class="bulk">
+                <label class="opt"><input type="checkbox" id="withNames" /> Include file names</label>
+                <button class="btn btn-ghost" id="bulkBtn" onclick="copyAll(this)">Copy all links</button>
+              </div>
+            </div>
+
+            <div id="doneSlot"></div>
+
+            <div id="libBody">
+              <div class="tabs" id="tabs"></div>
+              <div class="toolbar">
+                <input class="search" type="search" placeholder="Search by file name…" aria-label="Search" oninput="render()" id="q" />
+                <span class="sort">Headshots first, then newest first</span>
+              </div>
+              <div id="listSlot"></div>
+            </div>
+          </section>
+
+          <!-- ============ BRANDING (AC-4) ============ -->
+          <section id="v-branding" class="hide">
+            <div class="crumb" id="bCrumb"></div>
+            <div class="page-head"><div><h2 id="bTitle">Branding &amp; business details</h2><div class="sub">Where the headshot is uploaded today. After an upload, the link shows right here, and the file also lands in the library.</div></div></div>
+            <div class="panel">
+              <h3>Headshot</h3>
+              <div class="sub">Shown on your posts, emails and website. JPG or PNG, under 5 MB.</div>
+              <div class="brand-row">
+                <div class="thumb head" id="bThumb"></div>
+                <div class="brand-body">
+                  <div class="fname" id="bFile">priya-desai-headshot-2026.jpg</div>
+                  <div class="meta"><span class="badge inuse">✓ Uploaded just now</span> <span>412 KB · JPG</span></div>
+                  <div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap">
+                    <button class="btn btn-ghost btn-sm" onclick="openReplace()">Replace</button>
+                    <button class="btn btn-ghost btn-sm" onclick="toast('Remove (mock)')">Remove</button>
+                  </div>
+                  <div class="linkbox">
+                    <label>Link to this headshot</label>
+                    <div class="url-col">
+                      <input class="url" readonly id="bUrl" value="" onclick="this.select()" />
+                      <button class="btn btn-primary btn-sm copy" onclick="copyText(document.getElementById('bUrl').value, this)">Copy link</button>
+                    </div>
+                    <div style="font-size:0.76rem;margin-top:8px"><a href="#" onclick="setView('library');return false">See all files in <span id="bLibName">My Media</span> →</a></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="panel">
+              <h3>Logo</h3>
+              <div class="sub">Same pattern: after upload, the link shows here with Copy and the logo appears in the library under Logos.</div>
+              <div class="brand-row"><div class="thumb logo">HV</div><div class="brand-body"><div class="fname">harbourview-logo.png</div><div class="meta">Uploaded Sep 30, 2026 · 64 KB · PNG</div></div></div>
+            </div>
+          </section>
+
+          <!-- ============ ENTRY POINTS ============ -->
+          <section id="v-entry" class="hide">
+            <div class="page-head"><div><h2>One library, four ways in</h2><div class="sub">#417 does not add a new screen. It adds links and Copy buttons to the My Media library from #260, which already holds the Infographics from #400.</div></div></div>
+            <div class="entry-grid">
+              <div class="entry">
+                <span class="k">#260 · Advisor nav</span>
+                <h4>My Media in the main menu</h4>
+                <div class="mini">Menu: Posts · <span class="fake-btn hl">My Media</span> · Email · Social</div>
+                <p>The full library page (this mock). Advisors see only their own files.</p>
+                <a class="btn btn-ghost btn-sm" href="#" onclick="setRole('advisor');setView('library');return false">Open as advisor</a>
+                <a class="btn btn-ghost btn-sm" href="../../../260/directions/a/">#260 mock</a>
+              </div>
+              <div class="entry">
+                <span class="k">#260 · Social compose</span>
+                <h4>Pick from My Media drawer</h4>
+                <div class="mini">Post Now toolbar: <span class="fake-btn">Upload</span><span class="fake-btn hl">My Media</span></div>
+                <p>The #260 drawer shows the same files. Each tile gets a small "Copy link" in its menu; no other change.</p>
+                <a class="btn btn-ghost btn-sm" href="../../../260/directions/a/">#260 drawer</a>
+              </div>
+              <div class="entry">
+                <span class="k">#400 · Infographics</span>
+                <h4>Infographics = a tab of My Media</h4>
+                <div class="mini">My Media tabs: All · Headshots · Logos · <span class="fake-btn hl">Infographics</span> · Social · Email</div>
+                <p>The #400 Manage page is the Infographics tab, with branding and insert extras. Same files, same links.</p>
+                <a class="btn btn-ghost btn-sm" href="#" onclick="setView('library');setTab('info');return false">Open Infographics tab</a>
+                <a class="btn btn-ghost btn-sm" href="../../../400/manage/">#400 Manage</a>
+              </div>
+              <div class="entry">
+                <span class="k">#417 · Staff</span>
+                <h4>Manage Advisors → Media</h4>
+                <div class="mini">Priya Desai · Harbourview Wealth <span class="fake-btn">Edit</span><span class="fake-btn hl">Media</span><span class="fake-btn">Log in as</span></div>
+                <p>Staff open any advisor's library, upload for them, and copy all their links in one click.</p>
+                <a class="btn btn-ghost btn-sm" href="#" onclick="setRole('admin');setView('library');return false">Open as staff</a>
+              </div>
+            </div>
+            <div class="callout" style="margin-top:14px"><strong>Headshot and logo uploads in Settings</strong> (and staff editing an advisor) also land in this library and show their link right away. See the <a href="#" onclick="setView('branding');return false">Settings screen</a>.</div>
+          </section>
+
+        </main>
+      </div>
+    </div>
+  </div>
+
+  <!-- Upload modal -->
+  <div class="overlay" id="upModal" role="dialog" aria-modal="true" aria-labelledby="upTitle">
+    <div class="modal">
+      <h3 id="upTitle">Upload files</h3>
+      <p id="upSub">You'll get a link for each file as soon as it's uploaded.</p>
+      <div class="field" style="margin-bottom:12px"><label>What are these? <span class="oq">Open: type or tag?</span></label></div>
+      <div class="radio">
+        <label><input type="radio" name="kind" value="head" checked /> Headshots</label>
+        <label><input type="radio" name="kind" value="logo" /> Logos</label>
+        <label><input type="radio" name="kind" value="other" /> Other images or video</label>
+      </div>
+      <div class="drop" onclick="closeModal('upModal');setView('upload3')">
+        <strong>Drop files here, or click to choose</strong>
+        <small>You can pick several at once · JPG, PNG, GIF, MP4 · up to 5 MB each</small>
+      </div>
+      <div class="modal-actions">
+        <button class="btn btn-ghost" onclick="closeModal('upModal')">Cancel</button>
+        <button class="btn btn-ghost" onclick="closeModal('upModal');setView('upload1')">Demo: 1 file</button>
+        <button class="btn btn-primary" onclick="closeModal('upModal');setView('upload3')">Demo: 3 files</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Replace modal -->
+  <div class="overlay" id="repModal" role="dialog" aria-modal="true">
+    <div class="modal">
+      <h3>Replace this file?</h3>
+      <p><strong>The link will change.</strong> Anywhere you pasted the old link (a website, an email signature) will show a broken image until you paste the new one.</p>
+      <div class="callout warn">Open decision: should replacing keep the same link instead? That's what most people expect, but it's a bigger change. Today FC gives a replaced headshot a new link and removes the old file.</div>
+      <div class="modal-actions">
+        <button class="btn btn-ghost" onclick="closeModal('repModal')">Keep current file</button>
+        <button class="btn btn-primary" onclick="closeModal('repModal');toast('New file uploaded. New link ready to copy (mock)')">Choose new file</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Delete modal -->
+  <div class="overlay" id="delModal" role="dialog" aria-modal="true">
+    <div class="modal">
+      <h3 id="delTitle">Delete this file?</h3>
+      <p>Its link will stop working. Anywhere it was pasted will show a broken image. Posts and emails already sent are not changed.</p>
+      <div class="modal-actions">
+        <button class="btn btn-ghost" onclick="closeModal('delModal')">Keep it</button>
+        <button class="btn btn-danger" onclick="closeModal('delModal');toast('Deleted (mock)')">Delete</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script>
+    var BASE = 'https://financialcontent.ca/ufs/mediaLibrary/';
+    var KINDS = { head: 'Headshot', logo: 'Logo', info: 'Infographic', social: 'Social image', video: 'Social video', email: 'Email image' };
+    var FROM = { head: 'Settings', logo: 'Settings', info: 'Infographics (#400)', social: 'Social (#260)', video: 'Social (#260)', email: 'Email Campaigns' };
+    var ADVISORS = {
+      priya: { name: 'Priya Desai', firm: 'Harbourview Wealth', files: [
+        { id: 'pD3xKq8mWv2RtL5nA', f: 'priya-desai-headshot-2026.jpg', k: 'head', d: 'Oct 8, 2026', s: '412 KB', t: 'JPG', inuse: true, cls: '' },
+        { id: 'Zr8LqT2nWx6YpB4cE', f: 'priya-desai-headshot-casual.jpg', k: 'head', d: 'Oct 8, 2026', s: '388 KB', t: 'JPG', cls: '' },
+        { id: 'Hb7Vn2KsQ9mJd4XtR', f: 'harbourview-logo.png', k: 'logo', d: 'Sep 30, 2026', s: '64 KB', t: 'PNG', inuse: true },
+        { id: 'Tf5AqM8wLz3RcN1yU', f: 'tfsa-contribution-room.png', k: 'info', d: 'Sep 12, 2026', s: '1.1 MB', t: 'PNG' },
+        { id: 'Os2PkE7vXg4HnW9bQ', f: 'office-team-photo.jpg', k: 'social', d: 'Aug 21, 2026', s: '1.4 MB', t: 'JPG' },
+        { id: 'Mv9Ct3YrJk6LsD2aF', f: 'market-update-clip.mp4', k: 'video', d: 'Aug 2, 2026', s: '4.8 MB', t: 'MP4' },
+        { id: 'Nb4Fw8QeZp1XtG7hK', f: 'fall-newsletter-banner.png', k: 'email', d: 'Jul 15, 2026', s: '220 KB', t: 'PNG' }
+      ]},
+      marcus: { name: 'Marcus Lee', firm: 'Harbourview Wealth', files: [
+        { id: 'Ml6Gh2RtYw8KpZ3vB', f: 'marcus-lee-headshot.jpg', k: 'head', d: 'Oct 8, 2026', s: '356 KB', t: 'JPG', inuse: true, cls: 'h2' },
+        { id: 'Qa1Xs9DfJk4LmN7pC', f: 'harbourview-logo.png', k: 'logo', d: 'Oct 8, 2026', s: '64 KB', t: 'PNG', inuse: true },
+        { id: 'We3Rt5YuIo8PaS2dG', f: 'rrsp-vs-tfsa.png', k: 'info', d: 'Sep 2, 2026', s: '980 KB', t: 'PNG' }
+      ]},
+      daniel: { name: 'Daniel Okafor', firm: 'Harbourview Wealth', files: [
+        { id: 'Dk7Lp3MnBv9CxZ2qW', f: 'daniel-okafor-headshot.png', k: 'head', d: 'Oct 8, 2026', s: '501 KB', t: 'PNG', inuse: true, cls: 'h3' }
+      ]},
+      elena: { name: 'Elena Rossi', firm: 'Northgate Advisory', files: [] }
+    };
+    function slug(n) { return n.toLowerCase().replace(/[^a-z]+/g, '-'); }
+    function uploaded() {
+      var a = curAdv(); var sl = slug(a.name);
+      var c = (a.files.filter(function (x) { return x.k === 'head'; })[0] || { cls: 'h4' }).cls;
+      return [
+        { id: 'Sh4Nk8TqWp2VzL6mX', f: sl + '-headshot-2026-10.jpg', k: 'head', d: 'Today', s: '402 KB', t: 'JPG', cls: c, isNew: true },
+        { id: 'Sh9Bc3RtYx7MaQ1wE', f: sl + '-headshot-square.jpg', k: 'head', d: 'Today', s: '297 KB', t: 'JPG', cls: c, isNew: true },
+        { f: sl + '-headshot-original.heic', k: 'head', fail: 'This file type isn\'t supported. Save it as JPG or PNG and try again.' }
+      ];
+    }
+    var st = { role: 'admin', view: 'library', state: 'ok', adv: 'priya', tab: 'all', phone: false };
+
+    function url(x) { return BASE + x.id + '/' + encodeURIComponent(x.f); }
+    function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
+    function thumb(x, extra) {
+      var c = { head: 'head ' + (x.cls || ''), logo: 'logo', info: 'info', social: 'social', video: 'video', email: 'email' }[x.k];
+      var inner = x.k === 'logo' ? 'HV' : x.k === 'video' ? '▶' : x.k === 'info' ? 'Infographic' : x.k === 'email' ? 'Banner' : '';
+      return '<div class="thumb ' + c + ' ' + (extra || '') + '">' + inner + '</div>';
+    }
+    function curAdv() { return st.role === 'advisor' ? ADVISORS.priya : ADVISORS[st.adv]; }
+    function files() {
+      var a = curAdv(); var list = a.files.slice();
+      if ((st.view === 'upload1' || st.view === 'upload3')) {
+        var U = uploaded(); var add = st.view === 'upload1' ? [U[0]] : U.filter(function (u) { return !u.fail; });
+        list = add.concat(list);
+      }
+      return list;
+    }
+    function sorted(list) {
+      var heads = list.filter(function (x) { return x.k === 'head'; });
+      var rest = list.filter(function (x) { return x.k !== 'head'; });
+      return { heads: heads, rest: rest };
+    }
+    function filtered() {
+      var q = (document.getElementById('q').value || '').toLowerCase();
+      return files().filter(function (x) {
+        var tabOk = st.tab === 'all' || x.k === st.tab || (st.tab === 'social' && x.k === 'video');
+        return tabOk && (!q || x.f.toLowerCase().indexOf(q) >= 0);
+      });
+    }
+    function rowHtml(x) {
+      var u = url(x);
+      return '<div class="row' + (x.isNew ? ' new' : '') + '">' + thumb(x) +
+        '<div class="info-col"><div class="fname">' + esc(x.f) + '</div><div class="meta">' +
+        '<span class="badge' + (x.k === 'head' ? ' head' : '') + '">' + KINDS[x.k] + '</span>' +
+        (x.inuse ? '<span class="badge inuse">In use on profile</span>' : '') +
+        (x.isNew ? '<span class="badge new">New</span>' : '') +
+        '<span>' + x.d + ' · ' + x.s + ' · ' + x.t + '</span>' +
+        (x.k === 'info' || x.k === 'social' || x.k === 'video' ? '<span class="badge from">From ' + FROM[x.k] + '</span>' : '') +
+        '</div></div>' +
+        '<div class="url-col"><input class="url" readonly value="' + esc(u) + '" aria-label="Link for ' + esc(x.f) + '" onclick="this.select()" />' +
+        '<button class="btn btn-primary btn-sm copy" onclick="copyText(\'' + esc(u) + '\', this)">Copy link</button></div>' +
+        '<div class="row-actions more"><button class="btn btn-ghost btn-sm" aria-label="More" onclick="toggleMenu(this)">⋯</button>' +
+        '<div class="menu"><a href="' + esc(u) + '" target="_blank" rel="noopener">Open in new tab</a>' +
+        '<button onclick="openReplace()">Replace…</button>' +
+        (x.k === 'info' ? '<a href="../../../400/manage/">Set branding (#400)</a>' : '') +
+        (x.k === 'head' && !x.inuse ? '<button onclick="toast(\'Set as profile headshot (mock)\')">Use as profile headshot</button>' : '') +
+        '<button class="del" onclick="openDelete(\'' + esc(x.f) + '\')">Delete…</button></div></div>' +
+        '</div>';
+    }
+    function render() {
+      var a = curAdv(); var admin = st.role === 'admin';
+      // chrome
+      document.querySelectorAll('[data-role]').forEach(function (c) { c.classList.toggle('on', c.dataset.role === st.role); });
+      document.querySelectorAll('[data-view]').forEach(function (c) { c.classList.toggle('on', c.dataset.view === st.view); });
+      document.querySelectorAll('[data-state]').forEach(function (c) { c.classList.toggle('on', c.dataset.state === st.state); });
+      document.getElementById('phoneChip').classList.toggle('on', st.phone);
+      document.getElementById('stage').classList.toggle('phone', st.phone);
+      document.getElementById('railAdmin').classList.toggle('on', admin);
+      document.getElementById('railMedia').classList.toggle('on', !admin);
+      document.getElementById('railAdmin').style.display = admin ? '' : 'none';
+      var showLib = st.view === 'library' || st.view === 'upload1' || st.view === 'upload3';
+      document.getElementById('v-library').classList.toggle('hide', !showLib);
+      document.getElementById('v-branding').classList.toggle('hide', st.view !== 'branding');
+      document.getElementById('v-entry').classList.toggle('hide', st.view !== 'entry');
+
+      // header
+      document.getElementById('adminBar').classList.toggle('hide', !admin);
+      document.getElementById('crumb').innerHTML = admin ? '<a href="#" onclick="return false">Admin</a> › <a href="#" onclick="return false">Manage Advisors</a> › ' + esc(a.name) + ' › Media' : 'My Media';
+      document.getElementById('libTitle').textContent = admin ? a.name + "'s media" : 'My Media';
+      document.getElementById('libSub').textContent = admin
+        ? a.firm + ' · Every file uploaded to FinancialContent for this advisor, by them or by staff. Copy one link, or copy them all.'
+        : "Everything you've uploaded to FinancialContent. Copy a link to use a file anywhere: your website, an email signature, a bio page.";
+      document.getElementById('uploadBtn').textContent = admin ? 'Upload for ' + a.name.split(' ')[0] : 'Upload files';
+      var sel = document.getElementById('advPick');
+      sel.innerHTML = Object.keys(ADVISORS).map(function (k) { var v = ADVISORS[k]; return '<option value="' + k + '"' + (k === st.adv ? ' selected' : '') + '>' + v.name + ' · ' + v.firm + ' (' + v.files.length + ')</option>'; }).join('');
+
+      // branding view
+      var bf = st.role === 'advisor' ? ADVISORS.priya.files[0] : (a.files.filter(function (x) { return x.k === 'head'; })[0] || uploaded()[0]);
+      document.getElementById('bUrl').value = url(bf);
+      document.getElementById('bFile').textContent = bf.f;
+      document.getElementById('bThumb').className = 'thumb head ' + (bf.cls || '');
+      document.getElementById('bCrumb').textContent = admin ? 'Admin › Manage Advisors › ' + a.name + ' › Edit' : 'Settings';
+      document.getElementById('bTitle').textContent = admin ? a.name + ' · Branding' : 'Branding & business details';
+      document.getElementById('bLibName').textContent = admin ? a.name + "'s media" : 'My Media';
+
+      // done panel
+      var done = document.getElementById('doneSlot');
+      if (st.view === 'upload1' || st.view === 'upload3') {
+        var U2 = uploaded(); var up = st.view === 'upload1' ? [U2[0]] : U2;
+        var ok = up.filter(function (u) { return !u.fail; });
+        var fail = up.length - ok.length;
+        done.innerHTML = '<div class="done"><h3>✓ ' + ok.length + ' of ' + up.length + ' uploaded' + (admin ? ' for ' + esc(a.name) : '') + '</h3>' +
+          '<div class="sub">Here are the links. They\'re also saved in the library below, so you can come back for them any time.</div>' +
+          up.map(function (x) {
+            if (x.fail) return '<div class="done-row fail"><div class="thumb head" style="opacity:.4"></div><div><div class="fname">✕ ' + esc(x.f) + '</div><div class="errmsg">' + esc(x.fail) + '</div></div><div></div></div>';
+            var u = url(x);
+            return '<div class="done-row">' + thumb(x) + '<div class="fname">' + esc(x.f) + '</div><div class="url-col"><input class="url" readonly value="' + esc(u) + '" onclick="this.select()" /><button class="btn btn-primary btn-sm copy" onclick="copyText(\'' + esc(u) + '\', this)">Copy link</button></div></div>';
+          }).join('') +
+          '<div class="done-foot">' + (ok.length > 1 ? '<button class="btn btn-primary" onclick="copyList(this, ' + (st.view === 'upload1' ? 1 : 3) + ')">Copy all ' + ok.length + ' new links</button>' : '') +
+          (fail ? '<button class="btn btn-ghost" onclick="openUpload()">Try the failed file again</button>' : '') +
+          '<button class="btn btn-ghost" onclick="setView(\'library\')">Done</button></div></div>';
+      } else done.innerHTML = '';
+
+      // tabs
+      var all = files();
+      var counts = { all: all.length };
+      ['head', 'logo', 'info', 'social', 'email'].forEach(function (k) { counts[k] = all.filter(function (x) { return x.k === k || (k === 'social' && x.k === 'video'); }).length; });
+      var tabDefs = [['all', 'All'], ['head', 'Headshots'], ['logo', 'Logos'], ['info', 'Infographics'], ['social', 'Social images & video'], ['email', 'Email images']];
+      document.getElementById('tabs').innerHTML = tabDefs.map(function (t) { return '<button class="tab' + (st.tab === t[0] ? ' on' : '') + '" onclick="setTab(\'' + t[0] + '\')">' + t[1] + '<span class="n">' + counts[t[0]] + '</span></button>'; }).join('');
+
+      // list / states
+      var slot = document.getElementById('listSlot');
+      var bulk = document.getElementById('bulkBtn');
+      var f = filtered();
+      if (st.state === 'loading') {
+        slot.innerHTML = '<div class="list"><div class="skel"></div><div class="skel"></div><div class="skel"></div></div><p style="font-size:.8rem;color:var(--muted);margin-top:8px">Loading files…</p>';
+        bulk.disabled = true; bulk.textContent = 'Copy all links'; return;
+      }
+      if (st.state === 'error') {
+        slot.innerHTML = '<div class="state err"><div class="ico">⚠️</div><h3>We couldn\'t load these files</h3><p>Your files are safe. This is usually a connection hiccup. Try again in a moment.</p><button class="btn btn-primary" onclick="setState(\'ok\')">Try again</button></div>';
+        bulk.disabled = true; bulk.textContent = 'Copy all links'; return;
+      }
+      if (st.state === 'empty' || all.length === 0) {
+        slot.innerHTML = '<div class="state"><div class="ico">🖼</div><h3>' + (admin ? esc(a.name) + ' has no files yet' : 'No files yet') + '</h3><p>' +
+          (admin ? 'Upload their headshot or logo here and you\'ll get the link right away.' : 'Upload a headshot, logo, image or video. You\'ll get a link you can copy and use anywhere.') +
+          '</p><button class="btn btn-primary" onclick="openUpload()">' + (admin ? 'Upload for ' + esc(a.name.split(' ')[0]) : 'Upload your first file') + '</button></div>';
+        bulk.disabled = true; bulk.textContent = 'Copy all links (0)'; return;
+      }
+      bulk.disabled = f.length === 0;
+      var label = st.tab === 'all' ? 'links' : (st.tab === 'head' ? 'headshot links' : KINDS[st.tab].toLowerCase() + ' links');
+      bulk.textContent = 'Copy all ' + f.length + ' ' + label;
+      if (!f.length) { slot.innerHTML = '<div class="state"><h3>Nothing here</h3><p>No files match. Try another tab or clear the search.</p></div>'; return; }
+      var g = sorted(f);
+      var html = '';
+      if (g.heads.length) html += '<div class="section-label">Headshots (' + g.heads.length + ')</div><div class="list">' + g.heads.map(rowHtml).join('') + '</div>';
+      if (g.rest.length) html += '<div class="section-label">' + (g.heads.length ? 'Everything else, newest first' : 'Newest first') + ' (' + g.rest.length + ')</div><div class="list">' + g.rest.map(rowHtml).join('') + '</div>';
+      slot.innerHTML = html;
+
+    }
+
+    // ---------- clipboard: modern API, then execCommand fallback, then select-for-manual ----------
+    function fallbackCopy(text) {
+      var ta = document.createElement('textarea');
+      ta.value = text; ta.setAttribute('readonly', ''); ta.style.position = 'fixed'; ta.style.top = '-1000px';
+      document.body.appendChild(ta); ta.select();
+      var ok = false; try { ok = document.execCommand('copy'); } catch (e) { ok = false; }
+      document.body.removeChild(ta); return ok;
+    }
+    function doCopy(text) {
+      if (navigator.clipboard && window.isSecureContext) {
+        return navigator.clipboard.writeText(text).then(function () { return true; }, function () { return fallbackCopy(text); });
+      }
+      return Promise.resolve(fallbackCopy(text));
+    }
+    function flash(btn, okLabel) {
+      if (!btn) return;
+      var orig = btn.dataset.orig || btn.textContent; btn.dataset.orig = orig;
+      btn.textContent = okLabel; btn.classList.add('copied');
+      clearTimeout(btn._t); btn._t = setTimeout(function () { btn.textContent = orig; btn.classList.remove('copied'); }, 2000);
+    }
+    function copyText(text, btn) {
+      doCopy(text).then(function (ok) {
+        if (ok) { flash(btn, '✓ Copied'); toast('Link copied'); }
+        else {
+          var inp = btn && btn.parentNode.querySelector('input'); if (inp) { inp.focus(); inp.select(); }
+          toast('Press Ctrl+C (or ⌘C) to copy the selected link');
+        }
+      });
+    }
+    function listText(items) {
+      var names = document.getElementById('withNames').checked;
+      return items.map(function (x) { return names ? x.f + '\t' + url(x) : url(x); }).join('\n');
+    }
+    function copyAll(btn) {
+      var f = filtered(); if (!f.length) return;
+      var g = sorted(f); var items = g.heads.concat(g.rest);
+      doCopy(listText(items)).then(function (ok) {
+        if (ok) { flash(btn, '✓ Copied ' + items.length); toast(items.length + ' links copied, one per line. Paste into a spreadsheet or email.'); }
+        else toast('Your browser blocked copying. Try again, or use Copy link on each file.');
+      });
+    }
+    function copyList(btn, n) {
+      var U3 = uploaded(); var items = (n === 1 ? [U3[0]] : U3).filter(function (u) { return !u.fail; });
+      doCopy(listText(items)).then(function (ok) { if (ok) { flash(btn, '✓ Copied ' + items.length); toast(items.length + ' new links copied, one per line'); } else toast('Your browser blocked copying.'); });
+    }
+
+    // ---------- demo controls ----------
+    function setRole(r) { st.role = r; sync(); }
+    function setView(v) { st.view = v; if (v !== 'library' && v !== 'upload1' && v !== 'upload3') st.state = 'ok'; sync(); window.scrollTo(0, 0); }
+    function setState(s) { st.state = s; if (st.view !== 'library') st.view = 'library'; sync(); }
+    function setTab(t) { st.tab = t; render(); }
+    function pickAdvisor(k) { st.adv = k; st.tab = 'all'; if (st.view !== 'library') st.view = 'library'; sync(); }
+    function togglePhone() { st.phone = !st.phone; sync(); }
+    function sync() {
+      var parts = [st.role, st.view]; if (st.state !== 'ok') parts.push(st.state); if (st.phone) parts.push('phone'); if (st.role === 'admin' && st.adv !== 'priya') parts.push('adv-' + st.adv);
+      history.replaceState(null, '', '#' + parts.join('/'));
+      render();
+    }
+    function fromHash() {
+      var h = (location.hash || '').replace('#', '').split('/');
+      h.forEach(function (p) {
+        if (p === 'admin' || p === 'advisor') st.role = p;
+        else if (['library', 'upload1', 'upload3', 'branding', 'entry'].indexOf(p) >= 0) st.view = p;
+        else if (['empty', 'loading', 'error'].indexOf(p) >= 0) st.state = p;
+        else if (p === 'phone') st.phone = true;
+        else if (p.indexOf('adv-') === 0 && ADVISORS[p.slice(4)]) st.adv = p.slice(4);
+      });
+    }
+    function openUpload() {
+      var admin = st.role === 'admin'; var a = curAdv();
+      document.getElementById('upTitle').textContent = admin ? 'Upload for ' + a.name : 'Upload files';
+      document.getElementById('upSub').textContent = admin ? 'Files go into ' + a.name + "'s library. You'll get a link for each one as soon as it's uploaded." : "You'll get a link for each file as soon as it's uploaded.";
+      document.getElementById('upModal').classList.add('open');
+    }
+    function openReplace() { closeMenus(); document.getElementById('repModal').classList.add('open'); }
+    function openDelete(n) { closeMenus(); document.getElementById('delTitle').textContent = 'Delete “' + n + '”?'; document.getElementById('delModal').classList.add('open'); }
+    function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+    function toggleMenu(b) { var m = b.nextElementSibling; var open = m.classList.contains('open'); closeMenus(); if (!open) m.classList.add('open'); }
+    function closeMenus() { document.querySelectorAll('.menu.open').forEach(function (m) { m.classList.remove('open'); }); }
+    document.addEventListener('click', function (e) { if (!e.target.closest('.more')) closeMenus(); });
+    document.querySelectorAll('.overlay').forEach(function (o) { o.addEventListener('click', function (e) { if (e.target === o) o.classList.remove('open'); }); });
+    function toast(msg) { var t = document.getElementById('toast'); t.textContent = msg; t.classList.add('show'); clearTimeout(t._t); t._t = setTimeout(function () { t.classList.remove('show'); }, 2400); }
+    fromHash(); render();
+  </script>
+</body>
+</html>

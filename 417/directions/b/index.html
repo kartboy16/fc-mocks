@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>#417 · Direction B · Firm headshot sheet · FC mocks</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #f4f8fc; --card: #fff; --ink: #1e2a4a; --muted: #5b6572;
+      --blue: #2b7de9; --blue-dark: #1e5bb8; --border: #d4e4f2; --mint: #e6f1fb;
+      --danger: #c62828; --ok: #047857; --ok-bg: #e8f5e9; --warn-bg: #fff8eb; --warn-border: #f0d4a8; --warn: #8a5a10;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: Inter, system-ui, sans-serif; background: var(--bg); color: var(--ink); font-size: 14px; line-height: 1.45; }
+    a { color: var(--blue); }
+    .thesis { background: linear-gradient(135deg, #1e2a4a, #2b7de9); color: #fff; padding: 14px 24px; }
+    .thesis .rec { display: inline-block; background: #fff; color: var(--blue); font-size: 0.68rem; font-weight: 700; padding: 3px 10px; border-radius: 999px; margin-bottom: 6px; }
+    .thesis h1 { font-size: 1.05rem; margin-bottom: 2px; }
+    .thesis p { opacity: 0.9; font-size: 0.82rem; max-width: 920px; }
+    .nav { padding: 8px 24px; font-size: 0.8rem; background: #fafafa; border-bottom: 1px solid var(--border); display: flex; gap: 12px; flex-wrap: wrap; align-items: center; }
+    .nav a { text-decoration: none; font-weight: 500; }
+    .nav .on { font-weight: 700; color: var(--ink); }
+    .nav .sep { color: #c0c8d4; }
+    .demo { background: #fff; border-bottom: 1px solid var(--border); padding: 10px 24px; display: flex; flex-direction: column; gap: 8px; }
+    .demo-row { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
+    .demo-row > span { font-size: 0.68rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; color: var(--muted); min-width: 64px; }
+    .chip { padding: 6px 11px; border-radius: 999px; border: 1px solid var(--border); background: #fff; font-family: inherit; font-size: 0.76rem; font-weight: 600; color: var(--ink); cursor: pointer; }
+    .chip:hover { border-color: var(--blue); color: var(--blue); }
+    .chip.on { background: var(--blue); color: #fff; border-color: var(--blue); }
+
+    .stage { padding: 16px; }
+    .stage.phone .frame { max-width: 390px; margin: 0 auto; border: 10px solid #1e2a4a; border-radius: 28px; overflow: hidden; box-shadow: 0 12px 40px rgba(30,42,74,0.25); }
+    .frame { background: var(--bg); container-type: inline-size; container-name: app; }
+    .app { display: flex; min-height: 640px; }
+    .rail { width: 56px; background: #1e2a4a; flex-shrink: 0; display: flex; flex-direction: column; align-items: center; padding: 12px 0; gap: 8px; }
+    .rail .ri { width: 36px; height: 36px; border-radius: 8px; background: rgba(255,255,255,0.08); color: rgba(255,255,255,0.75); font-size: 0.58rem; font-weight: 700; display: flex; align-items: center; justify-content: center; text-align: center; line-height: 1.1; }
+    .rail .ri.on { background: var(--blue); color: #fff; }
+    .main { flex: 1; min-width: 0; padding: 18px 20px 48px; }
+    .crumb { font-size: 0.78rem; color: var(--muted); margin-bottom: 6px; }
+    .crumb a { text-decoration: none; }
+    .page-head { display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 12px; margin-bottom: 14px; }
+    .page-head h2 { font-size: 1.4rem; font-weight: 700; }
+    .page-head .sub { color: var(--muted); font-size: 0.85rem; margin-top: 2px; max-width: 560px; }
+    .head-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+    .btn { font-family: inherit; font-size: 0.86rem; font-weight: 600; padding: 10px 16px; border-radius: 10px; border: none; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 6px; min-height: 44px; text-decoration: none; white-space: nowrap; }
+    .btn-primary { background: var(--blue); color: #fff; }
+    .btn-primary:hover { background: var(--blue-dark); }
+    .btn-ghost { background: #fff; border: 1px solid var(--border); color: var(--ink); }
+    .btn-ghost:hover { border-color: var(--blue); color: var(--blue); }
+    .btn-danger { background: #fff; border: 1px solid var(--danger); color: var(--danger); }
+    .btn-sm { padding: 7px 11px; min-height: 36px; font-size: 0.78rem; }
+    .btn.copied { background: var(--ok) !important; color: #fff !important; border-color: var(--ok) !important; }
+    .btn[disabled] { opacity: 0.5; cursor: not-allowed; }
+
+    .admin-bar { background: #fff; border: 1px solid var(--border); border-radius: 12px; padding: 12px 14px; margin-bottom: 14px; display: flex; gap: 12px; align-items: flex-end; flex-wrap: wrap; }
+    .admin-bar .tag { font-size: 0.62rem; font-weight: 700; background: #fef3c7; color: #92400e; padding: 2px 8px; border-radius: 999px; text-transform: uppercase; letter-spacing: 0.04em; }
+    .field { display: flex; flex-direction: column; gap: 4px; }
+    .field label { font-size: 0.74rem; font-weight: 600; color: var(--muted); }
+    select, .search { padding: 10px 12px; border: 1px solid var(--border); border-radius: 10px; font-family: inherit; font-size: 0.9rem; background: #fff; min-height: 44px; color: var(--ink); }
+    .admin-bar select { min-width: 240px; }
+    .bulk { margin-left: auto; display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+    .bulk .opt { font-size: 0.78rem; color: var(--muted); display: flex; gap: 6px; align-items: center; }
+
+    .tabs { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 12px; }
+    .tab { padding: 8px 12px; border-radius: 999px; border: 1px solid var(--border); background: #fff; font-family: inherit; font-size: 0.8rem; font-weight: 600; color: var(--muted); cursor: pointer; min-height: 38px; }
+    .tab .n { font-weight: 700; color: var(--ink); margin-left: 4px; }
+    .tab.on { background: var(--mint); color: var(--blue); border-color: #9ec0e8; }
+    .tab.on .n { color: var(--blue); }
+    .toolbar { display: flex; gap: 8px; align-items: center; margin-bottom: 12px; flex-wrap: wrap; }
+    .toolbar .search { flex: 1; min-width: 160px; max-width: 300px; }
+    .toolbar .sort { font-size: 0.78rem; color: var(--muted); }
+
+    .section-label { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--muted); font-weight: 700; margin: 14px 0 8px; }
+    .list { display: flex; flex-direction: column; gap: 8px; }
+    .row { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 10px 12px; display: grid; grid-template-columns: 64px minmax(160px, 1.1fr) minmax(220px, 1.6fr) auto; gap: 12px; align-items: center; }
+    .row.new { border-color: #86efac; box-shadow: 0 0 0 3px #dcfce7; }
+    .thumb { width: 64px; height: 64px; border-radius: 10px; display: flex; align-items: center; justify-content: center; color: #fff; font-weight: 700; font-size: 0.9rem; position: relative; overflow: hidden; flex-shrink: 0; }
+    .thumb.head { border-radius: 50%; background: radial-gradient(circle at 50% 38%, #f3d2b8 0 18%, transparent 19%), radial-gradient(ellipse at 50% 100%, #3b5b8c 0 46%, transparent 47%), linear-gradient(160deg, #dbeafe, #93c5fd); }
+    .thumb.head.h2 { background: radial-gradient(circle at 50% 38%, #c8946f 0 18%, transparent 19%), radial-gradient(ellipse at 50% 100%, #334155 0 46%, transparent 47%), linear-gradient(160deg, #e0e7ff, #a5b4fc); }
+    .thumb.head.h3 { background: radial-gradient(circle at 50% 38%, #8d5a3b 0 18%, transparent 19%), radial-gradient(ellipse at 50% 100%, #14532d 0 46%, transparent 47%), linear-gradient(160deg, #dcfce7, #86efac); }
+    .thumb.head.h4 { background: radial-gradient(circle at 50% 38%, #f1c9a5 0 18%, transparent 19%), radial-gradient(ellipse at 50% 100%, #7c2d12 0 46%, transparent 47%), linear-gradient(160deg, #ffedd5, #fdba74); }
+    .thumb.logo { background: #fff; border: 1px solid var(--border); color: #0f766e; font-size: 0.7rem; }
+    .thumb.info { background: linear-gradient(145deg, #1e3a5f 0%, #2b7de9 55%, #7dd3fc 100%); font-size: 0.6rem; padding: 4px; text-align: center; }
+    .thumb.social { background: linear-gradient(145deg, #064e3b 0%, #059669 50%, #a7f3d0 100%); }
+    .thumb.video { background: linear-gradient(145deg, #4c1d95 0%, #7c3aed 50%, #ddd6fe 100%); font-size: 1.2rem; }
+    .thumb.email { background: linear-gradient(145deg, #7c2d12 0%, #ea580c 50%, #fed7aa 100%); font-size: 0.6rem; }
+    .info-col { min-width: 0; }
+    .fname { font-weight: 700; font-size: 0.88rem; overflow-wrap: anywhere; }
+    .meta { font-size: 0.74rem; color: var(--muted); margin-top: 2px; display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
+    .badge { display: inline-block; font-size: 0.64rem; font-weight: 700; padding: 2px 8px; border-radius: 999px; background: var(--mint); color: var(--blue); }
+    .badge.head { background: #ede9fe; color: #5b21b6; }
+    .badge.inuse { background: var(--ok-bg); color: var(--ok); }
+    .badge.new { background: #dcfce7; color: #166534; }
+    .badge.from { background: #f3f4f6; color: #374151; }
+    .url-col { display: flex; gap: 6px; align-items: center; min-width: 0; }
+    .url { flex: 1; min-width: 0; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 0.72rem; padding: 9px 10px; border: 1px solid var(--border); border-radius: 8px; background: #f8fafc; color: #334155; min-height: 36px; }
+    .row-actions { display: flex; gap: 4px; }
+    .more { position: relative; }
+    .menu { display: none; position: absolute; right: 0; top: 40px; background: #fff; border: 1px solid var(--border); border-radius: 10px; box-shadow: 0 10px 30px rgba(30,42,74,0.15); min-width: 180px; z-index: 20; padding: 4px; }
+    .menu.open { display: block; }
+    .menu button, .menu a { display: block; width: 100%; text-align: left; background: none; border: none; font-family: inherit; font-size: 0.82rem; padding: 9px 10px; border-radius: 6px; cursor: pointer; color: var(--ink); text-decoration: none; }
+    .menu button:hover, .menu a:hover { background: var(--mint); }
+    .menu .del { color: var(--danger); }
+
+    .state { text-align: center; padding: 44px 24px; background: #fff; border: 1px solid var(--border); border-radius: 14px; }
+    .state .ico { font-size: 2.2rem; }
+    .state h3 { font-size: 1.05rem; margin: 10px 0 6px; }
+    .state p { color: var(--muted); font-size: 0.88rem; margin: 0 auto 16px; max-width: 420px; }
+    .state.err { background: #fef2f2; border-color: #fecaca; }
+    .skel { height: 84px; border-radius: 12px; background: linear-gradient(90deg, #e9eff6 25%, #f5f8fb 50%, #e9eff6 75%); background-size: 200% 100%; animation: sh 1.2s infinite; }
+    @keyframes sh { to { background-position: -200% 0; } }
+
+    .callout { margin-bottom: 14px; padding: 11px 14px; background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 10px; font-size: 0.8rem; color: #1e40af; }
+    .callout.warn { background: var(--warn-bg); border-color: var(--warn-border); color: var(--warn); }
+    .oq { font-size: 0.7rem; font-weight: 700; background: #f5f3ff; color: #5b21b6; border: 1px solid #c4b5fd; padding: 1px 7px; border-radius: 999px; margin-left: 4px; white-space: nowrap; }
+
+    /* Upload success panel */
+    .done { background: #fff; border: 2px solid #86efac; border-radius: 14px; padding: 16px; margin-bottom: 16px; }
+    .done h3 { font-size: 1rem; color: var(--ok); margin-bottom: 2px; }
+    .done .sub { font-size: 0.82rem; color: var(--muted); margin-bottom: 12px; }
+    .done-row { display: grid; grid-template-columns: 44px minmax(120px, 0.9fr) minmax(200px, 1.6fr); gap: 10px; align-items: center; padding: 8px 0; border-top: 1px solid #eef2f7; }
+    .done-row .thumb { width: 44px; height: 44px; font-size: 0.7rem; }
+    .done-row.fail .fname { color: var(--danger); }
+    .done-row .errmsg { font-size: 0.76rem; color: var(--danger); }
+    .done-foot { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px; align-items: center; }
+
+    /* Branding / entry views */
+    .panel { background: #fff; border: 1px solid var(--border); border-radius: 14px; padding: 18px; margin-bottom: 14px; }
+    .panel h3 { font-size: 1rem; margin-bottom: 4px; }
+    .panel .sub { font-size: 0.82rem; color: var(--muted); margin-bottom: 14px; }
+    .brand-row { display: flex; gap: 16px; align-items: flex-start; flex-wrap: wrap; }
+    .brand-row .thumb { width: 96px; height: 96px; }
+    .brand-body { flex: 1; min-width: 220px; }
+    .linkbox { margin-top: 12px; padding: 12px; background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 10px; }
+    .linkbox label { display: block; font-size: 0.74rem; font-weight: 700; color: var(--ok); margin-bottom: 6px; }
+    .entry-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 12px; }
+    .entry { background: #fff; border: 1px solid var(--border); border-radius: 12px; padding: 14px; }
+    .entry .k { display: inline-block; font-size: 0.62rem; font-weight: 700; background: var(--mint); color: var(--blue); padding: 2px 8px; border-radius: 999px; margin-bottom: 8px; }
+    .entry h4 { font-size: 0.92rem; margin-bottom: 6px; }
+    .entry p { font-size: 0.8rem; color: var(--muted); margin-bottom: 10px; }
+    .mini { background: #f8fafc; border: 1px dashed #c7d6e6; border-radius: 10px; padding: 10px; font-size: 0.74rem; margin-bottom: 10px; }
+    .mini .fake-btn { display: inline-block; padding: 4px 8px; border-radius: 6px; border: 1px solid var(--border); background: #fff; font-weight: 600; margin: 2px 2px 0 0; }
+    .mini .fake-btn.hl { border-color: var(--blue); background: var(--mint); color: var(--blue); }
+
+    .overlay { display: none; position: fixed; inset: 0; background: rgba(15,23,42,0.45); z-index: 100; align-items: center; justify-content: center; padding: 16px; }
+    .overlay.open { display: flex; }
+    .modal { background: #fff; border-radius: 14px; max-width: 500px; width: 100%; padding: 22px; box-shadow: 0 20px 50px rgba(0,0,0,0.2); max-height: 90vh; overflow: auto; }
+    .modal h3 { font-size: 1.1rem; margin-bottom: 8px; }
+    .modal p { font-size: 0.86rem; color: var(--muted); margin-bottom: 12px; }
+    .modal .drop { border: 2px dashed #9ec0e8; background: #f0f7ff; border-radius: 12px; padding: 22px; text-align: center; margin-bottom: 12px; cursor: pointer; }
+    .modal .drop:hover { background: var(--mint); border-color: var(--blue); }
+    .modal .drop small { display: block; color: var(--muted); margin-top: 4px; font-size: 0.76rem; }
+    .modal-actions { display: flex; gap: 8px; justify-content: flex-end; flex-wrap: wrap; margin-top: 8px; }
+    .radio { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 12px; }
+    .radio label { border: 1px solid var(--border); border-radius: 10px; padding: 8px 12px; font-size: 0.82rem; cursor: pointer; display: flex; gap: 6px; align-items: center; }
+    .toast { display: none; position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%); background: #1e2a4a; color: #fff; padding: 12px 18px; border-radius: 10px; font-size: 0.85rem; z-index: 200; box-shadow: 0 8px 24px rgba(0,0,0,0.2); max-width: 90vw; }
+    .toast.show { display: block; }
+    .hide { display: none !important; }
+
+    /* Phone width (real phones via container query; desktop reviewers via "Phone" chip) */
+    @container app (max-width: 640px) {
+      .rail { display: none; }
+      .main { padding: 14px 12px 40px; }
+      .page-head h2 { font-size: 1.2rem; }
+      .head-actions, .head-actions .btn { width: 100%; }
+      .admin-bar { flex-direction: column; align-items: stretch; }
+      .admin-bar select { min-width: 0; width: 100%; }
+      .bulk { margin-left: 0; flex-direction: column; align-items: stretch; }
+      .bulk .btn { width: 100%; }
+      .tabs { flex-wrap: nowrap; overflow-x: auto; padding-bottom: 4px; }
+      .tab { flex-shrink: 0; }
+      .toolbar .search { max-width: none; }
+      .row { grid-template-columns: 56px 1fr; gap: 10px; }
+      .row .thumb { width: 56px; height: 56px; }
+      .row .url-col { grid-column: 1 / -1; flex-wrap: wrap; }
+      .row .url-col .url { flex-basis: 100%; }
+      .row .url-col .copy { flex: 1; }
+      .row .row-actions { grid-column: 2; grid-row: 1; justify-self: end; align-self: start; display: none; }
+      .done-row { grid-template-columns: 44px 1fr; }
+      .done-row .url-col { grid-column: 1 / -1; flex-wrap: wrap; }
+      .done-row .url-col .url { flex-basis: 100%; }
+      .done-row .url-col .copy { flex: 1; }
+      .done-foot .btn { width: 100%; }
+    }
+    @media (max-width: 640px) { .stage { padding: 0; } .thesis, .nav, .demo { padding-left: 12px; padding-right: 12px; } }
+  
+    .thesis .alt { display: inline-block; background: rgba(255,255,255,0.2); color: #fff; font-size: 0.68rem; font-weight: 700; padding: 3px 10px; border-radius: 999px; margin-bottom: 6px; }
+    .sheet { background: #fff; border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
+    .srow { display: grid; grid-template-columns: 56px minmax(150px, 1fr) minmax(240px, 1.8fr); gap: 12px; align-items: center; padding: 10px 14px; border-top: 1px solid #eef2f7; }
+    .srow:first-child { border-top: none; }
+    .srow.hd { background: #f8fafc; font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; color: var(--muted); padding: 8px 14px; }
+    .srow .thumb { width: 48px; height: 48px; }
+    .srow .missing { width: 48px; height: 48px; border-radius: 50%; border: 2px dashed #cbd5e1; display: flex; align-items: center; justify-content: center; color: #94a3b8; font-size: 1.1rem; }
+    .who .n { font-weight: 700; font-size: 0.88rem; }
+    .who .m { font-size: 0.74rem; color: var(--muted); }
+    .match { display: grid; grid-template-columns: 44px minmax(150px, 1fr) minmax(180px, 1fr); gap: 10px; align-items: center; padding: 8px 0; border-top: 1px solid #eef2f7; }
+    .match .thumb { width: 40px; height: 40px; }
+    .match select { min-height: 38px; padding: 6px 10px; font-size: 0.84rem; }
+    .match .ok { color: var(--ok); font-size: 0.74rem; font-weight: 600; }
+    .match .q { color: #b45309; font-size: 0.74rem; font-weight: 600; }
+    @container app (max-width: 640px) {
+      .srow { grid-template-columns: 48px 1fr; }
+      .srow.hd { display: none; }
+      .srow .url-col { grid-column: 1 / -1; flex-wrap: wrap; }
+      .srow .url-col .url { flex-basis: 100%; }
+      .srow .url-col .copy, .srow .url-col .btn { flex: 1; }
+      .match { grid-template-columns: 40px 1fr; }
+      .match select, .match .sel { grid-column: 1 / -1; width: 100%; }
+    }
+  </style>
+</head>
+<body>
+  <header class="thesis">
+    <span class="alt">#417 · Direction B · Alternative (staff add-on)</span>
+    <h1>Firm headshot sheet: every advisor at a firm, one link each</h1>
+    <p>A staff-only page for batch work like the WWF headshots: one row per advisor at a firm, with their current headshot link and Copy. Drop a batch of files and FC matches them to advisors by file name. Files still live in each advisor's My Media library (Direction A), so this is a view on top of it, not a separate store.</p>
+  </header>
+  <nav class="nav">
+    <a href="../../">Hub</a><span class="sep">·</span>
+    <a href="../a/">Direction A (recommended)</a><span class="sep">·</span>
+    <span class="on">Direction B (firm headshot sheet)</span><span class="sep">·</span>
+    <a href="../../build-contract.html">Build contract</a>
+  </nav>
+  <div class="demo">
+    <div class="demo-row"><span>Screen</span>
+      <button class="chip" data-view="sheet" onclick="setView('sheet')">Firm sheet</button>
+      <button class="chip" data-view="match" onclick="setView('match')">Batch upload: match files</button>
+      <button class="chip" data-view="done" onclick="setView('done')">Batch upload: links ready</button>
+      <span style="min-width:12px"></span>
+      <button class="chip" id="phoneChip" onclick="togglePhone()">📱 Phone width</button>
+    </div>
+  </div>
+
+  <div class="stage" id="stage">
+    <div class="frame">
+      <div class="app">
+        <aside class="rail" aria-hidden="true">
+          <div class="ri">FC</div><div class="ri">Posts</div><div class="ri">My Media</div><div class="ri">Email</div><div class="ri on">Admin</div>
+        </aside>
+        <main class="main">
+          <div class="crumb">Admin › Firms › Harbourview Wealth › Headshots</div>
+          <div class="page-head">
+            <div><h2>Harbourview Wealth · Headshots</h2><div class="sub">Each advisor's current profile headshot. Uploading here puts the file in that advisor's My Media library and sets it as their headshot.</div></div>
+            <div class="head-actions"><button class="btn btn-primary" onclick="setView('match')">Upload a batch</button></div>
+          </div>
+
+          <section id="v-done" class="hide">
+            <div class="done" id="doneBox"></div>
+          </section>
+          <section id="v-sheet">
+            <div class="admin-bar">
+              <div class="field"><label>Firm <span class="tag">Staff only</span></label><select><option>Harbourview Wealth (6 advisors)</option><option>Northgate Advisory (3 advisors)</option></select></div>
+              <div class="bulk">
+                <span class="opt" id="countNote"></span>
+                <button class="btn btn-ghost" onclick="copyFirm(this)" id="firmBtn">Copy all</button>
+              </div>
+            </div>
+            <div class="callout">Copy all gives one line per advisor: <strong>name, then link</strong>, so it pastes straight into a spreadsheet. Advisors with no headshot are skipped and listed in the message.</div>
+            <div class="sheet" id="sheet"></div>
+          </section>
+
+          <section id="v-match" class="hide">
+            <div class="panel">
+              <h3>Match files to advisors</h3>
+              <div class="sub">We matched 3 of 4 files by name. Check the last one, then upload.</div>
+              <div id="matchList"></div>
+              <div class="done-foot"><button class="btn btn-primary" onclick="setView('done')">Upload 4 headshots</button><button class="btn btn-ghost" onclick="setView('sheet')">Cancel</button></div>
+            </div>
+            <div class="callout warn">Open decision: should a batch upload <strong>replace</strong> an advisor's current headshot (and change its link), or only add the file to their library?</div>
+          </section>
+
+        </main>
+      </div>
+    </div>
+  </div>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <script>
+    var BASE = 'https://financialcontent.ca/ufs/mediaLibrary/';
+    var ROWS = [
+      { n: 'Priya Desai', id: 'pD3xKq8mWv2RtL5nA', f: 'priya-desai-headshot-2026.jpg', d: 'Oct 8, 2026', cls: '' },
+      { n: 'Marcus Lee', id: 'Ml6Gh2RtYw8KpZ3vB', f: 'marcus-lee-headshot.jpg', d: 'Oct 8, 2026', cls: 'h2' },
+      { n: 'Daniel Okafor', id: 'Dk7Lp3MnBv9CxZ2qW', f: 'daniel-okafor-headshot.png', d: 'Oct 8, 2026', cls: 'h3' },
+      { n: 'Sofia Hart', missing: true, nid: 'Sh4Nk8TqWp2VzL6mX', nf: 'sofia-hart.jpg', cls: 'h4' },
+      { n: 'Tomás Rivera', id: 'Tr2Wq7ZxLm5NbK8cV', f: 'tomas-rivera-headshot.jpg', d: 'Sep 19, 2026', cls: 'h2' },
+      { n: 'Grace Whitfield', missing: true, nid: 'Gw8Pz3KcVn6TyR1sD', nf: 'IMG_4471.jpg', cls: 'h3' }
+    ];
+    var st = { view: 'sheet', phone: false };
+    function u(id, f) { return BASE + id + '/' + encodeURIComponent(f); }
+    function rowsNow() {
+      return ROWS.map(function (r) {
+        var NEWS = { 'Marcus Lee': ['Ml9Qa2WsEd4RfT6gY', 'marcus-lee.jpg'], 'Sofia Hart': ['Sh4Nk8TqWp2VzL6mX', 'sofia-hart.jpg'], 'Daniel Okafor': ['Dk2Zx8CvBn5MqW3eR', 'daniel_okafor_2026.png'], 'Grace Whitfield': ['Gw8Pz3KcVn6TyR1sD', 'IMG_4471.jpg'] };
+        if (st.view === 'done' && NEWS[r.n]) return { n: r.n, id: NEWS[r.n][0], f: NEWS[r.n][1], d: 'Today', cls: r.cls, isNew: true };
+        return r;
+      });
+    }
+    function render() {
+      document.querySelectorAll('[data-view]').forEach(function (c) { c.classList.toggle('on', c.dataset.view === st.view); });
+      document.getElementById('phoneChip').classList.toggle('on', st.phone);
+      document.getElementById('stage').classList.toggle('phone', st.phone);
+      document.getElementById('v-sheet').classList.toggle('hide', st.view === 'match');
+      document.getElementById('v-match').classList.toggle('hide', st.view !== 'match');
+      document.getElementById('v-done').classList.toggle('hide', st.view !== 'done');
+      var rows = rowsNow();
+      var have = rows.filter(function (r) { return !r.missing; });
+      document.getElementById('countNote').textContent = have.length + ' of ' + rows.length + ' have a headshot';
+      document.getElementById('firmBtn').textContent = 'Copy all ' + have.length + ' headshot links';
+      document.getElementById('sheet').innerHTML = '<div class="srow hd"><div></div><div>Advisor</div><div>Headshot link</div></div>' + rows.map(function (r) {
+        if (r.missing) return '<div class="srow"><div class="missing">+</div><div class="who"><div class="n">' + r.n + '</div><div class="m">No headshot yet</div></div><div class="url-col"><button class="btn btn-ghost btn-sm" onclick="setView(\'match\')">Upload headshot</button></div></div>';
+        var link = u(r.id, r.f);
+        return '<div class="srow"' + (r.isNew ? ' style="background:#f0fdf4"' : '') + '><div class="thumb head ' + r.cls + '"></div><div class="who"><div class="n">' + r.n + (r.isNew ? ' <span class="badge new">New</span>' : '') + '</div><div class="m">' + r.f + ' · ' + r.d + ' · <a href="../a/#admin/library">Open their media</a></div></div><div class="url-col"><input class="url" readonly value="' + link + '" onclick="this.select()" /><button class="btn btn-primary btn-sm copy" onclick="copyText(\'' + link + '\', this)">Copy link</button></div></div>';
+      }).join('');
+      document.getElementById('matchList').innerHTML = [
+        ['marcus-lee.jpg', 'Marcus Lee', 'h2', 'ok'], ['sofia-hart.jpg', 'Sofia Hart', 'h4', 'ok'], ['daniel_okafor_2026.png', 'Daniel Okafor', 'h3', 'ok'], ['IMG_4471.jpg', '', 'h3', 'q']
+      ].map(function (m) {
+        var opts = ['Choose advisor…'].concat(ROWS.map(function (r) { return r.n; })).map(function (n) { return '<option' + (n === m[1] ? ' selected' : '') + '>' + n + '</option>'; }).join('');
+        return '<div class="match"><div class="thumb head ' + m[2] + '"></div><div><div class="fname">' + m[0] + '</div><div class="' + m[3] + '">' + (m[3] === 'ok' ? '✓ Matched by name' : 'Couldn\'t match. Pick the advisor.') + '</div></div><div class="sel"><select style="width:100%">' + opts + '</select></div></div>';
+      }).join('');
+      var news = [['Marcus Lee', 'Ml9Qa2WsEd4RfT6gY', 'marcus-lee.jpg', 'h2'], ['Sofia Hart', 'Sh4Nk8TqWp2VzL6mX', 'sofia-hart.jpg', 'h4'], ['Daniel Okafor', 'Dk2Zx8CvBn5MqW3eR', 'daniel_okafor_2026.png', 'h3'], ['Grace Whitfield', 'Gw8Pz3KcVn6TyR1sD', 'IMG_4471.jpg', 'h3']];
+      window._news = news;
+      document.getElementById('doneBox').innerHTML = '<h3>✓ 4 headshots uploaded</h3><div class="sub">Each one is now that advisor\'s profile headshot and is saved in their My Media library.</div>' +
+        news.map(function (x) { var link = u(x[1], x[2]); return '<div class="done-row"><div class="thumb head ' + x[3] + '"></div><div><div class="fname">' + x[0] + '</div><div class="meta">' + x[2] + '</div></div><div class="url-col"><input class="url" readonly value="' + link + '" onclick="this.select()" /><button class="btn btn-primary btn-sm copy" onclick="copyText(\'' + link + '\', this)">Copy link</button></div></div>'; }).join('') +
+        '<div class="done-foot"><button class="btn btn-primary" onclick="copyNew(this)">Copy all 4 (name, link)</button><button class="btn btn-ghost" onclick="setView(\'sheet\')">Back to firm sheet</button></div>';
+    }
+    function fallbackCopy(text) { var ta = document.createElement('textarea'); ta.value = text; ta.setAttribute('readonly', ''); ta.style.position = 'fixed'; ta.style.top = '-1000px'; document.body.appendChild(ta); ta.select(); var ok = false; try { ok = document.execCommand('copy'); } catch (e) {} document.body.removeChild(ta); return ok; }
+    function doCopy(text) { if (navigator.clipboard && window.isSecureContext) return navigator.clipboard.writeText(text).then(function () { return true; }, function () { return fallbackCopy(text); }); return Promise.resolve(fallbackCopy(text)); }
+    function flash(btn, label) { var o = btn.dataset.orig || btn.textContent; btn.dataset.orig = o; btn.textContent = label; btn.classList.add('copied'); clearTimeout(btn._t); btn._t = setTimeout(function () { btn.textContent = o; btn.classList.remove('copied'); }, 2000); }
+    function copyText(text, btn) { doCopy(text).then(function (ok) { if (ok) { flash(btn, '✓ Copied'); toast('Link copied'); } else { var i = btn.parentNode.querySelector('input'); if (i) { i.focus(); i.select(); } toast('Press Ctrl+C (or ⌘C) to copy the selected link'); } }); }
+    function copyFirm(btn) {
+      var rows = rowsNow(); var have = rows.filter(function (r) { return !r.missing; }); var miss = rows.filter(function (r) { return r.missing; }).map(function (r) { return r.n; });
+      var text = have.map(function (r) { return r.n + '\t' + u(r.id, r.f); }).join('\n');
+      doCopy(text).then(function (ok) { if (ok) { flash(btn, '✓ Copied ' + have.length); toast(have.length + ' links copied' + (miss.length ? '. No headshot yet: ' + miss.join(', ') : '')); } else toast('Your browser blocked copying.'); });
+    }
+    function copyNew(btn) { var text = window._news.map(function (x) { return x[0] + '\t' + u(x[1], x[2]); }).join('\n'); doCopy(text).then(function (ok) { if (ok) { flash(btn, '✓ Copied 4'); toast('4 links copied, one per line'); } }); }
+    function setView(v) { st.view = v; sync(); window.scrollTo(0, 0); }
+    function togglePhone() { st.phone = !st.phone; sync(); }
+    function sync() { history.replaceState(null, '', '#' + st.view + (st.phone ? '/phone' : '')); render(); }
+    function toast(m) { var t = document.getElementById('toast'); t.textContent = m; t.classList.add('show'); clearTimeout(t._t); t._t = setTimeout(function () { t.classList.remove('show'); }, 2600); }
+    (location.hash || '').replace('#', '').split('/').forEach(function (p) { if (['sheet', 'match', 'done'].indexOf(p) >= 0) st.view = p; if (p === 'phone') st.phone = true; });
+    render();
+  </script>
+</body>
+</html>
