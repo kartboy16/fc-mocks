@@ -1,0 +1,407 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>#458 · Direction B · Locked prefix chip · FC mocks</title><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" /><style>:root{--bg:#f4f8fc;--card:#fff;--ink:#1e2a4a;--muted:#5b6572;--blue:#2b7de9;--border:#d4e4f2;--mint:#e6f1fb;--ok:#065f46;--okbg:#e8f5e9;--warn:#92400e;--warnbg:#fef3c7}
+*{box-sizing:border-box}body{margin:0;font-family:Inter,system-ui,sans-serif;background:var(--bg);color:var(--ink);line-height:1.5}
+.top{background:linear-gradient(135deg,#1e2a4a,#2b7de9);color:#fff;padding:12px 20px;font-size:.85rem;display:flex;flex-wrap:wrap;gap:6px 16px;align-items:center}
+.top a{color:#fff;font-weight:600;text-decoration:none;opacity:.85}.top a.on{opacity:1;text-decoration:underline}
+.head{max-width:1180px;margin:0 auto;padding:18px 20px 4px}.head h1{font-size:1.25rem;margin:0 0 4px}.head p{margin:0;color:var(--muted);font-size:.88rem;max-width:880px}
+.pill{display:inline-block;font-size:.7rem;font-weight:700;padding:3px 10px;border-radius:999px;background:var(--okbg);color:var(--ok);margin-left:8px;vertical-align:middle}
+.pill.alt{background:var(--mint);color:var(--blue)}
+.tabs{max-width:1180px;margin:12px auto 0;padding:0 20px;display:flex;gap:6px;flex-wrap:wrap}
+.tabs a{font-size:.78rem;font-weight:600;color:var(--blue);background:#fff;border:1px solid var(--border);padding:6px 11px;border-radius:999px;text-decoration:none}
+.tabs a.on{background:var(--blue);color:#fff;border-color:var(--blue)}
+.stage{max-width:1180px;margin:14px auto 60px;padding:0 20px;display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:18px}
+@media(max-width:900px){.stage{grid-template-columns:1fr}}
+.app{background:#fff;border:1px solid var(--border);border-radius:12px;overflow:hidden}
+.appbar{display:flex;align-items:center;gap:14px;padding:10px 16px;border-bottom:1px solid var(--border);font-size:.8rem;color:var(--muted);flex-wrap:wrap}
+.appbar b{color:var(--ink)}.appbar .nav span{margin-right:12px}.appbar .nav span.on{color:var(--blue);font-weight:700;border-bottom:2px solid var(--blue);padding-bottom:9px}
+.body{padding:18px}
+.acc{border:1px solid var(--border);border-radius:10px;margin-bottom:12px}.acc h3{margin:0;padding:12px 14px;font-size:.88rem;border-bottom:1px solid var(--border);display:flex;justify-content:space-between}
+.acc .in{padding:14px}
+.row{display:flex;gap:14px;flex-wrap:wrap}.row>.f{flex:1;min-width:220px}
+.f{margin-bottom:14px}.f label{display:block;font-size:.72rem;font-weight:600;color:var(--muted);margin-bottom:4px}
+.f input,.f select{width:100%;font:inherit;font-size:.9rem;padding:10px 12px;border:1px solid #b9c9da;border-radius:8px;background:#fff;color:var(--ink)}
+.f input:focus{outline:2px solid var(--blue);outline-offset:-1px;border-color:var(--blue)}
+.f input[disabled]{background:#f3f6f9;color:#7a8594}
+.f .help{font-size:.75rem;color:var(--muted);margin-top:5px}
+.new{outline:2px dashed #2b7de9;outline-offset:6px;border-radius:8px;position:relative}
+.new:before{content:"NEW";position:absolute;top:-16px;right:0;font-size:.6rem;font-weight:800;color:#fff;background:var(--blue);padding:1px 6px;border-radius:4px}
+.preview{background:#f0f7ff;border:1px solid #bfdbfe;border-radius:8px;padding:9px 12px;font-size:.82rem;margin-top:8px}
+.preview b{font-weight:700}.preview .px{background:#dbeafe;border-radius:4px;padding:0 3px}
+.btn{font:inherit;font-size:.8rem;font-weight:600;border-radius:8px;padding:8px 14px;border:1px solid var(--blue);background:var(--blue);color:#fff;cursor:pointer}
+.btn.ghost{background:#fff;color:var(--blue)}.btn.link{border:none;background:none;color:var(--blue);padding:4px 2px;text-decoration:underline}
+.btn.sm{font-size:.72rem;padding:5px 10px}
+.note{font-size:.8rem;border-radius:8px;padding:9px 12px;margin:10px 0}
+.note.ok{background:var(--okbg);color:var(--ok)}.note.warn{background:var(--warnbg);color:var(--warn)}.note.info{background:#eff6ff;color:#1e40af}
+.side{display:flex;flex-direction:column;gap:14px}
+.panel{background:#fff;border:1px solid var(--border);border-radius:12px;padding:14px}.panel h4{margin:0 0 8px;font-size:.78rem;text-transform:uppercase;letter-spacing:.04em;color:var(--muted)}
+.panel p,.panel li{font-size:.8rem}.panel ul{padding-left:18px;margin:6px 0}
+.inbox{border:1px solid var(--border);border-radius:10px;overflow:hidden;font-size:.8rem}
+.inbox .msg{padding:9px 12px;border-bottom:1px solid #eef2f7;display:grid;grid-template-columns:120px 1fr;gap:8px;white-space:nowrap}
+.inbox .msg .s{overflow:hidden;text-overflow:ellipsis}.inbox .msg.me{background:#f8fbff}.inbox .msg.me .s{font-weight:700}
+.inbox .msg .fr{overflow:hidden;text-overflow:ellipsis;font-weight:600}
+.phone{width:300px;max-width:100%;border:10px solid #1e2a4a;border-radius:30px;margin:0 auto;background:#fff;overflow:hidden}
+.phone .bar{background:#f3f6f9;font-size:.7rem;text-align:center;padding:5px;color:var(--muted)}
+.phone .pm{padding:10px 12px;border-bottom:1px solid #eef2f7;font-size:.78rem}.phone .pm .fr{font-weight:700;display:flex;justify-content:space-between}
+.phone .pm .s{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.phone .pm .s.me{font-weight:700}
+.phone .pm .pv{color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.subj{display:flex;align-items:center;border:1px solid #b9c9da;border-radius:8px;background:#fff;padding:0 6px 0 0;min-height:42px}
+.subj:focus-within{outline:2px solid var(--blue);outline-offset:-1px}
+.subj input{border:none!important;outline:none!important;flex:1;min-width:60px}
+.chip{display:inline-flex;align-items:center;gap:4px;background:#dbeafe;color:#1e40af;font-size:.82rem;font-weight:600;border-radius:6px;padding:4px 4px 4px 8px;margin-left:6px;white-space:nowrap}
+.chip button{border:none;background:#bfdbfe;color:#1e40af;border-radius:4px;cursor:pointer;font-size:.75rem;line-height:1;padding:3px 5px}
+.counter{font-size:.72rem;color:var(--muted);display:flex;justify-content:space-between;gap:10px;margin-top:5px;flex-wrap:wrap}
+.counter .over{color:var(--warn);font-weight:700}
+.chips{display:flex;gap:6px;flex-wrap:wrap;margin:0 0 14px}.chips button{font:inherit;font-size:.74rem;border:1px solid var(--border);background:#fff;border-radius:999px;padding:5px 10px;cursor:pointer;color:var(--ink)}
+.chips button.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+table.t{border-collapse:collapse;width:100%;font-size:.78rem}table.t th,table.t td{border:1px solid var(--border);padding:7px;text-align:left;vertical-align:top}table.t th{background:#f0f7ff}
+.yes{color:var(--ok);font-weight:700}.no{color:#b45309;font-weight:700}
+.list{border:1px solid var(--border);border-radius:10px;overflow:hidden;font-size:.8rem}
+.list .lr{display:grid;grid-template-columns:1.2fr 1.6fr 90px 110px;gap:8px;padding:9px 12px;border-bottom:1px solid #eef2f7;align-items:center}
+.list .lh{background:#f0f7ff;font-weight:700;font-size:.72rem;color:var(--muted)}
+.styleopt{display:flex;gap:8px;flex-wrap:wrap}.styleopt label{display:flex;gap:6px;align-items:center;border:1px solid var(--border);border-radius:8px;padding:8px 10px;font-size:.82rem;font-weight:500;color:var(--ink);cursor:pointer;margin:0}
+.styleopt label.on{border-color:var(--blue);background:#f0f7ff}
+.mobile .row{flex-direction:column;gap:0}
+.dlg{border:1px solid var(--border);border-radius:12px;box-shadow:0 10px 30px rgba(30,42,74,.12);max-width:720px}
+.dlg .dh{padding:12px 16px;border-bottom:1px solid var(--border);font-weight:700;display:flex;justify-content:space-between}
+.dlg .db{padding:16px}
+.src{font-size:.72rem;color:var(--muted);margin-bottom:6px}
+</style></head>
+<body data-dir="b"><div class="top"><b>FC mocks · #458 Default subject prefix</b><a href="../../" class="">← Hub</a><a href="../../directions/a/" class="">Direction A (recommended)</a><a href="../../directions/b/" class="on">Direction B</a><a href="../../directions/c/" class="">Direction C</a><a href="../../build-contract.html" class="">Build contract</a></div>
+<div class="head"><h1>Direction B · Locked prefix chip <span class="pill alt">Alternative</span></h1><p>The prefix sits as a chip in front of the subject box. It can't be half-edited by accident; ✕ removes it for this campaign and “Add back” restores it. Click the tabs to walk through every screen. Type in the fields: the inbox preview and the saved subject update as you go. Names are fictional.</p></div>
+<div class="tabs" id="tabs"></div>
+<div class="stage"><div id="main"></div><div id="side"></div></div>
+<script>(function(){
+var DIR = document.body.getAttribute('data-dir');
+var KEY = 'fc458-' + DIR;
+var S = { prefix: 'From BPartners:', name: 'BPartners', style: 'from' };
+try { var saved = JSON.parse(localStorage.getItem(KEY) || 'null'); if (saved) S = Object.assign(S, saved); } catch (e) {}
+function save(){ try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) {} }
+function esc(s){ return String(s).replace(/[&<>"]/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); }
+
+/* ---- the rule (same in every direction; see build contract) ---- */
+function norm(s){ return String(s || '').trim().replace(/\s+/g, ' ').toLowerCase(); }
+function core(p){ return norm(p).replace(/^[\[\(]+/, '').replace(/[\s:|\-–—\]\)]+$/, ''); }
+function hasPrefix(subject, prefix){
+  var s = norm(subject), p = norm(prefix), c = core(prefix);
+  if (!p) return false;
+  if (s.indexOf(p) === 0) return true;
+  var sCore = s.replace(/^[\[\(]+/, '');
+  if (c && sCore.indexOf(c) === 0) { var next = sCore.charAt(c.length); return next === '' || /[^a-z0-9]/.test(next); }
+  return false;
+}
+function applyPrefix(subject, prefix){
+  var p = String(prefix || '').trim();
+  var s = String(subject || '').replace(/^\s+/, '');
+  if (!p) return s;
+  if (hasPrefix(s, p)) return s;
+  return p + ' ' + s;
+}
+function styled(name, style){
+  name = String(name || '').trim(); if (!name) return '';
+  if (style === 'from') return 'From ' + name + ':';
+  if (style === 'bar') return name + ' |';
+  if (style === 'bracket') return '[' + name + ']';
+  return name + ':';
+}
+function currentPrefix(){ return DIR === 'c' ? styled(S.name, S.style) : S.prefix; }
+window.FC458 = { norm: norm, hasPrefix: hasPrefix, applyPrefix: applyPrefix };
+
+var FROM = 'Morgan Lee | BPartners';
+var POST = 'Why High-Income Earners Need a Tax Plan Before Year-End';
+var DESK = 60, PHONE = 38;
+
+var screens = [
+  ['settings', 'Settings · prefix set'],
+  ['settings-empty', 'Settings · empty'],
+  ['new', 'New campaign'],
+  ['new-unset', 'New campaign · no prefix'],
+  ['already', 'Already starts with it'],
+  ['duplicate', 'Duplicate'],
+  ['long', 'Long subject'],
+  ['phone', 'Phone width']
+];
+
+function tabs(cur){
+  return screens.map(function(s){ return '<a href="#' + s[0] + '" class="' + (s[0] === cur ? 'on' : '') + '">' + s[1] + '</a>'; }).join('');
+}
+function appbar(tab){
+  var nav = ['Campaigns','Subscribers','Lists','Reports','Settings'].map(function(n){ return '<span class="' + (n === tab ? 'on' : '') + '">' + n + '</span>'; }).join('');
+  return '<div class="appbar"><b>Email Campaigns</b><div class="nav">' + nav + '</div></div>';
+}
+function hl(subject, prefix){
+  if (prefix && hasPrefix(subject, prefix)) {
+    var p = String(prefix).trim();
+    var n = subject.length >= p.length && norm(subject.slice(0, p.length)) === norm(p) ? p.length : core(prefix).length + (subject.match(/^[\[\(]*/)[0].length);
+    return '<span class="px">' + esc(subject.slice(0, n)) + '</span>' + esc(subject.slice(n));
+  }
+  return esc(subject);
+}
+function inbox(subject){
+  var s = subject || '(no subject)';
+  return '<div class="inbox">' +
+    '<div class="msg"><span class="fr">Weekly Market Brief</span><span class="s">Rates, earnings and what to watch this week</span></div>' +
+    '<div class="msg me"><span class="fr">' + esc(FROM) + '</span><span class="s" data-live="inbox">' + esc(s) + '</span></div>' +
+    '<div class="msg"><span class="fr">Northline Bank</span><span class="s">Your October statement is ready</span></div></div>';
+}
+function phoneInbox(subject){
+  return '<div class="phone"><div class="bar">Inbox · about ' + PHONE + ' characters fit</div>' +
+    '<div class="pm"><div class="fr"><span>' + esc(FROM) + '</span><span style="font-weight:400;color:#5b6572">9:02</span></div><div class="s me" data-live="phone">' + esc(subject || '(no subject)') + '</div><div class="pv">Tax season is closer than it looks. Here is…</div></div>' +
+    '<div class="pm"><div class="fr"><span>Northline Bank</span><span style="font-weight:400;color:#5b6572">8:40</span></div><div class="s">Your October statement is ready</div><div class="pv">View it in online banking</div></div></div>';
+}
+function counterHtml(len){
+  var msg = len > DESK ? '<span class="over">Long subject: inboxes usually cut it off after about ' + DESK + ' characters.</span>' : (len > PHONE ? '<span>Phones may cut it off after about ' + PHONE + ' characters.</span>' : '<span>Fits in most inboxes.</span>');
+  return '<span>' + len + ' characters</span>' + msg;
+}
+
+/* ---- Settings ---- */
+function settingsField(empty){
+  var p = empty ? '' : currentPrefix();
+  if (DIR === 'c') {
+    var name = empty ? '' : S.name;
+    var opts = [['from','From BPartners:'],['bar','BPartners |'],['bracket','[BPartners]']];
+    return '<div class="f new" style="flex-basis:100%">' +
+      '<label>Default subject prefix (optional)</label>' +
+      '<div class="row"><div class="f" style="max-width:280px;margin:0"><input id="pname" placeholder="Your name or firm, e.g. BPartners" value="' + esc(name) + '" maxlength="30"></div>' +
+      '<div class="styleopt" id="pstyle">' + opts.map(function(o){ return '<label class="' + (S.style === o[0] ? 'on' : '') + '"><input type="radio" name="st" value="' + o[0] + '"' + (S.style === o[0] ? ' checked' : '') + '> ' + esc(o[1].replace('BPartners', name || 'Name')) + '</label>'; }).join('') + '</div></div>' +
+      '<div class="help">Pick how it reads. We add it to the start of every new campaign subject. You can still change the subject on each campaign.</div>' +
+      '<div class="preview" id="pprev"></div></div>';
+  }
+  return '<div class="f new" style="flex:1;min-width:220px">' +
+    '<label for="prefix">Default subject prefix (optional)</label>' +
+    '<input id="prefix" maxlength="40" placeholder="e.g. From BPartners:" value="' + esc(p) + '">' +
+    '<div class="help">Added to the start of every new campaign subject. Include the colon or dash you want; we add one space after it. You can still change the subject on each campaign.</div>' +
+    '<div class="preview" id="pprev"></div></div>';
+}
+function renderSettings(empty){
+  return appbar('Settings') + '<div class="body">' +
+    (empty ? '<div class="note info">Empty state: nothing set, so subjects stay exactly as typed (today\'s behaviour).</div>' : '') +
+    '<div class="acc"><h3>Email Campaign From Settings <span>▾</span></h3><div class="in">' +
+    '<div style="font-size:.82rem;color:#5b6572;margin-bottom:12px">Set the sender name and email for your campaigns</div>' +
+    '<div class="row"><div class="f"><label>From Name</label><input value="' + esc(FROM) + '"></div>' +
+    '<div class="f"><label>From Email</label><input disabled value="morgan.lee.bpartners@financialcontent.ca"></div></div>' +
+    '<div class="row">' + settingsField(empty) + (DIR === 'c' ? '' : '<div class="f" style="flex:1;min-width:220px"></div>') + '</div>' +
+    '<div class="note ok" id="saved" style="display:none">Saved</div>' +
+    '</div></div>' +
+    '<div class="acc"><h3>Test emails <span>▸</span></h3></div><div class="acc"><h3>Compliance <span>▸</span></h3></div>' +
+    '</div>';
+}
+function bindSettings(empty){
+  var prev = document.getElementById('pprev'); var savedEl = document.getElementById('saved'); var t;
+  function flash(){ clearTimeout(t); savedEl.style.display = 'block'; t = setTimeout(function(){ savedEl.style.display = 'none'; }, 1500); }
+  function upd(){
+    var p = DIR === 'c' ? styled(document.getElementById('pname').value, S.style) : document.getElementById('prefix').value;
+    prev.innerHTML = p.trim() ? 'Subjects will look like: <b><span class="px">' + esc(p.trim()) + '</span> Your subject</b>' : 'No prefix set. Subjects look exactly as you type them: <b>Your subject</b>';
+  }
+  if (DIR === 'c') {
+    var nm = document.getElementById('pname');
+    nm.addEventListener('input', function(){ if (!empty) { S.name = nm.value; save(); } upd(); flash();
+      Array.prototype.forEach.call(document.querySelectorAll('#pstyle label'), function(l, i){ var o = ['From X:','X |','[X]'][i]; l.lastChild.textContent = ' ' + o.replace('X', nm.value.trim() || 'Name'); }); });
+    Array.prototype.forEach.call(document.querySelectorAll('#pstyle input'), function(r){ r.addEventListener('change', function(){ S.style = r.value; if (!empty) save();
+      Array.prototype.forEach.call(document.querySelectorAll('#pstyle label'), function(l){ l.classList.toggle('on', l.querySelector('input').checked); }); upd(); flash(); }); });
+  } else {
+    var f = document.getElementById('prefix');
+    f.addEventListener('input', function(){ if (!empty) { S.prefix = f.value; save(); } upd(); flash(); });
+  }
+  upd();
+}
+
+/* ---- Subject widget ---- */
+var W = {};
+function subjectWidget(initial, prefix, opts){
+  opts = opts || {};
+  W = { prefix: prefix, chipOn: false, rest: initial };
+  var help;
+  if (DIR === 'b') {
+    var already = prefix && hasPrefix(initial, prefix);
+    W.chipOn = !!prefix && !already && !opts.noAuto;
+    W.rest = initial;
+    return '<div class="f"><label>Subject *</label><div class="subj" id="subjbox">' +
+      '<span id="chipwrap"></span><input id="subj" value="' + esc(W.rest) + '" placeholder="Write your subject"></div>' +
+      '<div class="help" id="subjhelp"></div><div class="counter" id="cnt"></div></div>';
+  }
+  var val = (prefix && !opts.noAuto) ? applyPrefix(initial, prefix) : initial;
+  if (prefix && !opts.noAuto && !initial) val = prefix.trim() + ' ';
+  W.rest = val;
+  return '<div class="f"><label>Subject *</label><input id="subj" value="' + esc(val) + '" placeholder="Write your subject">' +
+    '<div class="help" id="subjhelp"></div><div class="counter" id="cnt"></div></div>';
+}
+function fullSubject(){
+  if (DIR === 'b') return (W.chipOn ? W.prefix.trim() + ' ' : '') + W.rest.replace(/^\s+/, '');
+  return W.rest;
+}
+function bindSubject(onChange){
+  var inp = document.getElementById('subj'); var help = document.getElementById('subjhelp');
+  function chip(){
+    if (DIR !== 'b') return;
+    var cw = document.getElementById('chipwrap');
+    cw.innerHTML = W.chipOn ? '<span class="chip" title="Your default prefix from Settings">' + esc(W.prefix.trim()) + '<button id="chipx" aria-label="Remove prefix for this campaign">✕</button></span>' : '';
+    var x = document.getElementById('chipx'); if (x) x.onclick = function(){ W.chipOn = false; chip(); upd(); };
+  }
+  function upd(){
+    var full = fullSubject();
+    if (DIR === 'b') {
+      if (W.chipOn && hasPrefix(W.rest, W.prefix)) { W.chipOn = false; chip(); help.innerHTML = '<span style="color:#065f46">Your subject already starts with <b>' + esc(W.prefix.trim()) + '</b>, so we won\'t add it twice.</span>'; }
+      else if (!W.prefix) help.innerHTML = 'No default prefix set. <a href="#settings">Add one in Settings</a>';
+      else if (W.chipOn) help.innerHTML = 'Your prefix from Settings is added in front. Click ✕ to send this one without it.';
+      else if (hasPrefix(W.rest, W.prefix)) help.innerHTML = '<span style="color:#065f46">Already starts with your prefix. Nothing added.</span>';
+      else help.innerHTML = 'Sent without your prefix. <button class="btn link" id="addback">Add “' + esc(W.prefix.trim()) + '” back</button>';
+      var ab = document.getElementById('addback'); if (ab) ab.onclick = function(){ W.chipOn = true; chip(); upd(); };
+    } else {
+      if (!W.prefix) help.innerHTML = 'No default prefix set. <a href="#settings">Add one in Settings</a>';
+      else if (hasPrefix(full, W.prefix)) help.innerHTML = 'Starts with your prefix from Settings. You can edit or delete it like any other text.';
+      else help.innerHTML = 'Doesn\'t start with your prefix. That\'s fine, it\'s your call. <button class="btn link" id="addback">Add “' + esc(W.prefix.trim()) + '”</button>';
+      var ab2 = document.getElementById('addback'); if (ab2) ab2.onclick = function(){ W.rest = applyPrefix(W.rest, W.prefix); inp.value = W.rest; upd(); inp.focus(); };
+    }
+    document.getElementById('cnt').innerHTML = counterHtml(full.trim().length);
+    Array.prototype.forEach.call(document.querySelectorAll('[data-live]'), function(el){ el.textContent = full.trim() || '(no subject)'; });
+    var fs = document.getElementById('fullsubj'); if (fs) fs.innerHTML = hl(full.trim(), W.prefix);
+    if (onChange) onChange(full);
+  }
+  inp.addEventListener('input', function(){ W.rest = inp.value; upd(); });
+  chip(); upd();
+  if (DIR !== 'b') { inp.focus(); var L = inp.value.length; try { inp.setSelectionRange(L, L); } catch (e) {} }
+}
+
+/* ---- New campaign ---- */
+var SOURCES = [
+  ['blank', 'Blank campaign', ''],
+  ['post', 'Email this post (Content Library)', POST],
+  ['info', 'Infographic', 'RRSP vs TFSA: Which Comes First?'],
+  ['admin', 'Prepared for you by FTT (Suggested posts)', POST]
+];
+function campaignDialog(title, subjectHtml, sourceNote){
+  return '<div class="dlg"><div class="dh">' + title + '<span>✕</span></div><div class="db">' + (sourceNote || '') +
+    '<div class="f"><label>Campaign Name *</label><input value="' + esc(title.indexOf('Copy') > -1 ? 'October newsletter (Copy)' : 'October newsletter') + '"></div>' +
+    subjectHtml +
+    '<div class="row"><div class="f"><label>From Name</label><input value="' + esc(FROM) + '"></div><div class="f"><label>From Email</label><input disabled value="morgan.lee.bpartners@financialcontent.ca"></div></div>' +
+    '<div class="f"><label>Send to</label><select><option>All subscribers (412)</option></select></div>' +
+    '<div style="display:flex;gap:8px;justify-content:flex-end"><button class="btn ghost">Send test</button><button class="btn ghost">Save draft</button><button class="btn">Review and send</button></div>' +
+    '</div></div>';
+}
+function renderNew(unset){
+  var src = window.__src || 'blank';
+  var s = SOURCES.filter(function(x){ return x[0] === src; })[0];
+  var prefix = unset ? '' : currentPrefix();
+  var note = '';
+  if (src === 'admin') note = '<div class="note info">FTT prepared this draft for you from Suggested posts. ' + (prefix ? 'Your prefix was added when the draft was made, and you can still change it before it goes out.' : '') + ' <i>(Open question 1: should these get the prefix?)</i></div>';
+  return appbar('Campaigns') + '<div class="body">' +
+    '<div class="src">Where the campaign starts (each one opens the same form):</div>' +
+    '<div class="chips" id="srcs">' + SOURCES.map(function(x){ return '<button data-src="' + x[0] + '" class="' + (x[0] === src ? 'on' : '') + '">' + x[1] + '</button>'; }).join('') + '</div>' +
+    (unset ? '<div class="note info">No default prefix in Settings. The subject behaves exactly like today.</div>' : '') +
+    campaignDialog('New campaign', subjectWidget(s[2], prefix), note) + '</div>';
+}
+function bindNew(unset){
+  Array.prototype.forEach.call(document.querySelectorAll('#srcs button'), function(b){ b.onclick = function(){ window.__src = b.getAttribute('data-src'); route(); }; });
+  bindSubject();
+}
+
+/* ---- Already prefixed ---- */
+function renderAlready(){
+  var p = currentPrefix() || 'From BPartners:';
+  var cases = [
+    p.trim() + ' ' + POST,
+    p.trim().toUpperCase() + POST,
+    '  ' + p.trim().toLowerCase() + '   ' + POST,
+    (DIR === 'c' && S.style !== 'from') ? p.replace(/[:|\]]/g, '').replace('[', '') + ' – ' + POST : 'From BPartners – ' + POST,
+    'BPartnership news: ' + POST,
+    POST
+  ];
+  var rows = cases.map(function(c){
+    var res = applyPrefix(c, p); var added = res !== c.replace(/^\s+/, '');
+    return '<tr><td><code>' + esc(c).replace(/ /g, '&nbsp;') + '</code></td><td class="' + (added ? 'no' : 'yes') + '">' + (added ? 'Added' : 'Not added') + '</td><td>' + esc(res) + '</td></tr>';
+  }).join('');
+  return appbar('Campaigns') + '<div class="body">' +
+    '<div class="note info">The post title already starts with the prefix (for example, it was written for this firm). We don\'t add it a second time.</div>' +
+    campaignDialog('New campaign', subjectWidget(p.trim() + ' ' + POST, p), '<div class="src">Started from: Email this post (Content Library) · post title “' + esc(p.trim() + ' ' + POST) + '”</div>') +
+    '<div class="acc" style="margin-top:18px"><h3>How we decide “already starts with it” <span></span></h3><div class="in">' +
+    '<ul style="font-size:.8rem;margin:0 0 10px;padding-left:18px"><li>Capitals don\'t matter (FROM BPARTNERS: = From BPartners:).</li><li>Extra spaces at the start or in the middle don\'t matter.</li><li>A different separator still counts if the name matches as a whole word (From BPartners – …).</li><li>A longer word that only starts the same way does not count (BPartnership…).</li></ul>' +
+    '<div class="f" style="margin-bottom:8px"><label>Try a subject</label><input id="try" value="from bpartners:   Year-end checklist"></div><div class="preview" id="tryout"></div>' +
+    '<table class="t" style="margin-top:12px"><tr><th>Subject coming in (prefix = “' + esc(p.trim()) + '”)</th><th>Prefix</th><th>Subject saved</th></tr>' + rows + '</table></div></div></div>';
+}
+function bindAlready(){
+  var p = currentPrefix() || 'From BPartners:';
+  bindSubject();
+  var t = document.getElementById('try'), o = document.getElementById('tryout');
+  function u(){ var r = applyPrefix(t.value, p); var added = r !== t.value.replace(/^\s+/, ''); o.innerHTML = (added ? '<span class="no">Prefix added</span>' : '<span class="yes">Already there, not added</span>') + ' → <b>' + esc(r) + '</b>'; }
+  t.addEventListener('input', u); u();
+}
+
+/* ---- Duplicate ---- */
+function renderDuplicate(){
+  var p = currentPrefix();
+  var which = window.__dup || 'with';
+  var src = which === 'with' ? applyPrefix('Your 5-minute market recap', p || 'From BPartners:') : 'Your 5-minute market recap';
+  var subj = DIR === 'b' ? subjectWidget(src, p, { noAuto: true }) : subjectWidget(src, p, { noAuto: true });
+  return appbar('Campaigns') + '<div class="body">' +
+    '<div class="list" style="margin-bottom:14px"><div class="lr lh"><span>Name</span><span>Subject</span><span>Status</span><span></span></div>' +
+    '<div class="lr"><span>September newsletter</span><span>' + hl(applyPrefix('Your 5-minute market recap', p || 'From BPartners:'), p) + '</span><span>Sent</span><span><button class="btn sm ghost" data-dup="with">Duplicate</button></span></div>' +
+    '<div class="lr"><span>June newsletter (before prefix)</span><span>Your 5-minute market recap</span><span>Sent</span><span><button class="btn sm ghost" data-dup="without">Duplicate</button></span></div></div>' +
+    '<div class="note info">A copy keeps the original subject exactly as it was. ' + (which === 'with' ? 'This one already had the prefix, so nothing changes.' : 'This one was sent before the prefix existed, so we don\'t add it on our own. ' + (DIR === 'b' ? 'Use “Add back” if you want it.' : 'One click adds it if you want it.')) + '</div>' +
+    campaignDialog('Edit campaign · October newsletter (Copy)', subj) + '</div>';
+}
+function bindDuplicate(){
+  Array.prototype.forEach.call(document.querySelectorAll('[data-dup]'), function(b){ b.onclick = function(){ window.__dup = b.getAttribute('data-dup'); route(); }; });
+  bindSubject();
+}
+
+/* ---- Long ---- */
+function renderLong(){
+  var p = currentPrefix();
+  return appbar('Campaigns') + '<div class="body">' +
+    '<div class="note info">The prefix uses part of the space inboxes show. “' + esc((p || '').trim()) + '” is ' + (p || '').trim().length + ' characters, so the rest of the subject has about ' + Math.max(0, DESK - (p || '').trim().length - 1) + ' on a computer and ' + Math.max(0, PHONE - (p || '').trim().length - 1) + ' on a phone. We warn, we never block.</div>' +
+    campaignDialog('New campaign', subjectWidget('Why High-Income Earners Need a Tax Plan Before Year-End (and 3 Mistakes to Avoid)', p), '') +
+    '<div class="acc" style="margin-top:14px"><h3>What people see <span></span></h3><div class="in"><div class="src">Computer inbox (about ' + DESK + ' characters)</div>' + inbox('') + '<div class="src" style="margin-top:12px">Phone</div>' + phoneInbox('') + '</div></div></div>';
+}
+
+/* ---- Phone ---- */
+function renderPhone(){
+  var p = currentPrefix();
+  var sw = subjectWidget('', p);
+  return '<div class="body"><div class="note info">Advisor on a phone (375px). Settings field stacks under From Name; the subject field keeps the prefix visible.</div>' +
+    '<div style="display:flex;gap:24px;flex-wrap:wrap;justify-content:center">' +
+    '<div class="phone mobile"><div class="bar">Settings</div><div style="padding:12px">' +
+    '<div class="f"><label>From Name</label><input value="' + esc(FROM) + '"></div>' +
+    '<div class="f"><label>Default subject prefix (optional)</label><input value="' + esc(p) + '" disabled style="background:#fff;color:#1e2a4a"><div class="help">Added to the start of new subjects.</div><div class="preview">Subjects will look like: <b><span class="px">' + esc(p.trim()) + '</span> Your subject</b></div></div></div></div>' +
+    '<div class="phone mobile"><div class="bar">New campaign</div><div style="padding:12px">' +
+    '<div class="f"><label>Campaign Name *</label><input value="October newsletter"></div>' + sw +
+    '<button class="btn" style="width:100%">Review and send</button></div></div></div></div>';
+}
+
+/* ---- side panel ---- */
+var DIRNOTE = {
+  a: '<b>Direction A · plain text (recommended).</b> The prefix is typed into the subject for you. Edit or delete it like any other text.',
+  b: '<b>Direction B · locked chip.</b> The prefix sits in front of the subject as a chip. It can\'t be half-edited; ✕ removes it for one campaign.',
+  c: '<b>Direction C · name + style.</b> Settings asks for a name and a style (From X: / X | / [X]). In the campaign it behaves like A.'
+};
+function side(screen){
+  var full = '';
+  var p = currentPrefix();
+  return '<div class="side"><div class="panel">' + DIRNOTE[DIR] + '</div>' +
+    (screen.indexOf('settings') === 0 || screen === 'phone' ? '' : '<div class="panel"><h4>Subject that will be saved</h4><div style="font-size:.88rem;font-weight:600" id="fullsubj"></div></div><div class="panel"><h4>Inbox preview</h4>' + inbox('') + '</div>') +
+    '<div class="panel"><h4>Rules shown here</h4><ul><li>Only <b>new</b> campaigns get the prefix. Existing drafts and sent campaigns are never changed.</li><li>No double prefix: capitals and extra spaces are ignored.</li><li>One space is added after the prefix. Colons or dashes are yours to type' + (DIR === 'c' ? ' (in C the style adds them)' : '') + '.</li><li>Test sends use the same subject with [TEST] in front, as today.</li></ul>' +
+    '<p style="margin:8px 0 0">Current prefix in this demo: <b>' + (p.trim() ? esc(p.trim()) : 'none') + '</b> · <a href="#settings">change</a></p></div></div>';
+}
+
+function route(){
+  var screen = (location.hash || '#settings').slice(1);
+  if (!screens.some(function(s){ return s[0] === screen; })) screen = 'settings';
+  document.getElementById('tabs').innerHTML = tabs(screen);
+  var main = document.getElementById('main'), sideEl = document.getElementById('side');
+  var r = {
+    'settings': [function(){ return renderSettings(false); }, function(){ bindSettings(false); }],
+    'settings-empty': [function(){ return renderSettings(true); }, function(){ bindSettings(true); }],
+    'new': [function(){ return renderNew(false); }, function(){ bindNew(false); }],
+    'new-unset': [function(){ var keep = S.prefix, kn = S.name; return renderNew(true); }, function(){ bindNew(true); }],
+    'already': [renderAlready, bindAlready],
+    'duplicate': [renderDuplicate, bindDuplicate],
+    'long': [renderLong, function(){ bindSubject(); }],
+    'phone': [renderPhone, function(){ bindSubject(); }]
+  }[screen];
+  main.innerHTML = '<div class="app">' + r[0]() + '</div>';
+  sideEl.innerHTML = side(screen);
+  r[1]();
+}
+window.addEventListener('hashchange', route);
+route();
+})();
+</script></body></html>

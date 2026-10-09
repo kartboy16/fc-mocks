@@ -1,0 +1,259 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>#458 · Build contract · FC mocks</title><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" /><style>
+body{font-family:Inter,system-ui,sans-serif;background:#f4f8fc;color:#1e2a4a;line-height:1.55;margin:0}
+.top{background:linear-gradient(135deg,#1e2a4a,#2b7de9);color:#fff;padding:12px 20px;font-size:.85rem;display:flex;flex-wrap:wrap;gap:6px 16px}.top a{color:#fff;font-weight:600;text-decoration:none;opacity:.85}.top a.on{opacity:1;text-decoration:underline}
+.wrap{max-width:900px;margin:20px auto 40px;padding:24px 22px 60px;background:#fff;border:1px solid #d4e4f2;border-radius:14px}
+h1{font-size:1.4rem;line-height:1.3}h2{font-size:1.05rem;margin-top:28px;border-bottom:1px solid #d4e4f2;padding-bottom:4px}h3{font-size:.95rem}
+a{color:#2b7de9;overflow-wrap:anywhere}code{background:#eef4fb;padding:1px 5px;border-radius:4px;font-size:.85em;overflow-wrap:anywhere}pre{background:#0f1a33;color:#e6eefc;padding:12px;border-radius:8px;overflow-x:auto}pre code{background:none;color:inherit}
+table{border-collapse:collapse;width:100%;font-size:.85rem;display:block;overflow-x:auto}th,td{border:1px solid #d4e4f2;padding:8px;text-align:left;vertical-align:top}th{background:#f0f7ff}li{margin-bottom:6px}
+@media(max-width:640px){.wrap{margin:0;border-radius:0;padding:16px 14px 48px}}
+</style></head><body><div class="top"><b>FC mocks · #458 Default subject prefix</b><a href="./" class="">← Hub</a><a href="./directions/a/" class="">Direction A (recommended)</a><a href="./directions/b/" class="">Direction B</a><a href="./directions/c/" class="">Direction C</a><a href="./build-contract.html" class="on">Build contract</a></div><div class="wrap"><h1>#458 · Default subject prefix: build contract</h1>
+<p><strong>Issue:</strong> <a href="https://github.com/kartboy16/content-library/issues/458">kartboy16/content-library#458</a> · <strong>Mock hub:</strong> https://kartboy16.github.io/fc-mocks/458/
+<strong>Status:</strong> Designer-first. <strong>Not agent-ready. Soft Dev hold until Alex picks.</strong>
+<strong>Recommended:</strong> Direction A (plain text prefix). Code references are from <code>main</code> @ <code>629afb3</code>.</p>
+<h2>1. What we're building</h2>
+<p>An optional <strong>Default subject prefix</strong> for each advisor account, in Email Campaigns → Settings → <em>Email Campaign From Settings</em>, right under From Name. When it's set, every <strong>new</strong> campaign subject starts with it. The subject stays fully editable per campaign, and the prefix is never added twice.</p>
+<p>Empty or unset = today's behaviour, byte for byte.</p>
+<h2>2. Field</h2>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Label</td>
+<td>Default subject prefix (optional)</td>
+</tr>
+<tr>
+<td>Placeholder</td>
+<td><code>e.g. From BPartners:</code></td>
+</tr>
+<tr>
+<td>Helper</td>
+<td>Added to the start of every new campaign subject. Include the colon or dash you want; we add one space after it. You can still change the subject on each campaign.</td>
+</tr>
+<tr>
+<td>Live preview</td>
+<td><code>Subjects will look like: From BPartners: Your subject</code> / empty: <code>No prefix set. Subjects look exactly as you type them.</code></td>
+</tr>
+<tr>
+<td>Max length</td>
+<td>40 characters (trimmed on save)</td>
+</tr>
+<tr>
+<td>Save</td>
+<td>Debounced autosave + "Saved" snackbar, same as From Name</td>
+</tr>
+<tr>
+<td>Placement</td>
+<td><code>imports/ui/EmailCampaigns/SESSettings.jsx</code>, <em>Email Campaign From Settings</em> accordion (From Name / From Email row ~L478–510); new row directly below From Name. Stacks on phone.</td>
+</tr>
+<tr>
+<td>Direction C only</td>
+<td>Two inputs instead: <strong>name</strong> (<code>BPartners</code>) + <strong>style</strong> radio <code>From X:</code> / <code>X \|</code> / <code>[X]</code>; stored as the rendered string plus <code>{name, style}</code></td>
+</tr>
+</tbody>
+</table>
+<h2>3. Storage</h2>
+<ul>
+<li>Today From Name for SES lives in <strong><code>AdvisorPreferences.fromName</code></strong> (<code>imports/collections/advisor_preferences.js</code>), written by <strong><code>ses.updateFromSettings</code></strong> (<code>server/ses-methods.js</code> ~L2431, which trims and <code>upsertAsync({ ownedBy }, { $set })</code>) and read in <code>SESSettings.jsx</code> L144 and in <code>CreateCampaign.jsx</code> L310/L322 (<code>preferences?.fromName ?? advisorConfig?.name</code>).</li>
+<li>Add <strong><code>AdvisorPreferences.defaultSubjectPrefix: String | null</code></strong> (trimmed; <code>''</code> → <code>null</code>). Write it through <code>ses.updateFromSettings</code> (add <code>defaultSubjectPrefix: Match.Optional(String)</code> to its payload check, max 40 chars) so it gets that method's auth and impersonation handling.</li>
+<li><strong>Do not</strong> save it through the generic <code>updateAdvisorPreferences</code> method: today it does <code>check(update, Object)</code> and <code>$set</code>s whatever it gets, with no user/ownership check (<code>advisor_preferences.js</code> L69–80). Worth tightening separately.</li>
+<li>Storing it on <code>AdvisorPreferences</code> rather than <code>MailChimpSettings</code> (Mailchimp's own <code>fromName</code>, <code>MailchimpSettings.jsx</code> L102) means it survives switching providers. See open question 6.</li>
+<li>Direction C: also store <code>defaultSubjectPrefixName</code>, <code>defaultSubjectPrefixStyle</code> (<code>from</code> | <code>bar</code> | <code>bracket</code>).</li>
+</ul>
+<h2>4. The apply rule (shared helper)</h2>
+<p>New file <code>imports/utils/subjectPrefix.js</code>, used on client <strong>and</strong> server, with unit tests in <code>tests/subject-prefix.test.js</code>.</p>
+<pre><code class="language-js">const norm = (s) =&gt; String(s || '').trim().replace(/\s+/g, ' ').toLowerCase();
+const core = (p) =&gt; norm(p).replace(/^[\[(]+/, '').replace(/[\s:|\-–—\])]+$/, '');
+
+export function hasSubjectPrefix(subject, prefix) {
+  const s = norm(subject), p = norm(prefix), c = core(prefix);
+  if (!p) return false;
+  if (s.startsWith(p)) return true;                  // exact (case/space-insensitive)
+  const sc = s.replace(/^[\[(]+/, '');
+  if (c &amp;&amp; sc.startsWith(c)) {                        // same name, different separator
+    const next = sc.charAt(c.length);
+    return next === '' || /[^a-z0-9]/.test(next);    // whole word only
+  }
+  return false;
+}
+
+export function applySubjectPrefix(subject, prefix) {
+  const p = String(prefix || '').trim();
+  const s = String(subject || '').replace(/^\s+/, '');
+  if (!p || hasSubjectPrefix(s, p)) return s;
+  return `${p} ${s}`;                                 // exactly one space
+}
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>Subject in (prefix <code>From BPartners:</code>)</th>
+<th>Result</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Why High-Income Earners…</code></td>
+<td><code>From BPartners: Why High-Income Earners…</code></td>
+</tr>
+<tr>
+<td><code>From BPartners: Why…</code></td>
+<td>unchanged</td>
+</tr>
+<tr>
+<td><code>FROM BPARTNERS:Why…</code></td>
+<td>unchanged (capitals ignored)</td>
+</tr>
+<tr>
+<td><code>from bpartners:   Why…</code></td>
+<td>unchanged (spaces ignored; leading spaces trimmed)</td>
+</tr>
+<tr>
+<td><code>From BPartners – Why…</code></td>
+<td>unchanged (same name, different separator)</td>
+</tr>
+<tr>
+<td><code>BPartnership news: …</code></td>
+<td>prefix added (not a whole-word match)</td>
+</tr>
+<tr>
+<td>`` (blank)</td>
+<td><code>From BPartners:</code> (cursor after the space)</td>
+</tr>
+</tbody>
+</table>
+<p>This is a bit looser than the issue's "exact match at start" on purpose: an advisor pasting <code>FROM BPARTNERS:</code> shouldn't get it twice. If Alex wants strict exact match, drop the <code>core</code> branch and the lowercasing. That's a one-line change.</p>
+<h2>5. Where campaigns get created, and who gets the prefix</h2>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>Path (file)</th>
+<th>How it creates</th>
+<th>Prefix? (recommended)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td><strong>Blank new campaign:</strong> Campaigns → Create (<code>imports/ui/EmailCampaigns/SESCampaignsList.jsx</code>, subject field ~L2457, <code>executeCreateCampaign</code> → <code>ses.createCampaign</code> L859)</td>
+<td>Client form</td>
+<td><strong>Yes:</strong> pre-fill the subject with <code>prefix + ' '</code> when the dialog opens, visible and editable</td>
+</tr>
+<tr>
+<td>2</td>
+<td><strong>Email this post</strong> (Content Library → <code>CreateCampaign</code> with <code>initialSubject={post.name…}</code>, <code>imports/ui/ContentLibrary.jsx</code> L5215–5238)</td>
+<td><code>CreateCampaign.jsx</code> <code>useEffect</code> L295–330 (<code>if (!campaignId)</code> branch)</td>
+<td><strong>Yes:</strong> <code>applySubjectPrefix(initialSubject, prefix)</code> in the new-campaign branch only</td>
+</tr>
+<tr>
+<td>3</td>
+<td><strong>Infographic → email</strong> (<code>ContentLibrary.jsx</code> L5250–5273 → <code>CreateCampaign</code>; inline fallback <code>imports/ui/infographicActions.js</code> L203 <code>ses.createCampaign</code>)</td>
+<td>Client form / direct call</td>
+<td><strong>Yes</strong> (form: pre-fill; inline: server rule, see 7)</td>
+</tr>
+<tr>
+<td>4</td>
+<td><strong>Admin distribute</strong> (Content Library distribute, <code>ContentLibrary.jsx</code> L2478/L2510 <code>ses.createCampaign</code>; Mailchimp <code>mailchimp.addScheduledEmailCampaignInternal</code> L2443)</td>
+<td>Admin, direct call</td>
+<td><strong>Yes, server-side</strong> (open question 1)</td>
+</tr>
+<tr>
+<td>5</td>
+<td><strong>Suggested posts / admin distribution dialog</strong> (<code>imports/ui/admin/AdminPostDistributionDialog.jsx</code> L429/L462 → <code>postSuggestions.createCampaignForUser</code>, <code>server/api/post-suggestions.js</code> L840 → <code>createCampaignForAdvisor</code>, <code>server/mailchimp/content-campaign-helper.js</code> L97)</td>
+<td>Server</td>
+<td><strong>Yes, server-side</strong> (open question 1). The admin-side <code>CreateCampaign</code> opened at <code>AdminPostDistributionDialog.jsx</code> L678/L691 should pre-fill the prefixed subject</td>
+</tr>
+<tr>
+<td>6</td>
+<td><strong>Duplicate</strong> (<code>SESCampaignsList.jsx</code> L1262 → <code>ses.duplicateCampaign</code>, <code>server/ses-methods.js</code> L1960, copies <code>src.subject</code>)</td>
+<td>Server</td>
+<td><strong>No.</strong> A copy keeps the original subject exactly. If it lacks the prefix, the editor shows "Add 'From BPartners:'" (A/C) or "Add back" (B). Pass <code>skipSubjectPrefix: true</code> so the server rule doesn't add it</td>
+</tr>
+<tr>
+<td>7</td>
+<td><strong>Edit existing draft / scheduled</strong> (<code>SESCampaignsList.jsx</code> L2829 <code>CreateCampaign campaignId=…</code>, <code>initialSubject={campaignToEdit.subject}</code>)</td>
+<td>Client form</td>
+<td><strong>No.</strong> Never touch existing campaigns</td>
+</tr>
+<tr>
+<td>8</td>
+<td><strong>Mailchimp create dialog</strong> (<code>imports/ui/EmailCampaigns/mailchimp/MailchimpCreateCampaignDialog.jsx</code> L98/L226/L254)</td>
+<td>Client form</td>
+<td>Open question 6 (recommended yes, same pre-fill, for new only)</td>
+</tr>
+<tr>
+<td>9</td>
+<td><strong>Sent campaigns / [TEST] sends / compliance copy</strong> (<code>server/ses-methods.js</code> L2742 <code>[TEST] ${subject}</code>; <code>server/mailchimp/pipeline-runners.js</code> L129 <code>[Compliance Review] ${subject}</code>)</td>
+<td>Server</td>
+<td>Unchanged: they wrap the already-saved subject, so they show <code>[TEST] From BPartners: …</code></td>
+</tr>
+</tbody>
+</table>
+<p>"Templates": FTT Mail (SES) has no saved-template picker today. New campaigns come from blank, a post, an infographic, admin distribute/suggestions or duplicate. Mailchimp's dialog loads a stub/template subject (row 8).</p>
+<h2>6. UI behaviour by direction</h2>
+<p><strong>A · Plain text (recommended)</strong>
+- The subject input is pre-filled with <code>From BPartners:</code> and the cursor sits at the end.
+- Helper: "Starts with your prefix from Settings. You can edit or delete it like any other text."
+- If the advisor removes it, the helper changes to "Doesn't start with your prefix. That's fine, it's your call. <strong>Add 'From BPartners:'</strong>" (one click, no double).
+- Saved subject = exactly what's in the box.</p>
+<p><strong>B · Locked chip</strong>
+- Chip <code>From BPartners:</code> ✕ sits before the input; the input holds only the rest.
+- Saved subject = <code>chip + ' ' + rest</code> (when the chip is on) or <code>rest</code>.
+- If the advisor types or pastes the prefix into the input, the chip turns off automatically ("already starts with it, we won't add it twice").
+- ✕ = this campaign only; "Add 'From BPartners:' back" restores it.
+- Needs a <code>subjectPrefixApplied: Boolean</code> on the campaign so re-opening a draft shows the chip again (or derive it from <code>hasSubjectPrefix</code>).</p>
+<p><strong>C · Name + style</strong>
+- Settings: name + style radio + preview. Prefix = <code>From {name}:</code> / <code>{name} |</code> / <code>[{name}]</code>.
+- The campaign editor works the same as A.</p>
+<p><strong>All directions</strong>
+- Character counter under the subject: "N characters".
+- More than 38: "Phones may cut it off after about 38 characters."
+- More than 60: "Long subject: inboxes usually cut it off after about 60 characters." This is a warning only and never blocks sending.
+- The inbox preview in the mock shows the cut-off.
+- Phone (≤600px): the Settings field stacks under From Name and the subject field keeps the prefix visible (B's chip doesn't wrap).</p>
+<h2>7. Server rule (for paths with no subject box)</h2>
+<p>In <code>createSESCampaign</code> (<code>server/ses-methods.js</code> L810) and <code>createMailchimpCampaignFromContent</code> (<code>content-campaign-helper.js</code>):</p>
+<pre><code class="language-js">const prefs = await AdvisorPreferences.findOneAsync({ ownedBy: advisorId }, { fields: { defaultSubjectPrefix: 1 } });
+if (!campaignData.skipSubjectPrefix &amp;&amp; prefs?.defaultSubjectPrefix) {
+  doc.subject = applySubjectPrefix(campaignData.subject, prefs.defaultSubjectPrefix);
+}
+</code></pre>
+<ul>
+<li>Add <code>skipSubjectPrefix: Match.Optional(Boolean)</code> to the checks in <code>ses.createCampaign</code> (L1604) and <code>postSuggestions.createCampaignForUser</code> (L840).</li>
+<li>Because the helper is idempotent, client pre-fill and the server rule can't double up. The server rule is therefore safe to run on every create except duplicate (<code>skipSubjectPrefix: true</code>). If the advisor deliberately deleted the prefix in the form (A/C) or clicked ✕ (B), the client must also send <code>skipSubjectPrefix: true</code>.</li>
+<li><code>ses.updateCampaign</code> and other edit paths never apply the prefix.</li>
+</ul>
+<h2>8. Acceptance checks (in addition to the issue's)</h2>
+<ol>
+<li>Prefix unset → every create path produces the same subject as today (tests for rows 1–6).</li>
+<li>Prefix <code>From BPartners:</code> + blank campaign → subject box shows <code>From BPartners:</code> and saves what the advisor typed.</li>
+<li>Post titled <code>From BPartners: X</code> → saved <code>From BPartners: X</code> (no double); <code>FROM BPARTNERS:X</code> → unchanged.</li>
+<li>Duplicate of a pre-prefix campaign → subject unchanged; one click adds the prefix.</li>
+<li>Changing or clearing the prefix in Settings does not modify any existing draft, scheduled or sent campaign.</li>
+<li>Advisor deletes the prefix in the form → saved without it (server doesn't re-add).</li>
+<li><code>[TEST]</code> send subject = <code>[TEST]</code> + saved subject.</li>
+<li>Unit tests for <code>applySubjectPrefix</code> cover every row of the table in §4.</li>
+</ol>
+<h2>9. Open questions (for Alex)</h2>
+<ol>
+<li><strong>Which new campaigns get it?</strong> Recommended: all new campaigns for the account, including ones FTT prepares (Suggested posts, Content Library distribute). Duplicates keep their subject.</li>
+<li><strong>Changing the prefix later:</strong> recommended to leave existing drafts and scheduled campaigns alone. New ones only.</li>
+<li><strong>Per account vs per firm/admin-set:</strong> recommended per advisor account, editable by the advisor and by FTT while impersonating. A firm-level default is a later add.</li>
+<li><strong>Separator:</strong> A/B store exactly what's typed plus one space. Add a colon automatically if it's missing? (C solves this with a style picker.)</li>
+<li><strong>Preheader / test sends:</strong> FTT Mail has no preheader field today, so nothing to do. Test sends keep <code>[TEST]</code> in front of the full subject.</li>
+<li><strong>Mailchimp accounts:</strong> same setting for Mailchimp-provider accounts too, or FTT Mail (SES) only for v1?</li>
+<li><strong>Matching:</strong> OK with the looser "same name, any capitals/spaces/separator" match, or strict exact match as written in the issue?</li>
+</ol>
+<h2>10. Out of scope</h2>
+<ul>
+<li>Rewriting subjects on sent campaigns.</li>
+<li>Bulk-updating drafts.</li>
+<li>Making the prefix required.</li>
+<li>Prefixing preheaders.</li>
+</ul><p><a href="build-contract.md">Raw markdown</a></p></div></body></html>
