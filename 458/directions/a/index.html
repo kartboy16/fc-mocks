@@ -73,7 +73,7 @@ table.t{border-collapse:collapse;width:100%;font-size:.78rem}table.t th,table.t 
 <script>(function(){
 var DIR = document.body.getAttribute('data-dir');
 var KEY = 'fc458-' + DIR;
-var S = { prefix: 'From BPartners:', name: 'BPartners', style: 'from' };
+var S = { prefix: 'From Your Firm Name:', name: 'Your Firm Name', style: 'from' };
 try { var saved = JSON.parse(localStorage.getItem(KEY) || 'null'); if (saved) S = Object.assign(S, saved); } catch (e) {}
 function save(){ try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) {} }
 function esc(s){ return String(s).replace(/[&<>"]/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); }
@@ -106,7 +106,7 @@ function styled(name, style){
 function currentPrefix(){ return DIR === 'c' ? styled(S.name, S.style) : S.prefix; }
 window.FC458 = { norm: norm, hasPrefix: hasPrefix, applyPrefix: applyPrefix };
 
-var FROM = 'Morgan Lee | BPartners';
+var FROM = 'Jane Advisor | Your Firm Name';
 var POST = 'Why High-Income Earners Need a Tax Plan Before Year-End';
 var DESK = 60, PHONE = 38;
 
@@ -158,17 +158,17 @@ function settingsField(empty){
   var p = empty ? '' : currentPrefix();
   if (DIR === 'c') {
     var name = empty ? '' : S.name;
-    var opts = [['from','From BPartners:'],['bar','BPartners |'],['bracket','[BPartners]']];
+    var opts = [['from','From Your Firm Name:'],['bar','Your Firm Name |'],['bracket','[Your Firm Name]']];
     return '<div class="f new" style="flex-basis:100%">' +
       '<label>Default subject prefix (optional)</label>' +
-      '<div class="row"><div class="f" style="max-width:280px;margin:0"><input id="pname" placeholder="Your name or firm, e.g. BPartners" value="' + esc(name) + '" maxlength="30"></div>' +
-      '<div class="styleopt" id="pstyle">' + opts.map(function(o){ return '<label class="' + (S.style === o[0] ? 'on' : '') + '"><input type="radio" name="st" value="' + o[0] + '"' + (S.style === o[0] ? ' checked' : '') + '> ' + esc(o[1].replace('BPartners', name || 'Name')) + '</label>'; }).join('') + '</div></div>' +
+      '<div class="row"><div class="f" style="max-width:280px;margin:0"><input id="pname" placeholder="Your name or firm, e.g. Your Firm Name" value="' + esc(name) + '" maxlength="30"></div>' +
+      '<div class="styleopt" id="pstyle">' + opts.map(function(o){ return '<label class="' + (S.style === o[0] ? 'on' : '') + '"><input type="radio" name="st" value="' + o[0] + '"' + (S.style === o[0] ? ' checked' : '') + '> ' + esc(o[1].replace('Your Firm Name', name || 'Name')) + '</label>'; }).join('') + '</div></div>' +
       '<div class="help">Pick how it reads. We add it to the start of every new campaign subject. You can still change the subject on each campaign.</div>' +
       '<div class="preview" id="pprev"></div></div>';
   }
   return '<div class="f new" style="flex:1;min-width:220px">' +
     '<label for="prefix">Default subject prefix (optional)</label>' +
-    '<input id="prefix" maxlength="40" placeholder="e.g. From BPartners:" value="' + esc(p) + '">' +
+    '<input id="prefix" maxlength="40" placeholder="e.g. From Your Firm Name:" value="' + esc(p) + '">' +
     '<div class="help">Added to the start of every new campaign subject. Include the colon or dash you want; we add one space after it. You can still change the subject on each campaign.</div>' +
     '<div class="preview" id="pprev"></div></div>';
 }
@@ -178,7 +178,7 @@ function renderSettings(empty){
     '<div class="acc"><h3>Email Campaign From Settings <span>▾</span></h3><div class="in">' +
     '<div style="font-size:.82rem;color:#5b6572;margin-bottom:12px">Set the sender name and email for your campaigns</div>' +
     '<div class="row"><div class="f"><label>From Name</label><input value="' + esc(FROM) + '"></div>' +
-    '<div class="f"><label>From Email</label><input disabled value="morgan.lee.bpartners@financialcontent.ca"></div></div>' +
+    '<div class="f"><label>From Email</label><input disabled value="jane.advisor@financialcontent.ca"></div></div>' +
     '<div class="row">' + settingsField(empty) + (DIR === 'c' ? '' : '<div class="f" style="flex:1;min-width:220px"></div>') + '</div>' +
     '<div class="note ok" id="saved" style="display:none">Saved</div>' +
     '</div></div>' +
@@ -273,7 +273,7 @@ function campaignDialog(title, subjectHtml, sourceNote){
   return '<div class="dlg"><div class="dh">' + title + '<span>✕</span></div><div class="db">' + (sourceNote || '') +
     '<div class="f"><label>Campaign Name *</label><input value="' + esc(title.indexOf('Copy') > -1 ? 'October newsletter (Copy)' : 'October newsletter') + '"></div>' +
     subjectHtml +
-    '<div class="row"><div class="f"><label>From Name</label><input value="' + esc(FROM) + '"></div><div class="f"><label>From Email</label><input disabled value="morgan.lee.bpartners@financialcontent.ca"></div></div>' +
+    '<div class="row"><div class="f"><label>From Name</label><input value="' + esc(FROM) + '"></div><div class="f"><label>From Email</label><input disabled value="jane.advisor@financialcontent.ca"></div></div>' +
     '<div class="f"><label>Send to</label><select><option>All subscribers (412)</option></select></div>' +
     '<div style="display:flex;gap:8px;justify-content:flex-end"><button class="btn ghost">Send test</button><button class="btn ghost">Save draft</button><button class="btn">Review and send</button></div>' +
     '</div></div>';
@@ -297,13 +297,13 @@ function bindNew(unset){
 
 /* ---- Already prefixed ---- */
 function renderAlready(){
-  var p = currentPrefix() || 'From BPartners:';
+  var p = currentPrefix() || 'From Your Firm Name:';
   var cases = [
     p.trim() + ' ' + POST,
     p.trim().toUpperCase() + POST,
     '  ' + p.trim().toLowerCase() + '   ' + POST,
-    (DIR === 'c' && S.style !== 'from') ? p.replace(/[:|\]]/g, '').replace('[', '') + ' – ' + POST : 'From BPartners – ' + POST,
-    'BPartnership news: ' + POST,
+    (DIR === 'c' && S.style !== 'from') ? p.replace(/[:|\]]/g, '').replace('[', '') + ' – ' + POST : 'From Your Firm Name – ' + POST,
+    'YourFirmNamePlus news: ' + POST,
     POST
   ];
   var rows = cases.map(function(c){
@@ -314,12 +314,12 @@ function renderAlready(){
     '<div class="note info">The post title already starts with the prefix (for example, it was written for this firm). We don\'t add it a second time.</div>' +
     campaignDialog('New campaign', subjectWidget(p.trim() + ' ' + POST, p), '<div class="src">Started from: Email this post (Content Library) · post title “' + esc(p.trim() + ' ' + POST) + '”</div>') +
     '<div class="acc" style="margin-top:18px"><h3>How we decide “already starts with it” <span></span></h3><div class="in">' +
-    '<ul style="font-size:.8rem;margin:0 0 10px;padding-left:18px"><li>Capitals don\'t matter (FROM BPARTNERS: = From BPartners:).</li><li>Extra spaces at the start or in the middle don\'t matter.</li><li>A different separator still counts if the name matches as a whole word (From BPartners – …).</li><li>A longer word that only starts the same way does not count (BPartnership…).</li></ul>' +
-    '<div class="f" style="margin-bottom:8px"><label>Try a subject</label><input id="try" value="from bpartners:   Year-end checklist"></div><div class="preview" id="tryout"></div>' +
+    '<ul style="font-size:.8rem;margin:0 0 10px;padding-left:18px"><li>Capitals don\'t matter (FROM YOUR FIRM NAME: = From Your Firm Name:).</li><li>Extra spaces at the start or in the middle don\'t matter.</li><li>A different separator still counts if the name matches as a whole word (From Your Firm Name – …).</li><li>A longer word that only starts the same way does not count (YourFirmNamePlus…).</li></ul>' +
+    '<div class="f" style="margin-bottom:8px"><label>Try a subject</label><input id="try" value="from your firm name:   Year-end checklist"></div><div class="preview" id="tryout"></div>' +
     '<table class="t" style="margin-top:12px"><tr><th>Subject coming in (prefix = “' + esc(p.trim()) + '”)</th><th>Prefix</th><th>Subject saved</th></tr>' + rows + '</table></div></div></div>';
 }
 function bindAlready(){
-  var p = currentPrefix() || 'From BPartners:';
+  var p = currentPrefix() || 'From Your Firm Name:';
   bindSubject();
   var t = document.getElementById('try'), o = document.getElementById('tryout');
   function u(){ var r = applyPrefix(t.value, p); var added = r !== t.value.replace(/^\s+/, ''); o.innerHTML = (added ? '<span class="no">Prefix added</span>' : '<span class="yes">Already there, not added</span>') + ' → <b>' + esc(r) + '</b>'; }
@@ -330,11 +330,11 @@ function bindAlready(){
 function renderDuplicate(){
   var p = currentPrefix();
   var which = window.__dup || 'with';
-  var src = which === 'with' ? applyPrefix('Your 5-minute market recap', p || 'From BPartners:') : 'Your 5-minute market recap';
+  var src = which === 'with' ? applyPrefix('Your 5-minute market recap', p || 'From Your Firm Name:') : 'Your 5-minute market recap';
   var subj = DIR === 'b' ? subjectWidget(src, p, { noAuto: true }) : subjectWidget(src, p, { noAuto: true });
   return appbar('Campaigns') + '<div class="body">' +
     '<div class="list" style="margin-bottom:14px"><div class="lr lh"><span>Name</span><span>Subject</span><span>Status</span><span></span></div>' +
-    '<div class="lr"><span>September newsletter</span><span>' + hl(applyPrefix('Your 5-minute market recap', p || 'From BPartners:'), p) + '</span><span>Sent</span><span><button class="btn sm ghost" data-dup="with">Duplicate</button></span></div>' +
+    '<div class="lr"><span>September newsletter</span><span>' + hl(applyPrefix('Your 5-minute market recap', p || 'From Your Firm Name:'), p) + '</span><span>Sent</span><span><button class="btn sm ghost" data-dup="with">Duplicate</button></span></div>' +
     '<div class="lr"><span>June newsletter (before prefix)</span><span>Your 5-minute market recap</span><span>Sent</span><span><button class="btn sm ghost" data-dup="without">Duplicate</button></span></div></div>' +
     '<div class="note info">A copy keeps the original subject exactly as it was. ' + (which === 'with' ? 'This one already had the prefix, so nothing changes.' : 'This one was sent before the prefix existed, so we don\'t add it on our own. ' + (DIR === 'b' ? 'Use “Add back” if you want it.' : 'One click adds it if you want it.')) + '</div>' +
     campaignDialog('Edit campaign · October newsletter (Copy)', subj) + '</div>';

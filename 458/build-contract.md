@@ -15,13 +15,13 @@ Empty or unset = today's behaviour, byte for byte.
 | | |
 |---|---|
 | Label | Default subject prefix (optional) |
-| Placeholder | `e.g. From BPartners:` |
+| Placeholder | `e.g. From Your Firm Name:` |
 | Helper | Added to the start of every new campaign subject. Include the colon or dash you want; we add one space after it. You can still change the subject on each campaign. |
-| Live preview | `Subjects will look like: From BPartners: Your subject` / empty: `No prefix set. Subjects look exactly as you type them.` |
+| Live preview | `Subjects will look like: From Your Firm Name: Your subject` / empty: `No prefix set. Subjects look exactly as you type them.` |
 | Max length | 40 characters (trimmed on save) |
 | Save | Debounced autosave + "Saved" snackbar, same as From Name |
 | Placement | `imports/ui/EmailCampaigns/SESSettings.jsx`, *Email Campaign From Settings* accordion (From Name / From Email row ~L478–510); new row directly below From Name. Stacks on phone. |
-| Direction C only | Two inputs instead: **name** (`BPartners`) + **style** radio `From X:` / `X \|` / `[X]`; stored as the rendered string plus `{name, style}` |
+| Direction C only | Two inputs instead: **name** (`Your Firm Name`) + **style** radio `From X:` / `X \|` / `[X]`; stored as the rendered string plus `{name, style}` |
 
 ## 3. Storage
 
@@ -59,17 +59,17 @@ export function applySubjectPrefix(subject, prefix) {
 }
 ```
 
-| Subject in (prefix `From BPartners:`) | Result |
+| Subject in (prefix `From Your Firm Name:`) | Result |
 |---|---|
-| `Why High-Income Earners…` | `From BPartners: Why High-Income Earners…` |
-| `From BPartners: Why…` | unchanged |
-| `FROM BPARTNERS:Why…` | unchanged (capitals ignored) |
-| `  from bpartners:   Why…` | unchanged (spaces ignored; leading spaces trimmed) |
-| `From BPartners – Why…` | unchanged (same name, different separator) |
-| `BPartnership news: …` | prefix added (not a whole-word match) |
-| `` (blank) | `From BPartners: ` (cursor after the space) |
+| `Why High-Income Earners…` | `From Your Firm Name: Why High-Income Earners…` |
+| `From Your Firm Name: Why…` | unchanged |
+| `FROM YOUR FIRM NAME:Why…` | unchanged (capitals ignored) |
+| `  from your firm name:   Why…` | unchanged (spaces ignored; leading spaces trimmed) |
+| `From Your Firm Name – Why…` | unchanged (same name, different separator) |
+| `YourFirmNamePlus news: …` | prefix added (not a whole-word match) |
+| `` (blank) | `From Your Firm Name: ` (cursor after the space) |
 
-This is a bit looser than the issue's "exact match at start" on purpose: an advisor pasting `FROM BPARTNERS:` shouldn't get it twice. If Alex wants strict exact match, drop the `core` branch and the lowercasing. That's a one-line change.
+This is a bit looser than the issue's "exact match at start" on purpose: an advisor pasting `FROM YOUR FIRM NAME:` shouldn't get it twice. If Alex wants strict exact match, drop the `core` branch and the lowercasing. That's a one-line change.
 
 ## 5. Where campaigns get created, and who gets the prefix
 
@@ -80,26 +80,26 @@ This is a bit looser than the issue's "exact match at start" on purpose: an advi
 | 3 | **Infographic → email** (`ContentLibrary.jsx` L5250–5273 → `CreateCampaign`; inline fallback `imports/ui/infographicActions.js` L203 `ses.createCampaign`) | Client form / direct call | **Yes** (form: pre-fill; inline: server rule, see 7) |
 | 4 | **Admin distribute** (Content Library distribute, `ContentLibrary.jsx` L2478/L2510 `ses.createCampaign`; Mailchimp `mailchimp.addScheduledEmailCampaignInternal` L2443) | Admin, direct call | **Yes, server-side** (open question 1) |
 | 5 | **Suggested posts / admin distribution dialog** (`imports/ui/admin/AdminPostDistributionDialog.jsx` L429/L462 → `postSuggestions.createCampaignForUser`, `server/api/post-suggestions.js` L840 → `createCampaignForAdvisor`, `server/mailchimp/content-campaign-helper.js` L97) | Server | **Yes, server-side** (open question 1). The admin-side `CreateCampaign` opened at `AdminPostDistributionDialog.jsx` L678/L691 should pre-fill the prefixed subject |
-| 6 | **Duplicate** (`SESCampaignsList.jsx` L1262 → `ses.duplicateCampaign`, `server/ses-methods.js` L1960, copies `src.subject`) | Server | **No.** A copy keeps the original subject exactly. If it lacks the prefix, the editor shows "Add 'From BPartners:'" (A/C) or "Add back" (B). Pass `skipSubjectPrefix: true` so the server rule doesn't add it |
+| 6 | **Duplicate** (`SESCampaignsList.jsx` L1262 → `ses.duplicateCampaign`, `server/ses-methods.js` L1960, copies `src.subject`) | Server | **No.** A copy keeps the original subject exactly. If it lacks the prefix, the editor shows "Add 'From Your Firm Name:'" (A/C) or "Add back" (B). Pass `skipSubjectPrefix: true` so the server rule doesn't add it |
 | 7 | **Edit existing draft / scheduled** (`SESCampaignsList.jsx` L2829 `CreateCampaign campaignId=…`, `initialSubject={campaignToEdit.subject}`) | Client form | **No.** Never touch existing campaigns |
 | 8 | **Mailchimp create dialog** (`imports/ui/EmailCampaigns/mailchimp/MailchimpCreateCampaignDialog.jsx` L98/L226/L254) | Client form | Open question 6 (recommended yes, same pre-fill, for new only) |
-| 9 | **Sent campaigns / [TEST] sends / compliance copy** (`server/ses-methods.js` L2742 `[TEST] ${subject}`; `server/mailchimp/pipeline-runners.js` L129 `[Compliance Review] ${subject}`) | Server | Unchanged: they wrap the already-saved subject, so they show `[TEST] From BPartners: …` |
+| 9 | **Sent campaigns / [TEST] sends / compliance copy** (`server/ses-methods.js` L2742 `[TEST] ${subject}`; `server/mailchimp/pipeline-runners.js` L129 `[Compliance Review] ${subject}`) | Server | Unchanged: they wrap the already-saved subject, so they show `[TEST] From Your Firm Name: …` |
 
 "Templates": FTT Mail (SES) has no saved-template picker today. New campaigns come from blank, a post, an infographic, admin distribute/suggestions or duplicate. Mailchimp's dialog loads a stub/template subject (row 8).
 
 ## 6. UI behaviour by direction
 
 **A · Plain text (recommended)**
-- The subject input is pre-filled with `From BPartners: ` and the cursor sits at the end.
+- The subject input is pre-filled with `From Your Firm Name: ` and the cursor sits at the end.
 - Helper: "Starts with your prefix from Settings. You can edit or delete it like any other text."
-- If the advisor removes it, the helper changes to "Doesn't start with your prefix. That's fine, it's your call. **Add 'From BPartners:'**" (one click, no double).
+- If the advisor removes it, the helper changes to "Doesn't start with your prefix. That's fine, it's your call. **Add 'From Your Firm Name:'**" (one click, no double).
 - Saved subject = exactly what's in the box.
 
 **B · Locked chip**
-- Chip `From BPartners:` ✕ sits before the input; the input holds only the rest.
+- Chip `From Your Firm Name:` ✕ sits before the input; the input holds only the rest.
 - Saved subject = `chip + ' ' + rest` (when the chip is on) or `rest`.
 - If the advisor types or pastes the prefix into the input, the chip turns off automatically ("already starts with it, we won't add it twice").
-- ✕ = this campaign only; "Add 'From BPartners:' back" restores it.
+- ✕ = this campaign only; "Add 'From Your Firm Name:' back" restores it.
 - Needs a `subjectPrefixApplied: Boolean` on the campaign so re-opening a draft shows the chip again (or derive it from `hasSubjectPrefix`).
 
 **C · Name + style**
@@ -131,8 +131,8 @@ if (!campaignData.skipSubjectPrefix && prefs?.defaultSubjectPrefix) {
 ## 8. Acceptance checks (in addition to the issue's)
 
 1. Prefix unset → every create path produces the same subject as today (tests for rows 1–6).
-2. Prefix `From BPartners:` + blank campaign → subject box shows `From BPartners: ` and saves what the advisor typed.
-3. Post titled `From BPartners: X` → saved `From BPartners: X` (no double); `FROM BPARTNERS:X` → unchanged.
+2. Prefix `From Your Firm Name:` + blank campaign → subject box shows `From Your Firm Name: ` and saves what the advisor typed.
+3. Post titled `From Your Firm Name: X` → saved `From Your Firm Name: X` (no double); `FROM YOUR FIRM NAME:X` → unchanged.
 4. Duplicate of a pre-prefix campaign → subject unchanged; one click adds the prefix.
 5. Changing or clearing the prefix in Settings does not modify any existing draft, scheduled or sent campaign.
 6. Advisor deletes the prefix in the form → saved without it (server doesn't re-add).

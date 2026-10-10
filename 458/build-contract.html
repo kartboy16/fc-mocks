@@ -29,7 +29,7 @@ table{border-collapse:collapse;width:100%;font-size:.85rem;display:block;overflo
 </tr>
 <tr>
 <td>Placeholder</td>
-<td><code>e.g. From BPartners:</code></td>
+<td><code>e.g. From Your Firm Name:</code></td>
 </tr>
 <tr>
 <td>Helper</td>
@@ -37,7 +37,7 @@ table{border-collapse:collapse;width:100%;font-size:.85rem;display:block;overflo
 </tr>
 <tr>
 <td>Live preview</td>
-<td><code>Subjects will look like: From BPartners: Your subject</code> / empty: <code>No prefix set. Subjects look exactly as you type them.</code></td>
+<td><code>Subjects will look like: From Your Firm Name: Your subject</code> / empty: <code>No prefix set. Subjects look exactly as you type them.</code></td>
 </tr>
 <tr>
 <td>Max length</td>
@@ -53,7 +53,7 @@ table{border-collapse:collapse;width:100%;font-size:.85rem;display:block;overflo
 </tr>
 <tr>
 <td>Direction C only</td>
-<td>Two inputs instead: <strong>name</strong> (<code>BPartners</code>) + <strong>style</strong> radio <code>From X:</code> / <code>X \|</code> / <code>[X]</code>; stored as the rendered string plus <code>{name, style}</code></td>
+<td>Two inputs instead: <strong>name</strong> (<code>Your Firm Name</code>) + <strong>style</strong> radio <code>From X:</code> / <code>X \|</code> / <code>[X]</code>; stored as the rendered string plus <code>{name, style}</code></td>
 </tr>
 </tbody>
 </table>
@@ -92,42 +92,42 @@ export function applySubjectPrefix(subject, prefix) {
 <table>
 <thead>
 <tr>
-<th>Subject in (prefix <code>From BPartners:</code>)</th>
+<th>Subject in (prefix <code>From Your Firm Name:</code>)</th>
 <th>Result</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td><code>Why High-Income Earners…</code></td>
-<td><code>From BPartners: Why High-Income Earners…</code></td>
+<td><code>From Your Firm Name: Why High-Income Earners…</code></td>
 </tr>
 <tr>
-<td><code>From BPartners: Why…</code></td>
+<td><code>From Your Firm Name: Why…</code></td>
 <td>unchanged</td>
 </tr>
 <tr>
-<td><code>FROM BPARTNERS:Why…</code></td>
+<td><code>FROM YOUR FIRM NAME:Why…</code></td>
 <td>unchanged (capitals ignored)</td>
 </tr>
 <tr>
-<td><code>from bpartners:   Why…</code></td>
+<td><code>from your firm name:   Why…</code></td>
 <td>unchanged (spaces ignored; leading spaces trimmed)</td>
 </tr>
 <tr>
-<td><code>From BPartners – Why…</code></td>
+<td><code>From Your Firm Name – Why…</code></td>
 <td>unchanged (same name, different separator)</td>
 </tr>
 <tr>
-<td><code>BPartnership news: …</code></td>
+<td><code>YourFirmNamePlus news: …</code></td>
 <td>prefix added (not a whole-word match)</td>
 </tr>
 <tr>
 <td>`` (blank)</td>
-<td><code>From BPartners:</code> (cursor after the space)</td>
+<td><code>From Your Firm Name:</code> (cursor after the space)</td>
 </tr>
 </tbody>
 </table>
-<p>This is a bit looser than the issue's "exact match at start" on purpose: an advisor pasting <code>FROM BPARTNERS:</code> shouldn't get it twice. If Alex wants strict exact match, drop the <code>core</code> branch and the lowercasing. That's a one-line change.</p>
+<p>This is a bit looser than the issue's "exact match at start" on purpose: an advisor pasting <code>FROM YOUR FIRM NAME:</code> shouldn't get it twice. If Alex wants strict exact match, drop the <code>core</code> branch and the lowercasing. That's a one-line change.</p>
 <h2>5. Where campaigns get created, and who gets the prefix</h2>
 <table>
 <thead>
@@ -173,7 +173,7 @@ export function applySubjectPrefix(subject, prefix) {
 <td>6</td>
 <td><strong>Duplicate</strong> (<code>SESCampaignsList.jsx</code> L1262 → <code>ses.duplicateCampaign</code>, <code>server/ses-methods.js</code> L1960, copies <code>src.subject</code>)</td>
 <td>Server</td>
-<td><strong>No.</strong> A copy keeps the original subject exactly. If it lacks the prefix, the editor shows "Add 'From BPartners:'" (A/C) or "Add back" (B). Pass <code>skipSubjectPrefix: true</code> so the server rule doesn't add it</td>
+<td><strong>No.</strong> A copy keeps the original subject exactly. If it lacks the prefix, the editor shows "Add 'From Your Firm Name:'" (A/C) or "Add back" (B). Pass <code>skipSubjectPrefix: true</code> so the server rule doesn't add it</td>
 </tr>
 <tr>
 <td>7</td>
@@ -191,22 +191,22 @@ export function applySubjectPrefix(subject, prefix) {
 <td>9</td>
 <td><strong>Sent campaigns / [TEST] sends / compliance copy</strong> (<code>server/ses-methods.js</code> L2742 <code>[TEST] ${subject}</code>; <code>server/mailchimp/pipeline-runners.js</code> L129 <code>[Compliance Review] ${subject}</code>)</td>
 <td>Server</td>
-<td>Unchanged: they wrap the already-saved subject, so they show <code>[TEST] From BPartners: …</code></td>
+<td>Unchanged: they wrap the already-saved subject, so they show <code>[TEST] From Your Firm Name: …</code></td>
 </tr>
 </tbody>
 </table>
 <p>"Templates": FTT Mail (SES) has no saved-template picker today. New campaigns come from blank, a post, an infographic, admin distribute/suggestions or duplicate. Mailchimp's dialog loads a stub/template subject (row 8).</p>
 <h2>6. UI behaviour by direction</h2>
 <p><strong>A · Plain text (recommended)</strong>
-- The subject input is pre-filled with <code>From BPartners:</code> and the cursor sits at the end.
+- The subject input is pre-filled with <code>From Your Firm Name:</code> and the cursor sits at the end.
 - Helper: "Starts with your prefix from Settings. You can edit or delete it like any other text."
-- If the advisor removes it, the helper changes to "Doesn't start with your prefix. That's fine, it's your call. <strong>Add 'From BPartners:'</strong>" (one click, no double).
+- If the advisor removes it, the helper changes to "Doesn't start with your prefix. That's fine, it's your call. <strong>Add 'From Your Firm Name:'</strong>" (one click, no double).
 - Saved subject = exactly what's in the box.</p>
 <p><strong>B · Locked chip</strong>
-- Chip <code>From BPartners:</code> ✕ sits before the input; the input holds only the rest.
+- Chip <code>From Your Firm Name:</code> ✕ sits before the input; the input holds only the rest.
 - Saved subject = <code>chip + ' ' + rest</code> (when the chip is on) or <code>rest</code>.
 - If the advisor types or pastes the prefix into the input, the chip turns off automatically ("already starts with it, we won't add it twice").
-- ✕ = this campaign only; "Add 'From BPartners:' back" restores it.
+- ✕ = this campaign only; "Add 'From Your Firm Name:' back" restores it.
 - Needs a <code>subjectPrefixApplied: Boolean</code> on the campaign so re-opening a draft shows the chip again (or derive it from <code>hasSubjectPrefix</code>).</p>
 <p><strong>C · Name + style</strong>
 - Settings: name + style radio + preview. Prefix = <code>From {name}:</code> / <code>{name} |</code> / <code>[{name}]</code>.
@@ -232,8 +232,8 @@ if (!campaignData.skipSubjectPrefix &amp;&amp; prefs?.defaultSubjectPrefix) {
 <h2>8. Acceptance checks (in addition to the issue's)</h2>
 <ol>
 <li>Prefix unset → every create path produces the same subject as today (tests for rows 1–6).</li>
-<li>Prefix <code>From BPartners:</code> + blank campaign → subject box shows <code>From BPartners:</code> and saves what the advisor typed.</li>
-<li>Post titled <code>From BPartners: X</code> → saved <code>From BPartners: X</code> (no double); <code>FROM BPARTNERS:X</code> → unchanged.</li>
+<li>Prefix <code>From Your Firm Name:</code> + blank campaign → subject box shows <code>From Your Firm Name:</code> and saves what the advisor typed.</li>
+<li>Post titled <code>From Your Firm Name: X</code> → saved <code>From Your Firm Name: X</code> (no double); <code>FROM YOUR FIRM NAME:X</code> → unchanged.</li>
 <li>Duplicate of a pre-prefix campaign → subject unchanged; one click adds the prefix.</li>
 <li>Changing or clearing the prefix in Settings does not modify any existing draft, scheduled or sent campaign.</li>
 <li>Advisor deletes the prefix in the form → saved without it (server doesn't re-add).</li>
