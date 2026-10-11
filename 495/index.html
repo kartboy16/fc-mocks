@@ -1,0 +1,40 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>FC — #495 Playground AI chat → website, social, email</title><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" /><style>
+:root{--bg:#f4f8fc;--ink:#1e2a4a;--muted:#5b6572;--blue:#2b7de9;--border:#d4e4f2;--mint:#e6f1fb}*{box-sizing:border-box}body{margin:0;font-family:Inter,system-ui,sans-serif;background:var(--bg);color:var(--ink);line-height:1.55}
+.hero{background:linear-gradient(135deg,#1e2a4a,#2b7de9);color:#fff;padding:36px 22px 32px}.hi{max-width:920px;margin:0 auto}.eb{font-size:.72rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;opacity:.85}h1{font-size:1.6rem;margin:8px 0}.hero p{opacity:.92;max-width:760px;font-size:.95rem;margin:0}
+.rec{display:inline-block;margin-top:16px;background:#e8f5e9;color:#065f46;font-weight:700;font-size:.8rem;padding:8px 14px;border-radius:999px}
+.wrap{max-width:920px;margin:0 auto;padding:26px 22px 70px}.cta{display:block;background:var(--blue);color:#fff;text-decoration:none;text-align:center;padding:15px;border-radius:12px;font-weight:700;margin-bottom:12px}.cta small{display:block;font-weight:500;opacity:.9}
+.cta.s{background:#fff;color:var(--blue);border:2px solid var(--blue)}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:14px}.card{background:#fff;border:1px solid var(--border);border-radius:12px;padding:16px;text-decoration:none;color:inherit}.card:hover{border-color:var(--blue)}
+.card h3{font-size:.95rem;color:var(--blue);margin:6px 0}.card p{font-size:.8rem;color:var(--muted);margin:0}.tag{font-size:.65rem;font-weight:700;background:var(--mint);color:var(--blue);padding:2px 8px;border-radius:999px}
+h2{font-size:.75rem;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);margin:28px 0 10px}.box{background:#fff;border:1px solid var(--border);border-radius:12px;padding:14px 18px;font-size:.88rem}.box li{margin-bottom:6px}
+.hold{padding:12px 16px;background:#fef3c7;border:1px solid #fcd34d;border-radius:10px;font-size:.85rem;color:#92400e;margin-bottom:18px}
+</style></head><body>
+<div class="hero"><div class="hi"><div class="eb">content-library #495 · Designer-first mock · Playground AI chat</div><h1>Use an AI answer for your website, social and email</h1>
+<p>After the AI writes a post, the advisor can turn it into a website post, a social post and/or an email campaign without retyping. They can tap a choice or just say it in their own words (“schedule the post”, “put this on my site”). Everything is saved as a <b>draft</b> after a Confirm step. Nothing is published or sent from the chat.</p>
+<span class="rec">Recommend Direction A · action bar + one review sheet</span></div></div>
+<div class="wrap">
+<div class="hold"><b>Not agent-ready.</b> Soft Dev hold until Alex/Angelina pick a direction. Playground only. Names in the mock are fictional.</div>
+<a class="cta" href="directions/a/">Open Direction A (recommended)<small>“Use this for: Website · Social · Email” under the answer → one review sheet → Create drafts</small></a>
+<a class="cta s" href="build-contract.html">Build contract<small>What exists on playground, AI intent detection, prefill per destination, server rules, open questions</small></a>
+<h2>Directions</h2><div class="grid">
+<a class="card" href="directions/a/"><span class="tag">Recommended</span><h3>A · Action bar + review sheet</h3><p>Pick one or more destinations under the answer. One sheet with a tab per destination shows each version (social shortened, email subject suggested). One button creates all the drafts.</p></a>
+<a class="card" href="directions/b/"><span class="tag">Least build</span><h3>B · Open each editor, prefilled</h3><p>A button per destination opens today's Share dialog, social composer or Create campaign with the chat text in it. One at a time, text copied as-is.</p></a>
+<a class="card" href="directions/c/"><span class="tag">Alternative</span><h3>C · Publish kit side panel</h3><p>The AI writes all versions side by side in a panel. Edit, then create or schedule each card. Most to look at, heaviest on phone.</p></a></div>
+<h2>Typed requests (all directions)</h2><div class="box"><p style="margin:0">Per Alex: advisors won't know trigger words. After any answer, the AI reads what the advisor types and decides if it's a request to <b>create/schedule/send</b> (show a confirm card with the destinations, a preview and any date mentioned: Confirm / Change / Not now), unclear (ask “Website, social, or email?”), or a <b>rewrite</b> (just rewrite). Nothing is created without Confirm. The chips/buttons stay as a visible fallback.</p></div>
+<h2>Why A</h2><div class="box"><p style="margin:0">It's the only option that does “one or more destinations, no retyping” in a single reviewable step, and it shows exactly what the AI changed for each place before anything is saved. It reuses the server code already on playground (private website post, social scheduling, <code>ses.createCampaign</code>), switched to create drafts. B is cheapest but takes three trips and pastes the full article into social. C rewrites every channel up front, which means more waiting and a long scroll on phone.</p></div>
+<h2>Screens</h2><div class="box"><ul style="margin:0;padding-left:18px"><li>Answer with the chips / buttons: <a href="directions/a/#chat">A</a> · <a href="directions/b/#chat">B</a> · <a href="directions/c/#chat">C</a></li><li>Typed request → confirm card (any wording): <a href="directions/a/#intent">A</a> · <a href="directions/b/#intent">B</a> · <a href="directions/c/#intent">C</a></li><li>Unclear request → AI asks where: <a href="directions/a/#clarify">A</a> · <a href="directions/b/#clarify">B</a> · <a href="directions/c/#clarify">C</a></li><li>Rewrite request (no card): <a href="directions/a/#rewrite">A</a> · <a href="directions/b/#rewrite">B</a> · <a href="directions/c/#rewrite">C</a></li><li>Drafts created: <a href="directions/a/#done">A</a> · <a href="directions/b/#done">B</a> · <a href="directions/c/#done">C</a></li><li>Not connected / no list: <a href="directions/a/#empty">A</a> · <a href="directions/b/#empty">B</a> · <a href="directions/c/#empty">C</a></li><li>Phone: <a href="directions/a/#phone">A</a> · <a href="directions/b/#phone">B</a> · <a href="directions/c/#phone">C</a></li></ul></div>
+<h2>Heads-up from the code</h2><div class="box"><ul style="margin:0;padding-left:18px">
+<li>Playground already has a chat-first version (“Where should this go?” → When → Confirm Send). Its Confirm Send <b>publishes and schedules for real</b> (website, social, email send). The mock switches the default to drafts.</li>
+<li>Typed intent today is a fixed phrase list (<code>aiLandingIntent.js</code>), which is why “schedule the post” wasn't picked up. The contract moves free text to an AI classifier.</li>
+<li>The same full chat text goes to every social network today, with no shortening or character limits.</li>
+<li>The #458 subject prefix isn't applied when the chat creates an email campaign.</li></ul></div>
+<h2>Open questions for Alex / Angelina</h2><div class="box"><ol style="margin:0;padding-left:20px">
+<li><b>Drafts or schedule/send from the chat?</b> Recommended: drafts, plus a social schedule time if the advisor gives one. Which phrases (“email this to my clients”, “post it now”) should ever mean send now?</li>
+<li><b>AI rewrite per destination, or copy as-is?</b> Recommended: short social version + suggested subject; body copied; one tap to use the original.</li>
+<li><b>Approval for AI-written text:</b> always route through the advisor's approval / compliance step?</li>
+<li><b>Which social networks:</b> LinkedIn + Facebook first; Instagram needs an image.</li>
+<li><b>Images:</b> pick from My Media in the Website tab, or add later on the draft?</li>
+<li><b>Should the chat remember its drafts</b> so “make LinkedIn friendlier” edits the same draft? (Recommended yes.)</li>
+<li><b>Typed “yes” after a confirm card:</b> counts as Confirm, or require the tap?</li></ol></div>
+</div></body></html>

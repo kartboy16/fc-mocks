@@ -1,0 +1,266 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1" /><title>#495 Build contract · FC mocks</title><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" /><style>:root{--ink:#1e2a4a;--muted:#5b6572;--blue:#2b7de9;--border:#d4e4f2}body{margin:0;font-family:Inter,system-ui,sans-serif;background:#f4f8fc;color:var(--ink);line-height:1.55}
+.top{background:linear-gradient(135deg,#1e2a4a,#2b7de9);color:#fff;padding:12px 20px;font-size:.85rem;display:flex;gap:16px;flex-wrap:wrap}.top a{color:#fff;font-weight:600;text-decoration:none}
+.wrap{max-width:980px;margin:0 auto;padding:20px 22px 70px;background:#fff;border:1px solid var(--border);border-radius:12px;margin-top:18px}
+h1{font-size:1.4rem}h2{font-size:1.05rem;margin-top:28px;border-bottom:1px solid var(--border);padding-bottom:4px}h3{font-size:.95rem}
+table{border-collapse:collapse;width:100%;font-size:.82rem;margin:8px 0}td,th{border:1px solid var(--border);padding:6px 8px;vertical-align:top;text-align:left}th{background:#f0f7ff}
+code{background:#eef4fb;padding:1px 4px;border-radius:4px;font-size:.82em}li{margin-bottom:4px}a{color:var(--blue)}</style></head><body>
+<div class="top"><b>FC mocks · #495</b><a href="./">Hub</a><a href="directions/a/">A</a><a href="directions/b/">B</a><a href="directions/c/">C</a><a href="build-contract.md">Markdown</a></div><div class="wrap"><h1>#495 Build contract: Playground AI chat → website post, social post, email campaign</h1>
+<p><strong>Status:</strong> Designer-first mock. <strong>Not agent-ready.</strong> Soft Dev hold until Alex/Angelina pick a direction.
+<strong>Recommended:</strong> Direction A (action bar under each AI answer → one review sheet with a tab per destination → Create drafts).
+<strong>Scope:</strong> Playground only (<code>public.aiLandingDistributeEnabled</code>, already <code>true</code> only in <code>settings.playground.json.template</code>). No change to the Email Campaigns or Social apps beyond accepting a prefill.</p>
+<p>Mock: https://kartboy16.github.io/fc-mocks/495/ · A <code>/directions/a/</code> · B <code>/directions/b/</code> · C <code>/directions/c/</code></p>
+<h2>1. What exists today (playground branch, a4801d9)</h2>
+<table>
+<thead>
+<tr>
+<th>Piece</th>
+<th>Where</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>AI landing chat</td>
+<td><code>imports/ui/AiLandingChat.jsx</code>, route <code>/content-library/ai</code></td>
+<td>“Create a post” / “Pick a post” chips; state machine in <code>imports/ui/aiLandingChatFlow.js</code></td>
+</tr>
+<tr>
+<td>AI output shape</td>
+<td><code>imports/api/aiLandingChat.js</code> <code>buildLandingSystemPrompt</code></td>
+<td>Model returns JSON <code>{reply, draftText, suggestions}</code>. <code>draftText</code> is <strong>one plain-text blob</strong> (no markdown, no per-channel versions).</td>
+</tr>
+<tr>
+<td>Chat-first distribute (already built)</td>
+<td><code>imports/api/aiLandingDistribute.js</code>, <code>server/ai-landing-distribute.js</code>, <code>AiLandingConfirmCard.jsx</code></td>
+<td>“Where should this go?” chips (Website / networks / Email / All three) → follow-ups → When (Now / Later / Pick a time) → Confirm card → <strong>Confirm Send</strong> → <code>aiLanding.confirmDistribute</code>.</td>
+</tr>
+<tr>
+<td>Title / body / excerpt mapping</td>
+<td><code>firstLineTitle</code>, <code>draftTextToHtml</code>, <code>excerptFromDraft</code></td>
+<td>Title = first line (≤120 chars), body = paragraphs split on blank lines, HTML-escaped. Excerpt = first 240 chars.</td>
+</tr>
+<tr>
+<td>Website</td>
+<td><code>materializeAiLandingHtmlPost</code></td>
+<td>Creates/updates one private <code>HTMLPosts</code> doc per chat (<code>privateToUserId</code>, <code>sourceType:'aiLanding'</code>, <code>sourceChatId</code>, <code>isPublic:false</code>). No featured image.</td>
+</tr>
+<tr>
+<td>Social</td>
+<td><code>publishSocial</code></td>
+<td>Same full <code>draftText</code> used as the caption for every network (<code>messages: {linkedin, facebook, instagram}</code> all = caption). No shortening, no character limits.</td>
+</tr>
+<tr>
+<td>Email</td>
+<td><code>publishEmail</code></td>
+<td>Skips if the advisor has a <code>compliance</code> category or no default list. SES: <code>ses.createCampaign</code> (creates <code>status:'draft'</code>); Mailchimp: <code>mailchimp.addScheduledEmailCampaignInternal</code>.</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Important:</strong> today's Confirm Send <strong>publishes / schedules for real</strong>: <code>website.publishPost</code> or <code>website.schedulePost</code>, <code>social.schedulePost</code> / <code>social.scheduleOnePost</code>, and <code>ses.sendCampaign</code> when timing is Now or a time is set. Only email with no time stays a draft. That conflicts with #495 AC-5 / NG-3 (drafts, no auto-publish). The recommended direction makes <strong>drafts the default</strong> and keeps publish/schedule in each channel's normal page.</p>
+<p>Other facts the build relies on:
+- <code>CreateHtmlPostPage.jsx</code> is <strong>staff-only</strong> (<code>/content-library/admin/html-posts/new</code>, redirects non-admins). Advisors have no standalone post editor. Their "website draft" is the private post in their Library, which they publish through the Share dialog (<code>PostDistributionDialog</code>, the #168 checklist).
+- <code>CreateCampaign.jsx</code> already takes <code>initialCampaignName</code>, <code>initialSubject</code>, <code>initialHtmlContent</code>, <code>initialListId</code>, etc., and applies the #458 prefix with <code>prefillNewCampaignSubject</code>. <strong><code>confirmDistribute</code> calls <code>ses.createCampaign</code> directly, so the #458 prefix is NOT applied there today.</strong> Apply <code>prefillNewCampaignSubject</code> server-side.
+- <code>SocialPostQueue</code> has no draft status. Statuses: <code>pending</code>, <code>pending_approval</code>, <code>processing</code>, <code>failed</code>, <code>rejected</code>. The scheduler only picks scheduled items (never <code>pending_approval</code>). <code>insertSocialQueueItem</code> applies the advisor's social approval setting.
+- Safety already in place: <code>loadOwnedChat</code> (chat must belong to <code>this.userId</code>), single-use nonce with 15-minute TTL, the model can't call confirm (<code>BLOCKED_MODEL_TOOLS</code>), <code>assertCanadianContentAllowed</code>, <code>callAsUser</code> runs channel methods as the signed-in user, <code>ses.createCampaign</code> checks <code>this.userId === advisorId</code>.</p>
+<h2>2. Surfaces (Direction A)</h2>
+<ol>
+<li><strong>Action bar</strong> under any assistant message that has a <code>draftText</code>: “Use this for: Website · Social · Email” multi-select chips + “Review N drafts”. Only channels in <code>loadSectionAccess</code> show. Always uses the latest draft (after Shorter / Friendlier).</li>
+<li><strong>Review sheet</strong> (inline below the chat on desktop, full-height bottom sheet on phone). Tabs: Website · Social · Email · What changed? Green dot = ready, amber = needs something.</li>
+<li><strong>Create drafts</strong> button: one server call, per-channel result.</li>
+<li><strong>Result message</strong> in the chat with a link per draft + a “Drafts from this chat” strip. Follow-ups (“make LinkedIn friendlier”) update the existing draft instead of making a new one.</li>
+<li><strong>Empty / error</strong>: not connected → Connect button and the channel is skipped; no list → email saves as a draft without a list; partial failure → keep successes, Try again retries only the failed channel (idempotent).</li>
+<li>Replace the current Where → When → Confirm Send chat steps with the action bar + sheet when the flag is on. Typed requests in any wording (“schedule the post”, “send this to my website”) go through the AI classifier (§2b) to a confirm card; Change opens the sheet with those channels pre-picked.</li>
+</ol>
+<h2>2b. Natural-language intent (Alex, <a href="https://github.com/kartboy16/content-library/issues/495#issuecomment-6111423150">issuecomment-6111423150</a>)</h2>
+<p>Advisors won't know trigger words. After any assistant message that has a <code>draftText</code>, <strong>every</strong> advisor message is classified by the AI, not by a phrase list.</p>
+<p><strong>Today:</strong> <code>imports/api/aiLandingIntent.js</code> <code>classifyLandingIntent</code> is a fixed chip map + phrase lists (<code>READY_EXACT</code>, etc.), gated by phase. “She literally asked to schedule the post” falls through to REFINE/UNCLEAR. That's the bug Alex is describing. Keep the chip map only as a fast path for exact chip taps; free text goes to the LLM.</p>
+<p><strong>Classifier call</strong> (<code>aiLanding.classifyIntent</code>, server-side, small/fast model, JSON mode), input = latest advisor message + the last 2–3 turns + whether a draft exists + which channels/networks/lists the account has. Output:</p>
+<pre><code class="language-json">{&quot;intent&quot;:&quot;create|rewrite|question|other&quot;,
+ &quot;destinations&quot;:[&quot;website&quot;,&quot;social&quot;,&quot;email&quot;],
+ &quot;networks&quot;:[&quot;linkedin&quot;],
+ &quot;when&quot;:{&quot;text&quot;:&quot;Tuesday morning&quot;,&quot;iso&quot;:&quot;2026-10-13T09:00:00-07:00&quot;} ,
+ &quot;wantsSendNow&quot;:false,
+ &quot;emailAudienceHint&quot;:&quot;my clients&quot;,
+ &quot;confidence&quot;:0.0-1.0,
+ &quot;clarify&quot;:&quot;Website, social, or email?&quot;}
+</code></pre>
+<p><strong>Routing rules</strong>
+- <code>intent=create</code> and confidence ≥ threshold (start at 0.75) and ≥1 destination → <strong>confirm card</strong> (destinations, prefilled preview per destination, date if mentioned, Confirm / Change / Not now). Change = Direction A review sheet (B: open the editor, C: publish kit).
+- <code>intent=create</code>, no destination or low confidence on destinations → one clarify question with destination chips (“Website, social, or email?”).
+- Confidence below a lower bound (≈0.5) or mixed (rewrite + create, e.g. “shorter and post it”) → apply the rewrite first, then show the confirm card for the new version; if truly unclear ask “Want me to set this up, or change the wording?”
+- <code>intent=rewrite</code> → normal rewrite, no card. Chips stay as fallback.
+- Dates: model extracts text + ISO in the advisor's timezone (America/Vancouver for the sample); server re-validates (future, ≤ 1 year) and shows the resolved time on the card. Vague times map to defaults (“morning” 9:00 AM, “afternoon” 1:00 PM) and are shown so the advisor can change them. Keep <code>parseLooseDatetime</code> only as a fallback.
+- Networks/lists not connected → card shows the Connect / no-list state from §2.5.</p>
+<p><strong>Never auto-execute.</strong> The classifier has no write tools. Only the Confirm button (single-use nonce, 15-min TTL, as today) calls <code>aiLanding.createDrafts</code>. Typing “yes” after the card counts as tapping Confirm only if the classifier returns <code>intent=confirm</code> for that exact card (nonce still checked). “Send it now” phrases still create <strong>drafts</strong> unless Alex decides otherwise (open question 9); the card says so in plain words (“I'll save it as a draft, not send it”).</p>
+<p><strong>Logging (playground):</strong> store <code>{text, classifierOutput, routed}</code> on the chat doc for tuning the threshold; no advisor content leaves FC beyond the existing AI provider.</p>
+<h2>3. Prefill mapping</h2>
+<h3>Website post (draft)</h3>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Source</th>
+<th>Adapted?</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>name</code> (title)</td>
+<td><code>firstLineTitle(draftText)</code></td>
+<td>Copied</td>
+</tr>
+<tr>
+<td><code>content</code></td>
+<td><code>draftTextToHtml(draftText)</code> minus the title line</td>
+<td>Copied</td>
+</tr>
+<tr>
+<td><code>excerpt</code></td>
+<td>AI short description (fallback <code>excerptFromDraft</code>)</td>
+<td>AI, editable</td>
+</tr>
+<tr>
+<td>featured image</td>
+<td>none; optional pick from My Media (#260 / #417 library)</td>
+<td>n/a</td>
+</tr>
+<tr>
+<td>Save</td>
+<td><code>materializeAiLandingHtmlPost</code> (private HTMLPost). <strong>Do not</strong> call <code>website.publishPost</code> / <code>website.schedulePost</code>.</td>
+<td></td>
+</tr>
+<tr>
+<td>Link</td>
+<td>Library → the private post (opens Share / Publish as today)</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h3>Social (draft or scheduled)</h3>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Source</th>
+<th>Adapted?</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>destinations</td>
+<td><code>loadDistributeCapabilities().social.destinations</code> (LinkedIn / Facebook / Instagram)</td>
+<td>n/a</td>
+</tr>
+<tr>
+<td>message per network</td>
+<td>new AI rewrite per network; “Use the full chat text instead” restores <code>draftText</code></td>
+<td>AI, editable</td>
+</tr>
+<tr>
+<td>char counts</td>
+<td>LinkedIn 3,000 · Facebook 63,206 (soft hint ~500) · Instagram 2,200</td>
+<td></td>
+</tr>
+<tr>
+<td>link</td>
+<td>placeholder replaced by the website share URL once the website post is published; dropped if no website post</td>
+<td></td>
+</tr>
+<tr>
+<td>When</td>
+<td>default <strong>Keep as draft</strong>; optional Schedule for date/time</td>
+<td></td>
+</tr>
+<tr>
+<td>Save (draft)</td>
+<td>new <code>SocialPostQueue</code> status <code>draft</code> (scheduler ignores it), inserted via <code>insertSocialQueueItem</code> path; or hold on the chat doc until scheduled (open question)</td>
+<td></td>
+</tr>
+<tr>
+<td>Save (scheduled)</td>
+<td><code>social.scheduleOnePost</code> / <code>social.schedulePost</code>, which respects approval settings (<code>pending_approval</code>)</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h3>Email campaign (draft)</h3>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Source</th>
+<th>Adapted?</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>subject</code></td>
+<td>AI suggestion (fallback <code>firstLineTitle</code>) → <code>prefillNewCampaignSubject(subject, prefs.defaultSubjectPrefix)</code> (#458)</td>
+<td>AI, editable</td>
+</tr>
+<tr>
+<td><code>htmlContent</code></td>
+<td><code>buildDistributionEmailHtml(post, {emailContentMode})</code>: <strong>teaser + link</strong> if Website is also picked, <strong>full article</strong> if not (#168 AC-6)</td>
+<td>Copied</td>
+</tr>
+<tr>
+<td><code>listId</code></td>
+<td>default list (<code>MailChimpSettings.defaultSesListIds</code>), radio picker as #387; may be empty</td>
+<td></td>
+</tr>
+<tr>
+<td><code>name</code></td>
+<td>title, ≤80 chars</td>
+<td></td>
+</tr>
+<tr>
+<td>Save</td>
+<td><code>ses.createCampaign(userId, {...})</code> → <code>status:'draft'</code>. <strong>Never</strong> call <code>ses.sendCampaign</code> from this flow. Mailchimp: <code>addScheduledEmailCampaignInternal</code> with <code>send:false</code>.</td>
+<td></td>
+</tr>
+<tr>
+<td>compliance</td>
+<td>if the advisor has the compliance category, still create the draft; sending goes through the normal compliance step</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h2>4. Methods to add / change</h2>
+<ul>
+<li><code>aiLanding.prepareDrafts({chatId, messageId, channels})</code> → returns prefill per channel (one AI call for social versions + subject + excerpt). No writes besides caching on the chat doc.</li>
+<li><code>aiLanding.createDrafts({chatId, nonce, website?, social?, email?})</code> → creates drafts only; stores <code>draft.distributeResult</code> with ids; idempotent per chat + channel (reuse the existing <code>channelAlreadyOk</code> pattern); returns links.</li>
+<li>Keep <code>aiLanding.confirmDistribute</code> for a later “schedule from chat” step or retire it behind the flag (open question).</li>
+</ul>
+<h2>5. Server-side rules</h2>
+<ul>
+<li>Every method: <code>this.userId</code> required; chat loaded with <code>{_id, userId}</code>; all inserts use <code>this.userId</code> as owner (<code>privateToUserId</code>, <code>advisorId</code>, <code>ownedBy</code>). Never trust an advisorId from the client. Staff impersonation goes through the existing <code>getTargetAdvisorId</code> rules only.</li>
+<li>Edited HTML from the review sheet must be sanitized server-side (allow-list: p, br, b/strong, i/em, ul/ol/li, a[href http/https/mailto]) before saving to HTMLPosts or campaigns. Plain-text fields are escaped (<code>draftTextToHtml</code>).</li>
+<li>Check <code>check()</code> lengths: subject ≤ 200, social message ≤ network max, title ≤ 120.</li>
+<li>No publish, schedule or send happens from <code>createDrafts</code> unless the advisor explicitly picked a social schedule time (and then the normal approval setting applies).</li>
+<li>Section access (<code>loadSectionAccess</code>) is re-checked on the server; hidden chips are not the only guard.</li>
+<li><code>assertCanadianContentAllowed</code> stays on every write.</li>
+<li>Playground flag check on the server too, not just the UI.</li>
+</ul>
+<h2>6. Acceptance mapping</h2>
+<ul>
+<li>AC-1 / AC-3: action bar → sheet prefilled for each channel; every draft link opens the normal page with the text in it.</li>
+<li>AC-2: multi-select chips; one Create drafts call.</li>
+<li>AC-4: phone bottom sheet; result message has a next step for every channel (including skipped).</li>
+<li>AC-5 / NG-3: drafts by default; no send/publish from the chat.</li>
+<li>Alex clarification: casual typed requests (“schedule the post”, “put this on my site”) reach the confirm card without trigger words; rewrites don't.</li>
+</ul>
+<h2>7. Open questions (for Alex / Angelina)</h2>
+<ol>
+<li><strong>Drafts vs schedule from the chat.</strong> Recommended: drafts only, with an optional social schedule time. Should the chat ever publish/send directly (today's playground Confirm Send does)?</li>
+<li><strong>AI rewrite per destination or verbatim?</strong> Recommended: AI writes a short social version and a subject/excerpt; body copied as-is; one tap to use the original text.</li>
+<li><strong>Compliance / approval for AI text.</strong> Should AI-written posts always go to the advisor's approval step (social approval, email compliance) even if they normally skip it?</li>
+<li><strong>Which social networks?</strong> LinkedIn + Facebook to start (what's connected), Instagram needs an image, so hide it until image handling exists?</li>
+<li><strong>Images.</strong> None from chat today. Offer a pick from My Media (#260/#417) in the Website tab, or leave it for the draft page?</li>
+<li><strong>Does the chat remember its drafts?</strong> Recommended yes: strip + follow-ups edit the same drafts (one website post per chat already works this way).</li>
+<li><strong>Social “draft” storage.</strong> New <code>draft</code> status in <code>SocialPostQueue</code>, or keep the unscheduled social text on the chat until the advisor schedules it?</li>
+<li><strong>Email list.</strong> Default list preselected; allow saving without a list (recommended) or block?</li>
+<li><strong>Which phrases mean “send now” vs draft?</strong> “Email this to my clients”, “post it now”, “publish it”. Recommended: always draft (plus social schedule if a time is given) and say so on the card; a later phase could allow “Send now” as an explicit second button.</li>
+<li><strong>Confidence threshold.</strong> Start at 0.75 for showing the card, below 0.5 ask; tune from playground logs?</li>
+<li><strong>Typed “yes” after a card.</strong> Count it as Confirm (with the nonce) or require the button tap?</li>
+<li><strong>Email audience words.</strong> “my clients” → match a list named Clients, else default list, else ask?</li>
+</ol></div></body></html>
