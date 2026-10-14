@@ -1,0 +1,39 @@
+<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>#543 build contract</title><style>body{font-family:sans-serif;max-width:900px;margin:auto;padding:20px;line-height:1.5}code{background:#eef2f6;padding:1px 4px}</style></head><body><p><a href="./">← #543 hub</a></p><h1>#543 Build contract — Timing for Website and Email (recommended: Direction A)</h1>
+<p>Not agent-ready. Soft Dev hold until a direction is picked.</p>
+<h2>What exists today (code)</h2>
+<li>Social Timing in Share: <code>imports/ui/components/PostDistributionDialog.jsx</code> (<code>socialTiming</code> now/scheduled, <code>getSocialTimingSummary</code>), <code>OutboundTimingControl.jsx</code> (&quot;Sends at publish · Adjust&quot;).</li>
+<li>Website scheduling already exists server-side (FC-side queue, not WP <code>future</code> status): <code>server/website-scheduler.js</code> — <code>website.schedulePost(postId, scheduledAt, options)</code>, <code>website.updateScheduledDate</code>, <code>website.cancelScheduledPost</code>, <code>website.getScheduledPosts</code>; owner-scoped by <code>this.userId</code>. Share opens in <code>entryMode=&#x27;schedule&#x27;</code> from ContentLibrary.jsx (~L2014) and Admin dialog, but normal Share → Website has no date setter and calls <code>website.publishPost</code> (ContentLibrary.jsx ~L2122).</li>
+<li>&quot;Always publish as WordPress drafts&quot;: <code>AdvisorPreferences.alwaysSendPostsAsDraft</code>, applied in <code>server/website-publisher/adapters/wordpress.js</code> L183 at publish time. Copy for &quot;Schedule as a WordPress draft&quot; already in <code>imports/ui/websiteDeliveryHelpers.js</code> L166.</li>
+<li>Email: <code>ses.sendCampaign(advisorId, campaignId, scheduledAt)</code> sets <code>status:&#x27;scheduled&#x27;</code> (<code>server/ses-methods.js</code> ~L1919); <code>ses.cancelScheduledCampaign</code> returns it to draft; cron <code>server/ses-campaign-scheduler.js</code> sends <code>status:&#x27;scheduled&#x27;, scheduledAt&lt;=now</code>. <code>CreateCampaign.jsx</code> already has <code>sendOption</code> now/schedule. Share → Email only calls <code>ses.createCampaign</code> (draft).</li>
+<li>Approval/compliance: <code>server/compliance-gate.js</code> <code>assertComplianceSendAllowed</code> is checked in <code>ses.sendCampaign</code> (at schedule time) — <b>not re-checked by the scheduler at send time</b>. Approval email flow <code>ses.sendCampaignApprovalEmail</code>, <code>ses.canManageCampaignApproval</code>, <code>ses-deferred-approval-scheduler.js</code>.</li>
+<li>Calendar: <code>imports/ui/Calendar.jsx</code> reads <code>WebsitePostQueue</code> (scheduled + published) and <code>SESCampaigns</code>; Website and Email Campaigns tabs exist; has a &quot;New Schedule Date &amp; Time&quot; editor.</li>
+<h2>Surfaces</h2>
+<li>Share dialog: one Timing block (Now / Pick date &amp; time) for all ticked destinations; &quot;Different time for each&quot; link reveals per-destination Timing. Email adds &quot;Save as draft&quot;.</li>
+<li>Create Campaign last step: Save as draft / Send now / Pick date &amp; time (restyle existing <code>sendOption</code>).</li>
+<li>Approval state copy; WP-drafts copy; Mailchimp note; success screen with calendar link.</li>
+<li>Calendar: scheduled website + email rows with Change time / Cancel and status chips (Scheduled, Waiting for approval, Scheduled as WordPress draft).</li>
+<h2>Data / fields</h2>
+<li>Share state: <code>timing: {mode:&#x27;now&#x27;|&#x27;scheduled&#x27;, at:Date}</code>, optional <code>overrides: {website?, email?, social?}</code>.</li>
+<li>Website: reuse <code>WebsitePostQueue</code> (<code>scheduledAt</code>, <code>status:&#x27;scheduled&#x27;</code>).</li>
+<li>Email: <code>SESCampaigns.status &#x27;scheduled&#x27;</code>, <code>scheduledAt</code>; add <code>approvalState</code> if not present.</li>
+<li>Display in account time zone (PT label); store UTC.</li>
+<h2>Methods</h2>
+<li>Share → Website scheduled: <code>website.schedulePost</code>. Share → Email scheduled: <code>ses.createCampaign</code> then <code>ses.sendCampaign(..., scheduledAt)</code> — or one new <code>share.scheduleDistribution</code> that does both atomically (preferred, avoids half-done shares).</li>
+<li>Calendar edit/cancel: existing <code>website.updateScheduledDate</code> / <code>website.cancelScheduledPost</code>, <code>ses.cancelScheduledCampaign</code> (+ add <code>ses.updateScheduledAt</code>).</li>
+<h2>Server-side checks (must)</h2>
+<li>Ownership: every method requires <code>this.userId</code> and <code>advisorId === this.userId</code> (or valid impersonation). Verify <code>ses.sendCampaign</code> — it checks <code>this.userId</code> but queries by passed <code>advisorId</code>.</li>
+<li>Reject <code>scheduledAt</code> in the past (allow ~1 min slack) and more than 1 year out.</li>
+<li><b>Re-run the approval/compliance gate in <code>ses-campaign-scheduler.js</code> and <code>website-scheduler.js</code> at send time</b>; if not approved → don&#x27;t send, mark <code>needs_attention</code>, email the advisor.</li>
+<li>Read <code>alwaysSendPostsAsDraft</code> at publish time (already true via adapter).</li>
+<h2>Edge cases / effort</h2>
+<li>FTT Mail draft vs scheduled send: draft = nothing goes out; scheduled = locked campaign. Editing a scheduled campaign → recommend it stays scheduled with edits saved (block edits within 5 min of send). List emptied by send time → skip, mark failed &quot;No subscribers&quot;, notify. Approval pending at send time → don&#x27;t send, notify, offer new time.</li>
+<li>WP drafts on + scheduled: at the chosen time we create a WP draft (not live). Copy says so; calendar chip &quot;Scheduled as WordPress draft&quot;. Article-live emails must not fire for drafts (scheduler already checks <code>wpStatus !== &#x27;draft&#x27;</code>).</li>
+<li>Past times blocked in picker and server. Timezone: account zone shown everywhere. Cancel email → back to Drafts; cancel website → removed from queue.</li>
+<li>Mailchimp: either hide Email timing for Mailchimp accounts (v1) or pass schedule to Mailchimp campaign schedule API (more work). Recommend hide + note in v1.</li>
+<li>Effort (A): ~3–5 dev days. UI timing block + wiring 1.5–2d; send-time approval re-check + past-time/ownership checks 1d; calendar status chips/edit email time 1d; tests 0.5–1d. B ≈ same; C +1d.</li>
+<h2>Open questions</h2>
+<li>Approval pending at send time: hold and send when approved (website) vs skip and ask for new time (email)? Mock shows that split.</li>
+<li>Editing a scheduled email: stays scheduled, or drops back to draft?</li>
+<li>Mailchimp in v1 or later?</li>
+<li>With WP drafts on, keep &quot;Pick date &amp; time&quot; (creates draft at that time) or hide it? Mock keeps it with explanation.</li>
+<li>Should Social timing join the shared block (A) or stay separate as today?</li></body></html>
