@@ -1,0 +1,36 @@
+<!doctype html><html><head><meta charset=utf-8><meta name=viewport content='width=device-width,initial-scale=1'><title>#521 C Inline expand</title><style>body{font-family:system-ui,Arial,sans-serif;margin:0;background:#f4f5f7;color:#222}
+header{background:#1f3a5f;color:#fff;padding:12px 20px;display:flex;gap:12px;align-items:center}
+header a{color:#cfe0ff}main{padding:20px;max-width:1100px;margin:auto}
+.btn{border:1px solid #1f3a5f;background:#fff;color:#1f3a5f;border-radius:6px;padding:6px 12px;cursor:pointer;font-size:14px}
+.btn.p{background:#1f3a5f;color:#fff}.btn.sm{padding:3px 9px;font-size:13px}
+.bar{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap}.states{background:#fff8e1;border:1px dashed #c9a400;padding:8px;border-radius:6px;margin-bottom:14px;font-size:13px}
+.dlg{background:#fff;border-radius:10px;box-shadow:0 4px 20px #0003;max-width:620px;margin:10px auto;padding:16px}
+.row{display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #eee;padding:10px 4px;gap:8px}
+.row.sel{background:#eef4ff}.meta{color:#666;font-size:13px}.purge{color:#a24a00;font-size:12px}
+.overlay{position:fixed;inset:0;background:#0006;display:none}.overlay.on{display:block}
+.drawer{position:fixed;top:0;right:-560px;width:540px;height:100%;background:#fff;box-shadow:-4px 0 18px #0003;transition:right .2s;display:flex;flex-direction:column}
+.drawer.on{right:0}.vh{padding:14px 16px;border-bottom:1px solid #ddd}.vb{flex:1;overflow:auto;padding:16px}.vf{padding:12px 16px;border-top:1px solid #ddd;display:flex;justify-content:space-between;align-items:center}
+.modal{position:fixed;inset:4%;background:#fff;border-radius:10px;display:none;flex-direction:column}.modal.on{display:flex}
+.ro{background:#fdecea;color:#8a1c1c;font-size:12px;padding:3px 8px;border-radius:10px;display:inline-block}
+.art{border:1px solid #e5e5e5;border-radius:6px;padding:14px;background:#fafafa}.art h2{margin-top:0}
+.err{background:#fdecea;color:#8a1c1c;padding:10px;border-radius:6px;margin:8px 0}.ok{background:#e7f6ea;color:#1d5e2b;padding:10px;border-radius:6px;margin:8px 0}
+.snack{position:fixed;bottom:20px;left:20px;background:#333;color:#fff;padding:10px 16px;border-radius:6px;display:none}
+.exp{padding:12px;background:#fafafa;border:1px solid #e5e5e5;border-radius:6px;margin:4px 0 10px}
+.card{background:#fff;padding:16px;border-radius:8px;margin:12px 0}table{border-collapse:collapse}td,th{border:1px solid #ddd;padding:6px 8px;text-align:left;vertical-align:top}</style></head><body><header><b>Content Library (admin)</b><a href='./'>← Mock hub</a></header><main><h2>C · Expand in the list</h2><p class=meta>View opens the post right under its row. Quick, but long posts get cramped.</p><div class=bar><button class='btn p'>Create New Post</button><button class=btn>Open Trash</button></div><div class=states><b>Mock states:</b> <button class='btn sm' onclick="setS('ok')">Normal</button> <button class='btn sm' onclick="setS('empty')">Empty trash</button> <button class='btn sm' onclick="setS('listerr')">List failed to load</button> <button class='btn sm' onclick="setS('viewerr')">Preview failed</button> <button class='btn sm' onclick="setS('restoreerr')">Restore fails</button> <button class='btn sm' onclick="setS('gone')">Already purged/restored</button></div><div class=dlg style='max-width:760px'><h3 style='margin-top:0'>Trash</h3><div id=list></div><div style='text-align:right'><button class=btn>Close</button></div></div></main><div class=snack id=snack></div><script>var S='ok',P=[["p1", "5 Questions to Ask Before You Retire", "Jane Advisor", "Oct 12, 2026 2:14 PM PT", "Dec 11, 2026"], ["p2", "Understanding Required Minimum Distributions", "Admin (you)", "Oct 9, 2026 9:02 AM PT", "Dec 8, 2026"], ["p3", "Your Firm Name Market Update: Q3", "Sam Staff", "Aug 18, 2026 4:40 PM PT", "Oct 17, 2026 (in 3 days)"]],BODY='<h2>%s</h2><p><em>By Jane Advisor, Your Firm Name</em></p><p>Planning ahead can make a big difference. Here are a few simple steps to talk through with your advisor.</p><ul><li>Know your monthly spending.</li><li>Review your income sources.</li><li>Check your beneficiary designations.</li></ul><p>Questions? Visit example.com or call your advisor.</p>';
+function setS(s){S=s;render();}
+function snack(t){var e=document.getElementById('snack');e.innerHTML=t;e.style.display='block';clearTimeout(window._t);window._t=setTimeout(function(){e.style.display='none'},6000);}
+function listHtml(){if(S=='listerr')return "<div class=err>We couldn't load Trash. <button class='btn sm' onclick=\"setS('ok')\">Try again</button></div>";
+if(S=='empty'||!P.length)return "<p class=meta>Trash is empty. Deleted posts show up here for 60 days, then they're removed for good.</p>";
+return "<p class=meta>Deleted posts are kept for 60 days, then removed for good.</p>"+P.map(rowHtml).join('');}
+function meta(p){return "Deleted "+p[3]+" by "+p[2];}
+function viewBody(p){if(S=='viewerr')return "<div class=err>We couldn't load this post's preview. You can still restore it. <button class='btn sm' onclick=\"setS('ok')\">Try again</button></div>";
+if(S=='gone')return "<div class=err>This post is no longer in Trash. It may have been restored by someone else or removed for good.</div>";
+return "<div class=art>"+BODY.replace('%s',p[1])+"</div>";}
+function doRestore(id,after){if(S=='restoreerr'){after(false);return;}var p=P.filter(function(x){return x[0]==id})[0];P=P.filter(function(x){return x[0]!=id});after(true);
+snack("Restored \""+p[1]+"\" to the library. <a style='color:#9cf' href='#' onclick='return false'>Open post</a>");}
+var cur=null,rerr=false;
+function rowHtml(p){var open=cur==p[0];var h="<div class='row"+(open?' sel':'')+"'><div><b>"+p[1]+"</b><div class=meta>"+meta(p)+"</div><div class=purge>Removed for good "+p[4]+"</div></div><div style='white-space:nowrap'><button class='btn sm' onclick=\"tog('"+p[0]+"')\">"+(open?'Hide':'View')+"</button> <button class='btn sm' onclick=\"rest('"+p[0]+"')\">Restore</button></div></div>";
+if(open)h+="<div class=exp><span class=ro>In Trash · read-only</span><div style='max-height:260px;overflow:auto;margin:8px 0'>"+viewBody(p)+"</div>"+(rerr?"<div class=err>Restore didn't work. Please try again.</div>":"")+(S=='gone'?"":"<div style='text-align:right'><button class='btn p' onclick=\"rest('"+p[0]+"')\">Restore to library</button></div>")+"</div>";return h;}
+function tog(id){cur=cur==id?null:id;rerr=false;render();}
+function rest(id){doRestore(id,function(ok){if(!ok){cur=id;rerr=true;render();return;}cur=null;render();});}
+function render(){document.getElementById('list').innerHTML=listHtml();}render();</script></body></html>
