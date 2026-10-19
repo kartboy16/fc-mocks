@@ -16,7 +16,7 @@
 <li><b>No email link sends anything.</b> Each link opens a page (GET) that only reads data. GET must never approve, send, schedule or use up the link. Scanners and link previews open links.</li>
 <li><b>Only a signed-in owner or admin can confirm.</b> Use <code>assertAdvisorOrAdmin(this.userId, doc.ownedBy)</code>. Not signed in: sign in, then return to the same confirm URL. Wrong account: show "Only Jane Advisor or an admin can approve this" with Switch account.</li>
 <li><b>Confirm is a click on the page</b> that calls a Meteor method over DDP. It must keep the #573 permit (<code>withMailchimpAudienceDeliveryPermit</code>, <code>explicitUserAction: true</code>, interactive <code>invocation.connection</code>).</li>
-<li><b>The link works once and expires</b> after 7 days, or sooner if the campaign is edited, re-sent for approval, declined, sent or scheduled.</li>
+<li><b>The link works once and expires</b> after 60 days, or sooner if the campaign is re-sent for approval, declined, sent or scheduled. It also stops working when the campaign is edited (CoS suggestion, pending Alex's OK).</li>
 <li><b>Show live data on the page.</b> Fetch the recipient count and list name from Mailchimp when the page opens, not from when the email was sent.</li>
 </ul>
 <h2>Screens (see mock tabs)</h2>
@@ -41,7 +41,7 @@
 <p>  Either way this is a <b>policy change</b> to the #573/#582 rule "only Send or Schedule on the Campaigns list reaches the audience". Alex needs to OK the confirm page as a second explicit-click surface.</p>
 <ul>
 <li><b>G5: passphrase.</b> Both send methods take a client-supplied <code>passphrase</code>, the same way <code>MailchimpCampaignsList.jsx</code> does. The confirm page needs the same source.</li>
-<li><b>G6: timezone.</b> No advisor has a timezone field. PR #583 adds <code>imports/utils/advisorDateTime.js</code> with <code>ADVISOR_TIME_ZONE = 'America/Vancouver'</code> hard-coded, and #583 is still open. Advisors outside Pacific time would see Pacific times. Either label the time "PT" clearly (v1) or add <code>AdvisorPreferences.timeZone</code> (more work, needs a profile setting).</li>
+<li><b>G6: timezone.</b> No advisor has a timezone field. PR #583 adds <code>imports/utils/advisorDateTime.js</code> with <code>ADVISOR_TIME_ZONE = 'America/Vancouver'</code> hard-coded, and #583 is still open. Advisors outside Pacific time would see Pacific times. Decided: v1 uses Pacific time for everyone, labelled clearly, with no "Change time zone" link. A per-advisor <code>AdvisorPreferences.timeZone</code> is later work.</li>
 <li><b>G7: approval recipients may not be the advisor.</b> <code>resolveApprovalRecipients</code> falls back from the campaign recipients to <code>prefs.sendTestEmailsTo</code> to the admin email. So the person who clicks may be an assistant or admin. Rule 2 handles this; the wrong-account state covers it.</li>
 <li><b>G8: no "content changed" check.</b> We need a content version (hash or <code>updatedAt</code>) stored on the link when the email is sent, compared on open, and a check of the Mailchimp campaign status (save / schedule / sending / sent) for the already-sent and already-scheduled states.</li>
 <li><b>G9: stats and Slack.</b> Keep <code>recordMailchimpApprovalClick</code> and the <code>#email_campaign_approved</code> Slack note. Add the send choice (ASAP or the time) to the Slack text.</li>
@@ -61,14 +61,19 @@
 <ul>
 <li>A or B: about 3 to 4 dev days. That covers the link collection and methods, the confirm route and page with all its states, the email template, the G2 fix, and tests.</li>
 <li>C: about +0.5 day for the suggested-time rule.</li>
-<li>A per-advisor timezone field: about +1 day.</li>
+<li>A per-advisor timezone field (not in v1): about +1 day later.</li>
 </ul>
+<h2>Decisions (Alex, Oct 19, 2026)</h2>
+<ul>
+<li><b>Second send place: OK.</b> The confirm page is an approved second explicit-click place to send or schedule, alongside the Campaigns list (#573). AFA works the same way.</li>
+<li><b>Link lifetime: 60 days.</b> Links also stop working when the campaign is edited. <i>The edit rule is a Chief of Staff suggestion, pending Alex's OK.</i></li>
+<li><b>Who can confirm: no change.</b> Keep the default in Hard rule 2 (the signed-in owner or an admin).</li>
+<li><b>Timezone: Pacific time for everyone in v1.</b></li>
+</ul>
+<p>Direction is <b>not locked yet</b>. A is recommended.</p>
 <h2>Open questions for Alex</h2>
 <ul>
-<li>Is it OK for the confirm page to be a second place where an explicit click sends or schedules (a policy change to the #573/#582 rule)?</li>
-<li>Should the link last 7 days, and should it become invalid when the campaign is edited?</li>
-<li>Can an admin or assistant who receives the approval email confirm, or only the advisor?</li>
-<li>Is Pacific time for everyone OK for v1, or do advisors need their own timezone first?</li>
+<li>OK the "edit voids the link" rule (decision 2)?</li>
 <li>Should "Don't send" notify anyone (Slack or admin), and should it record a reason?</li>
 <li>Direction C: where does the suggested time come from (a fixed default, the advisor's last send time, or a setting)?</li>
 <li>How should this fit with #582's "Send approval email on" date: should the scheduled picker default to the next morning after the approval email arrives?</li>

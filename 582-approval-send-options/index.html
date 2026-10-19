@@ -1,7 +1,7 @@
 <!doctype html><html><head><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><title>#582 Approval email: send ASAP or on a date</title><style>body{font-family:system-ui;max-width:900px;margin:24px auto;padding:0 16px;line-height:1.5;color:#1f2a33}.r{background:#eaf7ee;border:1px solid #9fd3ae;border-radius:8px;padding:12px 14px}.w{background:#fff8e1;border:1px solid #f0d98a;border-radius:8px;padding:10px 14px}li{margin:4px 0}</style></head><body>
 <p><a href="../">All mocks</a></p><h1>#582 Approval email: "send as soon as possible" or "send on a date I pick"</h1>
 <p>For advisors who don't need compliance. Designer-first mock. <b>Not agent-ready. Soft Dev hold until Alex picks.</b></p>
-<p class=w><b>Safety rule in every direction:</b> no email link sends anything. Each button opens a FinancialContent page, and the campaign goes out only when the signed-in advisor (or an admin) presses Confirm there. Links work once and expire.</p>
+<p class=w><b>Safety rule in every direction:</b> no email link sends anything. Each button opens a FinancialContent page, and the campaign goes out only when the signed-in advisor (or an admin) presses Confirm there. Links work once and expire after 60 days.</p>
 <p class=r><b>Recommend A.</b> It shows the two options Alex asked for right in the email, each lands on a confirm page with that option already picked (and switchable), and the last screen repeats exactly who gets it and when. B and C use the same confirm page, so switching later is cheap.</p>
 <h2>Directions</h2><ul>
 <li><a href="a-two-buttons.html">A. Two buttons in the email → confirm page with that option picked (recommended)</a></li>
@@ -9,5 +9,5 @@
 <li><a href="c-inline-hint.html">C. Email suggests a send time → confirm page</a></li></ul>
 <p>Each direction has tabs for: the approval email (desktop and mobile), Confirm ASAP, Confirm scheduled, the success states, expired / already sent / already scheduled / changed, not signed in (sign in, then return), and Make changes / Don't send.</p>
 <h2>Build</h2><ul><li><a href="build-contract.html">Build contract</a> (<a href="build-contract.md">.md</a>): rules, server gaps, data, tests, effort, open questions</li></ul>
-<h2>Biggest open question</h2><p>Today only Send or Schedule on the Campaigns list can reach the audience (#573). This adds the confirm page as a second explicit-click place to send. Alex needs to OK that.</p>
+<h2>Decided (Oct 19)</h2><ul><li>The confirm page is OK as a second explicit-click place to send, alongside Send or Schedule on the Campaigns list (#573).</li><li>Links last 60 days. They also stop working when the campaign is edited (suggested by Chief of Staff, waiting for Alex's OK).</li><li>Who can confirm: no change (the signed-in advisor or an admin).</li><li>Pacific time for everyone in v1.</li></ul><p><b>Direction is not locked yet.</b> A is recommended.</p>
 </body></html>
