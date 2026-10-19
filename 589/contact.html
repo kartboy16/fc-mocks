@@ -1,0 +1,92 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>#589 Contact page: all fields</title><style>:root{--bg:#f4f8fc;--card:#fff;--ink:#1e2a4a;--muted:#5b6572;--blue:#2b7de9;--blue-dark:#1e5bb8;--border:#d4e4f2;--line:#e6edf5;--mint:#e6f1fb;--ok:#047857;--ok-bg:#e8f5e9;--warn:#92400e;--warn-bg:#fef3c7;--mc:#7a4b00;--mc-bg:#fff4d6}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Inter,Roboto,system-ui,sans-serif;background:var(--bg);color:var(--ink);font-size:14px;line-height:1.45}
+a{color:var(--blue)}button{font-family:inherit;cursor:pointer}
+.thesis{background:linear-gradient(135deg,#1e2a4a,#2b7de9);color:#fff;padding:16px 24px}
+.thesis .rec{display:inline-block;background:#fff;color:var(--blue);font-size:.68rem;font-weight:700;padding:3px 10px;border-radius:999px;margin-bottom:8px}
+.thesis .rec.alt{background:rgba(255,255,255,.2);color:#fff}
+.thesis h1{font-size:1.05rem;margin-bottom:4px}.thesis p{opacity:.92;font-size:.8rem;max-width:1000px}
+.nav{padding:8px 24px;font-size:.75rem;background:#fafafa;border-bottom:1px solid var(--border);display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+.nav a{text-decoration:none;font-weight:500}.nav .on{font-weight:700;color:var(--ink)}
+.nav .hold{margin-left:auto;background:#fef3c7;color:#92400e;border:1px solid #fcd34d;border-radius:999px;padding:2px 10px;font-weight:600;font-size:.68rem}
+.demo-bar{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:12px 24px 6px;padding:10px 12px;background:#fff;border:1px dashed #b9c7d8;border-radius:10px}
+.demo-bar .lbl{font-size:.65rem;font-weight:700;text-transform:uppercase;color:var(--muted);margin-right:4px}
+.demo-btn{padding:5px 10px;border:1px solid var(--border);border-radius:8px;background:#fff;font-size:.72rem;font-weight:600;color:var(--ink)}
+.demo-btn:hover,.demo-btn.on{border-color:var(--blue);color:var(--blue);background:var(--mint)}
+.demo-note{margin:0 24px 10px;font-size:.76rem;color:var(--muted);min-height:1.2em}
+.stage{padding:4px 24px 30px}
+.app{max-width:1180px;margin:0 auto;background:#fff;border:1px solid var(--border);border-radius:12px;overflow:visible;box-shadow:0 10px 30px rgba(30,42,74,.08);position:relative;min-height:680px}
+.topbar{display:flex;align-items:center;gap:14px;padding:10px 18px;border-bottom:1px solid var(--line);background:#fff}
+.topbar b{font-size:.95rem}.topbar .who{margin-left:auto;font-size:.75rem;color:var(--muted)}
+.subtabs{display:flex;gap:18px;padding:0 18px;border-bottom:1px solid var(--line);font-size:.8rem}
+.subtabs span{padding:10px 0;color:var(--muted)}.subtabs span.on{color:var(--blue);border-bottom:2px solid var(--blue);font-weight:600}
+.content{padding:16px 18px}
+.hrow{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:12px}
+.hrow h2{font-size:1.15rem;font-weight:600}.count{font-size:.8rem;color:var(--muted)}
+.btns{display:flex;gap:8px;flex-wrap:wrap}
+.btn{border:1px solid rgba(43,125,233,.5);color:var(--blue);background:#fff;border-radius:6px;padding:6px 12px;font-size:.78rem;font-weight:600;text-transform:none;display:inline-flex;align-items:center;gap:6px}
+.btn.sm{padding:4px 10px;font-size:.74rem}.btn.pri{background:var(--blue);color:#fff;border-color:var(--blue)}
+.btn.ghost{border-color:transparent}.btn:disabled{opacity:.45;cursor:default}
+.btn .badge{background:var(--blue);color:#fff;border-radius:999px;font-size:.62rem;padding:0 6px}
+.toolbar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:14px;position:relative}
+.search{border:1px solid #c4c4c4;border-radius:6px;padding:6px 10px;font-size:.78rem;min-width:200px;color:var(--muted)}
+.alert{display:flex;gap:10px;align-items:flex-start;border-radius:8px;padding:10px 14px;margin-bottom:12px;font-size:.8rem}
+.alert.info{background:#e5f3fd;color:#014361}.alert .acts{margin-left:auto;display:flex;gap:6px;flex-shrink:0}
+.alert.ok{background:var(--ok-bg);color:#1e4620}
+.tablewrap{border:1px solid var(--line);border-radius:8px;overflow:auto;max-width:100%}
+table{border-collapse:separate;border-spacing:0;width:100%;font-size:.78rem}
+th,td{padding:7px 10px;border-bottom:1px solid var(--line);text-align:left;white-space:nowrap;background:#fff}
+th{font-weight:600;color:#1e2a4a;background:#fafcff;position:relative}
+th.sticky,td.sticky{position:sticky;left:0;z-index:2;box-shadow:1px 0 0 var(--line)}
+th.newcol,td.newcol{background:#fffbea}
+.chip{display:inline-block;border-radius:999px;padding:1px 8px;font-size:.68rem;border:1px solid #bdbdbd;margin-right:3px}
+.chip.ok{background:#2e7d32;color:#fff;border-color:#2e7d32}.chip.grey{background:#eee;border-color:#eee}
+.chip.blue{border-color:var(--blue);color:var(--blue)}
+.dash{color:#9aa4b2}
+.mc{display:inline-block;background:var(--mc-bg);color:var(--mc);border:1px solid #f3d38a;border-radius:4px;font-size:.6rem;font-weight:700;padding:0 5px;margin-left:6px;vertical-align:1px}
+.csv{display:inline-block;background:#eef1f5;color:#465264;border-radius:4px;font-size:.6rem;font-weight:700;padding:0 5px;margin-left:6px}
+.new{display:inline-block;background:#dcfce7;color:#166534;border-radius:4px;font-size:.6rem;font-weight:700;padding:0 5px;margin-left:6px}
+.pop{position:absolute;z-index:20;background:#fff;border:1px solid var(--border);border-radius:10px;box-shadow:0 12px 32px rgba(30,42,74,.18);width:320px;max-height:460px;display:flex;flex-direction:column}
+.pop .ph{padding:10px 12px;border-bottom:1px solid var(--line);font-weight:600;font-size:.82rem}
+.pop .pb{overflow:auto;padding:6px 0;flex:1}
+.pop .pf{padding:8px 12px;border-top:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;font-size:.72rem;color:var(--muted)}
+.grp{font-size:.64rem;font-weight:700;text-transform:uppercase;color:var(--muted);padding:8px 12px 4px}
+.opt{display:flex;align-items:center;gap:8px;padding:4px 12px;font-size:.78rem}
+.opt:hover{background:#f5f9ff}.opt input{accent-color:var(--blue)}
+.opt .hint{margin-left:auto;font-size:.66rem;color:var(--muted)}
+.drawer{position:absolute;top:0;right:0;bottom:0;width:380px;background:#fff;border-left:1px solid var(--border);box-shadow:-12px 0 30px rgba(30,42,74,.12);z-index:30;display:flex;flex-direction:column}
+.drawer .dh{padding:14px 16px;border-bottom:1px solid var(--line);display:flex;align-items:center}
+.drawer .dh b{font-size:.95rem}.drawer .dh button{margin-left:auto;border:none;background:none;font-size:1.1rem;color:var(--muted)}
+.drawer .db{padding:10px 16px;overflow:auto;flex:1}.drawer .df{padding:10px 16px;border-top:1px solid var(--line);display:flex;gap:8px;align-items:center}
+.shown{list-style:none;border:1px solid var(--line);border-radius:8px;margin:6px 0 12px}
+.shown li{display:flex;align-items:center;gap:8px;padding:6px 8px;border-bottom:1px solid var(--line);font-size:.78rem;background:#fff}
+.shown li:last-child{border-bottom:none}.shown li.drag{opacity:.4}.shown li.over{box-shadow:inset 0 2px 0 var(--blue)}
+.handle{cursor:grab;color:#9aa4b2;font-size:.9rem;user-select:none}
+.mini{border:1px solid var(--line);background:#fff;border-radius:5px;font-size:.7rem;padding:1px 6px;color:var(--muted)}
+.mini.x{margin-left:auto}
+.addrow{display:flex;align-items:center;gap:8px;padding:4px 2px;font-size:.78rem}
+.addrow button{margin-left:auto}
+.hmenu{border:none;background:none;color:var(--muted);font-size:.7rem;margin-left:4px;padding:0 3px;border-radius:3px}
+.hmenu:hover{background:var(--mint);color:var(--blue)}
+.plus{border:1px dashed var(--blue);color:var(--blue);background:#fff;border-radius:6px;font-size:.72rem;font-weight:600;padding:2px 8px}
+.menu{position:absolute;z-index:25;background:#fff;border:1px solid var(--border);border-radius:8px;box-shadow:0 10px 24px rgba(30,42,74,.18);min-width:170px;font-size:.78rem;padding:4px 0;font-weight:400}
+.menu div{padding:6px 12px;cursor:pointer}.menu div:hover{background:#f5f9ff}.menu .dis{color:#b0b8c4;cursor:default}
+.empty{padding:40px;text-align:center;color:var(--muted);border:1px solid var(--line);border-radius:8px}
+.pag{display:flex;justify-content:flex-end;gap:18px;padding:8px 10px;font-size:.74rem;color:var(--muted)}
+.legend{max-width:1180px;margin:14px auto 40px;padding:14px 18px;background:#fff;border:1px solid var(--border);border-radius:12px;font-size:.8rem;color:#374151}
+.legend h3{font-size:.85rem;margin:8px 0 4px}.legend li{margin:2px 0 2px 18px}
+.phonewrap{display:flex;gap:30px;justify-content:center;align-items:flex-start;flex-wrap:wrap;padding:20px}
+.phone{width:375px;min-height:720px;border:10px solid #0e1726;border-radius:32px;background:#fff;overflow:hidden}
+.phone .topbar{padding:10px 14px}
+.mcard{border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin-bottom:8px;font-size:.78rem}
+.mcard .em{font-weight:600}.mcard .meta{color:var(--muted);font-size:.72rem;margin-top:2px}
+.side{max-width:300px;font-size:.8rem;color:#374151;background:#fff;border:1px solid var(--border);border-radius:12px;padding:14px}
+.toast{position:absolute;left:50%;bottom:18px;transform:translateX(-50%);background:#1e2a4a;color:#fff;border-radius:8px;padding:8px 14px;font-size:.76rem;z-index:40;display:none}
+.dlg{max-width:620px;margin:20px auto;background:#fff;border-radius:10px;box-shadow:0 12px 40px rgba(30,42,74,.25)}
+.dlg .t{padding:16px 20px;font-size:1.05rem;font-weight:600;border-bottom:1px solid var(--line)}
+.dlg .b{padding:12px 20px;max-height:none}.dlg .f{padding:10px 20px;border-top:1px solid var(--line);display:flex;justify-content:flex-end;gap:8px}
+.fld{border:1px solid #c4c4c4;border-radius:6px;padding:8px 10px;margin:8px 0;position:relative;font-size:.85rem}
+.fld label{position:absolute;top:-8px;left:8px;background:#fff;padding:0 4px;font-size:.66rem;color:var(--muted)}
+.fld.ro{background:#fafafa}.two{display:grid;grid-template-columns:1fr 1fr;gap:0 12px}
+.sec{font-weight:600;font-size:.82rem;margin:14px 0 2px;display:flex;align-items:center}
+.callout{background:#e5f3fd;color:#014361;border-radius:8px;padding:8px 12px;font-size:.76rem;margin:8px 0}</style></head><body><div class="thesis"><span class="rec alt">All directions</span><h1>#589 Contact page: every field, always</h1><p>Today this is the Edit contact dialog in Subscribers. It already shows phone, birthday, address and an "Other fields" section from #585. The change: group the extra fields by where they came from, and show empty ones too, so an advisor can fill them in.</p></div><div class="nav"><a href="../">All mocks</a><a href="./">#589 hub</a><a href="a-dropdown.html">A. Dropdown checklist</a><a href="b-drawer.html">B. Side drawer + reorder</a><a href="c-add-column.html">C. Inline + Add column</a><span class="on">Contact page</span><a href="build-contract.html">Build contract</a><span class="hold">Mock only &middot; Soft Dev hold &middot; not agent-ready</span></div><div class="stage"><div class="dlg"><div class="t">Edit contact</div><div class="b"><div class="callout">Every field is always here, whatever columns are on in the Subscribers table. Hiding a column never hides or deletes data.</div><div class="sec">Basics</div><div class="fld"><label>Email</label>pat.example@example.com</div><div class="two"><div class="fld"><label>First name</label>Pat</div><div class="fld"><label>Last name</label>Example</div></div><div class="sec">Profile</div><div class="two"><div class="fld"><label>Phone</label>604-555-0101</div><div class="fld"><label>Birthday (MM/DD)</label>03/14</div></div><div class="fld"><label>Address line 1</label>100 Main St</div><div class="fld"><label>Address line 2</label><span class="dash">empty</span></div><div class="two"><div class="fld"><label>City</label>Vancouver</div><div class="fld"><label>Province / State</label>BC</div><div class="fld"><label>Postal code</label>V5K 0A1</div><div class="fld"><label>Country</label>Canada</div></div><div class="sec">Other fields <span class="mc">From Mailchimp</span></div><div class="fld"><label>Anniversary</label>06/21</div><div class="fld"><label>Referral source</label>Seminar</div><div class="fld"><label>Company</label>Example Co</div><div class="fld"><label>Preferred contact</label>Email</div><div class="fld"><label>Employer</label>Example Co</div><div class="fld"><label>Risk profile</label>Balanced</div><div class="fld"><label>Spouse name</label><span class="dash">empty</span></div><div class="fld ro"><label>Second address (Mailchimp address field)</label>200 Side St, Vancouver, BC</div><p class="count" style="font-size:.7rem">Address-type extra fields are read-only here today (as in the current edit dialog).</p><div class="sec">Other fields <span class="csv">From CSV</span></div><div class="fld"><label>Notes</label><span class="dash">empty</span></div><div class="sec">Status, lists and tags</div><div class="fld"><label>Status</label>Subscribed</div><div class="fld"><label>Lists</label><span class="chip">Newsletter</span><span class="chip">Clients</span></div><div class="fld"><label>Tags</label><span class="chip blue">Retired</span></div><p class="count" style="margin-top:10px">Added Oct 2, 2026 &middot; Last updated Oct 19, 2026</p></div><div class="f"><button class="btn ghost">Cancel</button><button class="btn pri">Save</button></div></div></div><div class="legend"><h3>Notes</h3><ul><li>Today "Other fields" only lists fields that have a value for this contact. Proposed: list every field this advisor has (from the field list saved at import), with empty ones shown as blank so they can be filled in.</li><li>On phones the same page is one column, full width.</li><li>Sample data only.</li></ul></div></body></html>

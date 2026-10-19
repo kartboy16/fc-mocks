@@ -1,0 +1,180 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>#589 A. Dropdown checklist next to Filters</title><style>:root{--bg:#f4f8fc;--card:#fff;--ink:#1e2a4a;--muted:#5b6572;--blue:#2b7de9;--blue-dark:#1e5bb8;--border:#d4e4f2;--line:#e6edf5;--mint:#e6f1fb;--ok:#047857;--ok-bg:#e8f5e9;--warn:#92400e;--warn-bg:#fef3c7;--mc:#7a4b00;--mc-bg:#fff4d6}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Inter,Roboto,system-ui,sans-serif;background:var(--bg);color:var(--ink);font-size:14px;line-height:1.45}
+a{color:var(--blue)}button{font-family:inherit;cursor:pointer}
+.thesis{background:linear-gradient(135deg,#1e2a4a,#2b7de9);color:#fff;padding:16px 24px}
+.thesis .rec{display:inline-block;background:#fff;color:var(--blue);font-size:.68rem;font-weight:700;padding:3px 10px;border-radius:999px;margin-bottom:8px}
+.thesis .rec.alt{background:rgba(255,255,255,.2);color:#fff}
+.thesis h1{font-size:1.05rem;margin-bottom:4px}.thesis p{opacity:.92;font-size:.8rem;max-width:1000px}
+.nav{padding:8px 24px;font-size:.75rem;background:#fafafa;border-bottom:1px solid var(--border);display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+.nav a{text-decoration:none;font-weight:500}.nav .on{font-weight:700;color:var(--ink)}
+.nav .hold{margin-left:auto;background:#fef3c7;color:#92400e;border:1px solid #fcd34d;border-radius:999px;padding:2px 10px;font-weight:600;font-size:.68rem}
+.demo-bar{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:12px 24px 6px;padding:10px 12px;background:#fff;border:1px dashed #b9c7d8;border-radius:10px}
+.demo-bar .lbl{font-size:.65rem;font-weight:700;text-transform:uppercase;color:var(--muted);margin-right:4px}
+.demo-btn{padding:5px 10px;border:1px solid var(--border);border-radius:8px;background:#fff;font-size:.72rem;font-weight:600;color:var(--ink)}
+.demo-btn:hover,.demo-btn.on{border-color:var(--blue);color:var(--blue);background:var(--mint)}
+.demo-note{margin:0 24px 10px;font-size:.76rem;color:var(--muted);min-height:1.2em}
+.stage{padding:4px 24px 30px}
+.app{max-width:1180px;margin:0 auto;background:#fff;border:1px solid var(--border);border-radius:12px;overflow:visible;box-shadow:0 10px 30px rgba(30,42,74,.08);position:relative;min-height:680px}
+.topbar{display:flex;align-items:center;gap:14px;padding:10px 18px;border-bottom:1px solid var(--line);background:#fff}
+.topbar b{font-size:.95rem}.topbar .who{margin-left:auto;font-size:.75rem;color:var(--muted)}
+.subtabs{display:flex;gap:18px;padding:0 18px;border-bottom:1px solid var(--line);font-size:.8rem}
+.subtabs span{padding:10px 0;color:var(--muted)}.subtabs span.on{color:var(--blue);border-bottom:2px solid var(--blue);font-weight:600}
+.content{padding:16px 18px}
+.hrow{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:12px}
+.hrow h2{font-size:1.15rem;font-weight:600}.count{font-size:.8rem;color:var(--muted)}
+.btns{display:flex;gap:8px;flex-wrap:wrap}
+.btn{border:1px solid rgba(43,125,233,.5);color:var(--blue);background:#fff;border-radius:6px;padding:6px 12px;font-size:.78rem;font-weight:600;text-transform:none;display:inline-flex;align-items:center;gap:6px}
+.btn.sm{padding:4px 10px;font-size:.74rem}.btn.pri{background:var(--blue);color:#fff;border-color:var(--blue)}
+.btn.ghost{border-color:transparent}.btn:disabled{opacity:.45;cursor:default}
+.btn .badge{background:var(--blue);color:#fff;border-radius:999px;font-size:.62rem;padding:0 6px}
+.toolbar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:14px;position:relative}
+.search{border:1px solid #c4c4c4;border-radius:6px;padding:6px 10px;font-size:.78rem;min-width:200px;color:var(--muted)}
+.alert{display:flex;gap:10px;align-items:flex-start;border-radius:8px;padding:10px 14px;margin-bottom:12px;font-size:.8rem}
+.alert.info{background:#e5f3fd;color:#014361}.alert .acts{margin-left:auto;display:flex;gap:6px;flex-shrink:0}
+.alert.ok{background:var(--ok-bg);color:#1e4620}
+.tablewrap{border:1px solid var(--line);border-radius:8px;overflow:auto;max-width:100%}
+table{border-collapse:separate;border-spacing:0;width:100%;font-size:.78rem}
+th,td{padding:7px 10px;border-bottom:1px solid var(--line);text-align:left;white-space:nowrap;background:#fff}
+th{font-weight:600;color:#1e2a4a;background:#fafcff;position:relative}
+th.sticky,td.sticky{position:sticky;left:0;z-index:2;box-shadow:1px 0 0 var(--line)}
+th.newcol,td.newcol{background:#fffbea}
+.chip{display:inline-block;border-radius:999px;padding:1px 8px;font-size:.68rem;border:1px solid #bdbdbd;margin-right:3px}
+.chip.ok{background:#2e7d32;color:#fff;border-color:#2e7d32}.chip.grey{background:#eee;border-color:#eee}
+.chip.blue{border-color:var(--blue);color:var(--blue)}
+.dash{color:#9aa4b2}
+.mc{display:inline-block;background:var(--mc-bg);color:var(--mc);border:1px solid #f3d38a;border-radius:4px;font-size:.6rem;font-weight:700;padding:0 5px;margin-left:6px;vertical-align:1px}
+.csv{display:inline-block;background:#eef1f5;color:#465264;border-radius:4px;font-size:.6rem;font-weight:700;padding:0 5px;margin-left:6px}
+.new{display:inline-block;background:#dcfce7;color:#166534;border-radius:4px;font-size:.6rem;font-weight:700;padding:0 5px;margin-left:6px}
+.pop{position:absolute;z-index:20;background:#fff;border:1px solid var(--border);border-radius:10px;box-shadow:0 12px 32px rgba(30,42,74,.18);width:320px;max-height:460px;display:flex;flex-direction:column}
+.pop .ph{padding:10px 12px;border-bottom:1px solid var(--line);font-weight:600;font-size:.82rem}
+.pop .pb{overflow:auto;padding:6px 0;flex:1}
+.pop .pf{padding:8px 12px;border-top:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;font-size:.72rem;color:var(--muted)}
+.grp{font-size:.64rem;font-weight:700;text-transform:uppercase;color:var(--muted);padding:8px 12px 4px}
+.opt{display:flex;align-items:center;gap:8px;padding:4px 12px;font-size:.78rem}
+.opt:hover{background:#f5f9ff}.opt input{accent-color:var(--blue)}
+.opt .hint{margin-left:auto;font-size:.66rem;color:var(--muted)}
+.drawer{position:absolute;top:0;right:0;bottom:0;width:380px;background:#fff;border-left:1px solid var(--border);box-shadow:-12px 0 30px rgba(30,42,74,.12);z-index:30;display:flex;flex-direction:column}
+.drawer .dh{padding:14px 16px;border-bottom:1px solid var(--line);display:flex;align-items:center}
+.drawer .dh b{font-size:.95rem}.drawer .dh button{margin-left:auto;border:none;background:none;font-size:1.1rem;color:var(--muted)}
+.drawer .db{padding:10px 16px;overflow:auto;flex:1}.drawer .df{padding:10px 16px;border-top:1px solid var(--line);display:flex;gap:8px;align-items:center}
+.shown{list-style:none;border:1px solid var(--line);border-radius:8px;margin:6px 0 12px}
+.shown li{display:flex;align-items:center;gap:8px;padding:6px 8px;border-bottom:1px solid var(--line);font-size:.78rem;background:#fff}
+.shown li:last-child{border-bottom:none}.shown li.drag{opacity:.4}.shown li.over{box-shadow:inset 0 2px 0 var(--blue)}
+.handle{cursor:grab;color:#9aa4b2;font-size:.9rem;user-select:none}
+.mini{border:1px solid var(--line);background:#fff;border-radius:5px;font-size:.7rem;padding:1px 6px;color:var(--muted)}
+.mini.x{margin-left:auto}
+.addrow{display:flex;align-items:center;gap:8px;padding:4px 2px;font-size:.78rem}
+.addrow button{margin-left:auto}
+.hmenu{border:none;background:none;color:var(--muted);font-size:.7rem;margin-left:4px;padding:0 3px;border-radius:3px}
+.hmenu:hover{background:var(--mint);color:var(--blue)}
+.plus{border:1px dashed var(--blue);color:var(--blue);background:#fff;border-radius:6px;font-size:.72rem;font-weight:600;padding:2px 8px}
+.menu{position:absolute;z-index:25;background:#fff;border:1px solid var(--border);border-radius:8px;box-shadow:0 10px 24px rgba(30,42,74,.18);min-width:170px;font-size:.78rem;padding:4px 0;font-weight:400}
+.menu div{padding:6px 12px;cursor:pointer}.menu div:hover{background:#f5f9ff}.menu .dis{color:#b0b8c4;cursor:default}
+.empty{padding:40px;text-align:center;color:var(--muted);border:1px solid var(--line);border-radius:8px}
+.pag{display:flex;justify-content:flex-end;gap:18px;padding:8px 10px;font-size:.74rem;color:var(--muted)}
+.legend{max-width:1180px;margin:14px auto 40px;padding:14px 18px;background:#fff;border:1px solid var(--border);border-radius:12px;font-size:.8rem;color:#374151}
+.legend h3{font-size:.85rem;margin:8px 0 4px}.legend li{margin:2px 0 2px 18px}
+.phonewrap{display:flex;gap:30px;justify-content:center;align-items:flex-start;flex-wrap:wrap;padding:20px}
+.phone{width:375px;min-height:720px;border:10px solid #0e1726;border-radius:32px;background:#fff;overflow:hidden}
+.phone .topbar{padding:10px 14px}
+.mcard{border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin-bottom:8px;font-size:.78rem}
+.mcard .em{font-weight:600}.mcard .meta{color:var(--muted);font-size:.72rem;margin-top:2px}
+.side{max-width:300px;font-size:.8rem;color:#374151;background:#fff;border:1px solid var(--border);border-radius:12px;padding:14px}
+.toast{position:absolute;left:50%;bottom:18px;transform:translateX(-50%);background:#1e2a4a;color:#fff;border-radius:8px;padding:8px 14px;font-size:.76rem;z-index:40;display:none}
+</style></head><body><div class="thesis"><span class="rec">Recommended</span><h1>#589 A. Dropdown checklist next to Filters</h1><p>A "Columns" button opens a short checklist grouped into Standard fields, From Mailchimp and Other fields. Ticking a box adds the column at the end straight away and saves it. No reorder: new columns go on the right. Search appears when there are lots of fields.</p></div><div class="nav"><a href="../">All mocks</a><a href="./">#589 hub</a><span class="on">A. Dropdown checklist</span><a href="b-drawer.html">B. Side drawer + reorder</a><a href="c-add-column.html">C. Inline + Add column</a><a href="contact.html">Contact page</a><a href="build-contract.html">Build contract</a><span class="hold">Mock only &middot; Soft Dev hold &middot; not agent-ready</span></div><div class="demo-bar"><span class="lbl">Try a state</span>
+<button class="demo-btn" data-p="normal" onclick="preset('normal')">1 Default (today)</button>
+<button class="demo-btn" data-p="open" onclick="preset('open')">2 Choose columns</button>
+<button class="demo-btn" data-p="hint" onclick="preset('hint')">3 After an import (one-time hint)</button>
+<button class="demo-btn" data-p="many" onclick="preset('many')">4 Many custom fields</button>
+<button class="demo-btn" data-p="nocustom" onclick="preset('nocustom')">5 No imported fields yet</button>
+<button class="demo-btn" data-p="empty" onclick="preset('empty')">6 No subscribers</button>
+<button class="demo-btn" data-p="mobile" onclick="preset('mobile')">7 Phone</button>
+<a class="demo-btn" style="text-decoration:none" href="contact.html">8 Contact page (all fields)</a></div><div class="demo-note" id="note"></div><div class="stage"><div class="app" id="app"></div></div><div class="legend"><h3>How A works</h3><ul><li>Columns sits next to Filters and looks like it (same small outlined button). A badge shows how many extra columns are on, e.g. "+3".</li><li>Ticking or unticking saves immediately. Nothing else on the page changes (filters, sort, page).</li><li>Email can't be turned off. Every other column, including today's defaults, can.</li><li>New columns are added on the right in the order you tick them. To change the order, untick and re-tick (or pick B).</li><li>"Reset to default" puts back exactly today's columns.</li></ul><h3>Why recommended</h3><ul><li>One click to open, one click per field. It's the least to learn and matches the Filters menu advisors already use.</li><li>Smallest build: no drag-and-drop, no header menus.</li><li>Reorder can be added later (B's drawer) without changing what's saved.</li></ul><h3>Same in every direction</h3><ul><li>Default view is unchanged: Email, Name, Status, Engagement, Lists, Tags. (Engagement is in today's table, so it stays on by default.)</li><li>The choice is saved for the advisor's account, so it follows them across sessions and devices. An admin acting as the advisor sees and changes the same choice.</li><li>Fields imported from Mailchimp are labelled "From Mailchimp". Fields from a CSV import are labelled "From CSV".</li><li>The contact page always shows every field, whatever columns are on.</li><li>Export still includes every field (proposed default). See the build contract.</li><li>Phones show the basic card view and no Columns control.</li></ul><p style="margin-top:8px">Sample data only: Jane Advisor, Your Firm Name, Example Co, example.com.</p></div><script>var STD=[{k:'email',l:'Email',locked:1},{k:'name',l:'Name'},{k:'status',l:'Status'},{k:'engagement',l:'Engagement'},{k:'lists',l:'Lists'},{k:'tags',l:'Tags'},{k:'phone',l:'Phone'},{k:'birthday',l:'Birthday'},{k:'city',l:'City'},{k:'address',l:'Full address'},{k:'created',l:'Added on'}];
+var DEF=['email','name','status','engagement','lists','tags'];
+var MC=[{k:'cf:Anniversary',l:'Anniversary',src:'mc'},{k:'cf:Referral source',l:'Referral source',src:'mc'},{k:'cf:Company',l:'Company',src:'mc'},{k:'cf:Spouse name',l:'Spouse name',src:'mc'},{k:'cf:Preferred contact',l:'Preferred contact',src:'mc'}];
+var CSVF=[{k:'cf:Notes',l:'Notes',src:'csv'}];
+var MANY=['Employer','Job title','Household size','Risk profile','Last review','Next review','Account type','Province','Language','Kids','Interest: Retirement','Interest: Education savings','Interest: Insurance','Interest: Estate planning','Seminar attended','Lead score','Second phone','Work email','Assistant name','Preferred time'].map(function(n){return {k:'cf:'+n,l:n,src:'mc'}});
+var NEWKEYS=['cf:Anniversary','cf:Referral source','cf:Company'];
+var PEOPLE=[
+['pat.example@example.com','Pat','Example','subscribed','Opened 2 days ago',['Newsletter','Clients'],['Retired'],'604-555-0101','03/14','Vancouver','100 Main St, Vancouver, BC V5K 0A1','Oct 2, 2026',{'Anniversary':'06/21','Referral source':'Seminar','Company':'Example Co','Preferred contact':'Email','Employer':'Example Co','Risk profile':'Balanced'}],
+['sam.sample@example.com','Sam','Sample','subscribed','Clicked last week',['Newsletter'],['RRSP review','Seminar 2026'],'604-555-0102','11/02','Burnaby','22 Oak Ave, Burnaby, BC V5H 0B2','Sep 28, 2026',{'Referral source':'Website','Spouse name':'Lee Sample','Notes':'Prefers mornings'}],
+['casey.demo@example.com','Casey','Demo','subscribed','No activity',['Prospects'],[],'','','Surrey','','Sep 20, 2026',{'Company':'Sample Holdings Ltd','Employer':'Sample Holdings Ltd'}],
+['robin.test@example.com','Robin','Test','unsubscribed','No activity',['Newsletter'],['Retired'],'604-555-0104','07/30','Richmond','8 Cedar Rd, Richmond, BC V6X 0C3','Sep 11, 2026',{'Anniversary':'09/09','Preferred contact':'Phone'}],
+['taylor.example@example.com','Taylor','Example','subscribed','Opened yesterday',['Clients'],['Seminar 2026'],'','01/05','North Vancouver','','Aug 30, 2026',{'Referral source':'Client referral','Risk profile':'Growth'}],
+['morgan.sample@example.com','Morgan','Sample','subscribed','No activity',['Newsletter','Prospects'],[],'604-555-0106','','Victoria','5 Elm St, Victoria, BC V8W 0D4','Aug 14, 2026',{}],
+['jamie.demo@example.com','Jamie','Demo','bounced','No activity',['Newsletter'],[],'','','','','Jul 3, 2026',{'Notes':'Old work address'}],
+['riley.example@example.com','Riley','Example','subscribed','Clicked 3 weeks ago',['Newsletter','Clients'],['RRSP review','Retired','Seminar 2026'],'604-555-0108','12/24','Kelowna','300 Lake Dr, Kelowna, BC V1Y 0E5','Jun 19, 2026',{'Anniversary':'05/02','Company':'Example Co','Spouse name':'Drew Example','Interest: Retirement':'Yes'}]];
+var S={order:DEF.slice(),mode:'normal',hint:false,hintDone:false,pop:false,drawer:false,draft:null,q:'',menu:null,mobile:false,flash:[]};
+function custom(){if(S.mode==='nocustom')return [];var a=MC.concat(CSVF);if(S.mode==='many')a=a.concat(MANY);return a}
+function all(){return STD.concat(custom())}
+function F(k){return all().filter(function(f){return f.k===k})[0]}
+function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;')}
+function tagsrc(f){return f.src==='mc'?'<span class="mc">From Mailchimp</span>':f.src==='csv'?'<span class="csv">From CSV</span>':''}
+function isNew(k){return S.flash.indexOf(k)>=0}
+function cell(k,p){var d='<span class="dash">-</span>';
+ if(k==='email')return '<a href="contact.html">'+p[0]+'</a>';
+ if(k==='name')return p[1]+' '+p[2];
+ if(k==='status')return '<span class="chip '+(p[3]==='subscribed'?'ok':'grey')+'">'+p[3]+'</span>';
+ if(k==='engagement')return '<span class="chip">'+p[4]+'</span>';
+ if(k==='lists')return p[5].slice(0,2).map(function(x){return '<span class="chip">'+x+'</span>'}).join('')+(p[5].length>2?'<span class="chip">+'+(p[5].length-2)+'</span>':'')||d;
+ if(k==='tags')return p[6].length?p[6].slice(0,2).map(function(x){return '<span class="chip blue">'+x+'</span>'}).join('')+(p[6].length>2?'<span class="chip">+'+(p[6].length-2)+'</span>':''):d;
+ if(k==='phone')return p[7]||d;if(k==='birthday')return p[8]||d;if(k==='city')return p[9]||d;if(k==='address')return p[10]||d;if(k==='created')return p[11];
+ var v=p[12][k.slice(3)];return v?esc(v):d}
+function toast(t){var e=document.getElementById('toast');e.textContent=t;e.style.display='block';clearTimeout(window._tt);window._tt=setTimeout(function(){e.style.display='none'},2200)}
+function setOrder(o,msg){S.order=o;render();if(msg)toast(msg)}
+function toggleKey(k){var o=S.order.slice(),i=o.indexOf(k);if(i>=0)o.splice(i,1);else o.push(k);setOrder(o,'Saved. Only changes what you see here.')}
+function reset(){S.flash=[];setOrder(DEF.slice(),'Back to the default columns.')}
+function changed(){return S.order.join()!==DEF.join()}
+function groups(filterFn){var q=S.q.toLowerCase();var m=function(f){return !q||f.l.toLowerCase().indexOf(q)>=0};
+ var g=[['Standard fields',STD.filter(m)],['From Mailchimp',custom().filter(function(f){return f.src==='mc'}).filter(m)],['Other fields',custom().filter(function(f){return f.src==='csv'}).filter(m)]];
+ return g.map(function(x){return [x[0],filterFn?x[1].filter(filterFn):x[1]]})}
+function hintHtml(){if(!S.hint||S.hintDone||S.mode==='nocustom')return '';
+ return '<div class="alert info"><div><b>3 new fields came in from your Mailchimp import:</b> Anniversary, Referral source, Company. They are already on each contact\'s page. Want to see any of them in this table?</div><div class="acts"><button class="btn sm pri" onclick="hintChoose()">Choose columns</button><button class="btn sm ghost" onclick="S.hintDone=true;render()">No thanks</button></div></div>'}
+function hintChoose(){S.hintDone=true;S.flash=NEWKEYS.slice();openPicker()}
+function tableHtml(){if(S.mode==='empty')return '<div class="empty">No subscribers yet. Add your first subscriber to get started.</div>';
+ var h='<div class="tablewrap"><table><thead><tr><th class="sticky" style="width:34px"><input type="checkbox"></th>';
+ S.order.forEach(function(k,i){var f=F(k);if(!f)return;h+='<th class="'+(k==='email'?'sticky" style="left:34px':'')+(isNew(k)?' newcol':'')+'">'+f.l+(f.src==='mc'?' <span class="mc" title="From Mailchimp">MC</span>':'')+(window.headerExtra?headerExtra(k,i):'')+'</th>'});
+ h+='<th style="text-align:right">'+(window.headerTail?headerTail():'Actions')+'</th></tr></thead><tbody>';
+ PEOPLE.forEach(function(p){h+='<tr><td class="sticky"><input type="checkbox"></td>';S.order.forEach(function(k){if(!F(k))return;h+='<td class="'+(k==='email'?'sticky" style="left:34px':'')+(isNew(k)?' newcol':'')+'">'+cell(k,p)+'</td>'});h+='<td style="text-align:right;color:var(--blue)"><a href="contact.html" title="Edit">&#9998;</a> &nbsp;<span style="color:#d32f2f">&#128465;</span></td></tr>'});
+ h+='</tbody></table></div><div class="pag"><span>Rows per page: 25</span><span>1-8 of 1,248</span><span>&lsaquo; &rsaquo;</span></div>';
+ var extra=S.order.filter(function(k){return DEF.indexOf(k)<0}).length;
+ if(extra>=6)h+='<p class="count" style="margin-top:6px">Wide table: scroll sideways. Email stays pinned on the left.</p>';
+ return h}
+function render(){if(S.mobile){renderMobile();return}
+ var extra=S.order.filter(function(k){return DEF.indexOf(k)<0}).length;
+ var h='<div class="topbar"><b>FinancialContent</b><span style="font-size:.8rem;color:var(--muted)">Email Campaigns &rsaquo; FTT Mail</span><span class="who">Jane Advisor &middot; Your Firm Name</span></div>'+
+ '<div class="subtabs"><span>Campaigns</span><span class="on">Subscribers</span><span>Lists</span><span>Forms</span><span>Reports</span><span>Settings</span></div><div class="content">'+
+ '<div class="hrow"><div><h2>Subscribers</h2><div class="count">'+(S.mode==='empty'?'0 subscribers':'1,248 subscribers')+'</div></div><div class="btns"><button class="btn">&#8681; Import CSV</button><button class="btn">&#9729; Import from Mailchimp</button><button class="btn">&#8679; Export</button><button class="btn pri">+ Add Contact</button></div></div>'+
+ '<div class="toolbar" id="tb"><button class="btn sm">&#9776; Filters</button>'+columnsControl(extra)+'<span class="search">Search (email, name)</span>'+(window.toolbarExtra?toolbarExtra():'')+'</div>'+
+ hintHtml()+tableHtml()+'</div>'+(window.overlay?overlay():'')+'<div class="toast" id="toast"></div>';
+ document.getElementById('app').innerHTML=h;if(window.afterRender)afterRender()}
+function renderMobile(){var h='<div class="phonewrap"><div class="phone"><div class="topbar"><b>FinancialContent</b><span class="who">&#9776;</span></div><div class="subtabs" style="overflow:hidden"><span>Campaigns</span><span class="on">Subscribers</span><span>Lists</span></div><div class="content"><div class="hrow"><div><h2>Subscribers</h2><div class="count">1,248 subscribers</div></div><button class="btn pri sm">+ Add</button></div><div class="toolbar"><button class="btn sm">&#9776; Filters</button><span class="search" style="min-width:0;flex:1">Search</span></div>'+
+ '<p class="count" style="margin-bottom:8px">Phones show the basic view. Your column choice applies on a computer or tablet.</p>';
+ PEOPLE.slice(0,6).forEach(function(p){h+='<a href="contact.html" style="text-decoration:none;color:inherit"><div class="mcard"><div class="em">'+p[1]+' '+p[2]+' '+cell('status',p)+'</div><div class="meta">'+p[0]+'</div><div class="meta">'+p[5].join(', ')+(p[6].length?' &middot; '+p[6].join(', '):'')+'</div></div></a>'});
+ h+='</div></div><div class="side"><b>Mobile (all directions)</b><ul style="margin-top:6px"><li>Under about 600px wide, the table becomes cards with Name, Status, Email, Lists and Tags.</li><li>The Columns control is hidden on phones, so a phone never changes the saved choice.</li><li>The post-import hint is not shown on phones.</li><li>Tap a card to open the contact page, which shows every field.</li></ul><p style="margin-top:8px"><button class="demo-btn" onclick="preset(\'normal\')">Back to desktop</button></p></div></div><div class="toast" id="toast"></div>';
+ document.getElementById('app').innerHTML=h}
+function preset(m){S.mobile=false;S.pop=false;S.drawer=false;S.menu=null;S.q='';S.flash=[];S.hint=false;S.hintDone=false;S.mode='normal';S.order=DEF.slice();var note='';
+ if(m==='normal')note='Default view: exactly today\'s columns. Advisors who never touch Columns see no change.';
+ if(m==='open'){note='Picker open.';setTimeout(openPicker,0)}
+ if(m==='hint'){S.hint=true;note='Shown once, the first time this advisor opens Subscribers after an import that added new fields. Either button makes it go away for good.'}
+ if(m==='many'){S.mode='many';S.order=DEF.concat(['phone','cf:Company','cf:Referral source','cf:Employer','cf:Risk profile','cf:Next review']);note='26 extra fields from Mailchimp. The picker gets a search box and scrolls. The table scrolls sideways with Email pinned.'}
+ if(m==='nocustom'){S.mode='nocustom';note='No imported fields yet: the picker lists only standard fields and explains where more come from.';setTimeout(openPicker,0)}
+ if(m==='empty'){S.mode='empty';note='No subscribers yet: today\'s empty message. Columns still works so the choice is ready for later.'}
+ if(m==='mobile'){S.mobile=true;note='Phone view.'}
+ document.querySelectorAll('.demo-btn[data-p]').forEach(function(b){b.classList.toggle('on',b.getAttribute('data-p')===m)});
+ document.getElementById('note').textContent=note;render()}
+function emptyNote(){return S.mode==='nocustom'?'<div class="opt" style="color:var(--muted);font-size:.72rem;white-space:normal">No extra fields yet. Fields from an Import from Mailchimp or Import CSV show up here.</div>':''}
+document.addEventListener('DOMContentLoaded',function(){preset('normal')});
+
+function columnsControl(extra){return '<span style="position:relative"><button class="btn sm" onclick="S.pop=!S.pop;S.q=\'\';render()">&#9638; Columns'+(extra?' <span class="badge">+'+extra+'</span>':'')+'</button>'+(S.pop?popHtml():'')+'</span>'}
+function onQ(v){S.q=v;render();var i=document.getElementById('q');i.focus();i.setSelectionRange(v.length,v.length)}
+function popHtml(){var h='<div class="pop" style="top:34px;left:0"><div class="ph">Columns to show</div>';
+ if(all().length>14)h+='<div style="padding:8px 12px 0"><input id="q" class="search" style="width:100%;color:var(--ink)" placeholder="Find a field" value="'+esc(S.q)+'" oninput="onQ(this.value)"></div>';
+ h+='<div class="pb">';
+ groups().forEach(function(g){if(!g[1].length&&g[0]!=='From Mailchimp')return;h+='<div class="grp">'+g[0]+'</div>';
+  if(!g[1].length){h+=emptyNote()||'<div class="opt" style="color:var(--muted);font-size:.72rem">No matches</div>';return}
+  g[1].forEach(function(f){var on=S.order.indexOf(f.k)>=0;h+='<label class="opt"><input type="checkbox" '+(on?'checked':'')+(f.locked?' disabled':'')+' onchange="toggleKey(\''+f.k.replace(/'/g,"\\'")+'\')"> '+f.l+(isNew(f.k)?'<span class="new">New</span>':'')+(f.locked?'<span class="hint">Always shown</span>':'')+'</label>'})});
+ h+='</div><div class="pf">'+(changed()?'<a href="#" onclick="reset();S.pop=true;render();return false">Reset to default</a>':'<span>Default columns</span>')+'<span>Saved automatically &nbsp;<button class="btn sm pri" onclick="S.pop=false;S.flash=[];render()">Done</button></span></div></div>';return h}
+function openPicker(){S.pop=true;render()}
+</script></body></html>
