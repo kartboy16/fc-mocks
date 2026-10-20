@@ -1,12 +1,14 @@
 <!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>#599 Build contract</title><style>body{font-family:Inter,system-ui,sans-serif;max-width:920px;margin:24px auto;padding:0 16px;line-height:1.55;color:#2C3E50}table{border-collapse:collapse;width:100%}td,th{border:1px solid #dde3ea;padding:6px 8px;text-align:left;vertical-align:top}th{background:#f4f7fa}blockquote{background:#fff4e5;border:2px dashed #e08a00;margin:0;padding:8px 14px;border-radius:8px}code{background:#f2f4f7;padding:1px 4px;border-radius:4px;font-size:.92em}</style></head><body><p><a href="index.html">&larr; #599 hub</a> &middot; <a href="build-contract.md">.md</a></p><h1>#599 Weekly picks review: build contract</h1>
 <p><strong>Status:</strong> Designer mock only. <strong>Not agent-ready. Soft Dev UI hold until Alex picks.</strong> The phase 1 backend (profiles, history, topic tagging) can go ahead in parallel, as Alex's comment allows.</p>
+<p><strong>Rev 2 (Oct 20):</strong> this revision adds content freshness from <a href="https://github.com/kartboy16/content-library/issues/599#issuecomment-6295711214">Alex's comment 6295711214</a>: created and updated dates, a needs-update state, and a created-date filter on Swap. See <em>Rev 2 changes</em> below.</p>
 <p>Mocks: <a href="index.html">Hub</a> · <a href="a-table-drawer.html">A (recommended)</a> · <a href="b-split-view.html">B</a> · <a href="c-focus-review.html">C</a></p>
 <h2>Rules the UI must make clear (all directions)</h2>
 <ul>
 <li><strong>Nothing is scheduled until it's approved.</strong> Approving hands the post to the normal scheduling flow.</li>
 <li><strong>Drafts never publish on their own.</strong> There is no auto-schedule and no auto-publish.</li>
 <li><strong>Slates are built every Monday at 5:00 AM PT.</strong> Profiles re-sync nightly at 2:00 AM PT.</li>
-<li>These appear as three pills at the top of the queue and the slate, and again in the toast after Approve or Skip.</li>
+<li><strong>Posts flagged as needing an update are skipped</strong> until they're refreshed (Rev 2).</li>
+<li>These appear as pills at the top of the queue and the slate, and again in the toast after Approve or Skip.</li>
 </ul>
 <h2>Open question (do not build around a guess)</h2>
 <blockquote>
@@ -30,26 +32,64 @@
 <td>Full-width table queue (like Manage Advisor Posts) → full slate page with Prev/Next</td>
 <td>Right-side drawer</td>
 <td>100+ rows, filters and bulk actions, close to today's admin screens</td>
-<td><strong>2–3 dev days</strong></td>
+<td><strong>2.5–3.5 dev days</strong> (was 2–3)</td>
 </tr>
 <tr>
 <td>B</td>
 <td>Split view: advisor list on the left, slate on the right</td>
 <td>Centred pop-up</td>
 <td>Fast clicking between advisors without leaving the list</td>
-<td>3–4 dev days</td>
+<td>3.5–4.5 dev days (was 3–4)</td>
 </tr>
 <tr>
 <td>C</td>
 <td>Overview with progress, then one advisor at a time (Approve all and next, keyboard keys)</td>
 <td>Inline, under the post</td>
 <td>Getting through the whole week quickly</td>
-<td>3–3.5 dev days</td>
+<td>3.5–4 dev days (was 3–3.5)</td>
 </tr>
 </tbody>
 </table>
+<p>Rev 2 adds about +0.5 day to each direction for the date lines, the needs-update states and the created-date filter. The filter control can be shared with #372 if it's built first.</p>
 <p>The estimates cover the UI only. They assume the slate methods and collections from phases 1–2 exist, and they include desktop and mobile layouts, states, and component tests.</p>
 <p><strong>Why A:</strong> it reuses the Manage Advisor Posts table pattern admins already know (fixed-width columns, chips, a 400px drawer), it handles 100+ rows with filters and bulk actions best, and it's the smallest build. B and C can come later as views over the same data.</p>
+<h2>Rev 2 changes (content freshness)</h2>
+<ol>
+<li><strong>Dates on every pick and every Swap option:</strong> "Created Mar 4, 2025 · Updated Sep 12, 2026". If the post hasn't been edited, it says "Not updated since" in place of the Updated date. These also show on the queue's top pick and on posts that were skipped for needing an update.</li>
+<li><strong>Needs update.</strong> There are two cases:</li>
+<li><strong>Skipped at build:</strong> the post was flagged before Monday's 5:00 AM PT build, so it's never picked.<ul>
+<li>The slate shows a <strong>"Skipped at build: needs update (N)"</strong> panel. For each post: title, topic, dates, and <strong>"⚠ Needs update: {reason}. Flagged {flaggedAt} by {flaggedBy}."</strong> Sample reasons follow the comment: "Outdated figures: TFSA contribution limit", "Outdated figures: CPP/OAS rates", "Outdated figures: tax brackets". Flagged by Content bot or an admin.</li>
+<li>Copy: "These would have fit {advisor}, but they're flagged as out of date, so the engine skipped them. They come back once the post is refreshed."</li>
+</ul>
+</li>
+<li><strong>Flagged since build (mock assumption, see Q8):</strong> a picked post gets flagged mid-week, for example by Content bot's periodic review.<ul>
+<li>The pick shows <strong>"Flagged since build: needs update"</strong>, its title is struck through, and the reason box says "It can't be approved until the post is refreshed. Swap it, or leave it skipped."</li>
+<li>Only <strong>Swap</strong> is offered. Approve all leaves it out.</li>
+<li>To see it, use the new <strong>Needs update</strong> button in the state bar.</li>
+</ul>
+</li>
+<li><strong>Queue:</strong><ul>
+<li>A new <strong>"Posts skipped: needs update"</strong> counter (A, B and C). It's clickable and filters the list.</li>
+<li>A row tag: "N skipped at build: needs update" and/or "N flagged since build: needs update".</li>
+<li>A new warning filter option: <strong>"Posts skipped: needs update"</strong>.</li>
+<li>A new rule pill: "Posts that need an update are skipped".</li>
+</ul>
+</li>
+<li><strong>Swap:</strong><ul>
+<li>Flagged posts are never in the ranked list.</li>
+<li>A link, "Show N posts hidden because they need an update", lists them greyed out and unselectable, with their reasons.</li>
+</ul>
+</li>
+<li><strong>Created-date filter on Swap and search.</strong> This reuses the <a href="https://kartboy16.github.io/fc-mocks/372/directions/a/">#372</a> Direction A design: two compact floating-label date fields, <strong>"Created from"</strong> and <strong>"to"</strong>, next to the search box, with a small <strong>Clear</strong> link.</li>
+<li>Empty means no limit. Each field works alone (on or after, or on or before), and dates are inclusive.</li>
+<li>Future dates are blocked (<code>max</code> is today).</li>
+<li>Status line: "Showing posts created Jan 1, 2025 – Dec 31, 2026 · 5 of 7 options".</li>
+<li>Empty result: "No options created … Widen the dates or clear the Created filter."</li>
+<li>If "to" is before "from", the field turns red with a plain message: "The "to" date is before "Created from". Pick a later date. Still showing the last range that worked." The last range that worked stays applied.</li>
+<li><strong>#372 isn't locked yet.</strong> Alex's comment says to reuse it "if Alex locks it", so this follows #372's <em>recommended</em> A, and Rev 2 changes if #372 lands differently.</li>
+<li><strong>Freshness down-rank:</strong> older posts score lower but aren't excluded. The fit score already includes this. The Swap explainer still says what's left out, and the dates make the ranking visible.</li>
+<li><strong>Open question unchanged:</strong> the new comment doesn't answer "and then provide within the", so the callouts stay.</li>
+</ol>
 <h2>Screens</h2>
 <ol>
 <li><strong>Review queue (Weekly picks review)</strong></li>
@@ -82,6 +122,8 @@
 </ol>
 <h2>States (each mock has a "Try a state" bar)</h2>
 <ul>
+<li><strong>Needs update (Rev 2):</strong> two posts are flagged since build (Jane Advisor and Sam Placeholder), plus the default posts skipped at build (Jane Advisor, Sam Placeholder and Morgan Sample).</li>
+<li><strong>Swap filter:</strong> created range applied, nothing in range, and "to" before "from".</li>
 <li><strong>Loading:</strong> skeleton rows with "Loading this week's slates…".</li>
 <li><strong>Empty:</strong> "No slate for this week yet. Slates are built every Monday at 5:00 AM PT. The next one will be ready Mon Oct 26 at 5:00 AM PT", with a <strong>Rebuild all slates now</strong> button. The rebuild builds drafts only.</li>
 <li><strong>Error:</strong> "We couldn't load this week's slates. Nothing has been scheduled or published." with <strong>Try again</strong> and a hint to use Rebuild if Monday's build failed.</li>
@@ -132,28 +174,34 @@
 <li>Keyboard shortcuts in C (A, S, ←, →) are ignored while typing in a field.</li>
 </ul>
 <h2>Data and code findings (read from <code>main</code>, read-only)</h2>
-<ul>
-<li><strong><code>advisor_post_history</code> already exists</strong> (<code>imports/collections/advisor_post_history.js</code>). It's indexed on <code>advisorId+templateId</code> and <code>advisorId+imageId</code>, and it's used by <code>server/ai-service.js</code> (around line 1531) and a publication (<code>imports/server/publications.js</code> around line 468). The spec's proposed <code>advisorPostHistory</code> would clash with it, so use a new name or extend it carefully. <em>Unverified:</em> exactly what writes to it.</li>
-<li><strong>No slate collections yet:</strong> nothing like <code>rotationSlates</code>, <code>slateItems</code>, <code>advisorTopicProfile</code> or <code>postTopics</code>.</li>
-<li><strong>Topics today = <code>postCategories.slug</code></strong> on HTMLPosts (indexed). There's no <code>primaryTopic</code> and no admin override field. Chips need a topic display name and colour mapping.</li>
-<li><strong>No numeric score is returned today.</strong> <code>getCandidatePostsForUser</code> (<code>server/api/post-suggestions.js</code> around lines 315–337) computes <code>scorePostWithServices</code> and sorts, but only returns <code>post</code>. The swap view needs a score (and its scale) for each item. The 0–100 "fit" in the mock is a display assumption.</li>
-<li><strong>No plain-language reason yet.</strong> <code>resolvePickReason</code> (<code>imports/utils/postPickHelpers.js</code>) returns only the codes <code>no-services</code>, <code>empty</code> and <code>success</code>. The spec's <code>slateItems.reason</code> text is new. <code>no-services</code> maps well to the "Missing products/services" warning.</li>
-<li><strong>Monthly "done" tracking is per month on AdvisorConfigs:</strong> <code>monthlyPickDoneMonthKey</code>, <code>monthlyPickDoneAt</code> and <code>monthlyPickScheduledPostId</code>, set by <code>postSuggestions.markMonthlyPickDone</code> and <code>unmarkMonthlyPickDone</code>. A weekly slate needs its own status. Decide whether approving also marks the month done.</li>
-<li><strong>Hand-off on Approve:</strong></li>
-<li><code>postSuggestions.bulkScheduleTopPicks({assignments, scheduledAt})</code> schedules immediately, with <strong>one shared date</strong> and <strong>website only</strong> (<code>insertScheduledWebsitePost</code>). It also marks the pick shown and the month done.</li>
-<li><code>scheduleForUser</code>, <code>scheduleSocialForUser</code> and <code>createCampaignForUser</code> exist for single posts.</li>
-<li>Approve needs a new method that sets the item to approved and then calls the normal scheduling flow. Which channel and which date is undecided (Q3).</li>
-<li><strong>Managed advisor list:</strong></li>
-<li>There's no "managed" flag.</li>
-<li><code>listMonthlyPickAdvisors</code> includes the advisor category "Content" and excludes "No longer a client" (<code>MONTHLY_PICK_*_CATEGORIES</code>).</li>
-<li><code>listMonthlyPickAdvisors</code> isn't called from any UI file. Manage Advisor Posts uses <code>getCandidatesForUsers</code> and <code>pickOneForUser</code>.</li>
-<li><em>Unverified:</em> whether "Content" means managed.</li>
-<li><strong>Products and services:</strong> <code>getConfirmedWebsiteServices</code> and <code>scorePostWithServices</code> (<code>server/api/advisor-website-services-helpers.js</code>) and the existing Choose Advisor Services panel. The warning box can link to that panel.</li>
-<li><strong>WP history:</strong> <code>fetchRecentWordpressPostsForUser</code> exists, with <code>DEFAULT_WP_TIMELINE_MONTHS = 6</code> and <code>MIN_WP_EXCLUSION_MONTHS = 24</code> for title exclusion.</li>
-<li><strong>Swap search:</strong> HTMLPosts has a text index on <code>name</code>, <code>excerpt</code> and <code>subtitle</code>, so the search can use it. Results must still apply the advisor's eligibility filter (<code>filterEligiblePosts</code>, the private-post protection).</li>
-<li><strong>Jobs:</strong> other schedulers use <code>acquireSchedulerLock</code> and <code>releaseSchedulerLock</code> (<code>server/scheduler-lock-helpers.js</code>). The Monday 5:00 AM PT job and the 2:00 AM PT re-sync can follow the same pattern. Watch for DST: 5 AM PT must stay 5 AM local.</li>
-<li><strong>Theme:</strong> MUI with Inter, primary <code>#2196F3</code>, text <code>#2C3E50</code>, and radius 12. The mock uses the same.</li>
-</ul>
+<p><strong>Rev 2 (freshness):</strong>
+- <strong>There's no <code>needsUpdate</code> flag on posts today.</strong> No <code>needsUpdate</code>, <code>needs_update</code> or "needs update" appears in collections, server APIs or admin UI. The field, its reason, <code>flaggedAt</code> and <code>flaggedBy</code>, plus a way to set and clear it (Content bot and admins), are all new. Eligibility in <code>filterEligiblePosts</code> and <code>getCandidatePostsForUser</code> must exclude flagged posts.
+- <strong>Created date is <code>createdOn</code>, not <code>createdAt</code>.</strong> HTMLPosts uses <code>createdOn</code> (indexed with <code>isPublic</code>, <code>postCategories.slug</code> and <code>availableToAdvisorSourceIds</code>, and in <code>HTML_POSTS_CARD_FIELDS</code>). The comment's <code>createdAt</code> should map to <code>createdOn</code>.
+- <strong><code>updatedAt</code> isn't a clean "content updated" date.</strong> <code>server/api/html-posts-api.js</code> sets it on edits, but also when an email template is linked or unlinked (around lines 332–346 and 378). <code>server/html-posts-trash.js</code> sets it on trash and restore. <code>updatedAt</code> is also <em>not</em> in <code>HTML_POSTS_CARD_FIELDS</code>. Using it for "Updated" and for freshness would count non-content changes. Consider a <code>contentUpdatedAt</code>. (Unverified: every place that writes posts.)
+- <strong>What "refreshed" means is undefined:</strong> an edit after <code>flaggedAt</code>, or an explicit "Mark as updated" that clears the flag?
+- <strong>Related pattern:</strong> <code>CanadianContributionLimitsEditor.jsx</code> already has an "Up to date" / "Review recommended" (<code>stale</code>) status for TFSA/RRSP limits (<code>imports/utils/canadian_contribution_limits.js</code>). Content bot's flagging could reuse the limits' <code>updatedAt</code> to find posts that cite old figures. This is a possible source, unverified.
+- <strong>The #372 created-range filter isn't built.</strong> There's no <code>createdFrom</code>/<code>createdTo</code> in <code>ManageAdvisorPosts.jsx</code> or <code>post-suggestions*.js</code>. The Swap filter would add the first <code>createdOn</code> range query, which the existing <code>createdOn</code> indexes can serve.</p>
+<p><strong>Rev 1:</strong>
+- <strong><code>advisor_post_history</code> already exists</strong> (<code>imports/collections/advisor_post_history.js</code>). It's indexed on <code>advisorId+templateId</code> and <code>advisorId+imageId</code>, and it's used by <code>server/ai-service.js</code> (around line 1531) and a publication (<code>imports/server/publications.js</code> around line 468). The spec's proposed <code>advisorPostHistory</code> would clash with it, so use a new name or extend it carefully. <em>Unverified:</em> exactly what writes to it.
+- <strong>No slate collections yet:</strong> nothing like <code>rotationSlates</code>, <code>slateItems</code>, <code>advisorTopicProfile</code> or <code>postTopics</code>.
+- <strong>Topics today = <code>postCategories.slug</code></strong> on HTMLPosts (indexed). There's no <code>primaryTopic</code> and no admin override field. Chips need a topic display name and colour mapping.
+- <strong>No numeric score is returned today.</strong> <code>getCandidatePostsForUser</code> (<code>server/api/post-suggestions.js</code> around lines 315–337) computes <code>scorePostWithServices</code> and sorts, but only returns <code>post</code>. The swap view needs a score (and its scale) for each item. The 0–100 "fit" in the mock is a display assumption.
+- <strong>No plain-language reason yet.</strong> <code>resolvePickReason</code> (<code>imports/utils/postPickHelpers.js</code>) returns only the codes <code>no-services</code>, <code>empty</code> and <code>success</code>. The spec's <code>slateItems.reason</code> text is new. <code>no-services</code> maps well to the "Missing products/services" warning.
+- <strong>Monthly "done" tracking is per month on AdvisorConfigs:</strong> <code>monthlyPickDoneMonthKey</code>, <code>monthlyPickDoneAt</code> and <code>monthlyPickScheduledPostId</code>, set by <code>postSuggestions.markMonthlyPickDone</code> and <code>unmarkMonthlyPickDone</code>. A weekly slate needs its own status. Decide whether approving also marks the month done.
+- <strong>Hand-off on Approve:</strong>
+  - <code>postSuggestions.bulkScheduleTopPicks({assignments, scheduledAt})</code> schedules immediately, with <strong>one shared date</strong> and <strong>website only</strong> (<code>insertScheduledWebsitePost</code>). It also marks the pick shown and the month done.
+  - <code>scheduleForUser</code>, <code>scheduleSocialForUser</code> and <code>createCampaignForUser</code> exist for single posts.
+  - Approve needs a new method that sets the item to approved and then calls the normal scheduling flow. Which channel and which date is undecided (Q3).
+- <strong>Managed advisor list:</strong>
+  - There's no "managed" flag.
+  - <code>listMonthlyPickAdvisors</code> includes the advisor category "Content" and excludes "No longer a client" (<code>MONTHLY_PICK_*_CATEGORIES</code>).
+  - <code>listMonthlyPickAdvisors</code> isn't called from any UI file. Manage Advisor Posts uses <code>getCandidatesForUsers</code> and <code>pickOneForUser</code>.
+  - <em>Unverified:</em> whether "Content" means managed.
+- <strong>Products and services:</strong> <code>getConfirmedWebsiteServices</code> and <code>scorePostWithServices</code> (<code>server/api/advisor-website-services-helpers.js</code>) and the existing Choose Advisor Services panel. The warning box can link to that panel.
+- <strong>WP history:</strong> <code>fetchRecentWordpressPostsForUser</code> exists, with <code>DEFAULT_WP_TIMELINE_MONTHS = 6</code> and <code>MIN_WP_EXCLUSION_MONTHS = 24</code> for title exclusion.
+- <strong>Swap search:</strong> HTMLPosts has a text index on <code>name</code>, <code>excerpt</code> and <code>subtitle</code>, so the search can use it. Results must still apply the advisor's eligibility filter (<code>filterEligiblePosts</code>, the private-post protection).
+- <strong>Jobs:</strong> other schedulers use <code>acquireSchedulerLock</code> and <code>releaseSchedulerLock</code> (<code>server/scheduler-lock-helpers.js</code>). The Monday 5:00 AM PT job and the 2:00 AM PT re-sync can follow the same pattern. Watch for DST: 5 AM PT must stay 5 AM local.
+- <strong>Theme:</strong> MUI with Inter, primary <code>#2196F3</code>, text <code>#2C3E50</code>, and radius 12. The mock uses the same.</p>
 <h2>Questions for Alex</h2>
 <ol>
 <li><strong>Unfinished sentence:</strong> what did "and then provide within the" mean? Is it about delivery (for example, an email digest or showing the slate somewhere)?</li>
@@ -165,12 +213,22 @@
 <li>Is it website only, or social and email too?</li>
 <li><strong>Approve all with no warnings:</strong> should rows with warnings be left out? The mock does this, as the spec says.</li>
 <li><strong>Rebuild:</strong> should it keep picks that are already approved? The mock says yes.</li>
-<li><strong>Skip this week:</strong> should anything be logged or shown to the advisor? The mock shows nothing to the advisor.</li>
+<li>
+<p><strong>Skip this week:</strong> should anything be logged or shown to the advisor? The mock shows nothing to the advisor.</p>
+</li>
+<li>
+<p><strong>(New) A post flagged after Monday's build:</strong> should the pick be pulled from the slate automatically (mock: yes, "Flagged since build", Swap only)? Or should it stay, show a warning, and still be approvable?</p>
+</li>
+<li><strong>(New) Clearing the flag:</strong> does any edit after <code>flaggedAt</code> clear it, or does someone press "Mark as updated"? Who is allowed to?</li>
+<li><strong>(New) "Updated" date:</strong> should it count only content edits? Today <code>updatedAt</code> also changes on template linking and trash/restore.</li>
+<li><strong>(New) #372:</strong> is its Direction A locked, so the Swap filter can match it? The comment says "if Alex locks it".</li>
+<li><strong>(New) Already-approved picks:</strong> if a post is flagged after it was approved and handed to scheduling, should anything happen? Out of scope in the mock.</li>
 </ol>
 <h2>Unverified</h2>
 <ul>
 <li>The scale and meaning of the fit score.</li>
 <li>Whether advisor category "Content" equals "managed".</li>
 <li>What writes to <code>advisor_post_history</code>.</li>
+<li>How much age down-ranks a post (only shown through the fit score).</li>
 <li>How a swapped-in post is re-checked against the 3rd-month block. The mock only shows a warning.</li>
 </ul></body></html>
