@@ -1,4 +1,4 @@
-<!doctype html><html lang=en><head><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><title>#582 approval layout · A. Grouped “Approval email” card (recommended)</title><style>*{box-sizing:border-box}body{margin:0;font-family:Roboto,system-ui,-apple-system,"Segoe UI",sans-serif;background:#eceff1;color:rgba(0,0,0,.87)}
+<!doctype html><html lang=en><head><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><title>#582 approval layout · A. Compliance and Approval cards (picked by Alex, Oct 19)</title><style>*{box-sizing:border-box}body{margin:0;font-family:Roboto,system-ui,-apple-system,"Segoe UI",sans-serif;background:#eceff1;color:rgba(0,0,0,.87)}
 a{color:#1976d2}.top{background:#fff;border-bottom:1px solid #ddd;padding:10px 16px}.top h1{font-size:17px;margin:4px 0 8px}.top p{margin:4px 0;font-size:13px;color:#455a64}
 .tabs{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}.tabs button{border:1px solid #b0bec5;background:#fff;border-radius:16px;padding:5px 12px;font-size:13px;cursor:pointer}.tabs button.on{background:#1976d2;color:#fff;border-color:#1976d2}
 .stage{display:flex;justify-content:center;padding:24px 12px 60px}
@@ -30,18 +30,27 @@ a{color:#1976d2}.top{background:#fff;border-bottom:1px solid #ddd;padding:10px 1
 .link{border:0;background:none;color:#1976d2;font:inherit;font-size:14px;font-weight:500;cursor:pointer;padding:2px 4px}
 .snack{position:fixed;left:50%;bottom:20px;transform:translateX(-50%);background:#323232;color:#fff;border-radius:4px;padding:10px 16px;font-size:14px;max-width:92vw;box-shadow:0 3px 5px rgba(0,0,0,.3);display:none}
 [hidden]{display:none!important}
-.apcard{border:1px solid #e0e0e0;border-radius:6px}.apcard.on{border-color:#90caf9;box-shadow:inset 3px 0 0 #1976d2}.aph{padding:12px 14px}.apb{padding:0 14px 14px 41px;display:flex;flex-direction:column;gap:8px}.dlg.m .apb{padding-left:14px}.sumline{font-size:13px;color:#0d47a1;background:#e3f2fd;border-radius:4px;padding:6px 10px}</style></head><body>
-<div class=top><a href="./">← #582 approval layout hub</a> · <a href="build-contract.html">Build contract</a><h1>A. Grouped “Approval email” card (recommended)</h1><p>One bordered card under the draft-only banner and compliance checkbox. Ticking it opens two radio choices for when the approval email goes out, a chip field for recipients, and a plain warning that this isn't the audience send. Everything is interactive: try typing, pasting “a@example.com, b@example.com”, adding a duplicate, a bad address, or a past time, then Save to pipeline.</p><div class=tabs><button data-k=off>Unticked</button><button data-k=asap>Ticked · as soon as ready</button><button data-k=time>Ticked · set time</button><button data-k=err>Error (bad email, past time)</button><button data-k=mobile>Mobile 375px</button></div></div>
+.cards{display:flex;flex-direction:column;gap:12px}.cardt{font-size:12px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#546e7a;margin-bottom:6px}.apcard{border:1px solid #e0e0e0;border-radius:6px}.apcard.on{border-color:#90caf9;box-shadow:inset 3px 0 0 #1976d2}.apcard.ro{background:#fafafa;box-shadow:inset 3px 0 0 #90a4ae;border-color:#cfd8dc}.aph{padding:12px 14px}.apb{padding:0 14px 14px 41px;display:flex;flex-direction:column;gap:8px}.dlg.m .apb{padding-left:14px}.sumline{font-size:13px;color:#0d47a1;background:#e3f2fd;border-radius:4px;padding:6px 10px}.w100{width:100%}.extbox{font-size:14px;background:#f3e5f5;border-radius:4px;padding:8px 12px;line-height:1.45;color:#4a148c}.robox{font-size:14px;line-height:1.5}.robox .lk{font-size:13px;color:#546e7a}</style></head><body>
+<div class=top><a href="./">← #582 approval layout hub</a> · <a href="build-contract.html">Build contract</a><h1>A. Compliance and Approval cards (picked by Alex, Oct 19)</h1><p><b style="color:#1b5e20">Direction A picked by Alex (Oct 19).</b> The draft-only banner sits just above two matching cards. Compliance holds “Send copy to compliance?” with the officer name and email, or the Red Oak notice for external compliance. Approval holds when the approval email goes out (15-minute steps, no past times) and the recipient chips, pre-filled from “Send test emails to”. Both cards lock once the approval email has gone out. Everything is clickable: try pasting “a@example.com, b@example.com”, a duplicate, a bad address or a past time, then Save to pipeline.</p><div class=tabs><button data-k=off>Both unticked</button><button data-k=both>Both ticked</button><button data-k=mixa>Approval only</button><button data-k=mixc>Compliance only</button><button data-k=time>Approval at a set time</button><button data-k=ext>External compliance (Red Oak)</button><button data-k=err>Error</button><button data-k=sent>Read-only (approval email sent)</button><button data-k=mobile>Mobile 375px</button></div></div>
 <div class=stage><div class=dlg id=dlg><div class=dt>Create Mailchimp Campaign</div><div class=dc>
 <div class=row2><div class=f><label>Campaign name</label>November newsletter</div><div class=f><label>Subject</label>Your November market update</div></div>
 <div class="f sel"><label>Audience</label>Example Co Newsletter (3)</div><div class="f sel"><label>Segment</label>Entire list</div>
 <div class=row2><div class=f><label>From name</label>Jane Advisor</div><div class=f><label>From email</label>jane@example.com</div></div>
-<div class=alert><span class=ic>ⓘ</span><div>Saving creates a Mailchimp draft only. Send or Schedule from the Campaigns list when you are ready — nothing goes to the audience from this dialog.</div></div><div><label class=cb><input type=checkbox id=comp> Send copy to compliance?</label>
-<div id=compf class=row2 style="margin-top:10px" hidden><input class=tf value="Sam Compliance" aria-label="Compliance Officer Name"><input class=tf value="compliance@example.com" aria-label="Compliance Email"></div></div><div class=apcard id=apcard><div class=aph><label class=cb><input type=checkbox id=on> <b>Send approval email</b></label><div class=muted style="margin:2px 0 0 27px">Someone reviews and approves the draft before you send it.</div></div>
-<div id=panel class=apb><div class=lbl>When should the approval email go out?</div>
+<div class=alert><span class=ic>ⓘ</span><div>Saving creates a Mailchimp draft only. Send or Schedule from the Campaigns list when you are ready — nothing goes to the audience from this dialog.</div></div><div class=cards>
+<div class=apcard id=compcard><div class=aph><div class=cardt>Compliance</div>
+ <div id=compEmailMode><label class=cb><input type=checkbox id=comp> <b>Send copy to compliance?</b></label><div class=muted style="margin:2px 0 0 27px">Your compliance officer gets a “[Compliance Review]” copy after the Mailchimp draft uploads.</div></div>
+ <div id=compExt class=extbox hidden><b>External compliance (Red Oak)</b><br>No compliance email is sent from here. Send and Schedule on the Campaigns list stay blocked until the Red Oak approval is recorded on the campaign.</div>
+ <div id=compRO class=robox hidden></div></div>
+ <div id=compf class=apb hidden><div class=row2><div><div class=lbl>Compliance officer name</div><input id=coff class="tf w100" value="Sam Compliance"></div><div><div class=lbl>Compliance email</div><input id=cem class="tf w100" value="compliance@example.com"><div id=cemhelp class=help>From Settings. One address.</div></div></div></div>
+</div>
+<div class=apcard id=apcard><div class=aph><div class=cardt>Approval</div>
+ <div id=apEdit><label class=cb><input type=checkbox id=on> <b>Send approval email</b></label><div class=muted style="margin:2px 0 0 27px">Someone reviews and approves the draft before you send it.</div></div>
+ <div id=apRO class=robox hidden></div></div>
+ <div id=panel class=apb><div class=lbl>When should the approval email go out?</div>
 <label class=rad><input type=radio name=when value=asap><span>As soon as the Mailchimp draft is ready<br><span class=muted>Usually within a minute or two of saving</span></span></label>
 <label class=rad><input type=radio name=when value=time><span>At a date and time I pick (Pacific)</span></label>
-<div id=timewrap style="margin-left:27px"><input type=datetime-local step=900 id=time class=tf aria-label="Approval email date and time"> <span class=muted>Pacific</span><div id=timehelp class=help></div></div><div class=lbl>Who gets the approval email</div><div id=chips class=chipf><input id=chipin placeholder="Add email address" aria-label="Approval email recipients"></div><div id=reciphelp class=help></div><div class=note><span>⚠</span><div><b>This only sets when the approval email goes out.</b> The campaign goes to the audience only when someone presses Send or Schedule on the Campaigns list.</div></div><div class=sumline>Summary: <span class=sum></span></div><div id=hint595 class=hint595></div></div></div>
+<div id=timewrap style="margin-left:27px"><input type=datetime-local step=900 id=time class=tf aria-label="Approval email date and time"> <span class=muted>Pacific</span><div id=timehelp class=help></div></div><div class=lbl>Who gets the approval email</div><div id=chips class=chipf><input id=chipin placeholder="Add email address" aria-label="Approval email recipients"></div><div id=reciphelp class=help></div><div class=note><span>⚠</span><div><b>This only sets when the approval email goes out.</b> The campaign goes to the audience only when someone presses Send or Schedule on the Campaigns list.</div></div><div class=sumline>Summary: <span class=sum></span></div><div id=hint595 class=hint595></div></div>
+</div></div>
 <div id=saveerr class="alert err" hidden><span class=ic>!</span><div>Fix the approval email details above before saving.</div></div>
 <div><div class=sec><b style="font-size:14px">Email Content</b><span class=ob>INSERT MERGE TAG</span></div><div class=muted style="margin:4px 0 8px">Use Mailchimp merge tags like *|FNAME|* and *|UNSUB|*.</div>
 <div class=ed><div class=tb><span>Create with AI</span><span>Create image with AI</span><span>Insert infographic</span><span>Insert from library</span><span>7 links · OK</span></div><div class=pg><b>Hi *|FNAME|*,</b><br>Here is your November market update from Example Co…</div></div></div>
@@ -55,17 +64,18 @@ function dayOffset(n,hh){const p=parts(new Date());const d=new Date(Date.UTC(+p.
 function fmt(v){if(!v)return'';const[d,t]=v.split('T');const[y,m,dd]=d.split('-').map(Number);const[h,mi]=t.split(':').map(Number);const dt=new Date(Date.UTC(y,m-1,dd,12));const wd=dt.toLocaleDateString('en-US',{weekday:'short',timeZone:'UTC'}),mo=dt.toLocaleDateString('en-US',{month:'short',timeZone:'UTC'});return wd+', '+mo+' '+dd+' at '+(((h+11)%12)+1)+':'+String(mi).padStart(2,'0')+' '+(h<12?'AM':'PM')+' Pacific'}
 const $=id=>document.getElementById(id);
 let S={};
-const PRESETS={
+let PRESETS={
  off:()=>({on:false,when:'asap',time:'',chips:['jane@example.com'],showErr:false,dup:'',mobile:false,open:false}),
  asap:()=>({on:true,when:'asap',time:'',chips:['jane@example.com','assistant@example.com'],showErr:false,dup:'',mobile:false,open:false}),
  time:()=>({on:true,when:'time',time:dayOffset(1,'09:00'),chips:['jane@example.com','assistant@example.com'],showErr:false,dup:'',mobile:false,open:false}),
  err:()=>({on:true,when:'time',time:dayOffset(-1,'09:00'),chips:['jane@example.com','assistant@example'],showErr:true,dup:'jane@example.com is already in the list.',mobile:false,open:true}),
  mobile:()=>({on:true,when:'asap',time:'',chips:['jane@example.com','assistant@example.com'],showErr:false,dup:'',mobile:true,open:false})
 };
+const PRESETS0={...PRESETS};
 function errors(){const e={};if(!S.on)return e;const bad=S.chips.filter(c=>!EMAIL.test(c));
  if(bad.length)e.recip='Fix or remove the address in red ('+bad.join(', ')+'). Click it to edit.';else if(!S.chips.length&&S.showErr)e.recip='Add at least one email address.';
- if(S.when==='time'){if(!S.time){if(S.showErr)e.time='Pick a date and time, or choose “As soon as the draft is ready”.'}else if(S.time<=nowLocal())e.time='That time has already passed (it is now '+fmt(nowLocal())+'). Pick a later time.'}
- return e}
+ if(S.when==='time'){if(!S.time){if(S.showErr)e.time='Pick a date and time, or choose “As soon as the draft is ready”.'}else if(+S.time.slice(14,16)%15)e.time='Pick a time on the quarter hour (:00, :15, :30 or :45).';else if(S.time<=nowLocal())e.time='That time has already passed (it is now '+fmt(nowLocal())+'). Pick a later time.'}
+ if(window.extraErrors)extraErrors(e);return e}
 function whenText(){return S.when==='time'&&S.time?fmt(S.time):'as soon as the Mailchimp draft is ready'}
 function summary(){if(!S.on)return'No approval email. You send or schedule from the Campaigns list.';const n=S.chips.length;return'Approval email to '+(n===1?S.chips[0]:n+' people')+' · '+whenText()}
 function addChips(raw){const items=String(raw).split(/[,;\s]+/).map(x=>x.trim()).filter(Boolean);S.dup='';let flash=null;
@@ -89,7 +99,7 @@ function render(){
  $('compf').hidden=!$('comp').checked;
  if(window.onRender)onRender(e);
 }
-function setPreset(k){S=PRESETS[k]();$('comp').checked=false;document.querySelectorAll('.tabs button').forEach(b=>b.classList.toggle('on',b.dataset.k===k));$('snack').style.display='none';render()}
+function setPreset(k){S=PRESETS[k]();$('comp').checked=!!S.comp;document.querySelectorAll('.tabs button').forEach(b=>b.classList.toggle('on',b.dataset.k===k));$('snack').style.display='none';render()}
 function wire(){
  document.querySelectorAll('.tabs button').forEach(b=>b.onclick=()=>setPreset(b.dataset.k));
  $('on').onchange=ev=>{S.on=ev.target.checked;if(!S.on){S.time='';S.when='asap';S.showErr=false}else S.open=true;render()};
@@ -105,4 +115,32 @@ function wire(){
  $('cancel').onclick=()=>setPreset('off');
  setPreset(new URLSearchParams(location.search).get('s')||'off');
 }
-window.onRender=()=>{$('apcard').classList.toggle('on',S.on)};wire();</script></body></html>
+
+const base=PRESETS.asap;
+PRESETS={
+ off:()=>({...PRESETS0.off(),comp:false}),
+ both:()=>({...base(),comp:true}),
+ mixa:()=>({...base(),comp:false}),
+ mixc:()=>({...PRESETS0.off(),comp:true}),
+ time:()=>({...PRESETS0.time(),comp:false}),
+ ext:()=>({...base(),mode:'external'}),
+ err:()=>({...PRESETS0.err(),comp:true,cem:'compliance@example'}),
+ sent:()=>({...base(),comp:true,sent:true}),
+ mobile:()=>({...base(),comp:true,mobile:true})
+};
+window.extraErrors=e=>{if(S.mode!=='external'&&$('comp').checked&&!S.sent){const v=$('cem').value.trim();if(!v)e.cem='Compliance email is required.';else if(!EMAIL.test(v))e.cem='Enter a valid compliance email.'}};
+window.onRender=e=>{const ext=S.mode==='external';
+ $('compEmailMode').hidden=ext||!!S.sent;$('compExt').hidden=!ext;
+ $('compcard').classList.toggle('on',!ext&&$('comp').checked&&!S.sent);$('compcard').classList.toggle('ro',!!S.sent&&!ext);
+ $('compRO').hidden=!(S.sent&&!ext);$('compRO').innerHTML=$('comp').checked?'<b>Compliance copy sent</b> Mon, Oct 19 at 3:05 PM Pacific to Sam Compliance (compliance@example.com)<div class=lk>🔒 Locked because the approval email has gone out.</div>':'<b>No compliance copy</b><div class=lk>🔒 Locked because the approval email has gone out.</div>';
+ if(S.sent||ext){$('compf').hidden=true}
+ $('cem').classList.toggle('err',!!e.cem);$('cemhelp').className='help'+(e.cem?' err':'');$('cemhelp').textContent=e.cem||'From Settings. One address.';
+ $('apEdit').hidden=!!S.sent;$('apRO').hidden=!S.sent;$('apcard').classList.toggle('on',S.on&&!S.sent);$('apcard').classList.toggle('ro',!!S.sent);
+ if(S.sent){$('panel').hidden=true;$('apRO').innerHTML='<b>Approval email sent</b> Mon, Oct 19 at 3:05 PM Pacific to '+S.chips.join(', ')+'<div class=lk>🔒 These settings are locked now. To send it again, use Resend approval email on the Campaigns list. The audience still gets nothing until you Send or Schedule.</div>'}
+ if(S.mode==='external')$('hint595').innerHTML='External compliance: the approval email stays as it is today.';
+ const t=document.querySelector('.dt');t.textContent=S.sent?'Edit Mailchimp Campaign':'Create Mailchimp Campaign';
+ document.querySelector('.alert div').textContent=S.sent?'Saving updates the Mailchimp draft only. A stored send date never sends or schedules. Use Send or Schedule on the Campaigns list.':'Saving creates a Mailchimp draft only. Send or Schedule from the Campaigns list when you are ready — nothing goes to the audience from this dialog.';
+};
+$('cem').oninput=render;
+const sp0=setPreset;setPreset=function(k){sp0(k);$('cem').value=S.cem||'compliance@example.com';render()};
+wire();</script></body></html>

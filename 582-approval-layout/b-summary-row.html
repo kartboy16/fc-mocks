@@ -1,4 +1,4 @@
-<!doctype html><html lang=en><head><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><title>#582 approval layout · B. Compact summary row with an Edit sub-panel</title><style>*{box-sizing:border-box}body{margin:0;font-family:Roboto,system-ui,-apple-system,"Segoe UI",sans-serif;background:#eceff1;color:rgba(0,0,0,.87)}
+<!doctype html><html lang=en><head><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><title>#582 approval layout · B. Compact summary row with an Edit sub-panel (superseded)</title><style>*{box-sizing:border-box}body{margin:0;font-family:Roboto,system-ui,-apple-system,"Segoe UI",sans-serif;background:#eceff1;color:rgba(0,0,0,.87)}
 a{color:#1976d2}.top{background:#fff;border-bottom:1px solid #ddd;padding:10px 16px}.top h1{font-size:17px;margin:4px 0 8px}.top p{margin:4px 0;font-size:13px;color:#455a64}
 .tabs{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}.tabs button{border:1px solid #b0bec5;background:#fff;border-radius:16px;padding:5px 12px;font-size:13px;cursor:pointer}.tabs button.on{background:#1976d2;color:#fff;border-color:#1976d2}
 .stage{display:flex;justify-content:center;padding:24px 12px 60px}
@@ -31,7 +31,7 @@ a{color:#1976d2}.top{background:#fff;border-bottom:1px solid #ddd;padding:10px 1
 .snack{position:fixed;left:50%;bottom:20px;transform:translateX(-50%);background:#323232;color:#fff;border-radius:4px;padding:10px 16px;font-size:14px;max-width:92vw;box-shadow:0 3px 5px rgba(0,0,0,.3);display:none}
 [hidden]{display:none!important}
 .srow{display:flex;align-items:center;gap:10px;flex-wrap:wrap;border:1px solid #e0e0e0;border-radius:6px;padding:8px 12px}.srow.bad{border-color:#ef9a9a;background:#fffafa}.sumtxt{flex:1;font-size:14px;color:rgba(0,0,0,.65);min-width:180px}.fix{font-size:12px;color:#fff;background:#d32f2f;border-radius:10px;padding:2px 8px}.pop{margin:6px 0 0 18px;border:1px solid #bbdefb;background:#fafcff;border-radius:6px;padding:10px 14px;display:flex;flex-direction:column;gap:8px;box-shadow:0 2px 6px rgba(0,0,0,.08)}.dlg.m .pop{margin-left:0}</style></head><body>
-<div class=top><a href="./">← #582 approval layout hub</a> · <a href="build-contract.html">Build contract</a><h1>B. Compact summary row with an Edit sub-panel</h1><p>The approval email takes one line (“Approval email to 2 people · as soon as the Mailchimp draft is ready · Edit”). Edit opens a small sub-panel with the same choices; Done folds it back. Errors turn the row red and reopen the panel on save.</p><div class=tabs><button data-k=off>Unticked</button><button data-k=asap>Ticked · as soon as ready</button><button data-k=time>Ticked · set time</button><button data-k=err>Error (bad email, past time)</button><button data-k=mobile>Mobile 375px</button></div></div>
+<div class=top><a href="./">← #582 approval layout hub</a> · <a href="build-contract.html">Build contract</a><h1>B. Compact summary row with an Edit sub-panel (superseded)</h1><p><b style="color:#b71c1c">Superseded: Alex picked A (Oct 19).</b> The approval email takes one line (“Approval email to 2 people · as soon as the Mailchimp draft is ready · Edit”). Edit opens a small sub-panel with the same choices; Done folds it back. Errors turn the row red and reopen the panel on save.</p><div class=tabs><button data-k=off>Unticked</button><button data-k=asap>Ticked · as soon as ready</button><button data-k=time>Ticked · set time</button><button data-k=err>Error (bad email, past time)</button><button data-k=mobile>Mobile 375px</button></div></div>
 <div class=stage><div class=dlg id=dlg><div class=dt>Create Mailchimp Campaign</div><div class=dc>
 <div class=row2><div class=f><label>Campaign name</label>November newsletter</div><div class=f><label>Subject</label>Your November market update</div></div>
 <div class="f sel"><label>Audience</label>Example Co Newsletter (3)</div><div class="f sel"><label>Segment</label>Entire list</div>
@@ -55,17 +55,18 @@ function dayOffset(n,hh){const p=parts(new Date());const d=new Date(Date.UTC(+p.
 function fmt(v){if(!v)return'';const[d,t]=v.split('T');const[y,m,dd]=d.split('-').map(Number);const[h,mi]=t.split(':').map(Number);const dt=new Date(Date.UTC(y,m-1,dd,12));const wd=dt.toLocaleDateString('en-US',{weekday:'short',timeZone:'UTC'}),mo=dt.toLocaleDateString('en-US',{month:'short',timeZone:'UTC'});return wd+', '+mo+' '+dd+' at '+(((h+11)%12)+1)+':'+String(mi).padStart(2,'0')+' '+(h<12?'AM':'PM')+' Pacific'}
 const $=id=>document.getElementById(id);
 let S={};
-const PRESETS={
+let PRESETS={
  off:()=>({on:false,when:'asap',time:'',chips:['jane@example.com'],showErr:false,dup:'',mobile:false,open:false}),
  asap:()=>({on:true,when:'asap',time:'',chips:['jane@example.com','assistant@example.com'],showErr:false,dup:'',mobile:false,open:false}),
  time:()=>({on:true,when:'time',time:dayOffset(1,'09:00'),chips:['jane@example.com','assistant@example.com'],showErr:false,dup:'',mobile:false,open:false}),
  err:()=>({on:true,when:'time',time:dayOffset(-1,'09:00'),chips:['jane@example.com','assistant@example'],showErr:true,dup:'jane@example.com is already in the list.',mobile:false,open:true}),
  mobile:()=>({on:true,when:'asap',time:'',chips:['jane@example.com','assistant@example.com'],showErr:false,dup:'',mobile:true,open:false})
 };
+const PRESETS0={...PRESETS};
 function errors(){const e={};if(!S.on)return e;const bad=S.chips.filter(c=>!EMAIL.test(c));
  if(bad.length)e.recip='Fix or remove the address in red ('+bad.join(', ')+'). Click it to edit.';else if(!S.chips.length&&S.showErr)e.recip='Add at least one email address.';
- if(S.when==='time'){if(!S.time){if(S.showErr)e.time='Pick a date and time, or choose “As soon as the draft is ready”.'}else if(S.time<=nowLocal())e.time='That time has already passed (it is now '+fmt(nowLocal())+'). Pick a later time.'}
- return e}
+ if(S.when==='time'){if(!S.time){if(S.showErr)e.time='Pick a date and time, or choose “As soon as the draft is ready”.'}else if(+S.time.slice(14,16)%15)e.time='Pick a time on the quarter hour (:00, :15, :30 or :45).';else if(S.time<=nowLocal())e.time='That time has already passed (it is now '+fmt(nowLocal())+'). Pick a later time.'}
+ if(window.extraErrors)extraErrors(e);return e}
 function whenText(){return S.when==='time'&&S.time?fmt(S.time):'as soon as the Mailchimp draft is ready'}
 function summary(){if(!S.on)return'No approval email. You send or schedule from the Campaigns list.';const n=S.chips.length;return'Approval email to '+(n===1?S.chips[0]:n+' people')+' · '+whenText()}
 function addChips(raw){const items=String(raw).split(/[,;\s]+/).map(x=>x.trim()).filter(Boolean);S.dup='';let flash=null;
@@ -89,7 +90,7 @@ function render(){
  $('compf').hidden=!$('comp').checked;
  if(window.onRender)onRender(e);
 }
-function setPreset(k){S=PRESETS[k]();$('comp').checked=false;document.querySelectorAll('.tabs button').forEach(b=>b.classList.toggle('on',b.dataset.k===k));$('snack').style.display='none';render()}
+function setPreset(k){S=PRESETS[k]();$('comp').checked=!!S.comp;document.querySelectorAll('.tabs button').forEach(b=>b.classList.toggle('on',b.dataset.k===k));$('snack').style.display='none';render()}
 function wire(){
  document.querySelectorAll('.tabs button').forEach(b=>b.onclick=()=>setPreset(b.dataset.k));
  $('on').onchange=ev=>{S.on=ev.target.checked;if(!S.on){S.time='';S.when='asap';S.showErr=false}else S.open=true;render()};

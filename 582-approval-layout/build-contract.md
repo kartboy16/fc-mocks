@@ -1,10 +1,32 @@
 # #582 / #595 Approval-email section layout: build contract
 
-**Status:** Not agent-ready. Soft Dev hold until Alex picks a direction. Mock only.
+**Status: Direction A picked by Alex (Oct 19)**, with separate Compliance and Approval cards. Pending Alex's final sign-off via Chief of Staff before Software developer starts. B and C are superseded.
 **Hub:** https://kartboy16.github.io/fc-mocks/582-approval-layout/
-**Recommended:** A (grouped "Send approval email" card).
+**Mock:** https://kartboy16.github.io/fc-mocks/582-approval-layout/a-approval-card.html
 
-## Where it lives today (read from `main` @ c97978a, read-only)
+## Locked defaults (Alex, Oct 19)
+1. The approval time picker uses **15-minute steps** (`step=900`; off-step values are rejected).
+2. The section turns **read-only once the approval email has gone out** (`approvalEmailSentAt` set).
+3. Approval recipients **pre-fill from Settings → "Send test emails to"** (`preferences.sendTestEmailsTo`).
+4. **Past times are blocked in the dialog and on the server.**
+
+## Layout
+Draft-only banner (create or edit copy, unchanged) → **Compliance card** → **Approval card** → Email Content. Both cards share one style: bordered, a small uppercase title ("COMPLIANCE", "APPROVAL"), a blue left edge when ticked, and grey with a lock line when read-only.
+
+## Compliance card
+Mode comes from `resolveComplianceMode(preferences)` in `imports/utils/complianceMode.js` (`email` | `external` | `off`; legacy `compliance` category → `email`).
+- **email:** checkbox "Send copy to compliance?" (state `sendToCompliance`, default unticked). Ticking reveals **Compliance officer name** (`complianceOfficerName`) and **Compliance email** (`complianceEmail`, a single address), both pre-filled from `preferences.complianceOfficerName` / `preferences.complianceEmail`. Helper: "Your compliance officer gets a “[Compliance Review]” copy after the Mailchimp draft uploads." Validation as today: required plus valid email.
+- **external:** no checkbox. A read-only notice: "External compliance (Red Oak). No compliance email is sent from here. Send and Schedule on the Campaigns list stay blocked until the Red Oak approval is recorded on the campaign." Use `externalSystem` from the attestation default (`DEFAULT_EXTERNAL_SYSTEM` = Red Oak). The attestation itself (system, reference, approver, approved date, or typing APPROVED) stays on the Campaigns list, not in this dialog.
+- **off:** hide the Compliance card (same as today, where nothing renders).
+- **Read-only:** once the approval email has gone out (or `complianceEmailSentAt` is set), show "Compliance copy sent <date> Pacific to <name> (<email>)" or "No compliance copy", plus a lock line.
+- The Mailchimp dialog has no compliance-copy time. `complianceCopyScheduledAt` exists only on the SES path, so it stays out.
+
+Compliance field mapping (unchanged on save): `sendComplianceEmail = sendToCompliance && !!complianceEmail`, `complianceOfficerName`, `complianceEmail` (null when unticked). The server keeps `sendComplianceEmail` only in email mode (`shouldSendComplianceApprovalEmail`). The copy is sent by `server/mailchimp/pipeline-runners.js` and stamped `complianceEmailSentAt` (`compliance-email-stamp.js`).
+
+
+
+
+## Approval card: where it lives today (read from `main` @ c97978a, read-only)
 - Component: `imports/ui/EmailCampaigns/mailchimp/MailchimpCreateCampaignDialog.jsx` (approval block about lines 853–895; validation `handleSave` about 698–711; payload `proceedSave` about 572–585).
 - Labels/contract: `imports/ui/EmailCampaigns/mailchimp/mailchimpCreateDialogFields.js` (`SEND_APPROVAL_EMAIL_LABEL`, `SEND_APPROVAL_EMAIL_ON_LABEL`, `MAILCHIMP_CREATE_DIALOG_FIELD_LABELS`, `defaultSendApprovalEmailChecked()` → `false`, `shouldShowApprovalEmailOnField()`).
 - Time helpers: `/imports/utils/advisorDateTime` (`ADVISOR_TIME_ZONE` = America/Vancouver, `datetimeLocalInTimeZoneToDate`, `dateToDatetimeLocalInTimeZone`).
@@ -22,12 +44,15 @@
 
 Edit mode: load `approvalWhen = doc.approvalEmailScheduledAt ? 'time' : 'asap'`.
 
-## States (all directions)
-1. **Unticked:** only the checkbox ("Send approval email" + "Someone reviews and approves the draft before you send it."). Nothing else shows.
-2. **Ticked · as soon as ready (default on tick):** radio ASAP selected, chips prefilled.
-3. **Ticked · set time:** picking "At a date and time" reveals the datetime field, defaulting to tomorrow 9:00 AM Pacific, with `step=900` (15 min). Helper confirms: "The approval email goes out Tue, Oct 20 at 9:00 AM Pacific. The audience still gets nothing until you Send or Schedule."
-4. **Error:** bad address chip is red and editable on click; past time; no recipients; "time" picked with no value. Save is blocked with an inline Alert ("Fix the approval email details above before saving."). In B, the row turns red with "N things to fix" and the panel reopens.
-5. **Mobile ~375px:** single column; in C the lanes stack.
+## States (mock tabs)
+1. **Both unticked:** two compact cards, checkboxes only.
+2. **Both ticked:** compliance name and email shown; approval set to as soon as ready, with chips pre-filled.
+3. **Approval only / Compliance only:** the mixed states.
+4. **Approval at a set time:** picking "At a date and time I pick (Pacific)" reveals the datetime field, defaulting to tomorrow 9:00 AM Pacific, with `step=900`. Helper: "The approval email goes out Tue, Oct 20 at 9:00 AM Pacific. The audience still gets nothing until you Send or Schedule."
+5. **External compliance (Red Oak):** the notice in the Compliance card, and Approval works as normal.
+6. **Error:** an invalid compliance email; a red approval chip; a duplicate message; a past time. Save is blocked with an inline Alert ("Fix the approval email details above before saving.").
+7. **Read-only (approval email sent):** the Edit dialog with both cards locked: "Approval email sent Mon, Oct 19 at 3:05 PM Pacific to …", plus "🔒 These settings are locked now. To send it again, use Resend approval email on the Campaigns list." Save still updates the other draft fields and must not change the approval or compliance fields.
+8. **Mobile ~375px:** single column, with the officer name and email stacked.
 
 ## Recipient chips
 - Enter, comma, semicolon or Tab commits; blur commits; Backspace on an empty input removes the last chip.
@@ -40,8 +65,11 @@ Edit mode: load `approvalWhen = doc.approvalEmailScheduledAt ? 'time' : 'asap'`.
 - Ticked + 0 recipients → "Add at least one email address."
 - Any invalid → "Fix or remove the address in red (…). Click it to edit."
 - `approvalWhen==='time'` + empty → "Pick a date and time, or choose “As soon as the draft is ready”."
-- `approvalWhen==='time'` + time ≤ now (Pacific) → "That time has already passed (it is now …). Pick a later time." (shown live too)
-- **Server (new, small):** reject a past `approvalEmailScheduledAt` in `mailchimp.createScheduledEmailCampaign` / update. Today a past time is silently treated as "send now" (`ses-methods.js` ignores it; the deferred scheduler fires anything `<= now` on the next tick), which is surprising.
+- `approvalWhen==='time'` + minutes not 00/15/30/45 → "Pick a time on the quarter hour (:00, :15, :30 or :45)."
+- `approvalWhen==='time'` + time ≤ now (Pacific) → "That time has already passed (it is now …). Pick a later time." (also shown live)
+- Compliance (email mode, ticked): empty → "Compliance email is required."; invalid → "Enter a valid compliance email."
+- **Server (locked):** in `server/mailchimp/scheduled-campaigns-methods.js` create and update, reject `approvalEmailScheduledAt` ≤ now or off the quarter hour with `Meteor.Error('invalid-approval-time')`. Today a past time is silently treated as "send now": `ses-methods.js` ignores it, and the deferred scheduler fires anything `<= now`.
+- **Server (locked, read-only):** once `approvalEmailSentAt` is set, ignore or reject changes to `sendApprovalEmail`, `approvalEmailRecipients`, `approvalEmailScheduledAt`, `sendComplianceEmail`, `complianceOfficerName` and `complianceEmail` on update.
 
 ## Copy
 - Section: "Send approval email" / "Someone reviews and approves the draft before you send it."
@@ -53,12 +81,10 @@ Edit mode: load `approvalWhen = doc.approvalEmailScheduledAt ? 'time' : 'asap'`.
 - Drop the old helper "Advisor timezone (America/Vancouver)… Not the audience send date." (replaced by the radio labels + warning).
 - Update `MAILCHIMP_CREATE_DIALOG_FIELD_LABELS` and any tests/e2e that look for "Send approval email on" / "Approval Recipients".
 
-## Effort
-- A: ~1–1.5 dev days (chip input, radio + derive, validation, server past-time reject, tests).
-- B: ~1.5–2 days (adds summary/collapse state). C: ~2 days (layout restructure, timeline, mobile stacking).
+## Effort (revised for the picked A)
+About **1.5–2 dev days**: the two-card restructure, the chip input, the radio choice, 15-minute and past-time checks on client and server, the read-only state with a server-side lock, and updated tests and field labels. That's up from 1–1.5 because of the Compliance card and the read-only lock.
+(B and C are superseded.)
 
-## Open questions for Alex
-1. Should the datetime use 15-minute steps (like #595's scheduler) or any minute?
-2. Edit mode after the approval email has already gone out: show "Approval email sent Oct 19, 3:05 PM Pacific" read-only, or allow re-sending? (Mock doesn't cover it.)
-3. Keep prefilling recipients from Settings → "Send test emails to"?
-4. Should the server reject past times (recommended) or keep treating them as "send now"?
+## Open questions (remaining)
+1. Should Save to pipeline be blocked if the scheduled approval time passes while the dialog is open? (Mock: yes, the past-time error shows.)
+2. In read-only, should the lock also apply when only the compliance copy has gone out (approval unticked)? (Mock locks on `approvalEmailSentAt`. The contract suggests also locking compliance on `complianceEmailSentAt`.)
