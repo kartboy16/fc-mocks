@@ -1,0 +1,110 @@
+<!doctype html><html lang=en><head><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><title>#582 approval layout · C. Two lanes: Audience send vs Approval email</title><style>*{box-sizing:border-box}body{margin:0;font-family:Roboto,system-ui,-apple-system,"Segoe UI",sans-serif;background:#eceff1;color:rgba(0,0,0,.87)}
+a{color:#1976d2}.top{background:#fff;border-bottom:1px solid #ddd;padding:10px 16px}.top h1{font-size:17px;margin:4px 0 8px}.top p{margin:4px 0;font-size:13px;color:#455a64}
+.tabs{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}.tabs button{border:1px solid #b0bec5;background:#fff;border-radius:16px;padding:5px 12px;font-size:13px;cursor:pointer}.tabs button.on{background:#1976d2;color:#fff;border-color:#1976d2}
+.stage{display:flex;justify-content:center;padding:24px 12px 60px}
+.dlg{background:#fff;border-radius:4px;box-shadow:0 11px 15px -7px rgba(0,0,0,.2),0 24px 38px 3px rgba(0,0,0,.14);width:900px;max-width:100%;transition:width .2s}
+.dlg.m{width:375px;border-radius:0}.dlg.m .row2>*{min-width:100%}
+.dt{font-size:20px;font-weight:500;padding:16px 24px}.dc{padding:4px 24px 12px;display:flex;flex-direction:column;gap:16px}.dlg.m .dt{padding:14px 16px}.dlg.m .dc{padding:4px 16px 12px}
+.f{position:relative;border:1px solid rgba(0,0,0,.23);border-radius:4px;padding:15px 14px;font-size:16px;color:rgba(0,0,0,.87)}.f label{position:absolute;top:-9px;left:10px;background:#fff;padding:0 4px;font-size:12px;color:rgba(0,0,0,.6)}
+.f.sel:after{content:"▾";position:absolute;right:14px;top:14px;color:rgba(0,0,0,.54)}
+.row2{display:flex;gap:16px;flex-wrap:wrap}.row2>*{flex:1;min-width:200px}
+.alert{background:#e5f6fd;color:#014361;border-radius:4px;padding:8px 16px;display:flex;gap:12px;font-size:14px;line-height:1.43}.alert .ic{color:#0288d1;font-weight:700}
+.alert.err{background:#fdeded;color:#5f2120}.alert.err .ic{color:#d32f2f}
+.cb{display:inline-flex;align-items:center;gap:9px;cursor:pointer;font-size:16px}.cb input{width:18px;height:18px;accent-color:#1976d2;margin:0}
+.rad{display:flex;align-items:flex-start;gap:9px;cursor:pointer;font-size:15px;padding:4px 0}.rad input{accent-color:#1976d2;width:18px;height:18px;margin:2px 0 0}
+.muted{color:rgba(0,0,0,.6);font-size:13px}.lbl{font-size:14px;font-weight:500;margin:4px 0 4px;color:rgba(0,0,0,.75)}
+.tf{border:1px solid rgba(0,0,0,.23);border-radius:4px;padding:8px 10px;font:inherit;font-size:15px;max-width:100%}.tf:focus{outline:0;border-color:#1976d2;box-shadow:inset 0 0 0 1px #1976d2}.tf.err{border-color:#d32f2f}
+.chipf{border:1px solid rgba(0,0,0,.23);border-radius:4px;padding:5px 6px;display:flex;flex-wrap:wrap;gap:6px;min-height:42px;align-items:center;cursor:text}
+.chipf:focus-within{border-color:#1976d2;box-shadow:inset 0 0 0 1px #1976d2}.chipf.err{border-color:#d32f2f}
+.chip{display:inline-flex;align-items:center;gap:5px;background:rgba(0,0,0,.08);border-radius:16px;height:28px;padding:0 4px 0 11px;font-size:13px;max-width:100%;border:1px solid transparent}
+.chip span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.chip.bad{background:#fdecea;color:#b71c1c;border-color:#ef9a9a;cursor:pointer}
+.chip button{border:0;background:rgba(0,0,0,.26);color:#fff;border-radius:50%;width:18px;height:18px;font-size:12px;line-height:18px;padding:0;cursor:pointer;flex:none}.chip.bad button{background:#e57373}
+.chip.flash{animation:fl .9s}@keyframes fl{0%,60%{background:#fff3c4;border-color:#f9a825}}
+.chipf input{border:0;outline:0;flex:1;min-width:150px;font:inherit;font-size:14px;padding:4px}
+.help{font-size:12px;color:rgba(0,0,0,.6);margin:4px 2px 0;line-height:1.4}.help.err{color:#d32f2f}.help.ok{color:#2e7d32}
+.note{display:flex;gap:8px;background:#fff8e1;border:1px solid #ffe08a;border-radius:4px;padding:8px 12px;font-size:13px;line-height:1.45;color:#5d4300}
+.hint595{font-size:12.5px;color:#455a64;border-top:1px dashed #cfd8dc;padding-top:8px;line-height:1.45}
+.ed{border:1px solid #e0e0e0;border-radius:4px;background:#f6f7f9;padding:12px}.ed .tb{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px}.ed .tb span{font-size:12px;border:1px solid #cfd8dc;background:#fff;border-radius:4px;padding:3px 8px}.ed .pg{background:#fff;border:1px solid #e0e0e0;max-width:600px;margin:auto;padding:16px;font-size:14px;color:#37474f}
+.sec{display:flex;justify-content:space-between;align-items:center}.ob{border:1px solid rgba(25,118,210,.5);color:#1976d2;background:#fff;border-radius:4px;padding:4px 10px;font-size:13px;font-weight:500}
+.da{display:flex;justify-content:flex-end;gap:8px;padding:8px 16px 16px}.btn{font:inherit;font-size:14px;font-weight:500;letter-spacing:.02em;border-radius:4px;padding:6px 16px;cursor:pointer;border:0;background:none;color:#1976d2;text-transform:uppercase}.btn.pri{background:#1976d2;color:#fff;box-shadow:0 3px 1px -2px rgba(0,0,0,.2),0 2px 2px rgba(0,0,0,.14)}
+.link{border:0;background:none;color:#1976d2;font:inherit;font-size:14px;font-weight:500;cursor:pointer;padding:2px 4px}
+.snack{position:fixed;left:50%;bottom:20px;transform:translateX(-50%);background:#323232;color:#fff;border-radius:4px;padding:10px 16px;font-size:14px;max-width:92vw;box-shadow:0 3px 5px rgba(0,0,0,.3);display:none}
+[hidden]{display:none!important}
+.lanes{display:grid;grid-template-columns:1fr 1fr;gap:14px}.dlg.m .lanes{grid-template-columns:1fr}.lane{border:1px solid #e0e0e0;border-radius:6px;padding:12px;display:flex;flex-direction:column;gap:10px}.lane.ap.on{border-color:#90caf9;background:#fbfdff}.laneh{font-weight:600;font-size:15px}.lanewhen{font-size:14px;background:#f5f5f5;border-radius:4px;padding:6px 10px}.tl{display:flex;flex-wrap:wrap;gap:6px;align-items:center;font-size:12.5px}.tl span.s{background:#eceff1;border-radius:12px;padding:3px 10px}.tl span.s.a{background:#e3f2fd;color:#0d47a1}.tl span.s.k{background:#e8f5e9;color:#1b5e20}</style></head><body>
+<div class=top><a href="./">← #582 approval layout hub</a> · <a href="build-contract.html">Build contract</a><h1>C. Two lanes: Audience send vs Approval email</h1><p>Side-by-side columns make the split explicit: left is the audience (draft only, Send/Schedule later), right is the approval email. A “What happens” strip underneath spells out the order. On mobile the lanes stack.</p><div class=tabs><button data-k=off>Unticked</button><button data-k=asap>Ticked · as soon as ready</button><button data-k=time>Ticked · set time</button><button data-k=err>Error (bad email, past time)</button><button data-k=mobile>Mobile 375px</button></div></div>
+<div class=stage><div class=dlg id=dlg><div class=dt>Create Mailchimp Campaign</div><div class=dc>
+<div class=row2><div class=f><label>Campaign name</label>November newsletter</div><div class=f><label>Subject</label>Your November market update</div></div>
+<div class="f sel"><label>Audience</label>Example Co Newsletter (3)</div><div class="f sel"><label>Segment</label>Entire list</div>
+<div class=row2><div class=f><label>From name</label>Jane Advisor</div><div class=f><label>From email</label>jane@example.com</div></div>
+<div class=lanes><div class=lane><div class=laneh>📣 Audience send</div><div class=muted style="margin-bottom:8px">Example Co Newsletter (3) · Entire list</div><div class=alert><span class=ic>ⓘ</span><div>Saving creates a Mailchimp draft only. Send or Schedule from the Campaigns list when you are ready — nothing goes to the audience from this dialog.</div></div><div class=lanewhen><b>When:</b> only when you press Send or Schedule on the Campaigns list.</div><div><label class=cb><input type=checkbox id=comp> Send copy to compliance?</label>
+<div id=compf class=row2 style="margin-top:10px" hidden><input class=tf value="Sam Compliance" aria-label="Compliance Officer Name"><input class=tf value="compliance@example.com" aria-label="Compliance Email"></div></div></div>
+<div class="lane ap" id=apl><div class=laneh>✉️ Approval email <span class=muted>(goes out first, to reviewers)</span></div><label class=cb><input type=checkbox id=on> Send approval email</label>
+<div id=panel style="display:flex;flex-direction:column;gap:8px;margin-top:8px"><div class=lbl>When should the approval email go out?</div>
+<label class=rad><input type=radio name=when value=asap><span>As soon as the Mailchimp draft is ready<br><span class=muted>Usually within a minute or two of saving</span></span></label>
+<label class=rad><input type=radio name=when value=time><span>At a date and time I pick (Pacific)</span></label>
+<div id=timewrap style="margin-left:27px"><input type=datetime-local step=900 id=time class=tf aria-label="Approval email date and time"> <span class=muted>Pacific</span><div id=timehelp class=help></div></div><div class=lbl>Who gets the approval email</div><div id=chips class=chipf><input id=chipin placeholder="Add email address" aria-label="Approval email recipients"></div><div id=reciphelp class=help></div><div id=hint595 class=hint595></div></div></div></div>
+<div class=tl id=tl></div>
+<div id=saveerr class="alert err" hidden><span class=ic>!</span><div>Fix the approval email details above before saving.</div></div>
+<div><div class=sec><b style="font-size:14px">Email Content</b><span class=ob>INSERT MERGE TAG</span></div><div class=muted style="margin:4px 0 8px">Use Mailchimp merge tags like *|FNAME|* and *|UNSUB|*.</div>
+<div class=ed><div class=tb><span>Create with AI</span><span>Create image with AI</span><span>Insert infographic</span><span>Insert from library</span><span>7 links · OK</span></div><div class=pg><b>Hi *|FNAME|*,</b><br>Here is your November market update from Example Co…</div></div></div>
+</div><div class=da><button class=btn id=cancel>Cancel</button><button class="btn pri" id=save>Save to pipeline</button></div></div></div>
+<div id=snack class=snack></div>
+<script>window.DIR="C";
+const TZ='America/Vancouver',EMAIL=/^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+function parts(d){return Object.fromEntries(new Intl.DateTimeFormat('en-CA',{timeZone:TZ,year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',hourCycle:'h23'}).formatToParts(d).map(x=>[x.type,x.value]))}
+function nowLocal(){const p=parts(new Date());return p.year+'-'+p.month+'-'+p.day+'T'+p.hour+':'+p.minute}
+function dayOffset(n,hh){const p=parts(new Date());const d=new Date(Date.UTC(+p.year,+p.month-1,+p.day+n,12));return d.toISOString().slice(0,10)+'T'+hh}
+function fmt(v){if(!v)return'';const[d,t]=v.split('T');const[y,m,dd]=d.split('-').map(Number);const[h,mi]=t.split(':').map(Number);const dt=new Date(Date.UTC(y,m-1,dd,12));const wd=dt.toLocaleDateString('en-US',{weekday:'short',timeZone:'UTC'}),mo=dt.toLocaleDateString('en-US',{month:'short',timeZone:'UTC'});return wd+', '+mo+' '+dd+' at '+(((h+11)%12)+1)+':'+String(mi).padStart(2,'0')+' '+(h<12?'AM':'PM')+' Pacific'}
+const $=id=>document.getElementById(id);
+let S={};
+const PRESETS={
+ off:()=>({on:false,when:'asap',time:'',chips:['jane@example.com'],showErr:false,dup:'',mobile:false,open:false}),
+ asap:()=>({on:true,when:'asap',time:'',chips:['jane@example.com','assistant@example.com'],showErr:false,dup:'',mobile:false,open:false}),
+ time:()=>({on:true,when:'time',time:dayOffset(1,'09:00'),chips:['jane@example.com','assistant@example.com'],showErr:false,dup:'',mobile:false,open:false}),
+ err:()=>({on:true,when:'time',time:dayOffset(-1,'09:00'),chips:['jane@example.com','assistant@example'],showErr:true,dup:'jane@example.com is already in the list.',mobile:false,open:true}),
+ mobile:()=>({on:true,when:'asap',time:'',chips:['jane@example.com','assistant@example.com'],showErr:false,dup:'',mobile:true,open:false})
+};
+function errors(){const e={};if(!S.on)return e;const bad=S.chips.filter(c=>!EMAIL.test(c));
+ if(bad.length)e.recip='Fix or remove the address in red ('+bad.join(', ')+'). Click it to edit.';else if(!S.chips.length&&S.showErr)e.recip='Add at least one email address.';
+ if(S.when==='time'){if(!S.time){if(S.showErr)e.time='Pick a date and time, or choose “As soon as the draft is ready”.'}else if(S.time<=nowLocal())e.time='That time has already passed (it is now '+fmt(nowLocal())+'). Pick a later time.'}
+ return e}
+function whenText(){return S.when==='time'&&S.time?fmt(S.time):'as soon as the Mailchimp draft is ready'}
+function summary(){if(!S.on)return'No approval email. You send or schedule from the Campaigns list.';const n=S.chips.length;return'Approval email to '+(n===1?S.chips[0]:n+' people')+' · '+whenText()}
+function addChips(raw){const items=String(raw).split(/[,;\s]+/).map(x=>x.trim()).filter(Boolean);S.dup='';let flash=null;
+ for(const it of items){const ex=S.chips.find(c=>c.toLowerCase()===it.toLowerCase());if(ex){S.dup=it+' is already in the list.';flash=ex;continue}S.chips.push(it)}
+ render();if(flash){const el=document.querySelector('.chip[data-v="'+CSS.escape(flash)+'"]');if(el){el.classList.remove('flash');void el.offsetWidth;el.classList.add('flash')}}}
+function render(){
+ $('dlg').classList.toggle('m',!!S.mobile);$('on').checked=S.on;$('panel').hidden=!S.on||(window.DIR==='B'&&!S.open);
+ document.querySelectorAll('input[name=when]').forEach(r=>r.checked=r.value===S.when);
+ $('timewrap').hidden=S.when!=='time';$('time').value=S.time;
+ const e=errors();
+ $('time').classList.toggle('err',!!e.time);$('timehelp').className='help'+(e.time?' err':S.time?' ok':'');
+ $('timehelp').textContent=e.time||(S.time?'The approval email goes out '+fmt(S.time)+'. The audience still gets nothing until you Send or Schedule.':'Pacific time (Vancouver). 15-minute steps.');
+ const cf=$('chips');cf.querySelectorAll('.chip').forEach(c=>c.remove());const inp=$('chipin');
+ S.chips.forEach((c,i)=>{const ok=EMAIL.test(c);const d=document.createElement('span');d.className='chip'+(ok?'':' bad');d.dataset.v=c;d.title=ok?c:'Not a valid email address. Click to edit.';d.innerHTML='<span></span><button type=button aria-label="Remove">×</button>';d.firstChild.textContent=c;
+  d.lastChild.onclick=ev=>{ev.stopPropagation();S.chips.splice(i,1);S.dup='';render()};if(!ok)d.firstChild.onclick=()=>{S.chips.splice(i,1);render();inp.value=c;inp.focus()};cf.insertBefore(d,inp)});
+ cf.classList.toggle('err',!!e.recip);const rh=$('reciphelp');rh.className='help'+(e.recip||S.dup?' err':'');rh.textContent=[e.recip,S.dup].filter(Boolean).join(' ')||'Type or paste addresses. Enter, comma or Tab adds each one.';
+ document.querySelectorAll('.sum').forEach(x=>x.textContent=summary());
+ const nErr=Object.keys(e).length;const st=$('saveerr');st.hidden=!(S.showErr&&nErr);
+ if(window.DIR==='B'){$('editbtn').hidden=!S.on;$('editbtn').textContent=S.open?'Done':'Edit';$('sumrow').classList.toggle('bad',nErr>0&&S.on);$('fixcount').hidden=!(nErr&&S.on);$('fixcount').textContent=nErr+(nErr>1?' things':' thing')+' to fix'}
+ $('hint595').innerHTML=$('comp').checked?'Compliance is on for this campaign, so the approval email stays as it is today.':'No compliance on this campaign, so the approval email will include <b>Approve and send as soon as possible</b> and <b>Approve and send on a date I pick</b> (#595). <a href="../582-approval-send-options/a-two-buttons.html" target=_blank>See that email</a>';
+ $('compf').hidden=!$('comp').checked;
+ if(window.onRender)onRender(e);
+}
+function setPreset(k){S=PRESETS[k]();$('comp').checked=false;document.querySelectorAll('.tabs button').forEach(b=>b.classList.toggle('on',b.dataset.k===k));$('snack').style.display='none';render()}
+function wire(){
+ document.querySelectorAll('.tabs button').forEach(b=>b.onclick=()=>setPreset(b.dataset.k));
+ $('on').onchange=ev=>{S.on=ev.target.checked;if(!S.on){S.time='';S.when='asap';S.showErr=false}else S.open=true;render()};
+ $('comp').onchange=render;
+ document.querySelectorAll('input[name=when]').forEach(r=>r.onchange=()=>{S.when=r.value;if(S.when==='time'&&!S.time)S.time=dayOffset(1,'09:00');render()});
+ $('time').oninput=ev=>{S.time=ev.target.value;render()};
+ const inp=$('chipin');$('chips').onclick=()=>inp.focus();
+ inp.onkeydown=ev=>{if(['Enter',',','Tab',';'].includes(ev.key)&&inp.value.trim()){ev.preventDefault();const v=inp.value;inp.value='';addChips(v);inp.focus()}else if(ev.key==='Backspace'&&!inp.value&&S.chips.length){S.chips.pop();S.dup='';render();inp.focus()}};
+ inp.onpaste=ev=>{const t=(ev.clipboardData||window.clipboardData).getData('text');if(/[,;\s]/.test(t.trim())){ev.preventDefault();addChips(t);inp.focus()}};
+ inp.onblur=()=>{if(inp.value.trim()){const v=inp.value;inp.value='';addChips(v)}};
+ if($('editbtn'))$('editbtn').onclick=()=>{S.open=!S.open;render()};
+ $('save').onclick=()=>{S.showErr=true;const e=errors();if(Object.keys(e).length){S.open=true;render();return}S.showErr=false;render();const sn=$('snack');sn.textContent='Saved as a Mailchimp draft. '+(S.on?summary()+'.':'')+' Nothing went to the audience.';sn.style.display='block';setTimeout(()=>sn.style.display='none',5000)};
+ $('cancel').onclick=()=>setPreset('off');
+ setPreset(new URLSearchParams(location.search).get('s')||'off');
+}
+window.onRender=()=>{$('apl').classList.toggle('on',S.on);const st=S.on?['<span class=s>Save → Mailchimp draft</span>','→','<span class="s a">Approval email to '+S.chips.length+(S.chips.length===1?' person':' people')+' · '+whenText()+'</span>','→','<span class=s>Approved</span>','→','<span class="s k">You press Send or Schedule → audience</span>']:['<span class=s>Save → Mailchimp draft</span>','→','<span class="s k">You press Send or Schedule → audience</span>'];$('tl').innerHTML='<b>What happens:</b> '+st.join(' ')};wire();</script></body></html>

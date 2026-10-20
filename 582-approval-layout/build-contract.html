@@ -1,0 +1,69 @@
+<!doctype html><html lang=en><head><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><title>#582 approval layout build contract</title><style>body{font-family:system-ui;max-width:960px;margin:24px auto;padding:0 16px;line-height:1.5;color:#1f2a33}table{border-collapse:collapse;font-size:14px}td,th{border:1px solid #cfd8dc;padding:6px 8px;vertical-align:top;text-align:left}code{background:#f1f3f4;padding:1px 4px;border-radius:3px;font-size:.9em}</style></head><body><p><a href="./">← Hub</a> · <a href="build-contract.md">.md</a></p><h1>#582 / #595 Approval-email section layout: build contract</h1>
+<p><b>Status:</b> Not agent-ready. Soft Dev hold until Alex picks a direction. Mock only.</p>
+<p><b>Hub:</b> <a href="https://kartboy16.github.io/fc-mocks/582-approval-layout/">https://kartboy16.github.io/fc-mocks/582-approval-layout/</a></p>
+<p><b>Recommended:</b> A (grouped "Send approval email" card).</p>
+<h2>Where it lives today (read from <code>main</code> @ c97978a, read-only)</h2>
+<ul>
+<li>Component: <code>imports/ui/EmailCampaigns/mailchimp/MailchimpCreateCampaignDialog.jsx</code> (approval block about lines 853–895; validation <code>handleSave</code> about 698–711; payload <code>proceedSave</code> about 572–585).</li>
+<li>Labels/contract: <code>imports/ui/EmailCampaigns/mailchimp/mailchimpCreateDialogFields.js</code> (<code>SEND_APPROVAL_EMAIL_LABEL</code>, <code>SEND_APPROVAL_EMAIL_ON_LABEL</code>, <code>MAILCHIMP_CREATE_DIALOG_FIELD_LABELS</code>, <code>defaultSendApprovalEmailChecked()</code> → <code>false</code>, <code>shouldShowApprovalEmailOnField()</code>).</li>
+<li>Time helpers: <code>/imports/utils/advisorDateTime</code> (<code>ADVISOR_TIME_ZONE</code> = America/Vancouver, <code>datetimeLocalInTimeZoneToDate</code>, <code>dateToDatetimeLocalInTimeZone</code>).</li>
+<li>Server: <code>server/mailchimp/scheduled-campaigns-methods.js</code> (<code>resolveAdvisorDateTime</code>), <code>server/ses-methods.js</code> (~925), <code>server/ses-deferred-approval-scheduler.js</code> (cron picks up <code>approvalEmailScheduledAt &lt;= now</code>).</li>
+</ul>
+<h2>Field mapping (no schema change)</h2>
+<table>
+<tr><th>UI</th><th>State today</th><th>Saved field</th><th>Notes</th></tr>
+<tr><td>Send approval email checkbox</td><td><code>sendApprovalEmail</code> (default <code>false</code>)</td><td><code>sendApprovalEmail</code>, <code>skipApprovalEmail = !sendApprovalEmail</code></td><td>Keep default unticked for all session kinds. Unticking clears the time (as today).</td></tr>
+<tr><td>When: "As soon as the Mailchimp draft is ready"</td><td>new UI-only <code>approvalWhen = 'asap'</code></td><td><code>approvalEmailScheduledAt: null</code></td><td>Derived: <code>'asap'</code> when the stored value is empty.</td></tr>
+<tr><td>When: "At a date and time I pick (Pacific)"</td><td><code>approvalWhen = 'time'</code> + <code>approvalEmailAt</code> (datetime-local string)</td><td><code>approvalEmailScheduledAt: Date</code> via <code>datetimeLocalInTimeZoneToDate(…, ADVISOR_TIME_ZONE)</code></td><td>Switching back to ASAP clears <code>approvalEmailAt</code>.</td></tr>
+<tr><td>Who gets the approval email (chips)</td><td><code>approvalEmailRecipients</code> becomes <code>string[]</code> in UI</td><td><code>approvalEmailRecipients: chips.join(', ')</code></td><td>Same comma string as today. Load: <code>parseEmailList(stored)</code>; prefill from <code>preferences.sendTestEmailsTo</code> as today.</td></tr>
+<tr><td>Send copy to compliance?</td><td>unchanged</td><td>unchanged</td><td>Stays directly above the approval block.</td></tr>
+<tr><td>Draft-only banner</td><td>unchanged (create and edit copy)</td><td>—</td><td>Stays directly above compliance.</td></tr>
+</table>
+<p>Edit mode: load <code>approvalWhen = doc.approvalEmailScheduledAt ? 'time' : 'asap'</code>.</p>
+<h2>States (all directions)</h2>
+<ol>
+<li><b>Unticked:</b> only the checkbox ("Send approval email" + "Someone reviews and approves the draft before you send it."). Nothing else shows.</li>
+<li><b>Ticked · as soon as ready (default on tick):</b> radio ASAP selected, chips prefilled.</li>
+<li><b>Ticked · set time:</b> picking "At a date and time" reveals the datetime field, defaulting to tomorrow 9:00 AM Pacific, with <code>step=900</code> (15 min). Helper confirms: "The approval email goes out Tue, Oct 20 at 9:00 AM Pacific. The audience still gets nothing until you Send or Schedule."</li>
+<li><b>Error:</b> bad address chip is red and editable on click; past time; no recipients; "time" picked with no value. Save is blocked with an inline Alert ("Fix the approval email details above before saving."). In B, the row turns red with "N things to fix" and the panel reopens.</li>
+<li><b>Mobile ~375px:</b> single column; in C the lanes stack.</li>
+</ol>
+<h2>Recipient chips</h2>
+<ul>
+<li>Enter, comma, semicolon or Tab commits; blur commits; Backspace on an empty input removes the last chip.</li>
+<li>Paste of "a@x.com, b@x.com; c@x.com" (commas, semicolons, spaces, newlines) splits into chips.</li>
+<li>Duplicate (case-insensitive): not added; the existing chip flashes; helper "jane@example.com is already in the list."</li>
+<li>Invalid (same regex as today's <code>isValidEmail</code>): kept as a red chip so it can be fixed; click to edit.</li>
+<li>MUI: <code>Autocomplete multiple freeSolo</code> with <code>renderTags</code> → <code>Chip</code> (<code>color="error"</code> when invalid), or a small <code>ChipInput</code> wrapper.</li>
+</ul>
+<h2>Validation (client, on Save)</h2>
+<ul>
+<li>Ticked + 0 recipients → "Add at least one email address."</li>
+<li>Any invalid → "Fix or remove the address in red (…). Click it to edit."</li>
+<li><code>approvalWhen==='time'</code> + empty → "Pick a date and time, or choose “As soon as the draft is ready”."</li>
+<li><code>approvalWhen==='time'</code> + time ≤ now (Pacific) → "That time has already passed (it is now …). Pick a later time." (shown live too)</li>
+<li><b>Server (new, small):</b> reject a past <code>approvalEmailScheduledAt</code> in <code>mailchimp.createScheduledEmailCampaign</code> / update. Today a past time is silently treated as "send now" (<code>ses-methods.js</code> ignores it; the deferred scheduler fires anything <code>&lt;= now</code> on the next tick), which is surprising.</li>
+</ul>
+<h2>Copy</h2>
+<ul>
+<li>Section: "Send approval email" / "Someone reviews and approves the draft before you send it."</li>
+<li>"When should the approval email go out?" → "As soon as the Mailchimp draft is ready" ("Usually within a minute or two of saving") / "At a date and time I pick (Pacific)"</li>
+<li>"Who gets the approval email" · placeholder "Add email address" · helper "Type or paste addresses. Enter, comma or Tab adds each one."</li>
+<li>Warning (A, B): "<b>This only sets when the approval email goes out.</b> The campaign goes to the audience only when someone presses Send or Schedule on the Campaigns list."</li>
+<li>Summary (A line, B row): "Approval email to 2 people · as soon as the Mailchimp draft is ready" / "… · Tue, Oct 20 at 9:00 AM Pacific".</li>
+<li>#595 hint (when compliance unticked): "No compliance on this campaign, so the approval email will include <b>Approve and send as soon as possible</b> and <b>Approve and send on a date I pick</b> (#595). See that email". With compliance ticked: "Compliance is on for this campaign, so the approval email stays as it is today." Hint is display only; no #595 scope added.</li>
+<li>Drop the old helper "Advisor timezone (America/Vancouver)… Not the audience send date." (replaced by the radio labels + warning).</li>
+<li>Update <code>MAILCHIMP_CREATE_DIALOG_FIELD_LABELS</code> and any tests/e2e that look for "Send approval email on" / "Approval Recipients".</li>
+</ul>
+<h2>Effort</h2>
+<ul>
+<li>A: ~1–1.5 dev days (chip input, radio + derive, validation, server past-time reject, tests).</li>
+<li>B: ~1.5–2 days (adds summary/collapse state). C: ~2 days (layout restructure, timeline, mobile stacking).</li>
+</ul>
+<h2>Open questions for Alex</h2>
+<ol>
+<li>Should the datetime use 15-minute steps (like #595's scheduler) or any minute?</li>
+<li>Edit mode after the approval email has already gone out: show "Approval email sent Oct 19, 3:05 PM Pacific" read-only, or allow re-sending? (Mock doesn't cover it.)</li>
+<li>Keep prefilling recipients from Settings → "Send test emails to"?</li>
+<li>Should the server reject past times (recommended) or keep treating them as "send now"?</li>
+</ol></body></html>

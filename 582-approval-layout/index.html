@@ -1,0 +1,14 @@
+<!doctype html><html lang=en><head><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><title>#582 / #595 Approval-email section layout</title><style>body{font-family:system-ui;max-width:900px;margin:24px auto;padding:0 16px;line-height:1.5;color:#1f2a33}.r{background:#eaf7ee;border:1px solid #9fd3ae;border-radius:8px;padding:12px 14px}.w{background:#fff8e1;border:1px solid #f0d98a;border-radius:8px;padding:10px 14px}li{margin:4px 0}</style></head><body>
+<p><a href="../">All mocks</a></p><h1>#582 / #595: a cleaner approval-email section in Create/Edit Mailchimp Campaign</h1>
+<p>Designer-first mock. <b>Not agent-ready. Soft Dev hold until Alex picks.</b> This is only the layout of the dialog section; the #595 email/confirm-page work is unchanged.</p>
+<p class=w><b>The problem today:</b> the "Send approval email" checkbox sits inline with a full-width "Send approval email on" date field and a long helper, then a comma-separated "Approval Recipients" box. It's cluttered and easy to read the time as the audience send date.</p>
+<p class=r><b>Recommend A.</b> One card with two plain choices ("As soon as the Mailchimp draft is ready" or "At a date and time I pick (Pacific)"), email chips, and a yellow line that says this is only the approval email. Nothing is hidden behind an Edit click, it reads top to bottom right under the draft-only banner, and it's the smallest build (about 1–1.5 dev days).</p>
+<h2>Directions</h2><ul>
+<li><a href="a-approval-card.html">A. Grouped "Send approval email" card with radio choices and chips (recommended)</a></li>
+<li><a href="b-summary-row.html">B. Compact one-line summary ("Approval email to 2 people · as soon as ready · Edit") with a sub-panel</a></li>
+<li><a href="c-two-lanes.html">C. Two lanes: Audience send vs Approval email, with a "What happens" strip</a></li></ul>
+<p>Each has tabs for Unticked, Ticked (as soon as ready), Ticked (set time), Error (bad email + past time) and Mobile 375px. All are clickable: tick, switch, type or paste emails, try a duplicate, then Save to pipeline.</p>
+<h2>Build</h2><ul><li><a href="build-contract.html">Build contract</a> (<a href="build-contract.md">.md</a>): field mapping to today's saved fields (no schema change), states, chip rules, validation, copy, effort, open questions.</li></ul>
+<h2>Open questions</h2><ol><li>15-minute steps for the time, or any minute?</li><li>Editing after the approval email already went out: show it read-only, or allow re-sending?</li><li>Keep prefilling recipients from Settings → "Send test emails to"?</li><li>Should the server reject a past time? Today it silently sends right away.</li></ol>
+<p>Related: <a href="../582-approval-send-options/">#582 send-options mocks</a> (Direction A locked in #595).</p>
+</body></html>
