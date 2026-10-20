@@ -1,0 +1,180 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>#599 A: Table queue + slate page + swap drawer</title><style>
+*{box-sizing:border-box}body{margin:0;font-family:Inter,Roboto,Helvetica,Arial,sans-serif;background:#FAFAFA;color:#2C3E50;font-size:14px;line-height:1.45}
+a{color:#1976D2}button{font:inherit;cursor:pointer}
+.mockbar{background:#1e2a4a;color:#fff;padding:8px 16px;display:flex;flex-wrap:wrap;gap:8px;align-items:center;font-size:12px}
+.mockbar a{color:#cfe3ff}.mockbar b{margin-right:6px}.mockbar .sp{flex:1}
+.mockbar button{background:#2c3a60;color:#fff;border:1px solid #4a5a85;border-radius:6px;padding:3px 9px;font-size:12px}
+.mockbar button.on{background:#2196F3;border-color:#2196F3}
+.top{background:#fff;border-bottom:1px solid #e3e8ee;padding:10px 20px;display:flex;align-items:center;gap:14px}
+.logo{font-weight:800;color:#1976D2}.crumb{color:#546E7A;font-size:13px}.crumb a{text-decoration:none}
+.wrap{max-width:1240px;margin:0 auto;padding:18px 20px 60px}
+h1{font-size:22px;margin:0 0 4px;font-weight:600}h2{font-size:17px;margin:18px 0 8px;font-weight:600}
+.sub{color:#546E7A;margin:0 0 12px}
+.rules{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0 14px}
+.rule{background:#e8f3fe;border:1px solid #b9dafb;color:#0d4a8a;border-radius:999px;padding:4px 12px;font-size:12.5px;font-weight:600}
+.oq{background:#fff4e5;border:2px dashed #e08a00;border-radius:10px;padding:10px 14px;margin:12px 0;font-size:13px}
+.oq b.t{display:inline-block;background:#e08a00;color:#fff;border-radius:4px;padding:1px 7px;font-size:11px;letter-spacing:.03em;margin-right:6px;text-transform:uppercase}
+.assume{background:#f3eefc;border:1px dashed #8e6fd1;border-radius:10px;padding:8px 12px;margin:10px 0;font-size:12.5px}
+.assume b.t{background:#8e6fd1;color:#fff;border-radius:4px;padding:1px 7px;font-size:11px;margin-right:6px;text-transform:uppercase}
+.card{background:#fff;border:1px solid #e3e8ee;border-radius:12px;box-shadow:0 2px 10px rgba(0,0,0,.05)}
+.btn{border:1px solid #c9d4df;background:#fff;color:#2C3E50;border-radius:8px;padding:6px 12px;font-weight:600;font-size:13px}
+.btn:hover{background:#f2f6fa}.btn.pri{background:#2196F3;border-color:#2196F3;color:#fff}.btn.pri:hover{background:#1976D2}
+.btn.ok{background:#2e7d32;border-color:#2e7d32;color:#fff}.btn.ghost{border-color:transparent;background:transparent;color:#1976D2}
+.btn.sm{padding:3px 9px;font-size:12px}.btn[disabled]{opacity:.45;cursor:not-allowed}
+.chip{display:inline-block;border-radius:999px;padding:1px 9px;font-size:11.5px;font-weight:600;background:#eef2f6;color:#37474f;margin:1px 2px 1px 0;white-space:nowrap}
+.t-benefits{background:#e3f2fd;color:#0d47a1}.t-life{background:#fce4ec;color:#880e4f}.t-retire{background:#e8f5e9;color:#1b5e20}
+.t-tax{background:#fff3e0;color:#e65100}.t-invest{background:#ede7f6;color:#4527a0}.t-estate{background:#e0f2f1;color:#004d40}.t-disab{background:#f9fbe7;color:#827717}
+.st{display:inline-block;border-radius:6px;padding:2px 8px;font-size:12px;font-weight:700}
+.st-pending{background:#fff8e1;color:#8a6d00}.st-approved{background:#e8f5e9;color:#1b5e20}.st-partly{background:#e3f2fd;color:#0d47a1}.st-skipped{background:#eceff1;color:#546E7A}.st-swapped{background:#f3e5f5;color:#6a1b9a}
+.warn{display:inline-block;border-radius:6px;padding:1px 7px;font-size:11.5px;font-weight:600;background:#fdecea;color:#b71c1c;margin:1px 2px}
+.reason{font-size:12.5px;color:#37474f;background:#f6f8fa;border-left:3px solid #2196F3;padding:3px 8px;border-radius:0 6px 6px 0;margin-top:4px}
+.thumb{width:64px;height:44px;border-radius:6px;flex:none;background:linear-gradient(135deg,#90caf9,#e3f2fd);display:flex;align-items:center;justify-content:center;color:#1565c0;font-size:10px;font-weight:700}
+.thumb.lg{width:120px;height:80px}
+.muted{color:#78909c;font-size:12px}
+table{width:100%;border-collapse:collapse}th{font-size:12px;text-align:left;color:#546E7A;font-weight:600;padding:8px;border-bottom:1px solid #e3e8ee;background:#f7f9fb}
+td{padding:9px 8px;border-bottom:1px solid #eef1f4;vertical-align:top}tr.click:hover td{background:#f5faff;cursor:pointer}
+.filters{display:flex;flex-wrap:wrap;gap:8px;align-items:center;padding:10px 12px;border-bottom:1px solid #e3e8ee}
+select,input[type=text],input[type=search]{font:inherit;font-size:13px;border:1px solid #c9d4df;border-radius:8px;padding:5px 9px;background:#fff}
+.bulk{display:flex;gap:8px;align-items:center;padding:8px 12px;background:#e8f3fe;border-bottom:1px solid #b9dafb;font-size:13px}
+.stats{display:flex;flex-wrap:wrap;gap:10px;margin:8px 0 14px}.stat{background:#fff;border:1px solid #e3e8ee;border-radius:10px;padding:8px 14px;min-width:110px}.stat b{display:block;font-size:20px}
+.stat.click{cursor:pointer}.stat.click:hover{border-color:#2196F3}
+.toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%);background:#263238;color:#fff;padding:10px 18px;border-radius:8px;font-size:13px;display:none;z-index:99}
+.skel{background:linear-gradient(90deg,#eef1f4,#f8fafb,#eef1f4);background-size:200% 100%;animation:sk 1.2s infinite;border-radius:6px;height:14px;margin:8px 0}@keyframes sk{to{background-position:-200% 0}}
+.empty{text-align:center;padding:40px 20px;color:#546E7A}.empty .ico{font-size:34px}
+.err{background:#fdecea;border:1px solid #f5c2c0;color:#8b1a1a;border-radius:10px;padding:12px 14px;margin:10px 0}
+.success{background:#e8f5e9;border:1px solid #a5d6a7;color:#1b5e20;border-radius:10px;padding:12px 14px;margin:10px 0}
+.post{display:flex;gap:12px;padding:12px;border-bottom:1px solid #eef1f4;align-items:flex-start}.post:last-child{border-bottom:0}
+.post .body{flex:1;min-width:0}.post .ttl{font-weight:600}.post .acts{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}
+.post.done{background:#fbfdfb}.post.skip{opacity:.6}
+.hist{font-size:12px;color:#546E7A}
+.swapitem{display:flex;gap:10px;padding:10px;border:1px solid #e3e8ee;border-radius:10px;margin:8px 0;align-items:flex-start;cursor:pointer;background:#fff}
+.swapitem.sel{border-color:#2196F3;box-shadow:0 0 0 2px #bbdefb}.swapitem input{margin-top:4px}
+.score{font-weight:800;font-size:15px;color:#1976D2;min-width:38px;text-align:right}
+.rank{font-weight:700;color:#90a4ae;min-width:22px}
+.badge{display:inline-block;background:#263238;color:#fff;border-radius:4px;font-size:10.5px;padding:0 6px;margin-left:4px;font-weight:700}
+.overlay{position:fixed;inset:0;background:rgba(20,30,50,.35);display:none;z-index:50}
+.drawer{position:fixed;top:0;right:0;bottom:0;width:440px;max-width:100%;background:#fff;box-shadow:-6px 0 24px rgba(0,0,0,.15);display:none;z-index:60;flex-direction:column}
+.drawer .hd,.modal .hd{padding:14px 16px;border-bottom:1px solid #e3e8ee}.drawer .bd,.modal .bd{padding:10px 16px;overflow:auto;flex:1}.drawer .ft,.modal .ft{padding:12px 16px;border-top:1px solid #e3e8ee;display:flex;gap:8px;justify-content:flex-end;align-items:center}
+.modal{position:fixed;top:6vh;left:50%;transform:translateX(-50%);width:720px;max-width:96vw;max-height:88vh;background:#fff;border-radius:14px;box-shadow:0 10px 40px rgba(0,0,0,.25);display:none;z-index:60;flex-direction:column}
+.hide{display:none!important}
+@media(max-width:760px){.wrap{padding:12px}.hide-m{display:none!important}.post{flex-wrap:wrap}.post .acts{width:100%;justify-content:flex-start}.drawer{width:100%}
+ table.resp thead{display:none}table.resp tr{display:block;border:1px solid #e3e8ee;border-radius:10px;margin:8px;background:#fff}table.resp td{display:block;border:0;padding:4px 10px}}
+</style></head><body>
+<div id="mb"></div><div class="top"><span class="logo">FC</span><span class="crumb"><a href="#" onclick="UI.view2='';go('queue');return false">Admin</a> &rsaquo; <a href="#" onclick="UI.view2='';go('queue');return false">Weekly picks review</a><span id="crumbx"></span></span></div><div class="wrap" id="main"></div><div class="overlay" id="ov" onclick="closeSwap()"></div><div class="drawer" id="dr"></div>
+<div id="toast" class="toast"></div>
+<script>
+var TOPICS={benefits:['Group benefits','t-benefits'],life:['Life insurance','t-life'],retire:['Retirement','t-retire'],tax:['Tax','t-tax'],invest:['Investing','t-invest'],estate:['Estate planning','t-estate'],disab:['Disability cover','t-disab']};
+function chip(k){var t=TOPICS[k];return '<span class="chip '+t[1]+'">'+t[0]+'</span>';}
+var LIB=[
+ {id:'p1',title:'Life insurance basics for young families',topic:'life',score:92,why:'Life insurance, since group benefits ran Aug and Sep'},
+ {id:'p2',title:'Five questions to ask before you retire',topic:'retire',score:88,why:'Retirement not used in 6 weeks; matches services'},
+ {id:'p3',title:'Year-end tax checklist for households',topic:'tax',score:85,why:'Tax fits the season; last used 5 months ago'},
+ {id:'p4',title:'Critical illness cover, explained simply',topic:'life',score:81,why:'Matches a product sold but not posted about lately'},
+ {id:'p5',title:'Staying calm when markets swing',topic:'invest',score:79,why:'Investing not used in 8 weeks'},
+ {id:'p6',title:'Why benefits help small teams hire',topic:'benefits',score:74,why:'Group benefits; strong penalty applied (used last month)'},
+ {id:'p7',title:'An estate planning checklist',topic:'estate',score:71,why:'Estate planning never posted on this site'},
+ {id:'p8',title:'Disability cover if you are self-employed',topic:'disab',score:68,why:'Matches a service; weaker topic fit'},
+ {id:'p9',title:'Choosing between two savings accounts',topic:'invest',score:66,why:'Investing; similar post ran 10 months ago'},
+ {id:'p10',title:'Health spending accounts in plain terms',topic:'benefits',score:61,why:'Group benefits; would be a 3rd month in a row (blocked unless nothing else fits)'}
+];
+function lib(id){for(var i=0;i<LIB.length;i++)if(LIB[i].id===id)return LIB[i];}
+var ADV=[
+ {id:'a1',name:'Jane Advisor',firm:'Example Co',month:'life',hist:['benefits','benefits','retire'],warn:[],items:[{post:'p1',st:'pending',backups:['p4','p2']},{post:'p2',st:'pending',backups:['p3','p5']},{post:'p3',st:'pending',backups:['p5','p7']}]},
+ {id:'a2',name:'John Sample',firm:'Your Firm Name',month:'retire',hist:['tax','life','invest'],warn:[],items:[{post:'p2',st:'approved',backups:['p5','p7']},{post:'p5',st:'approved',backups:['p9','p3']},{post:'p7',st:'approved',backups:['p3','p2']}]},
+ {id:'a3',name:'Pat Example',firm:'Example Co',month:'benefits',hist:['benefits','benefits','life'],warn:['Streak override'],items:[{post:'p10',st:'pending',backups:['p6','p8']},{post:'p8',st:'approved',backups:['p4','p1']},{post:'p4',st:'pending',backups:['p1','p6']}]},
+ {id:'a4',name:'Sam Placeholder',firm:'Sample Advisory',month:'tax',hist:['retire','invest','life'],warn:['Missing products/services'],items:[{post:'p3',st:'pending',backups:['p5','p9']},{post:'p9',st:'pending',backups:['p5','p2']},{post:'p5',st:'pending',backups:['p2','p7']}]},
+ {id:'a5',name:'Chris Demo',firm:'Demo Financial',month:'invest',hist:['tax','retire','estate'],warn:[],items:[{post:'p5',st:'skipped',backups:['p9','p2']},{post:'p9',st:'skipped',backups:['p2','p3']},{post:'p2',st:'skipped',backups:['p3','p7']}]},
+ {id:'a6',name:'Taylor Test',firm:'Your Firm Name',month:'estate',hist:['life','tax','benefits'],warn:['Thin fit'],items:[{post:'p7',st:'pending',backups:['p8','p3']},{post:'p8',st:'pending',backups:['p4','p1']},{post:'p6',st:'pending',backups:['p10','p4']}]},
+ {id:'a7',name:'Morgan Sample',firm:'Example Co',month:'life',hist:['invest','retire','tax'],warn:[],items:[{post:'p4',st:'approved',backups:['p1','p8']},{post:'p1',st:'pending',backups:['p8','p2']},{post:'p2',st:'approved',backups:['p3','p5']}]},
+ {id:'a8',name:'Riley Example',firm:'Sample Advisory',month:'retire',hist:['life','benefits','tax'],warn:[],items:[{post:'p2',st:'pending',backups:['p7','p5']},{post:'p7',st:'pending',backups:['p3','p9']},{post:'p5',st:'pending',backups:['p9','p3']}]}
+];
+var ORIG=JSON.stringify(ADV);
+function adv(id){for(var i=0;i<ADV.length;i++)if(ADV[i].id===id)return ADV[i];}
+function slateStatus(a){var n={pending:0,approved:0,skipped:0,swapped:0};a.items.forEach(function(it){n[it.st]++;});
+ var ap=n.approved;if(n.skipped===a.items.length)return 'skipped';if(ap===a.items.length-n.skipped&&ap>0)return 'approved';if(ap>0)return 'partly';return 'pending';}
+var STLABEL={pending:'Pending review',approved:'Approved',partly:'Partly approved',skipped:'Skipped this week',swapped:'Swapped, needs approval'};
+function stBadge(s){return '<span class="st st-'+s+'">'+STLABEL[s]+'</span>';}
+function itemBadge(s){var l={pending:'Not approved',approved:'Approved, ready to schedule',skipped:'Skipped',swapped:'Swapped, needs approval'}[s];var c=s==='swapped'?'swapped':s;return '<span class="st st-'+c+'">'+l+'</span>';}
+function histChips(a){return a.hist.map(chip).join('');}
+function warns(a){return a.warn.map(function(w){return '<span class="warn">&#9888; '+w+'</span>';}).join('');}
+function toast(m){var t=document.getElementById('toast');t.innerHTML=m;t.style.display='block';clearTimeout(window.tt);window.tt=setTimeout(function(){t.style.display='none';},2600);}
+function counts(){var c={pending:0,approved:0,partly:0,skipped:0};ADV.forEach(function(a){c[slateStatus(a)]++;});return c;}
+var UI={state:'default',view:'queue',cur:'a1',swapItem:0,swapSel:null,q:'',fStatus:'',fTopic:'',fWarn:'',sel:{}};
+function setState(s){UI.state=s;if(s==='success'){ADV.forEach(function(a){a.items.forEach(function(it){if(it.st!=='skipped')it.st='approved';});});}
+ if(s==='default'){ADV=JSON.parse(ORIG);}
+ document.querySelectorAll('[data-state]').forEach(function(b){b.classList.toggle('on',b.getAttribute('data-state')===s);});render();}
+function go(v,id){UI.view=v;if(id)UI.cur=id;render();window.scrollTo(0,0);}
+function act(i,st){var a=adv(UI.cur);a.items[i].st=st;toast(st==='approved'?'Approved. It moves to normal scheduling. Nothing publishes on its own.':st==='skipped'?'Skipped for this week. Nothing will be scheduled for this post.':'Updated');render();}
+function approveAll(){var a=adv(UI.cur);a.items.forEach(function(it){if(it.st==='pending'||it.st==='swapped')it.st='approved';});toast('All remaining picks for '+a.name+' approved. They move to normal scheduling.');render();}
+function skipWeek(){var a=adv(UI.cur);a.items.forEach(function(it){it.st='skipped';});toast(a.name+' skipped for this week. Nothing will be scheduled.');render();}
+function undoItem(i){adv(UI.cur).items[i].st='pending';render();}
+function openSwap(i){UI.swapItem=i;UI.swapSel=null;UI.q='';UI.view2='swap';render();}
+function closeSwap(){UI.view2='';render();}
+function swapList(){var a=adv(UI.cur),it=a.items[UI.swapItem];var used=a.items.map(function(x){return x.post;});
+ var list=LIB.filter(function(p){return used.indexOf(p.id)<0;});
+ list.sort(function(x,y){var bx=it.backups.indexOf(x.id),by=it.backups.indexOf(y.id);bx=bx<0?9:bx;by=by<0?9:by;return bx-by||y.score-x.score;});
+ if(UI.q){var q=UI.q.toLowerCase();list=list.filter(function(p){return p.title.toLowerCase().indexOf(q)>=0||TOPICS[p.topic][0].toLowerCase().indexOf(q)>=0;});}
+ return list;}
+function swapRows(){var a=adv(UI.cur),it=a.items[UI.swapItem];var list=swapList();
+ if(!list.length)return '<div class="empty"><div class="ico">&#128269;</div>No posts match "'+UI.q+'". Try a topic like "tax" or clear the search.</div>';
+ return list.map(function(p,n){var b=it.backups.indexOf(p.id);var bl=b>=0?'<span class="badge">Backup '+(b+1)+'</span>':'';
+  var block=p.id==='p10'&&a.month==='benefits'?'<div class="warn">&#9888; Would be a 3rd month of Group benefits</div>':'';
+  var hd=(n===0&&b>=0)?'<div class="muted" style="font-weight:700;margin-top:6px">BACKUPS PICKED BY THE ENGINE</div>':((b<0&&(n===0||it.backups.indexOf(list[n-1].id)>=0))?'<div class="muted" style="font-weight:700;margin-top:10px">'+(UI.q?'SEARCH RESULTS, BEST FIT FIRST':'OTHER OPTIONS, BEST FIT FIRST')+'</div>':'');
+  return hd+'<label class="swapitem'+(UI.swapSel===p.id?' sel':'')+'" onclick="UI.swapSel=\''+p.id+'\';render()"><input type="radio" name="sw" '+(UI.swapSel===p.id?'checked':'')+'><span class="rank">#'+(n+1)+'</span><div class="thumb">IMG</div><div style="flex:1"><div class="ttl" style="font-weight:600">'+p.title+bl+'</div>'+chip(p.topic)+'<div class="reason">'+p.why+'</div>'+block+'</div><div class="score" title="Fit score out of 100">'+p.score+'<div class="muted" style="font-weight:400">fit</div></div></label>';}).join('');}
+function confirmSwap(){if(!UI.swapSel)return;var a=adv(UI.cur);var it=a.items[UI.swapItem];var old=lib(it.post).title;it.post=UI.swapSel;it.st='swapped';UI.view2='';toast('Swapped in "'+lib(UI.swapSel).title+'". It still needs your approval.');render();}
+function bulkApprove(){var n=0;Object.keys(UI.sel).forEach(function(id){if(!UI.sel[id])return;var a=adv(id);if(a.warn.length)return;a.items.forEach(function(it){if(it.st==='pending'||it.st==='swapped'){it.st='approved';}});n++;});UI.sel={};toast(n+' advisor slate(s) approved. Rows with warnings were left for you to check.');render();}
+function bulkApproveNoWarn(){var n=0;ADV.forEach(function(a){if(a.warn.length)return;var s=slateStatus(a);if(s==='pending'||s==='partly'){a.items.forEach(function(it){if(it.st==='pending'||it.st==='swapped')it.st='approved';});n++;}});toast('Approved '+n+' slates with no warnings. Rows with warnings still need a look.');render();}
+function bulkSkip(){var n=0;Object.keys(UI.sel).forEach(function(id){if(!UI.sel[id])return;adv(id).items.forEach(function(it){it.st='skipped';});n++;});UI.sel={};toast(n+' advisor(s) skipped for this week.');render();}
+function filtered(){return ADV.filter(function(a){var s=slateStatus(a);if(UI.fStatus&&s!==UI.fStatus)return false;if(UI.fTopic&&a.month!==UI.fTopic)return false;if(UI.fWarn==='any'&&!a.warn.length)return false;if(UI.fWarn&&UI.fWarn!=='any'&&a.warn.indexOf(UI.fWarn)<0)return false;if(UI.fq&&a.name.toLowerCase().indexOf(UI.fq.toLowerCase())<0)return false;return true;});}
+function topicOpts(){var h='<option value="">All topics</option>';Object.keys(TOPICS).forEach(function(k){h+='<option value="'+k+'"'+(UI.fTopic===k?' selected':'')+'>'+TOPICS[k][0]+'</option>';});return h;}
+function statusOpts(){var h='<option value="">All statuses</option>';['pending','partly','approved','skipped'].forEach(function(k){h+='<option value="'+k+'"'+(UI.fStatus===k?' selected':'')+'>'+STLABEL[k]+'</option>';});return h;}
+function warnOpts(){var h='<option value="">Any warnings</option><option value="any"'+(UI.fWarn==='any'?' selected':'')+'>Has a warning</option>';['Thin fit','Streak override','Missing products/services'].forEach(function(k){h+='<option'+(UI.fWarn===k?' selected':'')+'>'+k+'</option>';});return h;}
+function filterBar(){return '<div class="filters"><input type="search" placeholder="Search advisors" value="'+(UI.fq||'')+'" oninput="UI.fq=this.value;render();this.focus()" style="min-width:180px"><select onchange="UI.fStatus=this.value;render()">'+statusOpts()+'</select><select onchange="UI.fTopic=this.value;render()">'+topicOpts()+'</select><select onchange="UI.fWarn=this.value;render()">'+warnOpts()+'</select><span style="flex:1"></span><button class="btn sm" onclick="toast(\'Rebuilding all slates. Approved picks are kept. This takes a few minutes.\')">Rebuild all slates</button><button class="btn sm pri" onclick="bulkApproveNoWarn()">Approve all with no warnings</button></div>';}
+function rulesBanner(){return '<div class="rules"><span class="rule">&#10003; Nothing is scheduled until you approve it</span><span class="rule">&#10003; Drafts never publish on their own</span><span class="rule">&#128197; New slates are built every Monday at 5:00 AM PT</span></div>';}
+var OQ_TXT='Alex\'s spec has an unfinished sentence: <i>&ldquo;and then provide within the&rdquo;</i>. It may be about where or how the slate is delivered. We have not guessed. Confirm with Alex before this part is built.';
+function oq(where){return '<div class="oq"><b class="t">Open question</b>'+(where?'<b>'+where+':</b> ':'')+OQ_TXT+'</div>';}
+function weekLine(){return '<p class="sub">Week of Mon Oct 19, 2026 &middot; Built Mon Oct 19 at 5:00 AM PT &middot; Profiles re-synced 2:00 AM PT &middot; 8 managed advisors (sample; the real list is 100+)</p>';}
+function loadingBlock(){return '<div class="card" style="padding:16px"><div class="muted">Loading this week\'s slates&hellip;</div><div class="skel" style="width:60%"></div><div class="skel"></div><div class="skel" style="width:80%"></div><div class="skel"></div><div class="skel" style="width:70%"></div></div>';}
+function emptyBlock(){return '<div class="card empty"><div class="ico">&#128197;</div><b>No slate for this week yet</b><p>Slates are built every Monday at 5:00 AM PT. The next one will be ready Mon Oct 26 at 5:00 AM PT.</p><p class="muted">Want one now? Rebuild builds a draft. Nothing is scheduled until you approve it.</p><button class="btn pri" onclick="toast(\'Building draft slates. Nothing is scheduled until you approve.\')">Rebuild all slates now</button></div>';}
+function errorBlock(){return '<div class="err"><b>We couldn\'t load this week\'s slates.</b> Nothing has been scheduled or published. <button class="btn sm" onclick="setState(\'default\')">Try again</button><div class="muted" style="color:#8b1a1a">If Monday\'s 5:00 AM PT build failed, use Rebuild all slates. Your earlier approvals are safe.</div></div>';}
+function successBlock(){return '<div class="success"><b>All slates reviewed for this week.</b> Approved posts have moved to normal scheduling. Skipped advisors get nothing this week. The next slate is built Mon Oct 26 at 5:00 AM PT.</div>';}
+function mockbar(letter,name){return '<div class="mockbar"><b>#599 mock &middot; Direction '+letter+': '+name+'</b><a href="index.html">Hub</a><a href="a-table-drawer.html">A</a><a href="b-split-view.html">B</a><a href="c-focus-review.html">C</a><a href="build-contract.html">Contract</a><span class="sp"></span>Screen: <button data-v="queue" onclick="UI.view2=\'\';go(\'queue\')">1 Queue</button><button data-v="slate" onclick="UI.view2=\'\';go(\'slate\')">2 Slate</button><button data-v="swap" onclick="UI.view=\'slate\';openSwap(0)">3 Swap</button> &nbsp;Try a state: <button data-state="default" class="on" onclick="setState(\'default\')">Default</button><button data-state="loading" onclick="setState(\'loading\')">Loading</button><button data-state="empty" onclick="setState(\'empty\')">Empty</button><button data-state="error" onclick="setState(\'error\')">Error</button><button data-state="success" onclick="setState(\'success\')">All approved</button></div>';}
+function markBar(){document.querySelectorAll('[data-v]').forEach(function(b){var v=b.getAttribute('data-v');b.classList.toggle('on',(UI.view2==='swap'&&v==='swap')||(UI.view2!=='swap'&&UI.view===v));});}
+function slatePosts(a,opts){opts=opts||{};return a.items.map(function(it,i){var p=lib(it.post);var cls=it.st==='approved'?' done':it.st==='skipped'?' skip':'';
+ var acts=it.st==='approved'||it.st==='skipped'?'<button class="btn sm ghost" onclick="undoItem('+i+')">Undo</button>':'<button class="btn sm ok" onclick="act('+i+',\'approved\')">Approve</button><button class="btn sm" onclick="openSwap('+i+')">Swap</button><button class="btn sm" onclick="act('+i+',\'skipped\')">Skip</button>';
+ var bk=opts.backups?'<div class="muted" style="margin-top:4px">Backups: '+it.backups.map(function(b){return lib(b).title;}).join(' &middot; ')+'</div>':'';
+ return '<div class="post'+cls+'"><div class="thumb'+(opts.lg?' lg':'')+'">IMG</div><div class="body"><div class="ttl">'+p.title+'</div><div>'+chip(p.topic)+' '+itemBadge(it.st)+' <span class="muted">fit '+p.score+'</span></div><div class="reason"><b>Why this pick:</b> '+p.why+'</div>'+bk+'</div><div class="acts">'+acts+'</div></div>';}).join('');}
+function slateHead(a){return '<div style="display:flex;flex-wrap:wrap;gap:10px;align-items:center"><div style="flex:1;min-width:220px"><h1 style="margin:0">'+a.name+' <span class="muted" style="font-size:14px">'+a.firm+'</span></h1><div style="margin-top:4px">This month\'s topic: '+chip(a.month)+' &nbsp;<span class="hist">Last 3 months: '+histChips(a)+'</span></div><div>'+warns(a)+'</div></div><div>'+stBadge(slateStatus(a))+'</div></div>';}
+function slateActions(){return '<div style="display:flex;gap:8px;flex-wrap:wrap;margin:12px 0"><button class="btn ok" onclick="approveAll()">Approve all</button><button class="btn" onclick="skipWeek()">Skip this week</button><button class="btn" onclick="toast(\'Rebuilding this advisor\\\'s slate. Approved picks are kept.\')">Rebuild this slate</button><span style="flex:1"></span><span class="muted" style="align-self:center">Approved posts go to normal scheduling. Nothing publishes on its own.</span></div>';}
+function warnHelp(a){if(a.warn.indexOf('Missing products/services')>=0)return '<div class="err" style="background:#fff8e1;border-color:#f0d98a;color:#6d5300"><b>No products or services on file.</b> Picks are based on topic rotation only. <a href="#" onclick="toast(\'Opens the advisor\\\'s Services panel (existing screen).\');return false">Add services</a></div>';
+ if(a.warn.indexOf('Streak override')>=0)return '<div class="err" style="background:#fff8e1;border-color:#f0d98a;color:#6d5300"><b>Third month of Group benefits.</b> Nothing else fit this advisor\'s products and services, so the usual block was lifted. Swap if you have a better fit.</div>';
+ if(a.warn.indexOf('Thin fit')>=0)return '<div class="err" style="background:#fff8e1;border-color:#f0d98a;color:#6d5300"><b>Few good matches.</b> Only a handful of library posts fit this advisor\'s services and haven\'t run before. Check the picks closely.</div>';return '';}
+function assumeCount(){return '<div class="assume"><b class="t">Assumption</b>Sample shows 3 picks per advisor so "Partly approved" makes sense. The spec says <i>one top pick plus 2 backups</i> per advisor. Confirm the number of picks per advisor per week.</div>';}
+
+
+function queueA(){var c=counts();var rows=filtered();
+ var h='<h1>Weekly picks review</h1>'+weekLine()+rulesBanner();
+ h+='<div class="stats"><div class="stat click" onclick="UI.fStatus=\'pending\';render()"><b>'+c.pending+'</b>Pending review</div><div class="stat click" onclick="UI.fStatus=\'partly\';render()"><b>'+c.partly+'</b>Partly approved</div><div class="stat click" onclick="UI.fStatus=\'approved\';render()"><b>'+c.approved+'</b>Approved</div><div class="stat click" onclick="UI.fStatus=\'skipped\';render()"><b>'+c.skipped+'</b>Skipped</div><div class="stat click" onclick="UI.fWarn=\'any\';UI.fStatus=\'\';render()"><b>3</b>With warnings</div></div>';
+ h+=oq('Delivery of the review queue');
+ if(UI.state==='loading')return h+loadingBlock();if(UI.state==='empty')return h+emptyBlock();if(UI.state==='error')return h+errorBlock();if(UI.state==='success')h+=successBlock();
+ var nsel=Object.keys(UI.sel).filter(function(k){return UI.sel[k];}).length;
+ h+='<div class="card">'+filterBar();
+ if(nsel)h+='<div class="bulk"><b>'+nsel+' selected</b><button class="btn sm ok" onclick="bulkApprove()">Approve selected</button><button class="btn sm" onclick="bulkSkip()">Skip selected this week</button><button class="btn sm" onclick="toast(\'Rebuilding selected slates.\')">Rebuild selected</button><button class="btn sm ghost" onclick="UI.sel={};render()">Clear</button><span class="muted">Approve skips rows with warnings.</span></div>';
+ h+='<table class="resp"><thead><tr><th style="width:30px"><input type="checkbox" onclick="ADV.forEach(function(a){UI.sel[a.id]=event.target.checked});render()"></th><th style="width:200px">Advisor</th><th style="width:140px">This month</th><th>Top pick and reason</th><th class="hide-m" style="width:170px">Last 3 months</th><th style="width:140px">Status</th><th style="width:90px"></th></tr></thead><tbody>';
+ if(!rows.length)h+='<tr><td colspan="7"><div class="empty">No advisors match these filters. <a href="#" onclick="UI.fStatus=\'\';UI.fTopic=\'\';UI.fWarn=\'\';UI.fq=\'\';render();return false">Clear filters</a></div></td></tr>';
+ rows.forEach(function(a){var p=lib(a.items[0].post);var ap=a.items.filter(function(i){return i.st==='approved'}).length;
+  h+='<tr class="click" onclick="go(\'slate\',\''+a.id+'\')"><td onclick="event.stopPropagation()"><input type="checkbox" '+(UI.sel[a.id]?'checked':'')+' onclick="UI.sel[\''+a.id+'\']=this.checked;render()"></td><td><b>'+a.name+'</b><div class="muted">'+a.firm+'</div>'+warns(a)+'</td><td>'+chip(a.month)+'</td><td><div style="display:flex;gap:8px"><div class="thumb">IMG</div><div><div style="font-weight:600">'+p.title+'</div><div class="reason">'+p.why+'</div><div class="muted">+ '+(a.items.length-1)+' more picks, 2 backups each</div></div></div></td><td class="hide-m">'+histChips(a)+'</td><td>'+stBadge(slateStatus(a))+'<div class="muted">'+ap+' of '+a.items.length+' approved</div></td><td><button class="btn sm pri">Review</button></td></tr>';});
+ h+='</tbody></table></div>';return h;}
+function slateA(){var a=adv(UI.cur);var h='<p><a href="#" onclick="go(\'queue\');return false">&larr; Back to all advisors</a></p>'+slateHead(a)+rulesBanner()+warnHelp(a);
+ if(UI.state==='loading')return h+loadingBlock();if(UI.state==='error')return h+errorBlock();
+ if(UI.state==='empty')return h+'<div class="card empty"><div class="ico">&#128197;</div><b>No draft slate for '+a.name+' this week</b><p>Slates are built every Monday at 5:00 AM PT.</p><button class="btn pri" onclick="toast(\'Building a draft slate. Nothing is scheduled until you approve.\')">Rebuild this slate</button></div>';
+ h+=slateActions()+assumeCount()+'<div class="card">'+slatePosts(a,{backups:true})+'</div>'+oq('What happens after Approve');
+ var i=ADV.indexOf(a);h+='<div style="display:flex;justify-content:space-between;margin-top:12px">'+(i>0?'<button class="btn" onclick="go(\'slate\',\''+ADV[i-1].id+'\')">&larr; '+ADV[i-1].name+'</button>':'<span></span>')+(i<ADV.length-1?'<button class="btn" onclick="go(\'slate\',\''+ADV[i+1].id+'\')">'+ADV[i+1].name+' &rarr;</button>':'')+'</div>';return h;}
+function drawerA(){var a=adv(UI.cur),it=a.items[UI.swapItem],p=lib(it.post);
+ return '<div class="hd"><b style="font-size:16px">Swap this pick</b><div class="muted">'+a.name+' &middot; replacing "'+p.title+'"</div><div style="margin-top:8px"><input type="search" style="width:100%" placeholder="Search the library by title or topic" value="'+UI.q+'" oninput="UI.q=this.value;document.getElementById(\'swl\').innerHTML=swapRows()"></div><div class="muted" style="margin-top:6px">Backups 1 and 2 first, then other options ranked by fit. Posts already on this advisor\'s site, or used in the last 12 months, are left out.</div></div><div class="bd" id="swl">'+swapRows()+'</div><div class="ft"><span class="muted" style="flex:1">The new pick still needs approval.</span><button class="btn" onclick="closeSwap()">Cancel</button><button class="btn pri" '+(UI.swapSel?'':'disabled')+' onclick="confirmSwap()">Confirm swap</button></div>';}
+function render(){var m=document.getElementById('main');m.innerHTML=UI.view==='queue'?queueA():slateA();
+ document.getElementById('crumbx').innerHTML=UI.view==='slate'?' &rsaquo; '+adv(UI.cur).name:'';
+ var on=UI.view2==='swap';document.getElementById('ov').style.display=on?'block':'none';var d=document.getElementById('dr');d.style.display=on?'flex':'none';if(on)d.innerHTML=drawerA();markBar();}
+
+document.getElementById('mb').innerHTML=mockbar('A','Table queue, slate page, swap drawer (recommended)');render();
+</script></body></html>

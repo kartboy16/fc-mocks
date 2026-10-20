@@ -1,0 +1,176 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>#599 Build contract</title><style>body{font-family:Inter,system-ui,sans-serif;max-width:920px;margin:24px auto;padding:0 16px;line-height:1.55;color:#2C3E50}table{border-collapse:collapse;width:100%}td,th{border:1px solid #dde3ea;padding:6px 8px;text-align:left;vertical-align:top}th{background:#f4f7fa}blockquote{background:#fff4e5;border:2px dashed #e08a00;margin:0;padding:8px 14px;border-radius:8px}code{background:#f2f4f7;padding:1px 4px;border-radius:4px;font-size:.92em}</style></head><body><p><a href="index.html">&larr; #599 hub</a> &middot; <a href="build-contract.md">.md</a></p><h1>#599 Weekly picks review: build contract</h1>
+<p><strong>Status:</strong> Designer mock only. <strong>Not agent-ready. Soft Dev UI hold until Alex picks.</strong> The phase 1 backend (profiles, history, topic tagging) can go ahead in parallel, as Alex's comment allows.</p>
+<p>Mocks: <a href="index.html">Hub</a> · <a href="a-table-drawer.html">A (recommended)</a> · <a href="b-split-view.html">B</a> · <a href="c-focus-review.html">C</a></p>
+<h2>Rules the UI must make clear (all directions)</h2>
+<ul>
+<li><strong>Nothing is scheduled until it's approved.</strong> Approving hands the post to the normal scheduling flow.</li>
+<li><strong>Drafts never publish on their own.</strong> There is no auto-schedule and no auto-publish.</li>
+<li><strong>Slates are built every Monday at 5:00 AM PT.</strong> Profiles re-sync nightly at 2:00 AM PT.</li>
+<li>These appear as three pills at the top of the queue and the slate, and again in the toast after Approve or Skip.</li>
+</ul>
+<h2>Open question (do not build around a guess)</h2>
+<blockquote>
+<p>Alex's spec has an unfinished sentence: <strong>"and then provide within the"</strong>. It may be about where or how the slate is delivered.</p>
+</blockquote>
+<p>The mocks show an orange <strong>Open question</strong> callout on the queue ("Delivery of the review queue") and under the slate ("What happens after Approve"). Anything that depends on it, such as delivery by email or Slack, a digest, or showing the slate to advisors, stays <strong>out of scope</strong> until Alex answers.</p>
+<h2>Directions</h2>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Layout</th>
+<th>Swap</th>
+<th>Best for</th>
+<th>UI estimate</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>A (recommended)</strong></td>
+<td>Full-width table queue (like Manage Advisor Posts) → full slate page with Prev/Next</td>
+<td>Right-side drawer</td>
+<td>100+ rows, filters and bulk actions, close to today's admin screens</td>
+<td><strong>2–3 dev days</strong></td>
+</tr>
+<tr>
+<td>B</td>
+<td>Split view: advisor list on the left, slate on the right</td>
+<td>Centred pop-up</td>
+<td>Fast clicking between advisors without leaving the list</td>
+<td>3–4 dev days</td>
+</tr>
+<tr>
+<td>C</td>
+<td>Overview with progress, then one advisor at a time (Approve all and next, keyboard keys)</td>
+<td>Inline, under the post</td>
+<td>Getting through the whole week quickly</td>
+<td>3–3.5 dev days</td>
+</tr>
+</tbody>
+</table>
+<p>The estimates cover the UI only. They assume the slate methods and collections from phases 1–2 exist, and they include desktop and mobile layouts, states, and component tests.</p>
+<p><strong>Why A:</strong> it reuses the Manage Advisor Posts table pattern admins already know (fixed-width columns, chips, a 400px drawer), it handles 100+ rows with filters and bulk actions best, and it's the smallest build. B and C can come later as views over the same data.</p>
+<h2>Screens</h2>
+<ol>
+<li><strong>Review queue (Weekly picks review)</strong></li>
+<li>The week line shows: "Week of Mon Oct 19 · Built Mon 5:00 AM PT · Profiles re-synced 2:00 AM PT".</li>
+<li>Status counters (Pending review, Partly approved, Approved, Skipped, With warnings). In A they're clickable and act as filters.</li>
+<li>Filters: search advisors, status, this month's topic, and warnings (Has a warning, Thin fit, Streak override, Missing products/services).</li>
+<li>Each row shows: advisor name and firm, warning chips, this month's topic, the top pick (thumbnail, title, one-line reason, and "+ N more picks, 2 backups each"), chips for the last 3 months' topics, the status with "x of y approved", and Review.</li>
+<li>Bulk actions:<ul>
+<li>Approve selected. This leaves out rows with warnings, and the UI says so.</li>
+<li>Skip selected this week.</li>
+<li>Rebuild selected.</li>
+<li><strong>Approve all with no warnings.</strong></li>
+<li>Rebuild all slates.</li>
+</ul>
+</li>
+<li><strong>Advisor slate</strong></li>
+<li>The header shows: name, firm, this month's topic, the last 3 months' topics, warnings, and the slate status.</li>
+<li>A help box for each warning type. "Missing products/services" links to the existing Services panel.</li>
+<li>Each pick shows: thumbnail, title, topic chip, the item's status, the fit score, <strong>"Why this pick:"</strong> with the reason, and its backups.</li>
+<li>Each pick has <strong>Approve / Swap / Skip</strong>. Undo appears once a pick is approved or skipped.</li>
+<li>Slate actions: <strong>Approve all</strong> (covers the remaining pending and swapped picks), <strong>Skip this week</strong>, and <strong>Rebuild this slate</strong>.</li>
+<li><strong>Swap</strong></li>
+<li>Backup 1 and Backup 2 come first under their own heading, then the other options ranked by fit (or search results).</li>
+<li>Each one shows: rank, thumbnail, title, topic chip, reason, and fit score.</li>
+<li>The 3rd-month-in-a-row warning is shown on the alternative it applies to.</li>
+<li>Search by title or topic. "No posts match" appears when nothing is found.</li>
+<li>Explainer: "Posts already on this advisor's site, or used in the last 12 months, are left out."</li>
+<li><strong>Confirm swap</strong> is disabled until a post is chosen. <strong>Cancel</strong> closes without changes.</li>
+<li>A swapped pick shows <strong>"Swapped, needs approval"</strong>. It is never approved automatically.</li>
+</ol>
+<h2>States (each mock has a "Try a state" bar)</h2>
+<ul>
+<li><strong>Loading:</strong> skeleton rows with "Loading this week's slates…".</li>
+<li><strong>Empty:</strong> "No slate for this week yet. Slates are built every Monday at 5:00 AM PT. The next one will be ready Mon Oct 26 at 5:00 AM PT", with a <strong>Rebuild all slates now</strong> button. The rebuild builds drafts only.</li>
+<li><strong>Error:</strong> "We couldn't load this week's slates. Nothing has been scheduled or published." with <strong>Try again</strong> and a hint to use Rebuild if Monday's build failed.</li>
+<li><strong>Success (all reviewed):</strong> "All slates reviewed for this week. Approved posts have moved to normal scheduling. Skipped advisors get nothing this week."</li>
+<li><strong>Filtered empty:</strong> "No advisors match these filters. Clear filters."</li>
+<li><strong>Swap search empty:</strong> "No posts match "x". Try a topic like "tax" or clear the search."</li>
+</ul>
+<h2>Copy (key strings)</h2>
+<ul>
+<li>Pills:</li>
+<li>"Nothing is scheduled until you approve it"</li>
+<li>"Drafts never publish on their own"</li>
+<li>"New slates are built every Monday at 5:00 AM PT"</li>
+<li>Toasts:</li>
+<li>After Approve: "Approved. It moves to normal scheduling. Nothing publishes on its own."</li>
+<li>After Skip: "Skipped for this week. Nothing will be scheduled for this post."</li>
+<li>After Swap: "Swapped in "…". It still needs your approval."</li>
+<li>Item statuses: Not approved · Approved, ready to schedule · Swapped, needs approval · Skipped.</li>
+<li>Slate statuses: Pending review · Partly approved · Approved · Skipped this week.</li>
+<li>Warning help:</li>
+<li>Thin fit: "Few good matches…"</li>
+<li>Streak override: "Third month of Group benefits. Nothing else fit… so the usual block was lifted."</li>
+<li>Missing products/services: "Picks are based on topic rotation only. Add services."</li>
+</ul>
+<h2>In scope</h2>
+<ul>
+<li>The three screens above, all the states, filters, bulk actions, rebuild for one advisor or all, and the swap search.</li>
+<li>Read-only display of the stored reason and the fit score.</li>
+</ul>
+<h2>Out of scope</h2>
+<ul>
+<li>Delivering the slate anywhere (email, Slack, digest, or the advisor's view). This is blocked on the open question.</li>
+<li>Editing the advisor's rotation order or target theme. The spec mentions it, but no screen was requested.</li>
+<li>Overriding a post's topic tag. It's in spec part 1, but it would sit on a library or post screen, not here.</li>
+<li>Choosing a schedule date in this screen. See Q3.</li>
+<li>Scorer tuning.</li>
+<li>Any change to Pick for Me or Suggested Post.</li>
+</ul>
+<h2>Desktop and mobile</h2>
+<ul>
+<li><strong>Desktop:</strong> A's table uses fixed column widths like Manage Advisor Posts. The drawer is 440px, close to the existing 400px <code>DRAWER_WIDTH</code>. B's list column is 280–360px.</li>
+<li><strong>Mobile (under 760px):</strong></li>
+<li>Table rows become stacked cards, and the "Last 3 months" column is hidden from the row (it's still shown on the slate).</li>
+<li>Pick actions wrap under the post.</li>
+<li>The Swap drawer goes full screen.</li>
+<li>In B, the list and the slate become separate screens with "← All advisors".</li>
+<li>C works as is.</li>
+<li>Keyboard shortcuts in C (A, S, ←, →) are ignored while typing in a field.</li>
+</ul>
+<h2>Data and code findings (read from <code>main</code>, read-only)</h2>
+<ul>
+<li><strong><code>advisor_post_history</code> already exists</strong> (<code>imports/collections/advisor_post_history.js</code>). It's indexed on <code>advisorId+templateId</code> and <code>advisorId+imageId</code>, and it's used by <code>server/ai-service.js</code> (around line 1531) and a publication (<code>imports/server/publications.js</code> around line 468). The spec's proposed <code>advisorPostHistory</code> would clash with it, so use a new name or extend it carefully. <em>Unverified:</em> exactly what writes to it.</li>
+<li><strong>No slate collections yet:</strong> nothing like <code>rotationSlates</code>, <code>slateItems</code>, <code>advisorTopicProfile</code> or <code>postTopics</code>.</li>
+<li><strong>Topics today = <code>postCategories.slug</code></strong> on HTMLPosts (indexed). There's no <code>primaryTopic</code> and no admin override field. Chips need a topic display name and colour mapping.</li>
+<li><strong>No numeric score is returned today.</strong> <code>getCandidatePostsForUser</code> (<code>server/api/post-suggestions.js</code> around lines 315–337) computes <code>scorePostWithServices</code> and sorts, but only returns <code>post</code>. The swap view needs a score (and its scale) for each item. The 0–100 "fit" in the mock is a display assumption.</li>
+<li><strong>No plain-language reason yet.</strong> <code>resolvePickReason</code> (<code>imports/utils/postPickHelpers.js</code>) returns only the codes <code>no-services</code>, <code>empty</code> and <code>success</code>. The spec's <code>slateItems.reason</code> text is new. <code>no-services</code> maps well to the "Missing products/services" warning.</li>
+<li><strong>Monthly "done" tracking is per month on AdvisorConfigs:</strong> <code>monthlyPickDoneMonthKey</code>, <code>monthlyPickDoneAt</code> and <code>monthlyPickScheduledPostId</code>, set by <code>postSuggestions.markMonthlyPickDone</code> and <code>unmarkMonthlyPickDone</code>. A weekly slate needs its own status. Decide whether approving also marks the month done.</li>
+<li><strong>Hand-off on Approve:</strong></li>
+<li><code>postSuggestions.bulkScheduleTopPicks({assignments, scheduledAt})</code> schedules immediately, with <strong>one shared date</strong> and <strong>website only</strong> (<code>insertScheduledWebsitePost</code>). It also marks the pick shown and the month done.</li>
+<li><code>scheduleForUser</code>, <code>scheduleSocialForUser</code> and <code>createCampaignForUser</code> exist for single posts.</li>
+<li>Approve needs a new method that sets the item to approved and then calls the normal scheduling flow. Which channel and which date is undecided (Q3).</li>
+<li><strong>Managed advisor list:</strong></li>
+<li>There's no "managed" flag.</li>
+<li><code>listMonthlyPickAdvisors</code> includes the advisor category "Content" and excludes "No longer a client" (<code>MONTHLY_PICK_*_CATEGORIES</code>).</li>
+<li><code>listMonthlyPickAdvisors</code> isn't called from any UI file. Manage Advisor Posts uses <code>getCandidatesForUsers</code> and <code>pickOneForUser</code>.</li>
+<li><em>Unverified:</em> whether "Content" means managed.</li>
+<li><strong>Products and services:</strong> <code>getConfirmedWebsiteServices</code> and <code>scorePostWithServices</code> (<code>server/api/advisor-website-services-helpers.js</code>) and the existing Choose Advisor Services panel. The warning box can link to that panel.</li>
+<li><strong>WP history:</strong> <code>fetchRecentWordpressPostsForUser</code> exists, with <code>DEFAULT_WP_TIMELINE_MONTHS = 6</code> and <code>MIN_WP_EXCLUSION_MONTHS = 24</code> for title exclusion.</li>
+<li><strong>Swap search:</strong> HTMLPosts has a text index on <code>name</code>, <code>excerpt</code> and <code>subtitle</code>, so the search can use it. Results must still apply the advisor's eligibility filter (<code>filterEligiblePosts</code>, the private-post protection).</li>
+<li><strong>Jobs:</strong> other schedulers use <code>acquireSchedulerLock</code> and <code>releaseSchedulerLock</code> (<code>server/scheduler-lock-helpers.js</code>). The Monday 5:00 AM PT job and the 2:00 AM PT re-sync can follow the same pattern. Watch for DST: 5 AM PT must stay 5 AM local.</li>
+<li><strong>Theme:</strong> MUI with Inter, primary <code>#2196F3</code>, text <code>#2C3E50</code>, and radius 12. The mock uses the same.</li>
+</ul>
+<h2>Questions for Alex</h2>
+<ol>
+<li><strong>Unfinished sentence:</strong> what did "and then provide within the" mean? Is it about delivery (for example, an email digest or showing the slate somewhere)?</li>
+<li><strong>Picks per advisor per week:</strong> the spec says one top pick plus 2 backups. The brief asks for several picks per slate and a "Partly approved" status. Is it one post a week, or several?</li>
+<li><strong>Weekly or monthly:</strong> the job runs weekly, but the spec talks about a monthly slate and "this month's topic". Is one weekly slate one month's pick, or does each week get its own?</li>
+<li><strong>Approve:</strong></li>
+<li>Does Approve schedule on a default date (like Manage Advisor Posts' "Default schedule date")?</li>
+<li>Or does it open the normal scheduler?</li>
+<li>Is it website only, or social and email too?</li>
+<li><strong>Approve all with no warnings:</strong> should rows with warnings be left out? The mock does this, as the spec says.</li>
+<li><strong>Rebuild:</strong> should it keep picks that are already approved? The mock says yes.</li>
+<li><strong>Skip this week:</strong> should anything be logged or shown to the advisor? The mock shows nothing to the advisor.</li>
+</ol>
+<h2>Unverified</h2>
+<ul>
+<li>The scale and meaning of the fit score.</li>
+<li>Whether advisor category "Content" equals "managed".</li>
+<li>What writes to <code>advisor_post_history</code>.</li>
+<li>How a swapped-in post is re-checked against the 3rd-month block. The mock only shows a warning.</li>
+</ul></body></html>

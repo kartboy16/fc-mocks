@@ -1,0 +1,20 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>#599 Weekly picks review (rotation engine)</title><style>body{font-family:Inter,system-ui,sans-serif;max-width:900px;margin:24px auto;padding:0 16px;line-height:1.5;color:#1e2a4a}.r{background:#eaf7ee;border:1px solid #9fd3ae;border-radius:8px;padding:12px 14px}.w{background:#fff8e1;border:1px solid #f0d98a;border-radius:8px;padding:10px 14px}.oq{background:#fff4e5;border:2px dashed #e08a00;border-radius:8px;padding:10px 14px}.oq b.t{background:#e08a00;color:#fff;border-radius:4px;padding:1px 7px;font-size:11px;text-transform:uppercase;margin-right:6px}li{margin:4px 0}</style></head><body>
+<p><a href="../">All mocks</a></p><h1>#599 Weekly picks review for managed advisors</h1>
+<p>Review screens for the rotation engine. Every Monday it drafts a slate of post picks for each managed advisor, with topic rotation built in. An admin approves, swaps or skips each pick. Designer-first mock with generic sample data. <b>Not agent-ready. Soft Dev UI hold until Alex picks.</b></p>
+<p class="w"><b>Rules shown on every screen:</b> nothing is scheduled until it's approved &middot; drafts never publish on their own &middot; slates are built every Monday at 5:00 AM PT (profiles re-sync at 2:00 AM PT).</p>
+<p class="r"><b>Recommend A, the table queue with a slate page and a swap drawer.</b> It looks and works like Manage Advisor Posts, which admins already use. It handles 100+ advisors with filters and bulk actions best, and it's the smallest build (about 2&ndash;3 UI dev days).</p>
+<h2>Directions</h2><ul>
+<li><a href="a-table-drawer.html">A. Table queue &rarr; slate page &rarr; swap drawer (recommended)</a>: a full-width table with clickable status counters and bulk actions. Each advisor opens a full slate page with Prev/Next. Swap slides in from the right. About 2&ndash;3 days.</li>
+<li><a href="b-split-view.html">B. Split view &rarr; swap pop-up</a>: the advisor list stays on the left and the slate opens on the right, with a week summary when nothing is selected. Swap is a centred pop-up. About 3&ndash;4 days.</li>
+<li><a href="c-focus-review.html">C. Focus review, one advisor at a time</a>: an overview with a progress bar, then step through advisors with "Approve all and next" and keyboard keys. Swap opens inline under the post. About 3&ndash;3.5 days.</li></ul>
+<p>Each direction has the three screens (1 Queue, 2 Slate, 3 Swap), which you can click through or jump to from the top bar, and a "Try a state" bar: Default, Loading, Empty, Error and All approved.</p>
+<p class="oq"><b class="t">Open question</b>Alex's spec sentence trails off at <i>&ldquo;and then provide within the&rdquo;</i>. We have not guessed what it means. It's marked on the queue (delivery) and under the slate (what happens after Approve). Delivery stays out of scope until Alex confirms.</p>
+<h2>Questions for Alex</h2><ol>
+<li>What did "and then provide within the" mean? Is it about delivery?</li>
+<li>Is it one pick (plus 2 backups) per advisor per week, or several picks? Several picks is what makes "Partly approved" possible.</li>
+<li>Weekly or monthly: the job runs weekly, but the spec talks about "this month's topic".</li>
+<li>Does Approve schedule on a default date or open the normal scheduler? Is it website only, or social and email too?</li>
+<li>Should "Approve all" leave out rows with warnings? The mock does.</li>
+<li>Should Rebuild keep picks that are already approved? The mock does.</li></ol>
+<h2>Build</h2><ul><li><a href="build-contract.html">Build contract</a> (<a href="build-contract.md">.md</a>): screens, states, copy, scope, mobile, estimates, code findings and open questions</li></ul>
+</body></html>
