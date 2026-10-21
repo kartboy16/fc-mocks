@@ -1,0 +1,201 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>#599 in MAP: build contract</title><style>body{font-family:Inter,system-ui,sans-serif;max-width:980px;margin:24px auto;padding:0 16px;line-height:1.55;color:#2C3E50}table{border-collapse:collapse;width:100%;font-size:14px;margin:10px 0;display:block;overflow-x:auto}th,td{border:1px solid #dde3ea;padding:6px 8px;text-align:left;vertical-align:top}th{background:#f3f6f9}code{background:#f3f6f9;padding:1px 4px;border-radius:4px;font-size:.9em}a{color:#1976D2}h2{margin-top:28px;border-bottom:1px solid #e3e8ee;padding-bottom:4px}</style></head><body><p><a href="./">&larr; #599 in MAP hub</a> &middot; <a href="../">All mocks</a> &middot; <a href="build-contract.md">.md</a></p><h1>#599 Weekly picks inside Manage Advisor Posts: build contract</h1>
+<p><strong>Status:</strong> Designer-first mock with generic sample data. <strong>Not agent-ready. Soft Dev UI hold until Alex picks.</strong>
+<strong>Decision (Oct 21):</strong> Alex changed direction. Weekly picks now live <strong>inside Manage Advisor Posts (MAP)</strong> for each advisor, not on a separate review screen. The earlier <code>599-rotation-review/</code> mocks are superseded. They stay online for reference.</p>
+<p>Mocks: <a href="index.html">hub</a> · <a href="a-inline-recommended.html">A, recommended</a> · <a href="b-weekly-picks-tab.html">B</a> · <a href="c-row-panel-overview.html">C</a></p>
+<h2>1. Rules shown on every screen</h2>
+<ul>
+<li>Nothing is scheduled until an admin clicks <strong>Schedule</strong> and confirms in MAP's dialog.</li>
+<li>Drafts never publish on their own.</li>
+<li>Picks are built every <strong>Monday at 5:00 AM PT</strong>.</li>
+<li>Posts that need an update are skipped, and the reason is shown.</li>
+</ul>
+<h2>2. Options</h2>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Where the pick lives</th>
+<th>Overview</th>
+<th>Bulk</th>
+<th>UI days</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>A (recommended)</strong></td>
+<td>A new <strong>"Recommended this week · 1"</strong> block in each row's Posts cell, between Upcoming and Suggested</td>
+<td>A light filter strip above the table: All · Due · Scheduled · Skipped · Needs update, plus Rebuild</td>
+<td>None (Q4 proposal)</td>
+<td><strong>2–2.5</strong></td>
+</tr>
+<tr>
+<td>B</td>
+<td>A new <strong>Weekly picks</strong> tab next to "All advisors", with a wide pick + backups column, checkboxes and <strong>Schedule selected…</strong></td>
+<td>Tab badge and the same strip</td>
+<td>Yes: same time for all, MAP defaults per advisor</td>
+<td>3–3.5</td>
+</tr>
+<tr>
+<td>C</td>
+<td>A <strong>Weekly pick · status</strong> toggle in Actions that opens a full-width panel under the row</td>
+<td>A separate light <strong>Weekly picks overview</strong> page (advisor, picks due, status, Open in MAP)</td>
+<td>None</td>
+<td>2.5–3</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Recommendation: A.</strong> The pick sits next to Past, Upcoming and Suggested, where admins already schedule from. It reuses the Suggested card almost unchanged and adds no route or tab. <strong>Cross-advisor overview:</strong> I recommend A's filter strip (counts and filters inside MAP). I don't recommend C's separate page: it adds a route and a publication and only links back into MAP.</p>
+<h2>3. Screens and states (all options)</h2>
+<ul>
+<li><strong>Pick card</strong> (based on <code>AdminSuggestPostCard</code>): image, title, topic chip, fit score, status chip, <strong>Why picked</strong> (the rotation reason, shown in the <code>whyThisFits</code> slot), <strong>Created</strong> and <strong>Updated</strong> dates, and a line per channel once it's scheduled (Website / Social / Email). Actions: <strong>Schedule</strong>, <strong>Swap</strong>, <strong>×</strong> (skip this week), plus <strong>Undo</strong> after a skip and <strong>Cancel</strong> after scheduling.</li>
+<li><strong>Skipped at build:</strong> a link under the card ("N skipped at build: needs update ▾") that lists each post with its reason. <strong>Flagged since build:</strong> the card turns amber, Schedule is disabled, and the reason is shown with Swap offered instead.</li>
+<li><strong>Swap drawer:</strong> search, optional <strong>Created from / to</strong> (the #372 pattern, with an "Showing posts created on or after…" notice and Clear), backups first, then the best fit. Posts already on the advisor's site, used in the last 12 months, or flagged as needing an update are left out. Swapping doesn't schedule anything.</li>
+<li><strong>Schedule:</strong> opens <strong>MAP's own Publish &amp; share dialog</strong> with the pick, with channels pre-checked from the advisor's categories exactly as MAP does today. The footer adds "Weekly pick for {name}". See §5.</li>
+<li><strong>Cancel:</strong> <strong>MAP's own cancel dialog</strong>. One new line: "This also removes the social posts and the email draft or campaign scheduled with it" (this is what the server already does).</li>
+<li>Page states: Default, Loading (skeleton), No picks yet (before the first Monday build), Error (with Retry), Needs update, Scheduled. Empty search shows "No advisors found".</li>
+<li>Mobile (390px): MAP's table scrolls sideways as it does today. The strip, notices and dialogs stack.</li>
+</ul>
+<h2>4. MAP components reused (content-library)</h2>
+<table>
+<thead>
+<tr>
+<th>Piece</th>
+<th>Path</th>
+<th>Reuse</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Page, toolbar, table, row cells</td>
+<td><code>imports/ui/admin/ManageAdvisorPosts.jsx</code></td>
+<td>Add the Recommended block to <code>AdvisorPostsCell</code> (A), a tab (B), or a sub-row (C). Add the filter strip under the toolbar.</td>
+</tr>
+<tr>
+<td>Suggested card</td>
+<td><code>imports/ui/admin/AdminSuggestPostCard.jsx</code>, <code>imports/utils/postPickHelpers.js</code></td>
+<td>Use as the pick card. Its <code>whyThisFits</code> chip shows the rotation reason. Add the dates and a status line.</td>
+</tr>
+<tr>
+<td>Schedule dialog</td>
+<td><code>imports/ui/admin/AdminPostDistributionDialog.jsx</code> → <code>imports/ui/components/PostDistributionDialog.jsx</code></td>
+<td>As is. Change <code>onScheduled</code> so it updates the slate item instead of (or as well as) <code>markMonthlyPickDone</code>.</td>
+</tr>
+<tr>
+<td>Channel defaults, labels, summaries</td>
+<td><code>imports/ui/admin/adminDistributionChannelDefaults.js</code>, <code>imports/ui/websiteDeliveryHelpers.js</code>, <code>adminWebsiteDeliverySummary.js</code>, <code>adminDistributionCapabilityNotices.js</code></td>
+<td>As is</td>
+</tr>
+<tr>
+<td>Social destinations</td>
+<td><code>imports/ui/social-schedule/useFilteredPostDestinations.js</code>, <code>PublishSocialSharePanel</code>, <code>OutboundTimingControl</code></td>
+<td>As is</td>
+</tr>
+<tr>
+<td>Email</td>
+<td><code>imports/ui/components/DistributionEmailSection.jsx</code>, <code>imports/ui/admin/AdminAdvisorNotifyEmailPanel.jsx</code></td>
+<td>As is</td>
+</tr>
+<tr>
+<td>Where it posts</td>
+<td><code>imports/ui/components/ConfirmWhereBlock.jsx</code></td>
+<td>As is</td>
+</tr>
+<tr>
+<td>Default date</td>
+<td><code>imports/ui/admin/mapDefaultScheduleDate.js</code>, <code>useDirtySyncedDate.js</code></td>
+<td>As is</td>
+</tr>
+<tr>
+<td>Upcoming timeline</td>
+<td><code>imports/utils/advisorWebsiteTimeline.js</code></td>
+<td>As is. See gap 1.</td>
+</tr>
+<tr>
+<td>Server: schedule</td>
+<td><code>server/api/post-suggestions.js</code> (<code>scheduleForUser</code>, <code>scheduleSocialForUser</code>, <code>createCampaignForUser</code>), <code>server/website-queue-helpers.js</code> (<code>insertScheduledWebsitePost</code>), <code>server/website-scheduler.js</code> (<code>assertScheduledAtInWindow</code>)</td>
+<td>As is</td>
+</tr>
+<tr>
+<td>Server: cancel</td>
+<td><code>cancelScheduledForUser</code> → <code>cancelScheduledWebsiteQueueItem</code> (removes the website row, its social posts, the SES draft and the Mailchimp campaign)</td>
+<td>As is</td>
+</tr>
+<tr>
+<td>Bulk (B only)</td>
+<td><code>bulkScheduleTopPicks</code> in <code>server/api/post-suggestions.js</code></td>
+<td>Today it isn't used in the UI and does website only with one time. B needs it to handle all channels.</td>
+</tr>
+<tr>
+<td>PT helpers</td>
+<td><code>imports/utils/advisorDateTime.js</code></td>
+<td>For "Mon 5:00 AM PT" and the dates</td>
+</tr>
+</tbody>
+</table>
+<h2>5. Decided and open questions</h2>
+<ul>
+<li><strong>Q3, decided:</strong> all channels (website, social, email), exactly as MAP's dialog does it.</li>
+<li><strong>Q6, decided:</strong> Cancel follows MAP. It removes the related social posts and the email draft or Mailchimp campaign. Already published content stays.</li>
+<li><strong>Q2, replaced:</strong> the picks live in MAP. <strong>MAP is admin-only</strong> (non-admins are redirected), so <strong>advisors can't see their picks</strong> in this design. If they should, that's a separate ask.</li>
+<li><strong>Q1, open. Proposed default:</strong> no separate Approve step (MAP has none). Clicking Schedule and confirming in MAP's dialog is the approval, and × skips the pick for this week, like Skip on Suggested cards.</li>
+<li><strong>Q4, open. Proposed default:</strong> no bulk in v1 (MAP has no bulk scheduling). If bulk is wanted (Option B): everyone goes at the same time, from MAP's <strong>Default schedule date</strong>. Each advisor's channels come from their categories, social goes about 5 minutes after publish, and email works as MAP does. Rows with warnings, needs-update picks, skipped picks and already scheduled picks are left out and listed.</li>
+<li><strong>Timing differs from the earlier mocks.</strong> MAP's picker uses the browser's local time, blocks past times only through the field's minimum, and has no 15-minute step. The server checks the window (<code>assertScheduledAtInWindow</code>). These mocks follow MAP and drop the earlier 15-minute/PT-only/past-blocked rules from #595. Keeping MAP consistent is the point. If PT-only times are wanted, that's a change to MAP for everyone.</li>
+<li>There's no <strong>Change time</strong> action, because MAP has none. Cancel and schedule again.</li>
+</ul>
+<h2>6. Estimate</h2>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>A</th>
+<th>B</th>
+<th>C</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>UI</td>
+<td>2–2.5 days</td>
+<td>3–3.5 days</td>
+<td>2.5–3 days</td>
+</tr>
+<tr>
+<td>Backend: MAP hookup</td>
+<td>1.5–2 days</td>
+<td>2.5–3 days (+1 for multi-channel bulk)</td>
+<td>1.5–2 days</td>
+</tr>
+<tr>
+<td><strong>Total</strong></td>
+<td><strong>3.5–4.5 days</strong></td>
+<td>5.5–6.5 days</td>
+<td>4–5 days</td>
+</tr>
+</tbody>
+</table>
+<p>This is smaller than the separate review screen (Direction A there was about 4.5–5.5 UI days in rev 3, before any backend), because the dialog, cancel, channels and timeline are reused. Backend hookup: add the slate to the MAP advisors payload, a swap/search endpoint with a <code>createdOn</code> range and needs-update exclusion, keep the slate item and queue item in sync, and add the needs-update field. <strong>Not included:</strong> the rotation engine itself (scorer and the Monday 5 AM PT job), which is a separate phase in the spec.</p>
+<h2>7. Code gaps</h2>
+<ol>
+<li><strong>Upcoming is website only.</strong> <code>advisorWebsiteTimeline</code> lists website queue items only, so a pick scheduled to social or email only won't show in Upcoming and can't be cancelled there. The mock forces Website on when Social is on, as MAP does, but email-only is possible.</li>
+<li><strong>Cancel is keyed on the website queue item.</strong> A slate item needs to store the <code>queueId</code> (and the social and email ids) so the pick's status can go back to Due when it's cancelled from Upcoming.</li>
+<li><strong><code>onScheduled</code> calls <code>markMonthlyPickDone</code>.</strong> Picks need their own hook to mark the slate item Scheduled.</li>
+<li><strong>No needs-update field</strong> on posts yet, and nothing that clears it.</li>
+<li><strong>Swap/search has no created-date range</strong> server side. #372's pattern needs to be added here.</li>
+<li><strong><code>bulkScheduleTopPicks</code></strong> is website-only with one time and isn't wired to the UI (only matters for B).</li>
+<li><strong>Browser timezone:</strong> MAP's picker uses the admin's browser time. Admins outside PT will see local times.</li>
+<li><strong>Security:</strong> <code>AdminPostDistributionDialog.jsx</code> has a hardcoded Mailchimp passphrase constant in the client bundle. It should move server side. Not quoted here.</li>
+<li><strong>Skip logging:</strong> MAP's Suggested skip isn't stored per week. A weekly skip needs storing so Rebuild and the counts respect it.</li>
+</ol>
+<h2>8. Open questions for Alex</h2>
+<ol>
+<li>Alex's spec sentence trails off at <em>"and then provide within the"</em>. We have not guessed. Is it about delivery? (Marked on every option.)</li>
+<li>Weekly or monthly? The job runs weekly, but the spec talks about "this month's topic".</li>
+<li>One pick plus 2 backups per advisor per week, or several picks?</li>
+<li>If a post is flagged after Monday's build, should the pick be pulled or stay with a warning? (The mock blocks Schedule and offers Swap.)</li>
+<li>What clears the needs-update flag: any edit, or a "Mark as updated" button? Who can press it?</li>
+<li>Should "Updated" count only content edits? Today it also changes on template linking and trash/restore.</li>
+<li>Is #372 Direction A locked, so Swap's created-date filter can match it?</li>
+<li>Should Rebuild keep picks that are already scheduled or skipped? (The mock keeps them.)</li>
+<li>Should skips be logged with a reason?</li>
+<li>Q1 and Q4 above (proposed defaults shown).</li>
+</ol></body></html>
