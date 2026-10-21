@@ -1,12 +1,14 @@
 <!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>#599 Build contract</title><style>body{font-family:Inter,system-ui,sans-serif;max-width:920px;margin:24px auto;padding:0 16px;line-height:1.55;color:#2C3E50}table{border-collapse:collapse;width:100%}td,th{border:1px solid #dde3ea;padding:6px 8px;text-align:left;vertical-align:top}th{background:#f4f7fa}blockquote{background:#fff4e5;border:2px dashed #e08a00;margin:0;padding:8px 14px;border-radius:8px}code{background:#f2f4f7;padding:1px 4px;border-radius:4px;font-size:.92em}</style></head><body><p><a href="index.html">&larr; #599 hub</a> &middot; <a href="build-contract.md">.md</a></p><h1>#599 Weekly picks review: build contract</h1>
 <p><strong>Status:</strong> Designer mock only. <strong>Not agent-ready. Soft Dev UI hold until Alex picks.</strong> The phase 1 backend (profiles, history, topic tagging) can go ahead in parallel, as Alex's comment allows.</p>
 <p><strong>Rev 2 (Oct 20):</strong> this revision adds content freshness from <a href="https://github.com/kartboy16/content-library/issues/599#issuecomment-6295711214">Alex's comment 6295711214</a>: created and updated dates, a needs-update state, and a created-date filter on Swap. See <em>Rev 2 changes</em> below.</p>
+<p><strong>Rev 3 (Oct 21):</strong> adds scheduling straight from the review queue. This follows a new requirement from Alex (Oct 20, 11:52 PM PT, relayed by Chief of Staff): <em>advisors must be able to schedule the recommended posts straight from the review queue.</em> See <em>Rev 3 changes</em> below. There were no new #599 comments to read before this revision.</p>
 <p>Mocks: <a href="index.html">Hub</a> · <a href="a-table-drawer.html">A (recommended)</a> · <a href="b-split-view.html">B</a> · <a href="c-focus-review.html">C</a></p>
 <h2>Rules the UI must make clear (all directions)</h2>
 <ul>
-<li><strong>Nothing is scheduled until it's approved.</strong> Approving hands the post to the normal scheduling flow.</li>
+<li><strong>Nothing is scheduled until someone clicks Schedule</strong> (Rev 3). Approve on its own marks a pick OK with no date.</li>
 <li><strong>Drafts never publish on their own.</strong> There is no auto-schedule and no auto-publish.</li>
 <li><strong>Slates are built every Monday at 5:00 AM PT.</strong> Profiles re-sync nightly at 2:00 AM PT.</li>
+<li><strong>Times are Pacific (PT).</strong> The picker uses 15-minute steps and blocks past times (Rev 3).</li>
 <li><strong>Posts flagged as needing an update are skipped</strong> until they're refreshed (Rev 2).</li>
 <li>These appear as pills at the top of the queue and the slate, and again in the toast after Approve or Skip.</li>
 </ul>
@@ -32,27 +34,67 @@
 <td>Full-width table queue (like Manage Advisor Posts) → full slate page with Prev/Next</td>
 <td>Right-side drawer</td>
 <td>100+ rows, filters and bulk actions, close to today's admin screens</td>
-<td><strong>2.5–3.5 dev days</strong> (was 2–3)</td>
+<td><strong>3.5–4.5 dev days</strong> (Rev 2: 2.5–3.5)</td>
 </tr>
 <tr>
 <td>B</td>
 <td>Split view: advisor list on the left, slate on the right</td>
 <td>Centred pop-up</td>
 <td>Fast clicking between advisors without leaving the list</td>
-<td>3.5–4.5 dev days (was 3–4)</td>
+<td>4.5–5.5 dev days (Rev 2: 3.5–4.5)</td>
 </tr>
 <tr>
 <td>C</td>
 <td>Overview with progress, then one advisor at a time (Approve all and next, keyboard keys)</td>
 <td>Inline, under the post</td>
 <td>Getting through the whole week quickly</td>
-<td>3.5–4 dev days (was 3–3.5)</td>
+<td>4.5–5 dev days (Rev 2: 3.5–4)</td>
 </tr>
 </tbody>
 </table>
-<p>Rev 2 adds about +0.5 day to each direction for the date lines, the needs-update states and the created-date filter. The filter control can be shared with #372 if it's built first.</p>
+<p>Rev 3 adds about +1 day to each direction for the Schedule picker, the bulk schedule with its confirm step, the scheduled states, and Change/Unschedule. Server-side work is extra, about 0.5–1 backend day (see the Rev 3 code findings). Rev 2 added about +0.5 day to each direction for the date lines, the needs-update states and the created-date filter. The filter control can be shared with #372 if it's built first.</p>
 <p>The estimates cover the UI only. They assume the slate methods and collections from phases 1–2 exist, and they include desktop and mobile layouts, states, and component tests.</p>
 <p><strong>Why A:</strong> it reuses the Manage Advisor Posts table pattern admins already know (fixed-width columns, chips, a 400px drawer), it handles 100+ rows with filters and bulk actions best, and it's the smallest build. B and C can come later as views over the same data.</p>
+<h2>Rev 3 changes (schedule from the review queue)</h2>
+<ol>
+<li><strong>Schedule on each pick:</strong></li>
+<li><strong>Slate:</strong> every pending, swapped or approved pick has <strong>Schedule…</strong>. Pending and swapped picks also keep Approve, Swap and Skip.</li>
+<li><strong>Queue:</strong> each row has <strong>Schedule top pick…</strong> (A: in the action column; B: in the advisor list; C: in the overview list). Once scheduled, the row shows the date chip.</li>
+<li><strong>Slate actions:</strong> a new <strong>Schedule all…</strong> button for the current advisor.</li>
+<li><strong>Bulk "Schedule selected…"</strong> in the queue's selection bar (A, B, C):</li>
+<li>Step 1 is the picker plus "If an advisor has more than one pick": All at the same time, One a day, or One a week.</li>
+<li>Step 2 is a <strong>confirm summary</strong>: "You're about to schedule N posts for M advisors" with a table of advisor, post and "Goes live (Pacific)". Below it is a <strong>Not included (N)</strong> list with reasons: needs update, skipped, already scheduled, or the advisor has a warning ("Open the slate to check it first", the same rule as Approve all).</li>
+<li>The button reads <strong>Confirm and schedule N posts</strong>. Back returns to step 1.</li>
+<li><strong>Date/time picker, matching #595 / <a href="../582-approval-layout/a-approval-card.html">582-approval-layout A</a>:</strong></li>
+<li><code>datetime-local</code> with <code>step=900</code> and a "Pacific" label.</li>
+<li>The help line reads "Pacific time (Vancouver). 15-minute steps." When the time is valid it reads "Goes live on {advisor}'s website {Tue, Oct 27 at 9:00 AM PT}. Nothing publishes before then."</li>
+<li>Inline errors, using the same wording as #595:<ul>
+<li>"That time has already passed (it is now …). Pick a later time."</li>
+<li>"Pick a time on the quarter hour (:00, :15, :30 or :45)."</li>
+<li>"Pick a date and time."</li>
+</ul>
+</li>
+<li>The confirm button stays disabled while there's an error.</li>
+<li>Default: tomorrow at 9:00 AM PT.</li>
+<li><strong>After scheduling:</strong></li>
+<li>The pick shows a <strong>📅 Scheduled · Wed, Oct 21 at 9:00 AM PT</strong> chip and the line "Goes live on {advisor}'s website … You can change or unschedule it until then."</li>
+<li><strong>Change</strong> opens the picker with the current time ("Save new time").</li>
+<li><strong>Unschedule</strong> returns the pick to "Approved, not scheduled yet".</li>
+<li>Slate header: "N of M scheduled".</li>
+<li><strong>Queue status, counts and filters:</strong></li>
+<li>New slate status <strong>Scheduled</strong>, used when every live pick is scheduled.</li>
+<li>"Approved" is now labelled <strong>"Approved, not all scheduled"</strong>.</li>
+<li>A new <strong>Scheduled</strong> counter (A and B are clickable; C shows "N fully scheduled" as a link) and a <strong>Scheduled</strong> option in the status filter.</li>
+<li>A rows show "x of y approved · z scheduled".</li>
+<li><strong>State switcher:</strong> a new <strong>Scheduled</strong> state (Jane Advisor fully scheduled one week apart, John Sample fully scheduled, Morgan Sample partly). There's also a <strong>4 Schedule</strong> screen button.</li>
+<li><strong>Copy:</strong></li>
+<li>Pills: "Nothing is scheduled until you click Schedule", "Drafts never publish on their own", "Times are Pacific (PT)".</li>
+<li>Picker footer: "Drafts never publish on their own. Posts are scheduled only when you click {Approve and schedule / Confirm / Save new time}."</li>
+<li>Approve toast: "Approved, but not scheduled yet. Click Schedule to pick a date and time."</li>
+<li><strong>Needs update:</strong> flagged picks show a disabled <strong>Schedule</strong> ("can't be scheduled until the post is refreshed"). They're left out of Schedule all and Schedule selected, and listed under Not included.</li>
+<li><strong>Assumption: Schedule implies approval.</strong> It's labelled in each slate and in the picker. Approve stays available on its own for "OK, but no date yet". The single-pick button reads <strong>Approve and schedule</strong>.</li>
+<li><strong>Advisors vs admins:</strong> a new <strong>Open question</strong> box on every queue says the requirement says <em>advisors</em>, but this is an admin screen. The mocks show the admin flow only. No advisor view is built, because #599 doesn't ask for one.</li>
+</ol>
 <h2>Rev 2 changes (content freshness)</h2>
 <ol>
 <li><strong>Dates on every pick and every Swap option:</strong> "Created Mar 4, 2025 · Updated Sep 12, 2026". If the post hasn't been edited, it says "Not updated since" in place of the Updated date. These also show on the queue's top pick and on posts that were skipped for needing an update.</li>
@@ -174,7 +216,24 @@
 <li>Keyboard shortcuts in C (A, S, ←, →) are ignored while typing in a field.</li>
 </ul>
 <h2>Data and code findings (read from <code>main</code>, read-only)</h2>
+<p><strong>Rev 3 (scheduling):</strong>
+- <strong>Admin schedule paths skip the time guard.</strong>
+  - <code>website.schedulePost</code> (advisor self, <code>server/website-scheduler.js</code> around line 474) calls <code>assertScheduledAtInWindow</code> (#543: no past times and nothing more than a year out, in <code>server/ses-schedule-guards.js</code>).
+  - The admin <code>postSuggestions.scheduleForUser</code> and <code>postSuggestions.bulkScheduleTopPicks</code> (<code>server/api/post-suggestions.js</code> around lines 776 and 863) call <code>insertScheduledWebsitePost</code> with <strong>no</strong> past or window check.
+  - No path enforces 15-minute steps on the server.
+  - Recommend adding the guard, and a quarter-hour check if Alex wants it.
+- <strong><code>insertScheduledWebsitePost</code> doesn't check</strong> for a post that's already scheduled for that advisor, or for needs-update. (<code>needsUpdate</code> doesn't exist yet; see Rev 2.)
+- <strong><code>bulkScheduleTopPicks</code> uses one <code>scheduledAt</code> for every row</strong>, and it's website only. Spacing ("one a day / one a week") needs a time for each row or a new method. It also marks the month done (<code>markMonthlyPickDoneInternal</code>), which may not fit a weekly slate.
+- <strong>No admin "Change time".</strong> <code>website.updateScheduledDate</code> only updates the caller's own queue items (<code>advisorId: this.userId</code>) and has no window check. Admin Change needs a <code>…ForUser</code> variant (or cancel and re-insert) with the guard.
+- <strong>Unschedule has side effects.</strong> <code>cancelScheduledWebsiteQueueItem</code> (<code>server/website-queue-helpers.js</code> around line 62) deletes the website queue row <strong>and</strong> pending social posts (and email) for the same post and advisor. The Unschedule copy may need to say that. Unverified for every channel.
+- <strong>Timezone:</strong>
+  - <code>imports/utils/advisorDateTime.js</code> has <code>ADVISOR_TIME_ZONE = 'America/Vancouver'</code> and <code>datetimeLocalInTimeZoneToDate</code>. Its comment says "no per-advisor TZ field exists yet". It's used by the Mailchimp dialog.
+  - Manage Advisor Posts' <strong>Default schedule date</strong> uses the <em>browser's</em> timezone (<code>toLocalDateTimeString</code> / <code>new Date(str)</code>), not PT.
+  - The new picker should use <code>advisorDateTime</code> so "PT" is true for admins outside Pacific.
+- <strong>Slate item status needs</strong> <code>scheduled</code>, a <code>queueId</code> link to <code>WebsitePostQueue</code>, and <code>scheduledAt</code>. The spec's <code>slateItems.status</code> is (pending | approved | swapped | skipped). The UI also needs to know when a queue row was published, cancelled or failed elsewhere. Unverified how to sync.
+- <strong>#595 picker is a mock, not code yet.</strong> The 15-minute <code>step=900</code> picker exists only in fc-mocks 582-approval-layout A, so there's no shared component to reuse yet.</p>
 <p><strong>Rev 2 (freshness):</strong>
+<strong>Rev 2 (freshness):</strong>
 - <strong>There's no <code>needsUpdate</code> flag on posts today.</strong> No <code>needsUpdate</code>, <code>needs_update</code> or "needs update" appears in collections, server APIs or admin UI. The field, its reason, <code>flaggedAt</code> and <code>flaggedBy</code>, plus a way to set and clear it (Content bot and admins), are all new. Eligibility in <code>filterEligiblePosts</code> and <code>getCandidatePostsForUser</code> must exclude flagged posts.
 - <strong>Created date is <code>createdOn</code>, not <code>createdAt</code>.</strong> HTMLPosts uses <code>createdOn</code> (indexed with <code>isPublic</code>, <code>postCategories.slug</code> and <code>availableToAdvisorSourceIds</code>, and in <code>HTML_POSTS_CARD_FIELDS</code>). The comment's <code>createdAt</code> should map to <code>createdOn</code>.
 - <strong><code>updatedAt</code> isn't a clean "content updated" date.</strong> <code>server/api/html-posts-api.js</code> sets it on edits, but also when an email template is linked or unlinked (around lines 332–346 and 378). <code>server/html-posts-trash.js</code> sets it on trash and restore. <code>updatedAt</code> is also <em>not</em> in <code>HTML_POSTS_CARD_FIELDS</code>. Using it for "Updated" and for freshness would count non-content changes. Consider a <code>contentUpdatedAt</code>. (Unverified: every place that writes posts.)
@@ -222,13 +281,25 @@
 <li><strong>(New) Clearing the flag:</strong> does any edit after <code>flaggedAt</code> clear it, or does someone press "Mark as updated"? Who is allowed to?</li>
 <li><strong>(New) "Updated" date:</strong> should it count only content edits? Today <code>updatedAt</code> also changes on template linking and trash/restore.</li>
 <li><strong>(New) #372:</strong> is its Direction A locked, so the Swap filter can match it? The comment says "if Alex locks it".</li>
-<li><strong>(New) Already-approved picks:</strong> if a post is flagged after it was approved and handed to scheduling, should anything happen? Out of scope in the mock.</li>
+<li>
+<p><strong>(New) Already-approved picks:</strong> if a post is flagged after it was approved and handed to scheduling, should anything happen? Out of scope in the mock.</p>
+</li>
+<li>
+<p><strong>(Rev 3) Approve vs Schedule:</strong> should Schedule also approve (the mock's default, "Approve and schedule")? Or should Approve be required first? Should plain "Approve" (no date) stay at all?</p>
+</li>
+<li><strong>(Rev 3) Advisors or admins:</strong> the requirement says <em>advisors</em> schedule from the review queue, but the queue is an admin screen. Do advisors get their own view of their weekly slate? Not built.</li>
+<li><strong>(Rev 3) Channels:</strong> website only (like <code>bulkScheduleTopPicks</code>), or social and email too?</li>
+<li><strong>(Rev 3) Bulk spacing:</strong> for advisors with several picks, is "same time / one a day / one a week" right? What should the default be?</li>
+<li><strong>(Rev 3) Rows with warnings:</strong> should they stay out of bulk Schedule selected (as the mock does, like Approve all)?</li>
+<li><strong>(Rev 3) Server rules:</strong> should the server reject past and off-quarter-hour times for admin scheduling (today only the advisor path checks the past)?</li>
+<li><strong>(Rev 3) Unschedule:</strong> should it also remove the related social and email posts, as the current cancel code does?</li>
 </ol>
 <h2>Unverified</h2>
 <ul>
 <li>The scale and meaning of the fit score.</li>
 <li>Whether advisor category "Content" equals "managed".</li>
 <li>What writes to <code>advisor_post_history</code>.</li>
+<li>How a slate item stays in sync when its scheduled post is published, cancelled or fails elsewhere.</li>
 <li>How much age down-ranks a post (only shown through the fit score).</li>
 <li>How a swapped-in post is re-checked against the 3rd-month block. The mock only shows a warning.</li>
 </ul></body></html>
