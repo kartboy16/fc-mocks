@@ -1,9 +1,11 @@
 # #617 FTT Mail Forms settings: build contract
 
-**Status:** Designer-first mock with generic sample data. **Not agent-ready. Soft Dev hold until Alex picks.**
+> **✓ Direction A is locked (Alex picked A, Oct 22, 2026):** "How will you use this form?" comes first, and each form has one sign-up type. B and C are kept for reference only. **Still with Alex:** form key, embeds when the allowed-websites list is empty, www vs bare domain, reCAPTCHA, the consent switch, and emails about blocked sign-ups.
+
+**Status:** Direction A locked. Designer-first mock with generic sample data. **Not agent-ready. Soft Dev hold until Alex answers the open questions.**
 **Scope:** FTT Mail only. The settings screen for Email Campaigns → Subscription Forms (`imports/ui/EmailCampaigns/SESForms.jsx`) as it is on staging at `f8ccc396` (PR #618).
 
-Mocks: [hub](index.html) · [Today](today.html) · [A](a-chooser.html) · [B](b-tabs.html) · [C, recommended](c-core-panels.html)
+Mocks: [hub](index.html) · [Today](today.html) · [A, picked](a-chooser.html) · [B (not picked)](b-tabs.html) · [C (not picked)](c-core-panels.html)
 
 ## 1. Why it's confusing today
 Every form is an embed, a hosted page and a public API endpoint **at the same time**, but there's no form type, so one long dialog (28 controls) mixes settings for all three. Helper text names a type ("Embed snippets ignore these", "The public subscribe API only…"), but nothing groups or hides settings by type. The API itself has no screen: no key, no snippet, and no field list. Those are only in `docs/public-subscribe-api.md`.
