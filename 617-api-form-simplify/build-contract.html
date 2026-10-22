@@ -1,0 +1,98 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>#617 API form, simpler: build contract</title><style>body{font-family:Inter,system-ui,sans-serif;max-width:960px;margin:24px auto;padding:0 16px;line-height:1.55;color:#2C3E50}table{border-collapse:collapse;width:100%;font-size:13.5px;margin:10px 0}th,td{border:1px solid #dde3ea;padding:6px 8px;text-align:left;vertical-align:top}th{background:#f3f6f9}code{background:#f3f6f9;padding:1px 4px;border-radius:4px;font-size:.9em}a{color:#1976D2}h2{margin-top:26px;border-bottom:1px solid #e3e8ee;padding-bottom:4px}li{margin:3px 0}</style></head><body><p><a href="index.html">&larr; Hub</a> &middot; <a href="../">All mocks</a> &middot; <a href="build-contract.md">.md</a></p>
+<h1>#617 API form, simpler: build contract</h1>
+<p><strong>Status:</strong> Designer-first mock with generic sample data. Builds on Direction A of #617, which is locked: chooser first, one sign-up type per form. <strong>Not agent-ready. Soft Dev hold until Alex picks.</strong></p>
+<p><strong>Scope:</strong> FTT Mail only. The Create/Edit Subscription Form dialog (<code>imports/ui/EmailCampaigns/SESForms.jsx</code>) when the type is <strong>Connect my own form</strong> (<code>usageType: "api"</code>), as on staging at <code>fe28797</code>.</p>
+<p>Mocks: <a href="index.html">hub</a> · <a href="today.html">Today</a> · <a href="a-one-scroll.html">A, one scroll (recommended)</a> · <a href="b-two-tabs.html">B, two tabs</a></p>
+<h2>1. Problem (Alex's feedback)</h2>
+<p>The dialog is overwhelming and has too much text. The submit URL is hard to find: it's relative (<code>/api/ses/forms/submit/&lt;id&gt;</code>), sits in a sentence halfway down, and has no Copy button. Today there are about 260 words of helper text, a developer field table that's always open, and a locked double opt-in switch. Target list isn't marked required, and Attach tag looks required.</p>
+<h2>2. Recommendation</h2>
+<p><strong>A, one scroll.</strong> The URL box sits at the top, then six advisor fields, then two collapsed sections: More options and Developer details. Everything stays on one screen, so nothing is hidden behind a tab, and only about 27 words of helper text show until you open something. B (Settings / Connect your website tabs) separates the roles more clearly but adds a click, and the URL appears twice.</p>
+<h2>3. Screen (A)</h2>
+<p>Top to bottom:</p>
+<ol>
+<li><strong>How will you use this form?</strong> The 3 type cards, each with a one-line description. Remove the "Need two ways…" paragraph (moved to the tooltip on the type cards; see open questions).
+<li><strong>Your form's URL</strong>
+<div style="margin-left:18px">&bull; <strong>Unsaved:</strong> a grey dashed box that says "Save to get your form's URL."</div>
+<div style="margin-left:18px">&bull; <strong>Saved:</strong> a green box with the absolute URL in monospace (<code>https://financialcontent.ca/api/ses/forms/submit/&lt;id&gt;</code>) and a <strong>Copy</strong> button. The button shows <strong>Copied</strong> for 2 seconds.</div>
+<li><strong>Settings</strong>
+<div style="margin-left:18px">&bull; Form name (Required)</div>
+<div style="margin-left:18px">&bull; Target list (Required, no "No list" option, placeholder "Choose a list")</div>
+<div style="margin-left:18px">&bull; Attach tag (Optional) + Create tag</div>
+<div style="margin-left:18px">&bull; Allowed websites with an ⓘ tooltip</div>
+<div style="margin-left:18px">&bull; Notify me at (Optional) + Add another address</div>
+<div style="margin-left:18px">&bull; Success message</div>
+<li><strong>More options</strong> (collapsed): consent wording with a one-line "Shows as: …" preview, and "Form is on (accepting sign-ups)" (saved forms only).
+<li><strong>Developer details</strong> (collapsed):
+<div style="margin-left:18px">&bull; A POST line with the full URL.</div>
+<div style="margin-left:18px">&bull; A field table (email, consent, name, interest, sourceUrl, website_url).</div>
+<div style="margin-left:18px">&bull; Spam-trap field name.</div>
+<div style="margin-left:18px">&bull; The Turnstile switch with a one-line note, and "Let sign-ups through if the bot check is down".</div>
+<div style="margin-left:18px">&bull; A <strong>sample HTML/JS</strong> snippet built with the full URL and the consent preview, with a <strong>Copy code</strong> button. Before the first save it says "Save first. The sample then includes your form's URL."</div>
+<li>Actions: Cancel, then <strong>Create Form</strong> or <strong>Update Form</strong>.
+</ol>
+<p><strong>Removed:</strong> the locked double opt-in switch, the "same thanks reply" paragraph, the interest-tags paragraph, the duplicate blocked-sign-ups lines and the www rules. The rules that still matter are in one tooltip.</p>
+<p><strong>ⓘ Tooltip (Allowed websites).</strong> It opens on hover, focus or tap, and closes on an outside tap.</p>
+<ul>
+<li>www.example.com and example.com count as the same site. Other subdomains need their own line.
+<li>Sign-ups from websites not on the list are blocked and never email you.
+<li>New subscribers always confirm by email first (double opt-in).
+<li>Each <code>interest</code> value becomes a tag like "Interest: Retirement planning", made the first time it comes in.
+<li>Lines that aren't a website address aren't saved. We'll show them to you.
+</ul>
+<h2>4. States</h2>
+<table>
+<tr><th>State</th><th>What shows</th></tr>
+<tr><td>Unsaved (new form)</td><td>Title "Create Subscription Form". URL box says "Save to get your form's URL." The snippet is replaced with "Save first…". The button says Create Form.</td></tr>
+<tr><td>Saved</td><td>Title "Edit Subscription Form". Green URL box with Copy. The snippet uses the full URL. The "Form is on" switch shows. The button says Update Form. Toast after create: "Form created. Your form's URL is ready to copy." Toast after update: "Saved. Changes apply to new sign-ups right away."</td></tr>
+<tr><td>Copy success</td><td>The button turns green and says <strong>Copied</strong> for 2 seconds, then goes back. This applies to both Copy and Copy code.</td></tr>
+<tr><td>Missing target list</td><td>Save is blocked. The top alert says "Choose a target list before saving." The Target list field gets a red border and the error "Choose a list. New sign-ups need a list to go to." It scrolls into view and clears once a list is picked.</td></tr>
+<tr><td>Rejected website lines</td><td>Keep today's warning after save. Its wording is unchanged.</td></tr>
+</table>
+<h2>5. Copy (all of it)</h2>
+<ul>
+<li><strong>Type cards:</strong> "Embed on my website / Paste our code", "Share a sign-up page / We host the page", "Connect my own form / Your site sends sign-ups".
+<li><strong>URL box:</strong> "Your form's URL", "Your website sends sign-ups here.", "Save to get your form's URL."
+<li><strong>Field help:</strong>
+<div style="margin-left:18px">&bull; "One website per line. Only these sites can send sign-ups."</div>
+<div style="margin-left:18px">&bull; "We email you about each new subscriber."</div>
+<div style="margin-left:18px">&bull; "Shown after someone signs up."</div>
+<li><strong>Developer details:</strong>
+<div style="margin-left:18px">&bull; Header hint: "For whoever builds your website form."</div>
+<div style="margin-left:18px">&bull; Spam trap: "Change only if your site already uses website_url."</div>
+<div style="margin-left:18px">&bull; Turnstile: "Needed for new interest tags. Your developer adds the widget."</div>
+</ul>
+<h2>6. In scope / out of scope</h2>
+<p><strong>In scope:</strong></p>
+<ul>
+<li>The API-type branch of the dialog: layout, copy, collapses, tooltip, URL box and Copy, the snippet generator, and required-field validation for the target list on API forms.
+<li>Building the absolute URL from the app origin (<code>Meteor.absoluteUrl()</code>), so staging shows the staging host.
+</ul>
+<p><strong>Out of scope:</strong></p>
+<ul>
+<li>Server behaviour (allowlist, Turnstile, consent).
+<li>Embed and sign-up page layouts.
+<li>The open #617 questions (form key, embeds with an empty list, www rules, reCAPTCHA, consent switch, blocked sign-up emails).
+<li>The forms list actions. Today, API rows show Get Embed Code and Copy Hosted Link; see the open questions.
+</ul>
+<h2>7. Mobile</h2>
+<p>Below 600px the dialog goes full screen:</p>
+<ul>
+<li>The type cards stack.
+<li>The URL wraps (break-all) and Copy turns into a full-width button under it.
+<li>The tooltip opens on tap.
+<li>The field table can scroll sideways.
+<li>The snippet scrolls inside its box.
+</ul>
+<h2>8. Estimate</h2>
+<ul>
+<li><strong>A:</strong> about 1.5–2 days. That's 1–1.5 days of UI (restructure the API branch, URL box and copy, two collapses, tooltip, snippet built from the form id and consent preview, required list validation) plus 0.5 day of tests and staging QA.
+<li><strong>B:</strong> about 2–2.5 days (tabs, plus keeping the URL bar in sync).
+</ul>
+<h2>9. Open questions for Alex</h2>
+<ol>
+<li>Should Target list be required for API forms only, or for every form type? Today "No list (general subscribers)" is allowed.
+<li>Where does Turnstile go: Developer details (as mocked) or the main settings? The site's developer has to add the widget either way.
+<li>Should forms list rows for API forms swap Get Embed Code and Copy Hosted Link for a single "Copy form URL"?
+<li>Is the "Need two ways? Create a second form" note OK to drop, or should it go into a tooltip on the type cards?
+<li>Should the form URL use financialcontent.ca everywhere, or the advisor's custom form hostname when one is set?
+</ol></body></html>

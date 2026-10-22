@@ -1,0 +1,136 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>#617 API form, simpler: A one scroll (recommended)</title><style>*{box-sizing:border-box}body{margin:0;font-family:Inter,Roboto,system-ui,-apple-system,Segoe UI,sans-serif;color:#2C3E50;background:#f5f7fa;font-size:14px;line-height:1.45}
+a{color:#1976D2}.mockbar{background:#1f2a44;color:#fff;padding:8px 14px;display:flex;flex-wrap:wrap;gap:8px;align-items:center;font-size:12.5px;position:sticky;top:0;z-index:60}
+.mockbar a{color:#cfe3ff}.mockbar .sp{flex:1}.mockbar button{background:#33415f;color:#fff;border:1px solid #4a5a80;border-radius:6px;padding:3px 8px;font-size:12px;cursor:pointer}.mockbar button.on{background:#2196F3;border-color:#2196F3}
+.app{display:flex;min-height:calc(100vh - 40px)}.side{width:84px;background:#fff;border-right:1px solid #e3e8ee;padding:12px 4px;text-align:center;font-size:11px;color:#556}.side div{padding:10px 2px}.side .on{color:#1976D2;font-weight:700}
+.main{flex:1;padding:20px 24px}h1{font-size:24px;margin:0 0 4px;color:#1976D2}.sub{color:#5b6572;margin:0 0 14px}
+.paper{background:#fff;border:1px solid #e3e8ee;border-radius:12px;padding:16px;margin-bottom:14px}
+.ov{position:fixed;inset:40px 0 0 0;background:rgba(30,40,60,.45);display:flex;justify-content:center;align-items:flex-start;overflow:auto;padding:24px 12px;z-index:40}
+.dlg{background:#fff;border-radius:12px;width:100%;max-width:620px;box-shadow:0 12px 40px rgba(0,0,0,.25);display:flex;flex-direction:column;max-height:calc(100vh - 90px)}
+.dh{padding:16px 20px 8px;font-size:18px;font-weight:600}.db{padding:4px 20px 12px;overflow:auto}.da{padding:10px 20px 14px;display:flex;justify-content:flex-end;gap:8px;border-top:1px solid #eef1f5}
+.btn{border:1px solid #2196F3;color:#1976D2;background:#fff;border-radius:8px;padding:7px 14px;font-weight:600;font-size:13px;cursor:pointer;font-family:inherit}.btn.c{background:#2196F3;color:#fff}.btn.t{border-color:transparent;background:none}.btn.sm{padding:3px 10px;font-size:12px}.btn.done{background:#2e7d32;border-color:#2e7d32;color:#fff}
+.ovl{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:#6b7785;margin:16px 0 4px;font-weight:600}
+.types{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.type{border:2px solid #e0e5eb;border-radius:10px;padding:8px 10px;font-size:13px;font-weight:600;cursor:pointer;background:#fff;text-align:left;font-family:inherit;color:#2C3E50}.type.on{border-color:#2196F3;background:#e3f2fd}.type small{display:block;font-weight:400;color:#5b6572;font-size:11.5px}
+.f{margin:12px 0}.f label{display:flex;align-items:center;gap:6px;font-size:12.5px;font-weight:600;margin-bottom:3px}.f input,.f textarea,.f select{width:100%;border:1px solid #c7cfd9;border-radius:6px;padding:9px 10px;font:inherit;background:#fff;color:#2C3E50}.f textarea{min-height:56px;resize:vertical}
+.req{font-size:11px;font-weight:700;color:#c62828;background:#ffebee;border-radius:10px;padding:0 7px}.opt{font-size:11px;font-weight:600;color:#607d8b;background:#eceff1;border-radius:10px;padding:0 7px}
+.help{font-size:12px;color:#5b6572;margin-top:3px}.err{font-size:12px;color:#c62828;margin-top:3px;display:none}.f.bad select{border-color:#c62828;border-width:2px}.f.bad .err{display:block}
+.urlbox{border-radius:10px;padding:12px 14px;margin:6px 0 4px}.urlbox.pending{background:#f3f6f9;border:1px dashed #b0bccb;color:#5b6572}.urlbox.ready{background:#e8f5e9;border:1px solid #a5d6a7}
+.urlrow{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.url{flex:1;min-width:0;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:13px;background:#fff;border:1px solid #c8e6c9;border-radius:6px;padding:8px 10px;word-break:break-all;color:#1b5e20}
+.lbl{font-size:12.5px;font-weight:700;margin-bottom:6px;color:#2C3E50}
+details{border:1px solid #e3e8ee;border-radius:10px;margin:12px 0;background:#fff}details>summary{cursor:pointer;padding:10px 14px;font-weight:600;font-size:13.5px;list-style:none;display:flex;align-items:center;gap:8px}details>summary::-webkit-details-marker{display:none}
+details>summary:before{content:"\25B8";color:#1976D2;transition:transform .15s}details[open]>summary:before{transform:rotate(90deg)}details>summary .hint{font-weight:400;color:#6b7785;font-size:12px}.dbody{padding:0 14px 12px}
+table{width:100%;border-collapse:collapse;font-size:12.5px}th,td{text-align:left;padding:6px 8px;border-bottom:1px solid #eef1f5;vertical-align:top}th{color:#5b6572;font-weight:600}code{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12px;background:#f3f6f9;padding:1px 4px;border-radius:4px}
+pre{background:#263238;color:#eceff1;border-radius:8px;padding:10px 12px;font-size:11.5px;overflow:auto;max-height:240px;margin:6px 0;white-space:pre}
+.tipw{position:relative;display:inline-block}.tipb{width:18px;height:18px;border-radius:50%;border:1px solid #90a4ae;background:#fff;color:#546e7a;font-size:11px;font-weight:700;cursor:pointer;padding:0;line-height:16px;font-family:inherit}
+.tip{display:none;position:absolute;left:-10px;top:24px;width:300px;background:#263238;color:#fff;font-weight:400;font-size:12px;border-radius:8px;padding:10px 12px;z-index:70;box-shadow:0 6px 18px rgba(0,0,0,.25)}.tip ul{margin:0;padding-left:16px}.tip li{margin:3px 0}
+.tipw:hover .tip,.tipw:focus-within .tip,.tipw.open .tip{display:block}
+.sw{display:flex;align-items:center;gap:8px;margin:8px 0;font-size:13px}.sw input{width:34px;height:18px}
+.alert{background:#ffebee;border:1px solid #ef9a9a;color:#b71c1c;border-radius:8px;padding:8px 12px;font-size:13px;margin:8px 0;display:none}body.st-error .alert{display:block}
+.toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%);background:#323232;color:#fff;border-radius:6px;padding:10px 16px;font-size:13px;display:none;z-index:90}
+.addl{color:#1976D2;background:none;border:0;padding:4px 0;font-weight:600;font-size:13px;cursor:pointer;font-family:inherit}
+.tabs{display:flex;border-bottom:1px solid #e3e8ee;margin:10px 0 4px}.tab{background:none;border:0;border-bottom:2px solid transparent;padding:8px 14px;font-weight:600;color:#5b6572;cursor:pointer;font-family:inherit;font-size:13.5px}.tab.on{color:#1976D2;border-color:#2196F3}.pane{display:none}.pane.on{display:block}
+.slim{display:flex;gap:8px;align-items:center;background:#f3f6f9;border-radius:8px;padding:6px 10px;font-size:12.5px;margin:4px 0}.slim .url{border:0;background:none;padding:0;font-size:12px}
+.ann{background:#fff8e1;border:1px dashed #ffb300;color:#7a4f01;border-radius:6px;padding:3px 8px;font-size:11.5px;margin:4px 0;display:none}body.showann .ann{display:block}
+@media (max-width:640px){.side{display:none}.main{display:none}.mockbar{position:static}.ov{position:static;padding:0;background:none}.dlg{max-width:none;border-radius:0;max-height:none;min-height:100%}.types{grid-template-columns:1fr}.urlrow .btn{width:100%}.tip{width:250px}}</style></head><body class="st-unsaved">
+<div class="mockbar"><a href="../">All mocks</a> · #617 API form, simpler · <a href="index.html">Hub</a> · <a href="today.html">Today</a> · <b>A (recommended)</b> · <a href="b-two-tabs.html">B</a> · <a href="build-contract.html">Contract</a><span class="sp"></span>State: <button data-st="unsaved" onclick="setState('unsaved')">Unsaved (new form)</button><button data-st="saved" onclick="setState('saved')">Saved</button><button data-st="error" onclick="setState('error')">Missing target list</button></div>
+<div class="app"><div class="side"><div>Content</div><div>Website</div><div>Social Media</div><div class="on">Email Campaigns</div><div>Calendar</div><div>Settings</div></div>
+<div class="main"><h1>Email Marketing</h1><p class="sub">Manage your email lists, subscribers, campaigns, and forms.</p>
+<div class="paper"><b>Subscription Forms</b><table style="margin-top:8px"><tr><th>Name</th><th>Used on</th><th>Actions</th></tr><tr><td>Website form</td><td><span class="opt">Own form (API)</span></td><td>Edit</td></tr></table></div></div></div>
+<div class="ov"><div class="dlg" role="dialog" aria-labelledby="dtitle"><div class="dh" id="dtitle">Edit Subscription Form</div><div class="db">
+<div class="alert">Choose a target list before saving.</div>
+<div class="ovl">How will you use this form?</div>
+<div class="types"><button class="type" type="button">Embed on my website<small>Paste our code</small></button><button class="type" type="button">Share a sign-up page<small>We host the page</small></button><button class="type on" type="button" aria-pressed="true">Connect my own form<small>Your site sends sign-ups</small></button></div>
+<div class="ovl">Connect</div>
+<div class="urlbox pending when-unsaved"><div class="lbl">Your form's URL</div>Save to get your form's URL.</div>
+<div class="urlbox ready when-saved"><div class="lbl">Your form's URL <span class="help" style="font-weight:400">Your website sends sign-ups here.</span></div>
+<div class="urlrow"><div class="url" id="formurl">https://financialcontent.ca/api/ses/forms/submit/Xy7Pq2Lm9Rt4Vb8Nc</div><button class="btn c" type="button" onclick="copyText(this,'https://financialcontent.ca/api/ses/forms/submit/Xy7Pq2Lm9Rt4Vb8Nc')">Copy</button></div></div>
+<div class="ovl">Settings</div>
+<div class="f"><label for="nm">Form name <span class="req">Required</span></label><input id="nm" value="Website form"></div>
+<div class="f" id="f-list"><label for="list">Target list <span class="req">Required</span></label><select id="list" onchange="listChange()"><option value="">Choose a list</option><option value="newsletter">Monthly newsletter</option><option value="clients">Clients</option></select><div class="err">Choose a list. New sign-ups need a list to go to.</div></div>
+<div class="f"><label for="tag">Attach tag <span class="opt">Optional</span></label><select id="tag"><option>No tag</option><option>From website</option></select><button class="addl" type="button">+ Create tag</button></div>
+<div class="f"><label for="sites">Allowed websites <span class="tipw"><button type="button" class="tipb" aria-label="More about allowed websites" onclick="tipToggle(this)">i</button><span class="tip" role="tooltip"><ul>
+<li>www.example.com and example.com count as the same site. Other subdomains need their own line.</li>
+<li>Sign-ups from websites not on the list are blocked and never email you.</li>
+<li>New subscribers always confirm by email first (double opt-in).</li>
+<li>Each <code style="background:#37474f;color:#fff">interest</code> value becomes a tag like "Interest: Retirement planning", made the first time it comes in.</li>
+<li>Lines that aren't a website address aren't saved. We'll show them to you.</li></ul></span></span></label><textarea id="sites">www.example.com
+preview.example.com</textarea><div class="help">One website per line. Only these sites can send sign-ups.</div></div>
+<div class="f"><label for="ne">Notify me at <span class="opt">Optional</span></label><input id="ne" type="email" value="jane@example.com"><button class="addl" type="button" onclick="addNotify(this)">+ Add another address</button><div class="help">We email you about each new subscriber.</div></div>
+<div class="f"><label for="sm">Success message</label><input id="sm" value="Thank you for subscribing!"><div class="help">Shown after someone signs up.</div></div>
+<details><summary>More options <span class="hint">Consent wording, form on/off</span></summary><div class="dbody">
+<div class="f"><label for="cw">Consent wording</label><textarea id="cw">I agree to receive emails from {firmName}. You can unsubscribe at any time.</textarea><div class="help">Shows as: "I agree to receive emails from Your Firm Name. You can unsubscribe at any time."</div></div>
+<label class="sw when-saved"><input type="checkbox" checked> Form is on (accepting sign-ups)</label></div></details>
+<details><summary>Developer details <span class="hint">For whoever builds your website form</span></summary><div class="dbody">
+<p class="help" style="font-size:12.5px;margin-top:0">Send a POST (JSON or form-encoded) to <span class="when-saved"><code>https://financialcontent.ca/api/ses/forms/submit/Xy7Pq2Lm9Rt4Vb8Nc</code></span><span class="when-unsaved">your form's URL (shown after you save)</span>.</p>
+<table><tr><th>Field</th><th>What it is</th><th>Needed?</th></tr>
+<tr><td><code>email</code></td><td>Email</td><td>Required</td></tr>
+<tr><td><code>consent</code> = <code>on</code></td><td>Consent tick box. We record wording, time, IP and page.</td><td>Required</td></tr>
+<tr><td><code>name</code> or <code>firstName</code> + <code>lastName</code></td><td>Name</td><td>Optional</td></tr>
+<tr><td><code>interest</code> (up to 5)</td><td>Becomes the tag "Interest: value"</td><td>Optional</td></tr>
+<tr><td><code>sourceUrl</code></td><td>Page they signed up on</td><td>Optional</td></tr>
+<tr><td><code>website_url</code> (hidden)</td><td>Spam trap. Filled in = thanks, nothing saved.</td><td>Recommended</td></tr></table>
+<div class="f"><label for="hp">Spam-trap field name <span class="opt">Optional</span></label><input id="hp" placeholder="website_url"><div class="help">Change only if your site already uses website_url.</div></div>
+<label class="sw"><input type="checkbox"> Cloudflare Turnstile bot check</label><div class="help" style="margin:-4px 0 6px 42px">Needed for new interest tags. Your developer adds the widget.</div>
+<label class="sw"><input type="checkbox"> Let sign-ups through if the bot check is down</label>
+<div class="lbl" style="margin-top:12px">Sample HTML and JavaScript</div>
+<div class="when-unsaved help">Save first. The sample then includes your form's URL.</div>
+<div class="when-saved"><pre id="snip"></pre><button class="btn sm" type="button" onclick="copyText(this,SNIPPET)">Copy code</button></div>
+</div></details>
+</div><div class="da"><button class="btn t" type="button">Cancel</button><button class="btn c" id="savebtn" type="button" onclick="save()">Create Form</button></div></div></div>
+<div class="toast" id="toast"></div>
+<script>
+function copyText(btn,text){var done=function(){var o=btn.getAttribute('data-label')||btn.textContent;btn.setAttribute('data-label',o);btn.textContent='Copied';btn.classList.add('done');clearTimeout(btn._t);btn._t=setTimeout(function(){btn.textContent=o;btn.classList.remove('done')},2000)};
+ if(navigator.clipboard&&window.isSecureContext){navigator.clipboard.writeText(text).then(done,function(){fb(text);done()})}else{fb(text);done()}}
+function fb(t){var a=document.createElement('textarea');a.value=t;a.style.position='fixed';a.style.opacity='0';document.body.appendChild(a);a.select();try{document.execCommand('copy')}catch(e){}document.body.removeChild(a)}
+function toast(m){var t=document.getElementById('toast');t.textContent=m;t.style.display='block';clearTimeout(t._t);t._t=setTimeout(function(){t.style.display='none'},2600)}
+function tipToggle(b){var w=b.parentNode;w.classList.toggle('open')}
+document.addEventListener('click',function(e){document.querySelectorAll('.tipw.open').forEach(function(w){if(!w.contains(e.target))w.classList.remove('open')})});
+function setState(s){document.body.className=document.body.className.replace(/st-\w+/g,'').trim()+' st-'+s;
+ document.querySelectorAll('[data-st]').forEach(function(b){b.classList.toggle('on',b.getAttribute('data-st')===s)});
+ var saved=s==='saved';document.querySelectorAll('.when-saved').forEach(function(e){e.style.display=saved?'':'none'});document.querySelectorAll('.when-unsaved').forEach(function(e){e.style.display=saved?'none':''});
+ var sel=document.getElementById('list');if(sel){if(s==='saved')sel.value='newsletter';else if(s==='error')sel.value='';}
+ var fl=document.getElementById('f-list');if(fl)fl.classList.toggle('bad',s==='error');
+ var sb=document.getElementById('savebtn');if(sb)sb.textContent=saved?'Update Form':'Create Form';
+ var t=document.getElementById('dtitle');if(t)t.textContent=saved?'Edit Subscription Form':'Create Subscription Form';}
+function save(){var sel=document.getElementById('list');if(!sel.value){setState('error');document.getElementById('f-list').scrollIntoView({block:'center',behavior:'smooth'});return}
+ var was=document.body.className.indexOf('st-saved')>-1;setState('saved');toast(was?'Saved. Changes apply to new sign-ups right away.':'Form created. Your form\'s URL is ready to copy.');}
+function listChange(){var fl=document.getElementById('f-list');if(document.getElementById('list').value){fl.classList.remove('bad');if(document.body.className.indexOf('st-error')>-1)setState('unsaved')}}
+function tab(n){document.querySelectorAll('.tab').forEach(function(t,i){t.classList.toggle('on',i===n)});document.querySelectorAll('.pane').forEach(function(p,i){p.classList.toggle('on',i===n)})}
+function addNotify(btn){var d=document.createElement('div');d.className='f';d.innerHTML='<input type="email" placeholder="name@example.com" aria-label="Another notification email">';btn.parentNode.insertBefore(d,btn)}
+
+var SNIPPET=`<form id="subscribe-form">
+  <label>Name <input name="name"></label>
+  <label>Email <input name="email" type="email" required></label>
+  <label>
+    <input type="checkbox" name="consent" value="on" required>
+    I agree to receive emails from Your Firm Name. You can unsubscribe at any time.
+  </label>
+  <!-- Spam trap: keep hidden, leave empty -->
+  <div aria-hidden="true" style="position:absolute;left:-9999px">
+    <input type="text" name="website_url" tabindex="-1" autocomplete="off">
+  </div>
+  <button type="submit">Subscribe</button>
+  <p id="subscribe-message" hidden></p>
+</form>
+<script>
+document.getElementById('subscribe-form').addEventListener('submit', function (e) {
+  e.preventDefault();
+  var form = e.target, msg = document.getElementById('subscribe-message');
+  var data = Object.fromEntries(new FormData(form).entries());
+  data.sourceUrl = window.location.href;
+  msg.hidden = false; msg.textContent = 'Submitting...';
+  fetch('https://financialcontent.ca/api/ses/forms/submit/Xy7Pq2Lm9Rt4Vb8Nc', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data)
+  })
+    .then(function (r) { return r.json(); })
+    .then(function (res) {
+      msg.textContent = res.success ? res.message : (res.error || 'Please try again.');
+      if (res.success) form.reset();
+    })
+    .catch(function () { msg.textContent = 'Please try again.'; });
+});
+<\/script>`;
+document.querySelectorAll('#snip').forEach(function(p){p.textContent=SNIPPET});
+setState('unsaved');
+</script></body></html>
