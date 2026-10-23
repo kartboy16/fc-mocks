@@ -25,7 +25,7 @@ details{border:1px solid #e3e8ee;border-radius:8px;margin:10px 0;background:#fff
 
 #dev.phone{width:390px;height:800px;margin:18px auto;border:12px solid #1f2a44;border-radius:38px;overflow:auto;background:#f5f7fa;box-shadow:0 10px 30px rgba(0,0,0,.25)}
 #dev.phone .app{min-height:0}#dev.phone .side{display:none}#dev.phone .main{padding:14px}#dev.phone h1{font-size:24px}#dev.phone .tabs{overflow-x:auto}#dev.phone .tab{padding:10px 10px;white-space:nowrap}
-#dev.phone .mch{flex-wrap:wrap}#dev.phone .mch .grow{flex:1 0 calc(100% - 80px)}#dev.phone .mch>.btn{margin-left:48px}#dev.phone .cp{flex-wrap:wrap}#dev.phone .cp .lab{width:100%}#dev.phone .garow{flex-direction:column;align-items:stretch}#dev.phone .garow .btn{width:100%}#dev.phone .grid3{grid-template-columns:1fr}#dev.phone .kv{gap:10px}
+#dev.phone .mch{flex-wrap:wrap}#dev.phone .mch .grow{flex:1 0 calc(100% - 80px)}#dev.phone .mch>.btn{margin-left:48px}#dev.phone .cp{flex-wrap:wrap}#dev.phone .cp .lab{width:100%}#dev.phone .garow{flex-direction:column;align-items:stretch}#dev.phone .garow .btn{width:100%;margin-top:4px!important}#dev.phone .grid3{grid-template-columns:1fr}#dev.phone .kv{gap:10px}
 .gacard{border:1px solid #e0e5eb;border-radius:10px;background:#fff;padding:14px 16px;margin:16px 0 12px}.gacard.off{background:#fafbfc}.gah{display:flex;gap:10px;align-items:center;flex-wrap:wrap}.gah .t{font-weight:600;font-size:15px}
 .garow{display:flex;gap:8px;align-items:flex-start;margin-top:10px}.garow .f{margin:0;flex:1;max-width:340px}#dev.phone .garow .f{max-width:none}
 .f input.bad{border-color:#c62828;border-width:2px}.err{font-size:12px;color:#c62828;margin-top:4px}
@@ -33,6 +33,13 @@ details{border:1px solid #e3e8ee;border-radius:8px;margin:10px 0;background:#fff
 .ph{background:#fffde7;border:1px dashed #f9a825;color:#6d5300;border-radius:6px;padding:6px 10px;font-size:12px;margin:8px 0}
 .future{display:flex;gap:10px;align-items:center;padding:10px 0;border-top:1px solid #eef1f5;color:#90a4ae;font-size:13px}
 .mockbar .grp{display:inline-flex;gap:4px;align-items:center;margin-left:8px}
+.secbreak{margin:26px 0 4px;padding-top:18px;border-top:2px solid #e3e8ee}.secbreak h3{margin:0;font-size:16px}.secbreak .help{font-size:13px;margin-top:2px}
+.setrow{display:grid;grid-template-columns:200px 1fr;gap:16px;padding:14px 0;border-bottom:1px solid #eef1f5;border-left:3px solid #ce93d8;padding-left:14px;margin-top:8px}.setrow .sl b{display:block;font-size:14px}.setrow .garow{margin-top:0}
+.uses{display:inline-flex;align-items:center;gap:4px;font-size:11.5px;font-weight:600;color:#7b1fa2;background:#f3e5f5;border-radius:10px;padding:1px 8px;margin-top:4px}
+.dim{opacity:.55}
+.strip{margin:-13px 0 12px 26px;padding:12px 14px 10px 16px;background:#fbf7fc;border-left:3px solid #ce93d8;border-bottom:1px solid #eadcef;border-radius:0 0 8px 8px;position:relative}.strip:before{content:"";position:absolute;left:-3px;top:-10px;height:10px;border-left:3px solid #ce93d8}
+.strip .sh{font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:#7b1fa2;font-weight:700;margin-bottom:6px}.strip .row2{display:grid;grid-template-columns:150px 1fr;gap:12px;align-items:start}
+#dev.phone .setrow,#dev.phone .strip .row2{grid-template-columns:1fr;gap:6px}#dev.phone .strip{margin-left:12px}
 </style></head><body>
 <div class="mockbar"><a href="../">All mocks</a> · #650 GA4 · <a href="index.html">Hub</a> · <b>Today</b> · <a href="a-ga-card.html">A (recommended)</a> · <a href="b-in-php-card.html">B</a> · <a href="c-tracking-card.html">C</a> · <a href="build-contract.html">Contract</a><span class="sp"></span><span class="grp"><button data-dev="desk" onclick="setDev('desk')">Desktop</button><button data-dev="phone" onclick="setDev('phone')">Phone</button></span></div><div id="dev" class="desk"><div class="app"><div class="side"><div>Content</div><div class="on">Website</div><div>Social Media</div><div>Email Campaigns</div><div>Calendar</div><div>Settings</div></div>
 <div class="main"><h1>Website</h1><div class="tabs"><div class="tab">Already Posted</div><div class="tab">Schedule</div><div class="tab on">Settings</div></div>
@@ -44,7 +51,8 @@ details{border:1px solid #e3e8ee;border-radius:8px;margin:10px 0;background:#fff
 <div class="step"><div class="num ok">2</div><div class="grow"><h4>Put it on your website</h4><p class="help" style="margin:0">Upload the insights folder to your website's main folder, then open example.com/insights once.</p></div></div>
 <div class="step"><div class="num ok">3</div><div class="grow"><h4>Check it's working</h4><div class="status ok"><b>&#10003; Connected</b> · example.com/insights<div class="kv"><div><b>4 min ago</b>Last fetched</div><div><b>12</b>Posts showing</div></div></div><p class="help">Saved website: <b>example.com</b>. Share and email links open example.com/insights/…</p></div></div>
 <details><summary>Developer details</summary><div class="dbody">Requirements, endpoints, routes, header and footer files, SEO and cache (unchanged).</div></details></div></div><div class="mc" id="mc-embed"><div class="mch" onclick="toggleCard('mc-embed')"><div class="ic">&lt;/&gt;</div><div class="grow"><div class="t">Article list on your site<span class="chip">Not active</span></div><div class="s">Snippet on your page · full article opens on Content Library</div></div><button class="btn sm" onclick="event.stopPropagation()">Switch to article list</button><span class="chev">&#9662;</span></div><div class="mcb"><p class="help">Theme, max posts, preview and site code (unchanged).</p></div></div><div class="mc" id="mc-wp"><div class="mch"><div class="ic">W</div><div class="grow"><div class="t">Full articles on your domain<span class="chip">Not set up</span></div><div class="s">Published to WordPress · readers stay on example.com</div></div><button class="btn sm">Request setup</button></div></div></div></div></div><div class="toast" id="toast"></div><script>
-var ST='empty',DEV='desk';
+var ST='empty',DEV='desk',VAR='2';
+function setVar(v){VAR=v;document.querySelectorAll('[data-var]').forEach(function(e){e.style.display=e.getAttribute('data-var')===v?'':'none'});document.querySelectorAll('[data-vb]').forEach(function(b){b.classList.toggle('on',b.getAttribute('data-vb')===v)})}
 function setDev(d){DEV=d;document.getElementById('dev').className=d;document.querySelectorAll('[data-dev]').forEach(function(b){b.classList.toggle('on',b.getAttribute('data-dev')===d)})}
 function toast(m){var t=document.getElementById('toast');t.textContent=m;t.style.display='block';clearTimeout(t._t);t._t=setTimeout(function(){t.style.display='none'},2800)}
 function toggleCard(id){var e=document.getElementById(id);if(e)e.classList.toggle('open')}
@@ -60,7 +68,7 @@ function setState(s){ST=s;document.querySelectorAll('[data-st]').forEach(functio
  document.querySelectorAll('[data-show]').forEach(function(e){e.style.display=e.getAttribute('data-show').split(' ').indexOf(s)>-1?'':'none'});
  document.querySelectorAll('[data-hide]').forEach(function(e){e.style.display=e.getAttribute('data-hide').split(' ').indexOf(s)>-1?'none':''});
  document.querySelectorAll('.gablock').forEach(function(b){var inp=b.querySelector('input');var off=s==='nophp';inp.disabled=off;inp.value=s==='invalid'?'UA-1234567-1':((s==='empty'||off)?'':'G-ABC1234XYZ');onInput(inp);b.querySelector('.save').disabled=true});
- document.querySelectorAll('.gacard').forEach(function(c){c.classList.toggle('off',s==='nophp')});
+ document.querySelectorAll('.gacard').forEach(function(c){c.classList.toggle('off',s==='nophp')});document.querySelectorAll('.dimmable').forEach(function(c){c.classList.toggle('dim',s==='nophp')});
  if(window.onState)onState(s)}
 
 setDev(/[?&]phone/.test(location.search)?'phone':'desk');</script></body></html>
