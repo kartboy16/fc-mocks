@@ -1,8 +1,9 @@
 <!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>#617 API form, simpler: build contract</title><style>body{font-family:Inter,system-ui,sans-serif;max-width:960px;margin:24px auto;padding:0 16px;line-height:1.55;color:#2C3E50}table{border-collapse:collapse;width:100%;font-size:13.5px;margin:10px 0}th,td{border:1px solid #dde3ea;padding:6px 8px;text-align:left;vertical-align:top}th{background:#f3f6f9}code{background:#f3f6f9;padding:1px 4px;border-radius:4px;font-size:.9em}a{color:#1976D2}h2{margin-top:26px;border-bottom:1px solid #e3e8ee;padding-bottom:4px}li{margin:3px 0}</style></head><body><p><a href="index.html">&larr; Hub</a> &middot; <a href="../">All mocks</a> &middot; <a href="build-contract.md">.md</a></p>
 <h1>#617 API form, simpler: build contract</h1>
-<p><strong>Status:</strong> Designer-first mock with generic sample data. Builds on Direction A of #617, which is locked: chooser first, one sign-up type per form. <strong>Not agent-ready. Soft Dev hold until Alex picks.</strong></p>
+<p style="background:#e8f5e9;border:2px solid #2e7d32;border-radius:10px;padding:10px 14px;color:#1b5e20"><strong>✓ Direction A (one scroll) is locked.</strong> Alex picked A at 12:58 AM PT on Oct 22, 2026, via Chief of Staff. B is kept for reference only. <strong>Software developer is building A on staging.</strong> The flow is staging first, then the FC Tester gate, and only Alex merges to main.</p>
+<p><strong>Status:</strong> A locked. Alex answered all five questions (section 9). Built on #617 Direction A (chooser first, one sign-up type per form).</p>
 <p><strong>Scope:</strong> FTT Mail only. The Create/Edit Subscription Form dialog (<code>imports/ui/EmailCampaigns/SESForms.jsx</code>) when the type is <strong>Connect my own form</strong> (<code>usageType: "api"</code>), as on staging at <code>fe28797</code>.</p>
-<p>Mocks: <a href="index.html">hub</a> · <a href="today.html">Today</a> · <a href="a-one-scroll.html">A, one scroll (recommended)</a> · <a href="b-two-tabs.html">B, two tabs</a></p>
+<p>Mocks: <a href="index.html">hub</a> · <a href="today.html">Today</a> · <a href="a-one-scroll.html">A, one scroll (picked)</a> · <a href="b-two-tabs.html">B, two tabs (not picked)</a></p>
 <h2>1. Problem (Alex's feedback)</h2>
 <p>The dialog is overwhelming and has too much text. The submit URL is hard to find: it's relative (<code>/api/ses/forms/submit/&lt;id&gt;</code>), sits in a sentence halfway down, and has no Copy button. Today there are about 260 words of helper text, a developer field table that's always open, and a locked double opt-in switch. Target list isn't marked required, and Attach tag looks required.</p>
 <h2>2. Recommendation</h2>
@@ -10,13 +11,13 @@
 <h2>3. Screen (A)</h2>
 <p>Top to bottom:</p>
 <ol>
-<li><strong>How will you use this form?</strong> The 3 type cards, each with a one-line description. Remove the "Need two ways…" paragraph (moved to the tooltip on the type cards; see open questions).
+<li><strong>How will you use this form?</strong> The 3 type cards, each with a one-line description. Drop the "Need two ways…" note entirely (Alex, Oct 22).
 <li><strong>Your form's URL</strong>
 <div style="margin-left:18px">&bull; <strong>Unsaved:</strong> a grey dashed box that says "Save to get your form's URL."</div>
 <div style="margin-left:18px">&bull; <strong>Saved:</strong> a green box with the absolute URL in monospace (<code>https://financialcontent.ca/api/ses/forms/submit/&lt;id&gt;</code>) and a <strong>Copy</strong> button. The button shows <strong>Copied</strong> for 2 seconds.</div>
 <li><strong>Settings</strong>
 <div style="margin-left:18px">&bull; Form name (Required)</div>
-<div style="margin-left:18px">&bull; Target list (Required, no "No list" option, placeholder "Choose a list")</div>
+<div style="margin-left:18px">&bull; Target list (Required on <strong>all</strong> form types, no "No list" option, placeholder "Choose a list")</div>
 <div style="margin-left:18px">&bull; Attach tag (Optional) + Create tag</div>
 <div style="margin-left:18px">&bull; Allowed websites with an ⓘ tooltip</div>
 <div style="margin-left:18px">&bull; Notify me at (Optional) + Add another address</div>
@@ -64,15 +65,16 @@
 <h2>6. In scope / out of scope</h2>
 <p><strong>In scope:</strong></p>
 <ul>
-<li>The API-type branch of the dialog: layout, copy, collapses, tooltip, URL box and Copy, the snippet generator, and required-field validation for the target list on API forms.
-<li>Building the absolute URL from the app origin (<code>Meteor.absoluteUrl()</code>), so staging shows the staging host.
+<li>The API-type branch of the dialog: layout, copy, collapses, tooltip, URL box and Copy, the snippet generator, and required-field validation for the target list on every form type (embed, sign-up page and API).
+<li>Forms list: API rows get one <strong>Copy form URL</strong> action (copies the absolute URL, shows "Copied"), replacing Get Embed Code and Copy Hosted Link.
+<li>The URL always uses <code>https://financialcontent.ca/api/ses/forms/submit/&lt;id&gt;</code> for now, even when a custom form hostname is set. Staging may show the staging host.
 </ul>
 <p><strong>Out of scope:</strong></p>
 <ul>
 <li>Server behaviour (allowlist, Turnstile, consent).
 <li>Embed and sign-up page layouts.
 <li>The open #617 questions (form key, embeds with an empty list, www rules, reCAPTCHA, consent switch, blocked sign-up emails).
-<li>The forms list actions. Today, API rows show Get Embed Code and Copy Hosted Link; see the open questions.
+<li>Custom form hostnames in the API URL (later).
 </ul>
 <h2>7. Mobile</h2>
 <p>Below 600px the dialog goes full screen:</p>
@@ -88,11 +90,11 @@
 <li><strong>A:</strong> about 1.5–2 days. That's 1–1.5 days of UI (restructure the API branch, URL box and copy, two collapses, tooltip, snippet built from the form id and consent preview, required list validation) plus 0.5 day of tests and staging QA.
 <li><strong>B:</strong> about 2–2.5 days (tabs, plus keeping the URL bar in sync).
 </ul>
-<h2>9. Open questions for Alex</h2>
+<h2>9. Alex's answers (Oct 22, 2026, replaces the open questions)</h2>
 <ol>
-<li>Should Target list be required for API forms only, or for every form type? Today "No list (general subscribers)" is allowed.
-<li>Where does Turnstile go: Developer details (as mocked) or the main settings? The site's developer has to add the widget either way.
-<li>Should forms list rows for API forms swap Get Embed Code and Copy Hosted Link for a single "Copy form URL"?
-<li>Is the "Need two ways? Create a second form" note OK to drop, or should it go into a tooltip on the type cards?
-<li>Should the form URL use financialcontent.ca everywhere, or the advisor's custom form hostname when one is set?
+<li><strong>Target list is required on all form types</strong>: embed, sign-up page and API. Remove "No list (general subscribers)".
+<li><strong>Turnstile goes in Developer details</strong>, as mocked.
+<li><strong>API rows in the forms list get a single "Copy form URL" action</strong>, replacing Get Embed Code and Copy Hosted Link.
+<li><strong>Drop the "Need two ways?" note.</strong> No tooltip.
+<li><strong>The URL always uses financialcontent.ca for now.</strong>
 </ol></body></html>

@@ -1,9 +1,11 @@
 # #617 API form, simpler: build contract
 
-**Status:** Designer-first mock with generic sample data. Builds on Direction A of #617, which is locked: chooser first, one sign-up type per form. **Not agent-ready. Soft Dev hold until Alex picks.**
+> **✓ Direction A (one scroll) is locked.** Alex picked A at 12:58 AM PT on Oct 22, 2026, via Chief of Staff. B is kept for reference only. **Software developer is building A on staging.** The flow is staging first, then the FC Tester gate, and only Alex merges to main.
+
+**Status:** A locked. Alex answered all five questions (section 9). Built on #617 Direction A (chooser first, one sign-up type per form).
 **Scope:** FTT Mail only. The Create/Edit Subscription Form dialog (`imports/ui/EmailCampaigns/SESForms.jsx`) when the type is **Connect my own form** (`usageType: "api"`), as on staging at `fe28797`.
 
-Mocks: [hub](index.html) · [Today](today.html) · [A, one scroll (recommended)](a-one-scroll.html) · [B, two tabs](b-two-tabs.html)
+Mocks: [hub](index.html) · [Today](today.html) · [A, one scroll (picked)](a-one-scroll.html) · [B, two tabs (not picked)](b-two-tabs.html)
 
 ## 1. Problem (Alex's feedback)
 The dialog is overwhelming and has too much text. The submit URL is hard to find: it's relative (`/api/ses/forms/submit/<id>`), sits in a sentence halfway down, and has no Copy button. Today there are about 260 words of helper text, a developer field table that's always open, and a locked double opt-in switch. Target list isn't marked required, and Attach tag looks required.
@@ -13,13 +15,13 @@ The dialog is overwhelming and has too much text. The submit URL is hard to find
 
 ## 3. Screen (A)
 Top to bottom:
-1. **How will you use this form?** The 3 type cards, each with a one-line description. Remove the "Need two ways…" paragraph (moved to the tooltip on the type cards; see open questions).
+1. **How will you use this form?** The 3 type cards, each with a one-line description. Drop the "Need two ways…" note entirely (Alex, Oct 22).
 2. **Your form's URL**
    - **Unsaved:** a grey dashed box that says "Save to get your form's URL."
    - **Saved:** a green box with the absolute URL in monospace (`https://financialcontent.ca/api/ses/forms/submit/<id>`) and a **Copy** button. The button shows **Copied** for 2 seconds.
 3. **Settings**
    - Form name (Required)
-   - Target list (Required, no "No list" option, placeholder "Choose a list")
+   - Target list (Required on **all** form types, no "No list" option, placeholder "Choose a list")
    - Attach tag (Optional) + Create tag
    - Allowed websites with an ⓘ tooltip
    - Notify me at (Optional) + Add another address
@@ -65,14 +67,15 @@ Top to bottom:
 
 ## 6. In scope / out of scope
 **In scope:**
-- The API-type branch of the dialog: layout, copy, collapses, tooltip, URL box and Copy, the snippet generator, and required-field validation for the target list on API forms.
-- Building the absolute URL from the app origin (`Meteor.absoluteUrl()`), so staging shows the staging host.
+- The API-type branch of the dialog: layout, copy, collapses, tooltip, URL box and Copy, the snippet generator, and required-field validation for the target list on every form type (embed, sign-up page and API).
+- Forms list: API rows get one **Copy form URL** action (copies the absolute URL, shows "Copied"), replacing Get Embed Code and Copy Hosted Link.
+- The URL always uses `https://financialcontent.ca/api/ses/forms/submit/<id>` for now, even when a custom form hostname is set. Staging may show the staging host.
 
 **Out of scope:**
 - Server behaviour (allowlist, Turnstile, consent).
 - Embed and sign-up page layouts.
 - The open #617 questions (form key, embeds with an empty list, www rules, reCAPTCHA, consent switch, blocked sign-up emails).
-- The forms list actions. Today, API rows show Get Embed Code and Copy Hosted Link; see the open questions.
+- Custom form hostnames in the API URL (later).
 
 ## 7. Mobile
 Below 600px the dialog goes full screen:
@@ -86,9 +89,9 @@ Below 600px the dialog goes full screen:
 - **A:** about 1.5–2 days. That's 1–1.5 days of UI (restructure the API branch, URL box and copy, two collapses, tooltip, snippet built from the form id and consent preview, required list validation) plus 0.5 day of tests and staging QA.
 - **B:** about 2–2.5 days (tabs, plus keeping the URL bar in sync).
 
-## 9. Open questions for Alex
-1. Should Target list be required for API forms only, or for every form type? Today "No list (general subscribers)" is allowed.
-2. Where does Turnstile go: Developer details (as mocked) or the main settings? The site's developer has to add the widget either way.
-3. Should forms list rows for API forms swap Get Embed Code and Copy Hosted Link for a single "Copy form URL"?
-4. Is the "Need two ways? Create a second form" note OK to drop, or should it go into a tooltip on the type cards?
-5. Should the form URL use financialcontent.ca everywhere, or the advisor's custom form hostname when one is set?
+## 9. Alex's answers (Oct 22, 2026, replaces the open questions)
+1. **Target list is required on all form types**: embed, sign-up page and API. Remove "No list (general subscribers)".
+2. **Turnstile goes in Developer details**, as mocked.
+3. **API rows in the forms list get a single "Copy form URL" action**, replacing Get Embed Code and Copy Hosted Link.
+4. **Drop the "Need two ways?" note.** No tooltip.
+5. **The URL always uses financialcontent.ca for now.**
