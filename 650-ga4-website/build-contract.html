@@ -1,0 +1,108 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>#650 GA4 on Settings &gt; Website: build contract</title><style>body{font-family:Inter,system-ui,sans-serif;max-width:960px;margin:24px auto;padding:0 16px;line-height:1.55;color:#2C3E50}table{border-collapse:collapse;width:100%;font-size:13.5px;margin:10px 0}th,td{border:1px solid #dde3ea;padding:6px 8px;text-align:left;vertical-align:top}th{background:#f3f6f9}code{background:#f3f6f9;padding:1px 4px;border-radius:4px;font-size:.9em}a{color:#1976D2}h2{margin-top:26px;border-bottom:1px solid #e3e8ee;padding-bottom:4px}li{margin:3px 0}</style></head><body><p><a href="index.html">&larr; Hub</a> &middot; <a href="../">All mocks</a> &middot; <a href="build-contract.md">.md</a></p>
+<h1>#650 Google Analytics (GA4) on Settings &gt; Website: build contract</h1>
+<p><strong>Status:</strong> Designer-first mock with generic sample data (example.com, <code>G-ABC1234XYZ</code>, advisor ID <code>abc123</code>). <strong>Not agent-ready. Soft Dev hold until Alex picks.</strong></p>
+<p><strong>Scope:</strong> Content Library → Website → <strong>Settings</strong> (<code>imports/ui/WebsiteSettings.jsx</code>, <code>components/website-publishing/PhpServerSettingsPanel.jsx</code>) and the PHP renderer (<code>private/php-renderer/insights/lib.php</code>, <code>fci_head_common()</code>), as on staging at <code>e50f1db</code>. #644 "PHP on your server" <strong>has landed</strong> on staging: it's the third method card (Direction A), and the renderer is at version 1.2.</p>
+<p>Mocks: <a href="index.html">hub</a> · <a href="today.html">Today</a> · <a href="a-ga-card.html">A, compact card (recommended)</a> · <a href="b-in-php-card.html">B, inside the PHP card</a> · <a href="c-tracking-card.html">C, Tracking &amp; analytics card</a>. Every page has a <strong>Desktop / Phone</strong> toggle (a 390px frame). Add <code>?phone</code> to the URL to open it in phone view.</p>
+<h2>1. Where the tag goes (matching the issue)</h2>
+<p>The issue asks for GA4 <code>gtag.js</code> in the <code>&lt;head&gt;</code> of every page, added once from a shared include or template partial, and skipped on preview/staging hosts and <code>noindex</code> pages.</p>
+<p>For static sites, the pages FC controls are the <strong>Insights pages</strong>: the PHP renderer builds one shared <code>&lt;head&gt;</code> for <code>/insights</code> and every <code>/insights/&lt;slug&gt;</code> in <code>fci_head_common()</code>. The mock puts the snippet there once. It's skipped when the request host isn't the saved website, and on pages that carry <code>noindex</code> (the error and not-found pages already do).</p>
+<p>The advisor's own header and footer files and the rest of their static pages <strong>aren't touched</strong> (see open question 1).</p>
+<h2>2. Recommendation</h2>
+<p><strong>A: a compact "Google Analytics" card below the method cards.</strong> It has one field, Save and a status line. It's always in the same place, it greys out when PHP isn't the method, and it's the cheapest.</p>
+<ul>
+<li><strong>B</strong> (step 4 inside the PHP card) ties analytics to the PHP setup, but it's buried in a long panel and disappears for other methods.
+<li><strong>C</strong> (a "Tracking &amp; analytics" card) leaves room for Tag Manager and future tags. It's slightly more UI, and the extra rows would be empty for now.
+</ul>
+<h2>3. Screen (A)</h2>
+<p><strong>Card header:</strong> "Google Analytics", then one line: "Paste your GA4 Measurement ID to track visits to your Insights pages."</p>
+<p><strong>Field and button:</strong></p>
+<ul>
+<li>Field: <strong>Measurement ID</strong> (placeholder <code>G-XXXXXXXXXX</code>). It trims and uppercases on blur.
+<li><strong>[Save]</strong> is enabled only when the value has changed and is valid.
+</ul>
+<p><strong>Status line (one line):</strong></p>
+<ul>
+<li>Not set up
+<li>Saved, waiting
+<li>Tracking (live)
+<li>Folder update needed
+<li>Not available for this method
+</ul>
+<p><strong>Collapsed sections:</strong></p>
+<ul>
+<li>"Where do I find my ID?": Admin → Data streams → your website → Measurement ID.
+<li>"Developer details": where the tag goes, the skip rules, white-label, how to check (GA4 Realtime / DebugView).
+</ul>
+<p><strong>Placeholder box:</strong> privacy or cookie-consent wording, <strong>not written</strong>. It needs Alex or compliance.</p>
+<p><strong>Remove:</strong> a link in the status line, with a confirm.</p>
+<h2>4. States</h2>
+<table>
+<tr><th>State</th><th>Field</th><th>Status line / message</th></tr>
+<tr><td>Empty</td><td>blank, Save disabled</td><td>"Not set up. Visits aren't tracked yet."</td></tr>
+<tr><td>Invalid ID</td><td>red border, Save disabled</td><td>Not G-: "That doesn't look like a GA4 ID. It starts with G-, like G-ABC1234XYZ." UA-: "That's an old Universal Analytics ID. Paste your GA4 ID instead. It starts with G-." GTM-: "That's a Tag Manager ID. Paste your GA4 Measurement ID. It starts with G-."</td></tr>
+<tr><td>Saved (waiting)</td><td><code>G-ABC1234XYZ</code></td><td>Toast: "Saved. Tracking starts on your Insights pages within 15 minutes." Line: "Saved. Waiting for your site to pick it up (up to 15 minutes). Remove"</td></tr>
+<tr><td>Live</td><td><code>G-ABC1234XYZ</code></td><td>"Tracking on example.com/insights. Your site picked it up 3 min ago. Remove" (shown after the first renderer fetch on version 1.3+ following the save)</td></tr>
+<tr><td>Folder update needed</td><td><code>G-ABC1234XYZ</code></td><td>"Update your insights folder to turn this on. Your site runs version 1.2; analytics needs 1.3. Download the update"</td></tr>
+<tr><td>Method not static/PHP</td><td>disabled, blank</td><td>A: "Available when you publish with PHP on your server." (greyed out). B: hidden (it lives in the PHP card). C: same as A.</td></tr>
+<tr><td>Removed</td><td>blank</td><td>Confirm: "Remove your Google Analytics ID? Tracking stops on your Insights pages within 15 minutes." Toast: "Removed. Tracking stops within 15 minutes."</td></tr>
+</table>
+<p><strong>What it applies to:</strong> Insights pages on the saved website only (<code>/insights</code> and <code>/insights/&lt;slug&gt;</code>). It doesn't apply to preview or staging hosts, <code>noindex</code> pages or the rest of the site.</p>
+<h2>5. Copy</h2>
+<ul>
+<li>One-line intro: "Paste your GA4 Measurement ID to track visits to your Insights pages."
+<li>Everything else is in section 4.
+<li><strong>Placeholder (not written):</strong> privacy or cookie-consent wording.
+</ul>
+<h2>6. In scope / out of scope</h2>
+<p><strong>In scope:</strong></p>
+<ul>
+<li><strong>UI:</strong> the card, validation, Save and Remove, the status line, help and developer details, and greyed-out or hidden states for other methods.
+<li><strong>Storage:</strong> <code>advisorConfig.analytics.ga4MeasurementId</code>, with a server method that validates <code>^G-[A-Z0-9]{4,12}$</code>.
+<li><strong>Delivery:</strong> the ID goes out to the renderer with the posts response. A new field, so no re-download after version 1.3.
+<li><strong>Renderer version 1.3:</strong>
+<div style="margin-left:18px">&bull; Injects the standard <code>gtag.js</code> snippet once in <code>fci_head_common()</code>.</div>
+<div style="margin-left:18px">&bull; Skips other hosts and <code>noindex</code> pages.</div>
+<div style="margin-left:18px">&bull; Reports in its fetch headers that it has the ID, so we can show "Live".</div>
+<li><strong>White-label:</strong> the snippet only references googletagmanager.com.
+<li><strong>Docs:</strong> a verify step (GA4 Realtime / DebugView).
+</ul>
+<p><strong>Out of scope (optional in the issue, or not decided):</strong></p>
+<ul>
+<li>A Google Tag Manager container ID. C shows it as "Later".
+<li>Sharing GA property access with the advisor.
+<li>Pages outside <code>/insights</code>.
+<li>WordPress and article-list analytics.
+<li>Consent banners.
+<li>Any privacy copy.
+<li>GA reporting inside FC.
+</ul>
+<h2>7. Mobile</h2>
+<p>Each direction has a Phone view:</p>
+<ul>
+<li>Card header buttons wrap under the title.
+<li>The field and Save stack, with Save full width.
+<li>The status line wraps.
+<li>The collapsed sections stay collapsed.
+</ul>
+<h2>8. Estimate</h2>
+<ul>
+<li><strong>A:</strong> about 2.5–3 days in total:
+<div style="margin-left:18px">&bull; 0.75–1 day of UI.</div>
+<div style="margin-left:18px">&bull; 0.25–0.5 day for storage and validation.</div>
+<div style="margin-left:18px">&bull; 0.75–1 day for renderer 1.3 and the API field ("live" detection, skip rules).</div>
+<div style="margin-left:18px">&bull; 0.5 day of tests and staging QA (including GA Realtime on a test property).</div>
+<li><strong>B:</strong> about the same, 2.5–3 days.
+<li><strong>C:</strong> about 3–3.5 days (the extra card structure and the "Later" rows).
+</ul>
+<h2>9. Open questions for Alex</h2>
+<ol>
+<li><strong>"Every page" vs Insights pages.</strong> The issue says every page of the static site, but FC only builds the <code>&lt;head&gt;</code> for <code>/insights</code> pages. For the rest of the site, should we:
+<div style="margin-left:18px">&bull; (a) keep it to Insights pages (as mocked),</div>
+<div style="margin-left:18px">&bull; (b) also show a copy-paste snippet for their other pages, or</div>
+<div style="margin-left:18px">&bull; (c) inject it on publish for sites FTT hosts (the #601 pilot)?</div>
+<li><strong>The issue's "on save or publish".</strong> With PHP, a change applies within the 15-minute cache with no publish step. Is that OK?
+<li><strong>Tag Manager.</strong> Should a GTM container ID be in v1 (as an alternative field), or later?
+<li><strong>Privacy/consent.</strong> Do we need any consent wording or a banner? The mock leaves a placeholder only.
+<li><strong>GA access.</strong> Should advisors get read access to the GA property, or do we share reports the way we do for WordPress? Who owns the property?
+<li><strong>Other methods.</strong> Should the card be shown greyed out (A/C) or hidden (B) when PHP isn't the method?
+</ol></body></html>
