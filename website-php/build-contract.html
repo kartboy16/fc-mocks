@@ -1,0 +1,106 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Website: PHP on your server: build contract</title><style>body{font-family:Inter,system-ui,sans-serif;max-width:960px;margin:24px auto;padding:0 16px;line-height:1.55;color:#2C3E50}table{border-collapse:collapse;width:100%;font-size:13.5px;margin:10px 0}th,td{border:1px solid #dde3ea;padding:6px 8px;text-align:left;vertical-align:top}th{background:#f3f6f9}code{background:#f3f6f9;padding:1px 4px;border-radius:4px;font-size:.9em}a{color:#1976D2}h2{margin-top:26px;border-bottom:1px solid #e3e8ee;padding-bottom:4px}li{margin:3px 0}</style></head><body><p><a href="index.html">&larr; Hub</a> &middot; <a href="../">All mocks</a> &middot; <a href="build-contract.md">.md</a></p>
+<h1>Website settings: "PHP on your server" option: build contract</h1>
+<p><strong>Status:</strong> Designer-first mock with generic sample data (Jane Advisor, example.com, advisor ID <code>abc123</code>). There's no GH issue for this UI yet; the related backend issue is #638. <strong>Not agent-ready. Soft Dev hold until Alex picks.</strong></p>
+<p><strong>Scope:</strong> Content Library → Website → <strong>Settings</strong> tab (<code>imports/ui/WebsiteHub.jsx</code> → <code>WebsiteSettings.jsx</code>, <code>PublishingMethodCard</code>, <code>WebsiteDeliveryChooser</code>, <code>websiteDeliveryHelpers.js</code>), as on staging at <code>52eb835</code>. Request from Alex via Software developer, 10:43 PM PT on Oct 22, 2026.</p>
+<p>Mocks: <a href="index.html">hub</a> · <a href="today.html">Today</a> · <a href="a-method-card.html">A, method card (recommended)</a> · <a href="b-wizard.html">B, wizard</a> · <a href="c-status-page.html">C, status page + drawer</a></p>
+<h2>1. How it works (for context)</h2>
+<p>A small PHP renderer on the advisor's own host reads their published FC posts:</p>
+<ul>
+<li><code>GET /api/posts/&lt;advisorId&gt;</code> for the list.
+<li><code>GET /api/post/&lt;id&gt;?advisor=&lt;advisorId&gt;</code> for a single post.
+</ul>
+<p>It renders <code>/insights</code> (the list) and <code>/insights/&lt;slug&gt;</code> (post pages) on the server, inside the site's own header and footer. Pages get SEO tags, a 15-minute cache and a stale fallback.</p>
+<p>Posts stay on FC. If the subscription ends, the API returns nothing (<code>revoked</code>) and the posts disappear; the advisor gets no copies. It's built first for a static-site advisor.</p>
+<h2>2. Today</h2>
+<p>The Settings tab has "Website publishing" ("One method is active for new posts. Compare methods") and two method cards:</p>
+<ul>
+<li><strong>Article list on your site</strong> (the embed snippet, with theme, max posts, categories, excerpts, custom CSS, a preview and Copy site code).
+<li><strong>Full articles on your domain</strong> (WordPress; Request setup or Configure WordPress).
+</ul>
+<p>A static or PHP site can only use the article list, and articles then open on Content Library.</p>
+<h2>3. Recommendation</h2>
+<p><strong>A: a third method card, "Full articles with PHP on your server", with an inline setup panel.</strong> It reuses <code>PublishingMethodCard</code> and the existing switch pattern, and keeps everything on one screen. Setup takes three numbered steps and a status box. It's the cheapest option and matches how WordPress already looks.</p>
+<ul>
+<li><strong>B</strong> (a 4-step wizard dialog) is friendlier for a first setup, but it hides the status behind "View status" and costs more.
+<li><strong>C</strong> (a "Your website setup" status page with setup in a drawer) is the best for health at a glance, but it replaces today's layout for all methods.
+</ul>
+<h2>4. Screen (A)</h2>
+<p>The card header has the title, a <strong>New</strong> chip, a status chip (see states) and the subtitle "A small folder on your web host · posts show at example.com/insights · readers stay on your site". When it's connected, a <strong>Switch to PHP</strong> button appears, using the same confirm dialog as today.</p>
+<p>The expanded panel, top to bottom:</p>
+<ol>
+<li><strong>Which posts show up</strong> note: "Only posts you've published to your website in FinancialContent. They stay on FinancialContent, so if your subscription ends they disappear from your site. Your site doesn't keep its own copies."
+<li><strong>Your advisor ID</strong> <code>abc123</code> [Copy] and <strong>Posts address</strong> <code>https://financialcontent.ca/api/posts/abc123</code> [Copy]. Copy shows "Copied" for 2 seconds.
+<li><strong>Step 1. Download the insights folder:</strong> [Download fc-insights.zip] "Version 1.0 · your advisor ID is already filled in."
+<li><strong>Step 2. Put it on your website:</strong>
+<div style="margin-left:18px">&bull; "Unzip it and upload the insights folder to your website's main folder."</div>
+<div style="margin-left:18px">&bull; "Open example.com/insights once."</div>
+<div style="margin-left:18px">&bull; Then: "Not sure how? Send this page to whoever looks after your website."</div>
+<li><strong>Step 3. Check it's working:</strong> a status box (states below) and [Test connection] with an inline result.
+<li><strong>Developer details</strong> (collapsed):
+<div style="margin-left:18px">&bull; Requirements: PHP 7.4+, cURL or allow_url_fopen, and a writable cache folder.</div>
+<div style="margin-left:18px">&bull; Both endpoints, the routes, the .htaccess and nginx rewrite, and the header/footer config.</div>
+<div style="margin-left:18px">&bull; SEO tags (title, description, canonical, Open Graph, Article JSON-LD).</div>
+<div style="margin-left:18px">&bull; The 15-minute cache and stale fallback, cache clearing when posts are revoked, and the renderer User-Agent.</div>
+</ol>
+<p>Step numbers turn green as each step is done.</p>
+<h2>5. States</h2>
+<table>
+<tr><th>State</th><th>Chip</th><th>Status box</th><th>Test connection result</th></tr>
+<tr><td>Not set up</td><td>Not set up</td><td>"Not set up yet. Download the folder to get started."</td><td>"Not yet. We haven't heard from your site…"</td></tr>
+<tr><td>Downloaded</td><td>Setup in progress</td><td>"Downloaded. Upload the folder, then open example.com/insights once."</td><td>Same as above. After a test it moves to Waiting.</td></tr>
+<tr><td>Waiting for first fetch</td><td>Waiting for your site</td><td>"Waiting for your site. We haven't heard from example.com yet. Open example.com/insights once to start it."</td><td>Same as above</td></tr>
+<tr><td>Connected</td><td>Connected</td><td>"✓ Connected · example.com/insights", then Last fetched (4 min ago), Posts showing (12), Connected since</td><td>"✓ Working. Your site loaded 12 posts just now."</td></tr>
+<tr><td>Error / stale</td><td>Needs attention</td><td>"⚠ Your site hasn't picked up new posts since Oct 20. It's showing the last saved posts…", then Last fetched (2 days ago), Posts showing (11, 1 new post missing)</td><td>"✗ Couldn't load example.com/insights. Your site answered 'Page not found'. Check the insights folder is in your site's main folder."</td></tr>
+</table>
+<p><strong>Stale rule (proposed):</strong> the last fetch is older than 24 hours, or a post was published after the last fetch plus 1 hour.</p>
+<h2>6. Copy</h2>
+<ul>
+<li><strong>Title:</strong> "Full articles with PHP on your server".
+<li><strong>Subtitle:</strong> as in section 4.
+<li><strong>Buttons:</strong> "Download fc-insights.zip", "Test connection", "Switch to PHP".
+<li><strong>Toasts:</strong>
+<div style="margin-left:18px">&bull; "Downloaded fc-insights.zip (your advisor ID is already filled in)."</div>
+<div style="margin-left:18px">&bull; "Switched. New posts publish to example.com/insights."</div>
+<li><strong>Compare methods table:</strong> add a column with:
+<div style="margin-left:18px">&bull; Setup time: "About 15 minutes (you or your web person)".</div>
+<div style="margin-left:18px">&bull; Where full articles open: "Your domain (/insights)".</div>
+<div style="margin-left:18px">&bull; Best for: "Websites that aren't WordPress".</div>
+</ul>
+<h2>7. In scope / out of scope</h2>
+<p><strong>In scope (UI):</strong></p>
+<ul>
+<li>The third method card and its panel, the status chip, Copy, Download, Test connection, the developer details and a Compare-methods column.
+<li>A new <code>websiteDelivery: 'php'</code> value (or see open question 1).
+</ul>
+<p><strong>Backend needed for the UI (small):</strong></p>
+<ul>
+<li>Record the last fetch per advisor: the time, the post count and the site host, from renderer requests (identified by User-Agent <code>FC-Insights-PHP/…</code>).
+<li>A Test connection method that fetches <code>https://&lt;site&gt;/insights</code> server-side and looks for the renderer marker (<code>&lt;meta name="generator" content="FC-Insights-PHP"&gt;</code>).
+<li>A zip download with the advisor ID filled into <code>config.php</code>.
+<li>#638 (the post visibility check, plus <code>slug</code> and <code>updatedAt</code>) must ship first.
+</ul>
+<p><strong>Out of scope:</strong></p>
+<ul>
+<li>Writing the PHP renderer itself (Software developer is building it for the first static-site advisor).
+<li>Hosting the advisor's site.
+<li>Custom paths other than /insights.
+<li>Social and email.
+<li>Per-post analytics from PHP pages.
+</ul>
+<h2>8. Mobile</h2>
+<p>Cards stack full width. Copy rows wrap, with the label above the value and the Copy button full width. The status numbers wrap. B's wizard goes full screen, and C's drawer is full width. Developer details stays collapsed.</p>
+<h2>9. Estimate</h2>
+<ul>
+<li><strong>A:</strong> about 2–2.5 days of UI plus about 1.5–2 days of backend (fetch tracking, test method, zip with ID, a new delivery value). Total about 3.5–4.5 days, not counting the renderer.
+<li><strong>B:</strong> about 3–3.5 UI days plus the same backend.
+<li><strong>C:</strong> about 3.5–4.5 UI days plus the same backend (it restructures the whole Settings tab).
+</ul>
+<h2>10. Open questions for Alex</h2>
+<ol>
+<li>Is PHP its own delivery method (switching makes it active, as mocked), or a variant of the article list? Both read the same published posts.
+<li>Should Test connection fetch the advisor's site from our server (needs their site address), or only show "last fetched" from the renderer's own calls?
+<li>Should advisors set up PHP themselves (download shown to everyone), or is it like WordPress, where we set it up and the advisor sees "Request setup"?
+<li>Is the page path fixed at /insights for v1, or can the advisor pick (for example /blog)?
+<li>Stale rule: 24 hours with no fetch, or a new post not picked up within 1 hour?
+<li>Does "Switch to PHP" stop the article list snippet, or can both run at once?
+</ol></body></html>
