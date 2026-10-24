@@ -1,0 +1,170 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>#650 Analytics: A, an Analytics section (recommended)</title><style>*{box-sizing:border-box}body{margin:0;font-family:Inter,Roboto,system-ui,-apple-system,Segoe UI,sans-serif;color:#2C3E50;background:#f5f7fa;font-size:14px;line-height:1.45}
+a{color:#1976D2}.mockbar{background:#1f2a44;color:#fff;padding:8px 14px;display:flex;flex-wrap:wrap;gap:6px;align-items:center;font-size:12.5px;position:sticky;top:0;z-index:60}.mockbar a{color:#cfe3ff}.mockbar .sp{flex:1}.mockbar button{background:#33415f;color:#fff;border:1px solid #4a5a80;border-radius:6px;padding:3px 8px;font-size:12px;cursor:pointer}.mockbar button.on{background:#2196F3;border-color:#2196F3}.mockbar .grp{display:inline-flex;gap:4px;align-items:center;margin-left:8px;flex-wrap:wrap}.mockbar .row2{flex-basis:100%;display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.app{display:flex;min-height:calc(100vh - 70px)}.side{width:88px;background:#fff;border-right:1px solid #e3e8ee;padding:12px 4px;text-align:center;font-size:11px;color:#556;flex-shrink:0}.side div{padding:10px 2px;cursor:default}.side .on{color:#1976D2;font-weight:700}.side .nw{font-size:9px;background:#f3e5f5;color:#7b1fa2;border-radius:8px;padding:0 5px;font-weight:700;display:inline-block}
+.main{flex:1;padding:20px 24px;max-width:1080px;min-width:0}h1{font-size:30px;margin:0 0 12px;color:#1976D2;font-weight:600}h2{font-size:18px;margin:0 0 4px}h3{font-size:15px;margin:0 0 6px}.sub{color:#5b6572;margin:0 0 14px}
+.tabs{display:flex;border-bottom:1px solid #e3e8ee;margin-bottom:18px}.tab{padding:10px 16px;color:#5b6572;font-weight:600;font-size:13.5px;border-bottom:2px solid transparent;cursor:pointer}.tab.on{color:#1976D2;border-color:#1976D2}
+.card{border:1px solid #e0e5eb;border-radius:10px;background:#fff;padding:14px 16px;margin-bottom:14px}
+.chip{display:inline-block;border-radius:12px;padding:1px 9px;font-size:11.5px;font-weight:600;border:1px solid #cfd8dc;color:#455a64;margin-left:6px;vertical-align:1px}.chip.g{background:#e8f5e9;color:#2e7d32;border-color:#a5d6a7}.chip.w{background:#fff3e0;color:#e65100;border-color:#ffcc80}.chip.ex{background:#fffde7;color:#6d5300;border-color:#f9a825}.chip.new{background:#f3e5f5;color:#7b1fa2;border-color:#ce93d8}
+.btn{border:1px solid #2196F3;color:#1976D2;background:#fff;border-radius:6px;padding:6px 14px;font-weight:600;font-size:13px;cursor:pointer;font-family:inherit;text-decoration:none;display:inline-block}.btn.c{background:#1976D2;color:#fff;border-color:#1976D2}.btn.sm{padding:3px 10px;font-size:12px}.btn.lg{padding:10px 20px;font-size:14px}.btn.t{border-color:transparent;background:none}.btn.danger{color:#c62828;border-color:#ef9a9a}
+.help{font-size:12.5px;color:#5b6572;margin:3px 0}
+.cp{display:flex;gap:8px;align-items:center;margin:6px 0}.cp .val{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:15px;font-weight:700;background:#f3f6f9;border:1px solid #e0e5eb;border-radius:6px;padding:7px 12px}
+.empty{text-align:center;padding:40px 20px;border:1px dashed #b0bccb;border-radius:12px;background:#fff}.empty .big{font-size:40px}.empty h2{margin:8px 0 4px}
+.res{border-radius:8px;padding:9px 12px;font-size:13px;margin:8px 0}.res.ok{background:#e8f5e9;border:1px solid #a5d6a7}.res.err{background:#ffebee;border:1px solid #ef9a9a}.res.warn{background:#fff8e1;border:1px solid #ffcc80}.res.info{background:#e3f2fd;border:1px solid #90caf9}
+.sline{font-size:13px;margin-top:6px;display:flex;gap:7px;align-items:flex-start}.dot{width:8px;height:8px;border-radius:50%;margin-top:6px;flex-shrink:0;background:#b0bec5}.dot.g{background:#2e7d32}.dot.w{background:#ef6c00}.dot.b{background:#1976D2}
+.spin{display:inline-block;width:13px;height:13px;border:2px solid #90caf9;border-top-color:#1976D2;border-radius:50%;animation:sp .8s linear infinite;vertical-align:-2px;margin-right:6px}@keyframes sp{to{transform:rotate(360deg)}}
+.toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%);background:#323232;color:#fff;border-radius:6px;padding:10px 16px;font-size:13px;display:none;z-index:90;max-width:90%}
+.ov{position:fixed;inset:0;background:rgba(30,40,60,.45);display:none;z-index:70;justify-content:center;align-items:flex-start;padding:50px 12px;overflow:auto}.ov.show{display:flex}.dlg{background:#fff;border-radius:12px;width:100%;max-width:560px;box-shadow:0 12px 40px rgba(0,0,0,.25)}.dh{padding:16px 20px 6px;font-size:18px;font-weight:600}.db{padding:4px 20px 12px}.da{padding:10px 20px 14px;display:flex;justify-content:flex-end;gap:8px;border-top:1px solid #eef1f5}
+.f{margin:10px 0}.f label{display:block;font-size:12.5px;font-weight:600;margin-bottom:3px}.f input,.f textarea,.f select{width:100%;border:1px solid #c7cfd9;border-radius:6px;padding:8px 10px;font:inherit}
+pre.snip{background:#263238;color:#eceff1;border-radius:8px;padding:10px 12px;font-size:11.5px;overflow:auto;margin:6px 0;white-space:pre;max-width:100%}
+ol.steps{margin:6px 0 8px;padding-left:20px;font-size:13px}ol.steps li{margin:3px 0}
+details{border:1px solid #e3e8ee;border-radius:8px;margin:10px 0;background:#fff}details>summary{cursor:pointer;padding:9px 12px;font-weight:600;font-size:13px;list-style:none}details>summary::-webkit-details-marker{display:none}details>summary:before{content:"\25B8  ";color:#1976D2}details[open]>summary:before{content:"\25BE  "}.dbody{padding:0 12px 10px;font-size:12.5px}.dbody ul{margin:4px 0;padding-left:18px}.dbody li{margin:3px 0}code{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12px;background:#f3f6f9;padding:1px 4px;border-radius:4px}
+.ph{background:#fffde7;border:1px dashed #f9a825;color:#6d5300;border-radius:6px;padding:6px 10px;font-size:12px;margin:8px 0}
+.sec{display:grid;grid-template-columns:34px minmax(0,1fr);gap:12px;padding:16px 0;border-top:1px solid #eef1f5}.sec:first-child{border-top:0;padding-top:4px}.num{width:28px;height:28px;border-radius:50%;background:#e3f2fd;color:#1976D2;font-weight:700;font-size:13px;display:flex;align-items:center;justify-content:center}.num.ok{background:#2e7d32;color:#fff}.locked{opacity:.45;pointer-events:none}
+.btnrow{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:8px}
+.sw{display:inline-flex;align-items:center;gap:8px;cursor:pointer;font-weight:600;font-size:13.5px}.sw .tr{width:36px;height:20px;border-radius:10px;background:#b0bec5;position:relative;transition:.15s}.sw .tr:after{content:"";position:absolute;top:2px;left:2px;width:16px;height:16px;border-radius:50%;background:#fff;transition:.15s}.sw.on .tr{background:#1976D2}.sw.on .tr:after{left:18px}
+.toprow{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:12px}.toprow .sp{flex:1}.toprow select{border:1px solid #c7cfd9;border-radius:6px;padding:6px 8px;font:inherit;background:#fff}
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:14px}.kpi{background:#fff;border:1px solid #e0e5eb;border-radius:10px;padding:12px}.kpi .l{font-size:12px;color:#5b6572}.kpi .v{font-size:24px;font-weight:700}.kpi .d{font-size:11.5px;color:#2e7d32}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+table.t{width:100%;border-collapse:collapse;font-size:13px}table.t td,table.t th{padding:7px 4px;border-bottom:1px solid #eef1f5;text-align:left}table.t th{font-size:11.5px;color:#5b6572;font-weight:600}table.t td.n,table.t th.n{text-align:right;white-space:nowrap}
+.bar{display:grid;grid-template-columns:110px 1fr 46px;gap:8px;align-items:center;font-size:13px;margin:6px 0}.bar .b{height:10px;border-radius:5px;background:#e3e8ee;overflow:hidden}.bar .b i{display:block;height:100%;background:#42a5f5}.bar .n{text-align:right}
+.exnote{font-size:11.5px;color:#6d5300}
+.wsline{border:1px solid #e0e5eb;background:#fff;border-radius:10px;padding:10px 14px;margin:6px 0 12px;font-size:13.5px}
+.mc{border:1px solid #e0e5eb;border-radius:10px;margin-bottom:10px;background:#fff;padding:14px 16px;display:flex;gap:12px;align-items:center}.mc.act{border:2px solid #1976D2;background:rgba(25,118,210,.04)}.mc .ic{width:34px;height:34px;border-radius:50%;background:#eef3f8;display:flex;align-items:center;justify-content:center;flex-shrink:0}.mc .t{font-weight:600}.mc .s{font-size:12.5px;color:#5b6572}
+.hcards{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}.hcard{background:#fff;border:1px solid #e0e5eb;border-radius:12px;padding:14px 16px;min-height:170px}.hcard.grey{color:#90a4ae}.hcard.main2{border:2px solid #90caf9}
+.crumb{font-size:13px;color:#5b6572;margin-bottom:6px}
+.sup{background:#ffebee;border:2px solid #c62828;color:#8e0000;border-radius:8px;padding:8px 14px;margin:10px 14px;font-size:13px}
+#dev.phone{width:390px;height:820px;margin:18px auto;border:12px solid #1f2a44;border-radius:38px;overflow:auto;background:#f5f7fa;box-shadow:0 10px 30px rgba(0,0,0,.25)}
+#dev.phone .app{min-height:0}#dev.phone .side{display:none}#dev.phone .main{padding:14px}#dev.phone h1{font-size:24px}#dev.phone .tabs{overflow-x:auto}#dev.phone .tab{padding:10px 12px;white-space:nowrap}
+#dev.phone .kpis{grid-template-columns:1fr 1fr}#dev.phone .g2,#dev.phone .hcards{grid-template-columns:1fr}#dev.phone .bar{grid-template-columns:90px 1fr 40px}#dev.phone .btnrow .btn{width:100%;text-align:center}#dev.phone .sec{grid-template-columns:28px minmax(0,1fr);gap:8px}#dev.phone .num{width:24px;height:24px}#dev.phone .cp{flex-wrap:wrap}#dev.phone .kpi .v{font-size:20px}#dev.phone table.t .hp{display:none}#dev.phone .toprow select{width:100%}
+#dev.phone .pnav{display:flex}.pnav{display:none;gap:4px;overflow-x:auto;background:#fff;border-bottom:1px solid #e3e8ee;padding:6px 8px;font-size:12px}.pnav span{padding:4px 8px;border-radius:12px;white-space:nowrap;color:#556}.pnav span.on{background:#e3f2fd;color:#1976D2;font-weight:700}
+</style></head><body><div class="mockbar"><a href="../">All mocks</a> · #650 Analytics · <a href="index.html">Hub</a> · <a href="today.html">Today</a> · <b>A (recommended)</b> · <a href="b-home-card.html">B</a> · <a href="site-consent.html">Advisor site + banner</a> · <a href="build-contract.html">Contract</a><span class="sp"></span><span class="grp"><button data-dev="desk" onclick="setDev('desk')">Desktop</button><button data-dev="phone" onclick="setDev('phone')">Phone</button></span><span class="grp">Screen: <button data-sb="view:" onclick="S.view='';apply()">Analytics</button><button data-sb="view:website" onclick="S.view='website';apply()">Website tab</button> · <button data-sb="tab:overview" onclick="go('overview')">Overview</button><button data-sb="tab:setup" onclick="go('setup')">Setup</button></span><span class="row2">State: <button data-sb="st:off" onclick="set('st','off')">Not turned on</button><button data-sb="st:prov" onclick="set('st','prov')">Setting up</button><button data-sb="st:err" onclick="set('st','err')">Setup error</button><button data-sb="st:ready" onclick="set('st','ready')">ID ready</button><button data-sb="st:waiting" onclick="set('st','waiting')">Waiting for data</button><button data-sb="st:data" onclick="set('st','data')">Has data</button>
+<span class="grp">Site: <button data-sb="host:self" onclick="set('host','self')">Advisor hosts it</button><button data-sb="host:ftt" onclick="set('host','ftt')">We host it (#601)</button></span>
+<span class="grp">Check result: <button data-rb="found" onclick="setResult('found')">Found</button><button data-rb="notfound" onclick="setResult('notfound')">Not found</button><button data-rb="wrongid" onclick="setResult('wrongid')">Wrong ID</button><button data-rb="unreach" onclick="setResult('unreach')">Can't reach</button></span></span></div><div id="dev" class="desk"><div class="pnav"><span>Content</span><span data-pw>Website</span><span>Social</span><span>Email</span><span data-pa class="on">Analytics</span><span>Calendar</span></div><div class="app"><div class="side"><div>Content</div><div data-sidew>Website</div><div>Social Media</div><div>Email Campaigns</div><div data-sidea>Analytics<br><span class="nw">NEW</span></div><div>Calendar</div><div>Settings</div></div><div class="main"><div data-view="website"><h1>Website</h1><div class="tabs"><div class="tab">Already Posted</div><div class="tab">Schedule</div><div class="tab on">Settings</div></div>
+<h2>Website publishing</h2><p class="sub">One method is active for new posts.</p>
+<div class="mc act"><div class="ic">&#9881;</div><div><div class="t">Full articles with PHP on your server <span class="chip g">Publishing here</span></div><div class="s">Posts show at example.com/insights</div></div></div>
+<div class="mc"><div class="ic">&lt;/&gt;</div><div><div class="t">Article list on your site <span class="chip">Not active</span></div><div class="s">Snippet on your page</div></div></div>
+<div class="mc"><div class="ic">W</div><div><div class="t">Full articles on your domain <span class="chip">Not set up</span></div><div class="s">Published to WordPress</div></div></div>
+<p class="help" style="font-size:13.5px;margin-top:14px">&#128200; Analytics: see visitors in <a href="#" onclick="S.view='';go('overview');return false">Analytics &rarr;</a></p>
+<p class="ann help" style="background:#fff8e1;border:1px dashed #ffb300;border-radius:6px;padding:4px 8px">Mock note: this one line is the only change on the Website tab. No analytics card or strip beside the methods.</p></div>
+<div data-view="">
+<h1>Analytics</h1>
+<div class="tabs"><div class="tab" data-go="overview" onclick="go('overview')">Overview</div><div class="tab" data-go="setup" onclick="go('setup')">Setup</div></div>
+<div data-tab="overview">
+<div data-st="off"><div class="empty"><div class="big">&#128200;</div><h2>See who visits your website</h2><p class="help" style="font-size:14px">Visitors, top pages and where they came from, right here.</p><button class="btn c lg" onclick="turnOn()">Turn on analytics</button><p class="help">We set it up for you. It takes about a minute.</p></div></div>
+<div data-st="prov"><div class="empty"><h2><span class="spin"></span>Setting up your analytics&hellip;</h2><p class="help">This usually takes under a minute. You can leave this page.</p></div></div>
+<div data-st="err"><div class="res err"><b>We couldn't finish setting up.</b> Nothing was changed on your site. <button class="btn sm" onclick="turnOn()">Try again</button></div></div>
+<div data-st="ready"><div class="res info"><b>Your analytics ID is ready.</b> Add it to your site to start seeing visitors. <a href="#" onclick="go('setup');return false">Finish setup &rarr;</a></div></div>
+<div data-st="waiting"><div class="empty"><div class="big">&#9203;</div><h2>Waiting for your first visitors</h2><p class="help" style="font-size:14px">Your site is set up. Numbers can take 24 to 48 hours to show.</p></div></div>
+<div data-st="data">
+<div class="toprow"><select id="range" onchange="S.range=this.value;draw()"><option value="7">Last 7 days</option><option value="28" selected>Last 28 days</option><option value="90">Last 90 days</option></select><span class="chip ex">Example data</span><span class="sp"></span><span class="help">Updated 2 hours ago</span></div>
+<div class="kpis"><div class="kpi"><div class="l">Visitors</div><div class="v" id="k1"></div><div class="d">&#9650; 12% vs before</div></div><div class="kpi"><div class="l">Page views</div><div class="v" id="k2"></div><div class="d">&#9650; 8%</div></div><div class="kpi"><div class="l">New visitors</div><div class="v" id="k3"></div><div class="d">of all visitors</div></div><div class="kpi"><div class="l">Insights reads</div><div class="v" id="k4"></div><div class="d">&#9650; 21%</div></div></div>
+<div class="card"><h3>Visitors per day <span class="chip ex">Example data</span></h3><svg id="chart" viewBox="0 0 600 150" preserveAspectRatio="none" style="width:100%;height:150px;display:block"></svg></div>
+<div class="g2"><div class="card"><h3>Top pages</h3><table class="t"><tr><th>Page</th><th class="n">Views</th></tr><tbody id="tp"></tbody></table></div>
+<div class="card"><h3>Where visitors came from</h3><div id="src"></div></div>
+<div class="card"><h3>Devices</h3><div id="devs"></div></div>
+<div class="card"><h3>Top Insights posts</h3><table class="t"><tr><th>Post</th><th class="n">Reads</th></tr><tbody id="ti"></tbody></table></div></div>
+<p class="help">&#9432; Only visitors who accept cookies are counted, so real traffic is higher. <a href="site-consent.html">See the banner</a></p>
+<p class="exnote">All numbers on this page are made-up example data.</p>
+</div>
+</div>
+<div data-tab="setup"><p class="sub">Track visits to every page of example.com.</p>
+<div class="card">
+<div class="sec"><div class="num" id="n1">1</div><div>
+<h3>Your analytics ID</h3>
+<div data-st="off"><p class="help">We create a Google Analytics ID for your site and look after it for you.</p><button class="btn c" onclick="turnOn()">Turn on analytics</button></div>
+<div data-st="prov"><p><span class="spin"></span>Setting up&hellip; usually under a minute.</p></div>
+<div data-st="err"><div class="res err"><b>Setup didn't finish.</b> <button class="btn sm" onclick="turnOn()">Try again</button></div></div>
+<div data-st="ready waiting data"><div class="cp"><span class="val">G-ABC1234XYZ</span><button class="btn sm" onclick="copyText(this,'G-ABC1234XYZ')">Copy</button><span class="chip g">Ready</span></div><p class="help">Created for example.com on Oct 24. You don't need a Google account.</p></div>
+</div></div>
+
+<div class="sec" data-lock="1"><div class="num" id="n2">2</div><div>
+<h3>Cookie banner</h3>
+<label class="sw on" id="bsw" onclick="toggleBanner()"><span class="tr"></span><span>Ask visitors first</span></label> <span class="chip g" data-banner="on">Recommended</span>
+<p class="help" data-banner="on">Nothing is tracked until a visitor clicks Accept. <a href="site-consent.html">Preview the banner</a></p>
+<div class="res warn" data-banner="off"><b>Banner off.</b> Use your own cookie tool. Nothing is tracked until it says a visitor agreed.</div>
+</div></div>
+
+<div class="sec" data-lock="1"><div class="num" id="n3">3</div><div>
+<h3>Add it to your site</h3>
+<div data-host="self">
+<pre class="snip" id="snip"></pre>
+<div class="btnrow"><button class="btn sm" onclick="copyText(this,document.getElementById('snip').textContent)">Copy code</button></div>
+<ol class="steps"><li>Copy the code.</li><li>Paste it in the &lt;head&gt; of every page (or once in your shared header).</li><li>Publish your site.</li><li>Click <b>Check my site</b>.</li></ol>
+<div class="btnrow"><button class="btn c sm" onclick="checkSite()">Check my site</button><button class="btn sm" onclick="openSend()">Send these steps to my web person</button><span class="help" id="chkspin"></span></div>
+<div class="res ok" data-chk="found"><b>&#10003; Found on your homepage.</b> The ID matches.</div>
+<div class="res err" data-chk="notfound"><b>&#10007; Not found on your homepage.</b> Check the code is in the &lt;head&gt; and the site is published.</div>
+<div class="res warn" data-chk="wrongid"><b>&#9888; Found a different ID</b> (G-ZZZ9876QRS). Replace it with the code above.</div>
+<div class="res err" data-chk="unreach"><b>&#10007; Couldn't reach example.com.</b> Check the site is live, then try again.</div>
+<div class="sline"><span class="dot g"></span><span data-chk="found"><b>Insights pages:</b> already covered by your site-wide code, so we don't add a second copy.</span><span data-chk="none notfound wrongid unreach"><b>Insights pages:</b> we add it for you on example.com/insights.</span></div>
+</div>
+<div data-host="ftt"><div class="res info"><b>We host your site, so we'll add it for you.</b> It goes on every page of example.com.</div>
+<div class="sline" data-st="ready"><span class="spin"></span><span>Adding it now. Usually within 15 minutes.</span></div>
+<div class="sline" data-st="waiting data"><span class="dot g"></span><span><b>Added to every page of example.com</b> on Oct 24. Insights pages are counted once.</span></div></div>
+</div></div>
+</div>
+<div data-st="ready waiting data"><details><summary>Developer details</summary><div class="dbody"><ul>
+<li>The code loads only from googletagmanager.com. Nothing mentions or links to us.</li>
+<li>Google consent mode starts as <code>denied</code>. With the banner on, Google Analytics loads only after Accept.</li>
+<li>Insights pages: our PHP folder adds the same tag unless your page already has <code>G-ABC1234XYZ</code>.</li>
+<li>Check my site loads your homepage and looks for your ID.</li>
+<li>Test in Google's Tag Assistant. Preview and staging hosts aren't counted.</li></ul></div></details>
+<div style="text-align:right"><button class="btn sm danger" onclick="turnOff()">Turn off analytics</button></div></div>
+</div>
+</div></div></div></div><div class="ov" id="sendov"><div class="dlg"><div class="dh">Send steps to your web person</div><div class="db">
+<div class="f"><label>Their email</label><input id="wpmail" placeholder="webperson@example.com" value="webperson@example.com"></div>
+<div class="f"><label>Message</label><textarea rows="6">Hi, please add our website analytics code to every page of example.com, in the &lt;head&gt;. The code and steps are below. Thanks, Jane Advisor</textarea></div>
+<p class="help">We include the code and the 4 steps. It's sent from Jane Advisor &lt;jane@example.com&gt;.</p></div>
+<div class="da"><button class="btn t" onclick="closeSend()">Cancel</button><button class="btn c" onclick="sendSteps()">Send</button></div></div></div><div class="toast" id="toast"></div><script>
+var S={st:'off',tab:'overview',host:'self',chk:'none',banner:'on',range:'28',result:'found',view:''};
+function qs(s){return document.querySelectorAll(s)}
+function setDev(d){document.getElementById('dev').className=d;qs('[data-dev]').forEach(function(b){b.classList.toggle('on',b.getAttribute('data-dev')===d)})}
+function toast(m){var t=document.getElementById('toast');t.textContent=m;t.style.display='block';clearTimeout(t._t);t._t=setTimeout(function(){t.style.display='none'},2800)}
+function copyText(b,txt){try{navigator.clipboard&&navigator.clipboard.writeText(txt).catch(function(){})}catch(e){}var o=b.textContent;b.textContent='Copied';setTimeout(function(){b.textContent=o},1400)}
+var SNIP_ON="<!-- Website analytics. Paste once in the <head> of every page. -->\n<script>\nwindow.dataLayer=window.dataLayer||[];\nfunction gtag(){dataLayer.push(arguments);}\ngtag('consent','default',{analytics_storage:'denied',ad_storage:'denied',\n  ad_user_data:'denied',ad_personalization:'denied'});\ngtag('js',new Date());\ngtag('config','G-ABC1234XYZ');\n<\/script>\n<script>\n/* Cookie banner: asks first. After Accept it loads\n   https://www.googletagmanager.com/gtag/js?id=G-ABC1234XYZ */\n(function(){ /* banner code, about 4 KB */ })();\n<\/script>";
+var SNIP_OFF="<!-- Website analytics. Paste once in the <head> of every page. -->\n<script>\nwindow.dataLayer=window.dataLayer||[];\nfunction gtag(){dataLayer.push(arguments);}\ngtag('consent','default',{analytics_storage:'denied',ad_storage:'denied',\n  ad_user_data:'denied',ad_personalization:'denied'});\ngtag('js',new Date());\ngtag('config','G-ABC1234XYZ');\n/* Your cookie tool must call gtag('consent','update',...) */\n<\/script>\n<script async src=\"https://www.googletagmanager.com/gtag/js?id=G-ABC1234XYZ\"><\/script>";
+function apply(){
+ ['st','tab','host','chk','banner','view'].forEach(function(k){qs('[data-'+k+']').forEach(function(e){e.style.display=e.getAttribute('data-'+k).split(' ').indexOf(String(S[k]))>-1?'':'none'})});
+ qs('[data-sb]').forEach(function(b){var p=b.getAttribute('data-sb').split(':');b.classList.toggle('on',String(S[p[0]])===p[1])});
+ var has=['ready','waiting','data'].indexOf(S.st)>-1;
+ qs('[data-lock]').forEach(function(e){e.classList.toggle('locked',!has)});
+ var n1=document.getElementById('n1');if(n1){n1.classList.toggle('ok',has);n1.textContent=has?'\u2713':'1'}
+ var n3=document.getElementById('n3');if(n3){var d3=S.st==='waiting'||S.st==='data';n3.classList.toggle('ok',d3);n3.textContent=d3?'\u2713':'3'}
+ var n2=document.getElementById('n2');if(n2){n2.classList.toggle('ok',has);n2.textContent=has?'\u2713':'2'}
+ var sw=document.getElementById('bsw');if(sw)sw.classList.toggle('on',S.banner==='on');
+ var sn=document.getElementById('snip');if(sn)sn.textContent=S.banner==='on'?SNIP_ON:SNIP_OFF;
+ qs('.tab[data-go]').forEach(function(t){t.classList.toggle('on',t.getAttribute('data-go')===S.tab)});
+ if(S.st==='data')draw();
+ if(window.onApply)onApply();
+}
+function set(k,v){S[k]=v;if(k==='st'&&v!=='waiting'&&v!=='data')S.chk='none';if(k==='st'&&(v==='waiting'||v==='data')&&S.host==='self')S.chk='found';apply()}
+function setResult(v){S.result=v;qs('[data-rb]').forEach(function(b){b.classList.toggle('on',b.getAttribute('data-rb')===v)})}
+function go(t){S.tab=t;apply();var d=document.getElementById('dev');d.scrollTop=0;window.scrollTo(0,0)}
+function turnOn(){set('st','prov');setTimeout(function(){set('st','ready');go('setup');toast('Your analytics ID is ready: G-ABC1234XYZ')},1600)}
+function turnOff(){if(confirm('Turn off analytics? Tracking stops and the numbers here are hidden. Remove the code from your site too.')){set('st','off');go('overview');toast('Analytics turned off.')}}
+function toggleBanner(){S.banner=S.banner==='on'?'off':'on';apply()}
+function checkSite(){var sp=document.getElementById('chkspin');sp.innerHTML='<span class="spin"></span>Checking example.com&hellip;';S.chk='none';apply();setTimeout(function(){sp.innerHTML='';S.chk=S.result;if(S.result==='found'&&S.st==='ready')S.st='waiting';apply()},1200)}
+function openSend(){document.getElementById('sendov').classList.add('show')}
+function closeSend(){document.getElementById('sendov').classList.remove('show')}
+function sendSteps(){closeSend();toast('Sent to '+document.getElementById('wpmail').value)}
+var SER=[38,42,35,30,44,51,48,40,37,45,52,58,49,43,39,47,55,61,57,50,44,53,60,66,59,52,48,57];
+function draw(){var r=+S.range,m=r/28;
+ function f(n){return Math.round(n*m).toLocaleString('en-CA')}
+ var k=document.getElementById('k1');if(!k)return;
+ k.textContent=f(1240);document.getElementById('k2').textContent=f(3860);document.getElementById('k3').textContent='64%';document.getElementById('k4').textContent=f(410);
+ var pts=[],n=r===7?7:(r===28?28:45),max=70;for(var i=0;i<n;i++){var v=SER[i%28]*(r===90?1.0:1)+(r===90?(i%5)*2:0);pts.push((i*(600/(n-1))).toFixed(1)+','+(145-v/max*130).toFixed(1))}
+ var svg=document.getElementById('chart');svg.innerHTML='<polyline fill="none" stroke="#1976D2" stroke-width="2.5" vector-effect="non-scaling-stroke" points="'+pts.join(' ')+'"/><line x1="0" y1="145" x2="600" y2="145" stroke="#e3e8ee" vector-effect="non-scaling-stroke"/>';
+ var tp=[['Home','/',1310],['About us','/about',520],['Insights','/insights',470],['TFSA or RRSP: where to start','/insights/tfsa-or-rrsp',310],['Contact','/contact',260]];
+ document.getElementById('tp').innerHTML=tp.map(function(p){return '<tr><td>'+p[0]+' <span class="help hp">'+p[1]+'</span></td><td class="n">'+f(p[2])+'</td></tr>'}).join('');
+ var src=[['Google search',46],['Typed or saved',24],['Social media',14],['Email',11],['Other sites',5]];
+ document.getElementById('src').innerHTML=src.map(function(s){return '<div class="bar"><span>'+s[0]+'</span><span class="b"><i style="width:'+s[1]*2+'%"></i></span><span class="n">'+s[1]+'%</span></div>'}).join('');
+ var dv=[['Phone',58],['Computer',36],['Tablet',6]];
+ document.getElementById('devs').innerHTML=dv.map(function(s){return '<div class="bar"><span>'+s[0]+'</span><span class="b"><i style="width:'+s[1]+'%"></i></span><span class="n">'+s[1]+'%</span></div>'}).join('');
+ var ti=[['TFSA or RRSP: where to start',310],['Planning your retirement income',140],['What a market dip means for you',95],['Five questions before you buy insurance',60]];
+ document.getElementById('ti').innerHTML=ti.map(function(p){return '<tr><td>'+p[0]+'</td><td class="n">'+f(p[1])+'</td></tr>'}).join('');
+}
+function init(){var q=location.search;setDev(/[?&]phone/.test(q)?'phone':'desk');
+ var m;['st','tab','host','view','banner'].forEach(function(k){m=q.match(new RegExp('[?&]'+k+'=([a-z]+)'));if(m)S[k]=m[1]});
+ if((S.st==='waiting'||S.st==='data')&&S.host==='self')S.chk='found';setResult('found');apply()}
+
+window.onApply=function(){var w=S.view==='website';qs('[data-sidew]').forEach(function(e){e.classList.toggle('on',w)});qs('[data-sidea]').forEach(function(e){e.classList.toggle('on',!w)});qs('[data-pw]').forEach(function(e){e.classList.toggle('on',w)});qs('[data-pa]').forEach(function(e){e.classList.toggle('on',!w)})};
+init();</script></body></html>

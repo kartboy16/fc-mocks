@@ -1,112 +1,215 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>#650 GA4 on Settings &gt; Website: build contract</title><style>body{font-family:Inter,system-ui,sans-serif;max-width:960px;margin:24px auto;padding:0 16px;line-height:1.55;color:#2C3E50}table{border-collapse:collapse;width:100%;font-size:13.5px;margin:10px 0}th,td{border:1px solid #dde3ea;padding:6px 8px;text-align:left;vertical-align:top}th{background:#f3f6f9}code{background:#f3f6f9;padding:1px 4px;border-radius:4px;font-size:.9em}a{color:#1976D2}h2{margin-top:26px;border-bottom:1px solid #e3e8ee;padding-bottom:4px}li{margin:3px 0}</style></head><body><p><a href="index.html">&larr; Hub</a> &middot; <a href="../">All mocks</a> &middot; <a href="build-contract.md">.md</a></p>
-<h1>#650 Google Analytics (GA4) on Settings &gt; Website: build contract</h1>
-<p><strong>Status:</strong> Designer-first mock with generic sample data (example.com, <code>G-ABC1234XYZ</code>, advisor ID <code>abc123</code>). <strong>Not agent-ready. Soft Dev hold until Alex picks.</strong></p>
-<p><strong>Scope:</strong> Content Library → Website → <strong>Settings</strong> (<code>imports/ui/WebsiteSettings.jsx</code>, <code>components/website-publishing/PhpServerSettingsPanel.jsx</code>) and the PHP renderer (<code>private/php-renderer/insights/lib.php</code>, <code>fci_head_common()</code>), as on staging at <code>e50f1db</code>. #644 "PHP on your server" <strong>has landed</strong> on staging: it's the third method card (Direction A), and the renderer is at version 1.2.</p>
-<p style="background:#e8f5e9;border:2px solid #2e7d32;border-radius:10px;padding:10px 14px;color:#1b5e20"><strong>Revised Oct 23, 2026 (Alex's feedback):</strong> he likes A, but it read like a 4th publishing method. A is now a <strong>setting</strong>, not a card, in two variants on the same page: <a href="a-ga-card.html?v=1">A1, a section and settings row</a> and <a href="a-ga-card.html?v=2">A2, a strip attached under the PHP card (recommended)</a>. Coverage stays Insights pages only.</p>
-<p>Mocks: <a href="index.html">hub</a> · <a href="today.html">Today</a> · <a href="a-ga-card.html">A, a setting (A1 / A2, recommended A2)</a> · <a href="b-in-php-card.html">B, inside the PHP card</a> · <a href="c-tracking-card.html">C, Tracking &amp; analytics card</a>. Every page has a <strong>Desktop / Phone</strong> toggle (a 390px frame). Add <code>?phone</code> to the URL to open it in phone view.</p>
-<h2>1. Where the tag goes (matching the issue)</h2>
-<p>The issue asks for GA4 <code>gtag.js</code> in the <code>&lt;head&gt;</code> of every page, added once from a shared include or template partial, and skipped on preview/staging hosts and <code>noindex</code> pages.</p>
-<p>For static sites, the pages FC controls are the <strong>Insights pages</strong>: the PHP renderer builds one shared <code>&lt;head&gt;</code> for <code>/insights</code> and every <code>/insights/&lt;slug&gt;</code> in <code>fci_head_common()</code>. The mock puts the snippet there once. It's skipped when the request host isn't the saved website, and on pages that carry <code>noindex</code> (the error and not-found pages already do).</p>
-<p>The advisor's own header and footer files and the rest of their static pages <strong>aren't touched</strong> (see open question 1).</p>
-<h2>2. Recommendation</h2>
-<p><strong>A2: a settings strip attached directly under the PHP card.</strong> It reads as part of PHP's setup, not as a choice, so it can't be mistaken for a 4th method. It follows the PHP card wherever it sits: first when PHP is active, last when it isn't (then it's dimmed and says "Available when you publish with PHP on your server"). It adds no new page section.</p>
-<ul>
-<li><strong>A1</strong> (a section break, "Settings for your Insights pages", and a plain row under all three cards) is clear too, and it scales if more Insights settings come later. But it sits further from the PHP card it depends on, so it relies on a "Uses PHP on your server" tag to make the link.
-<li><strong>B</strong> (inside the PHP setup panel) and <strong>C</strong> (a "Tracking &amp; analytics" card) are unchanged. C has the same "looks like a method" problem.
-</ul>
-<h2>3. Screen (A, revised)</h2>
-<p>Both variants use <strong>no card border, no radio and no selectable or hover look</strong>. Each is a plain settings row: label on the left, then the field, Save and a status line. A purple accent (the same colour as the PHP card's "New" chip) ties it to PHP.</p>
-<p><strong>A1: section and row</strong></p>
-<ul>
-<li>A 2px section break below the three method cards.
-<li>Heading <strong>"Settings for your Insights pages"</strong>, with the subhead "These apply to the /insights pages that PHP on your server shows on your site."
-<li>One row: <strong>Google Analytics</strong>, with the one-line help and a <strong>"⚙ Uses PHP on your server"</strong> tag on the left, and the Measurement ID field, Save and the status on the right. There's a left purple accent line.
-</ul>
-<p><strong>A2: strip under the PHP card (recommended)</strong></p>
-<ul>
-<li>A tinted strip tucked under the PHP card, indented, with a purple connector line from the card.
-<li>Eyebrow: <strong>"Insights page settings · for PHP on your server"</strong>.
-<li>The same Google Analytics row.
-</ul>
-<p><strong>Both variants:</strong></p>
-<ul>
-<li>Field: <strong>Measurement ID</strong> (placeholder <code>G-XXXXXXXXXX</code>). It trims and uppercases on blur. <strong>[Save]</strong> is enabled only when the value has changed and is valid.
-<li>The status line covers not set up, saved/waiting, tracking (live), folder update needed and not available.
-<li>Collapsed "Where do I find my ID?" and "Developer details (analytics)".
-<li>The privacy placeholder, <strong>not written</strong>.
-<li>Remove, with a confirm.
-</ul>
-<p><strong>Method not PHP:</strong> the row or strip stays visible but dimmed, with the field disabled and the line "Available when you publish with PHP on your server."</p>
-<p><strong>Phone:</strong> the label stacks above the field, and Save is full width. A2's indent shrinks to 12px.</p>
-<h2>4. States</h2>
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>#650 Analytics build contract</title><style>body{font-family:Inter,system-ui,sans-serif;max-width:960px;margin:24px auto;padding:0 16px;line-height:1.55;color:#2C3E50}a{color:#1976D2}table{border-collapse:collapse;width:100%;margin:8px 0;font-size:14px}td,th{border:1px solid #e0e5eb;padding:6px 8px;text-align:left;vertical-align:top}th{background:#f3f6f9}blockquote{background:#e8f5e9;border:2px solid #2e7d32;border-radius:10px;margin:10px 0;padding:4px 14px}code{background:#f3f6f9;padding:1px 4px;border-radius:4px}@media(max-width:600px){table{display:block;overflow-x:auto}}</style></head><body><p><a href="../">All mocks</a> · <a href="index.html">Hub</a> · <a href="build-contract.md">Markdown</a></p><h1>#650 Analytics: build contract (FC-owned Google Analytics, whole site)</h1>
+<blockquote>
+<p><strong>Direction locked by Alex, Oct 24, 2026:</strong> FC creates and looks after a Google Analytics 4 property for each advisor, tracks the <strong>whole</strong> advisor site, and shows the numbers inside FC in a new <strong>Analytics</strong> section. It is not a Website publishing method.</p>
+<p><strong>Not agent-ready. Soft Dev hold until Alex picks A or B.</strong> Mocks only, with generic names (Jane Advisor, Your Firm Name, example.com) and made-up example numbers.</p>
+</blockquote>
+<p>Mocks: <a href="index.html">Hub</a> · <a href="today.html">Today</a> · <a href="a-analytics-section.html">A, Analytics section (recommended)</a> · <a href="b-home-card.html">B, Home card + full page</a> · <a href="site-consent.html">Advisor site with cookie banner</a>. Every page has a Desktop / Phone toggle (<code>?phone</code>).</p>
+<h2>1. Recommendation</h2>
+<p><strong>A: an Analytics item in the sidebar, with Overview and Setup tabs.</strong> It's easy to find, it has room to grow (email and social numbers later), and it keeps setup away from the Website method cards. B (a Home card that opens a full page) is a good add-on later; the card can reuse A's data.</p>
+<h2>2. Screens</h2>
 <table>
-<tr><th>State</th><th>Field</th><th>Status line / message</th></tr>
-<tr><td>Empty</td><td>blank, Save disabled</td><td>"Not set up. Visits aren't tracked yet."</td></tr>
-<tr><td>Invalid ID</td><td>red border, Save disabled</td><td>Not G-: "That doesn't look like a GA4 ID. It starts with G-, like G-ABC1234XYZ." UA-: "That's an old Universal Analytics ID. Paste your GA4 ID instead. It starts with G-." GTM-: "That's a Tag Manager ID. Paste your GA4 Measurement ID. It starts with G-."</td></tr>
-<tr><td>Saved (waiting)</td><td><code>G-ABC1234XYZ</code></td><td>Toast: "Saved. Tracking starts on your Insights pages within 15 minutes." Line: "Saved. Waiting for your site to pick it up (up to 15 minutes). Remove"</td></tr>
-<tr><td>Live</td><td><code>G-ABC1234XYZ</code></td><td>"Tracking on example.com/insights. Your site picked it up 3 min ago. Remove" (shown after the first renderer fetch on version 1.3+ following the save)</td></tr>
-<tr><td>Folder update needed</td><td><code>G-ABC1234XYZ</code></td><td>"Update your insights folder to turn this on. Your site runs version 1.2; analytics needs 1.3. Download the update"</td></tr>
-<tr><td>Method not static/PHP</td><td>disabled, blank</td><td>A1/A2: dimmed, "Available when you publish with PHP on your server." B: hidden (it lives in the PHP card). C: greyed out.</td></tr>
-<tr><td>Removed</td><td>blank</td><td>Confirm: "Remove your Google Analytics ID? Tracking stops on your Insights pages within 15 minutes." Toast: "Removed. Tracking stops within 15 minutes."</td></tr>
+<thead>
+<tr>
+<th>Screen</th>
+<th>A (recommended)</th>
+<th>B</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Entry point</td>
+<td>Sidebar <strong>Analytics</strong> (NEW badge), between Email Campaigns and Calendar. Phone: same item in the top nav.</td>
+<td><strong>Website visitors</strong> card on Home. "See all →" opens a full page (Home › Website visitors). No sidebar item.</td>
+</tr>
+<tr>
+<td>Overview</td>
+<td>Date range, 4 number tiles, visitors-per-day chart, top pages, where visitors came from, devices, top Insights posts</td>
+<td>Same content on the full page</td>
+</tr>
+<tr>
+<td>Setup</td>
+<td><strong>Setup</strong> tab: 1 Your analytics ID · 2 Cookie banner · 3 Add it to your site</td>
+<td>Collapsed <strong>Setup</strong> section under the numbers</td>
+</tr>
+<tr>
+<td>Website tab</td>
+<td>One line only: "Analytics: see visitors in Analytics →". No card, strip or field beside Article list / Embed / PHP.</td>
+<td>Same line, linking to the full page</td>
+</tr>
+<tr>
+<td>Advisor site</td>
+<td><a href="site-consent.html">site-consent.html</a>: banner, settings, accepted, declined</td>
+<td>Same</td>
+</tr>
+</tbody>
 </table>
-<p><strong>What it applies to:</strong> Insights pages on the saved website only (<code>/insights</code> and <code>/insights/&lt;slug&gt;</code>). It doesn't apply to preview or staging hosts, <code>noindex</code> pages or the rest of the site.</p>
-<h2>5. Copy</h2>
+<h2>3. States</h2>
+<table>
+<thead>
+<tr>
+<th>State</th>
+<th>What the advisor sees</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Off</strong> (default)</td>
+<td>Empty state: "See who visits your website" + <strong>Turn on analytics</strong>. "We set it up for you. It takes about a minute."</td>
+</tr>
+<tr>
+<td><strong>Provisioning</strong></td>
+<td>"Setting up your analytics… usually under a minute." Safe to leave the page.</td>
+</tr>
+<tr>
+<td><strong>Error</strong></td>
+<td>"We couldn't finish setting up. Nothing was changed on your site." + <strong>Try again</strong>.</td>
+</tr>
+<tr>
+<td><strong>ID ready</strong></td>
+<td><code>G-ABC1234XYZ</code> with Copy, "Created for example.com on Oct 24. You don't need a Google account." Overview: "Your analytics ID is ready. Finish setup →".</td>
+</tr>
+<tr>
+<td><strong>Snippet: found</strong></td>
+<td>"✓ Found on your homepage. The ID matches." Moves to Waiting.</td>
+</tr>
+<tr>
+<td><strong>Snippet: not found</strong></td>
+<td>"✗ Not found on your homepage. Check the code is in the &lt;head&gt; and the site is published."</td>
+</tr>
+<tr>
+<td><strong>Snippet: wrong ID</strong></td>
+<td>"⚠ Found a different ID (G-ZZZ9876QRS). Replace it with the code above."</td>
+</tr>
+<tr>
+<td><strong>Snippet: couldn't reach</strong></td>
+<td>"✗ Couldn't reach example.com. Check the site is live, then try again."</td>
+</tr>
+<tr>
+<td><strong>Auto-inserted</strong></td>
+<td>Insights pages (PHP): "we add it for you on example.com/insights". FTT-hosted (#601): "We host your site, so we'll add it for you" → "Adding it now" → "Added to every page of example.com".</td>
+</tr>
+<tr>
+<td><strong>No double count</strong></td>
+<td>When the site-wide tag is found: "Insights pages: already covered by your site-wide code, so we don't add a second copy."</td>
+</tr>
+<tr>
+<td><strong>Waiting for data</strong></td>
+<td>"Waiting for your first visitors. Numbers can take 24 to 48 hours to show."</td>
+</tr>
+<tr>
+<td><strong>Has data</strong></td>
+<td>Numbers, chart and lists, with "Updated 2 hours ago".</td>
+</tr>
+<tr>
+<td><strong>Consent-limited</strong></td>
+<td>Under the numbers: "Only visitors who accept cookies are counted, so real traffic is higher."</td>
+</tr>
+<tr>
+<td><strong>Consent declined</strong> (site)</td>
+<td>Banner hides, Google Analytics never loads, nothing is sent. Footer "Cookie settings" reopens the banner.</td>
+</tr>
+<tr>
+<td><strong>Banner off</strong> (setup)</td>
+<td>"Banner off. Use your own cookie tool. Nothing is tracked until it says a visitor agreed." The snippet changes to the no-banner version.</td>
+</tr>
+<tr>
+<td><strong>Turned off</strong></td>
+<td>Confirm, then back to Off. The ID is kept (not deleted) so turning it back on reuses it (see open question).</td>
+</tr>
+</tbody>
+</table>
+<h2>4. Copy (plain, short)</h2>
 <ul>
-<li>One-line intro: "Paste your GA4 Measurement ID to track visits to your Insights pages."
-<li>Everything else is in section 4.
-<li><strong>Placeholder (not written):</strong> privacy or cookie-consent wording.
+<li>Turn on: "See who visits your website" / "Turn on analytics" / "We set it up for you. It takes about a minute."</li>
+<li>Paste steps: 1. Copy the code. 2. Paste it in the &lt;head&gt; of every page (or once in your shared header). 3. Publish your site. 4. Click <strong>Check my site</strong>.</li>
+<li>"Send these steps to my web person": email field + editable message, sent from Jane Advisor &lt;jane@example.com&gt;, includes the code and 4 steps.</li>
+<li>Cookie banner: "Ask visitors first" (on, Recommended). "Nothing is tracked until a visitor clicks Accept. Preview the banner."</li>
+<li><strong>Banner text is a placeholder and needs compliance review.</strong> The mocks don't write legal or privacy wording.</li>
 </ul>
-<h2>6. In scope / out of scope</h2>
-<p><strong>In scope:</strong></p>
+<h2>5. In scope / out of scope</h2>
+<p><strong>In:</strong> FC provisions one GA4 property + web data stream per advisor; Analytics section (A) with Overview and Setup; site-wide snippet with consent mode; Check my site; send steps by email; auto-insert on PHP Insights pages and FTT-hosted sites; cookie banner on/off with a preview; reports pulled into FC; one-line link on the Website tab.</p>
+<p><strong>Out (for now):</strong> advisors pasting their own GA ID (could come back as "Use my own ID" later); Tag Manager; ads, conversions or goals; real-time view; per-visitor data; email and social analytics in the same section; WordPress sites (they keep the current analytics process); writing the banner's legal text.</p>
+<h2>6. Backend notes</h2>
 <ul>
-<li><strong>UI:</strong> the card, validation, Save and Remove, the status line, help and developer details, and greyed-out or hidden states for other methods.
-<li><strong>Storage:</strong> <code>advisorConfig.analytics.ga4MeasurementId</code>, with a server method that validates <code>^G-[A-Z0-9]{4,12}$</code>.
-<li><strong>Delivery:</strong> the ID goes out to the renderer with the posts response. A new field, so no re-download after version 1.3.
-<li><strong>Renderer version 1.3:</strong>
-<div style="margin-left:18px">&bull; Injects the standard <code>gtag.js</code> snippet once in <code>fci_head_common()</code>.</div>
-<div style="margin-left:18px">&bull; Skips other hosts and <code>noindex</code> pages.</div>
-<div style="margin-left:18px">&bull; Reports in its fetch headers that it has the ID, so we can show "Live".</div>
-<li><strong>White-label:</strong> the snippet only references googletagmanager.com.
-<li><strong>Docs:</strong> a verify step (GA4 Realtime / DebugView).
+<li><strong>Property creation:</strong> Google Analytics Admin API (<code>properties.create</code>, then <code>dataStreams.create</code> for the web stream, scope <code>analytics.edit</code>) under an FC-owned Google Analytics account, using a service account. Store property ID, stream ID and Measurement ID on the advisor record. Name it with the advisor's site (e.g. "example.com"), time zone and CAD from the account. Make it idempotent so Try again doesn't make two properties.</li>
+<li><strong>Quotas:</strong> a GA account holds up to <strong>2,000 properties</strong> (Google can raise it), and an organization up to 100 accounts. Plan to shard advisors across several FC accounts (e.g. 1,000 each) and track counts. Admin API write calls are rate-limited, so queue provisioning.</li>
+<li><strong>Reports:</strong> Google Analytics Data API <code>runReport</code> per property, for date range, users, new users, page views, top pages, session source, device. Data API quotas are per property (core tokens per day and per hour, about 10 concurrent requests), so <strong>cache</strong> results (e.g. refresh every few hours, "Updated 2 hours ago") rather than calling on every page view. Data has a 24 to 48 hour lag at the start.</li>
+<li><strong>Data retention:</strong> set the property's data retention (2 or 14 months for detailed data; standard reports aren't affected). Decide the setting.</li>
+<li><strong>Ownership and leaving:</strong> FC owns the property. If an advisor cancels: options are (a) stop the tag and delete the property after N days, (b) grant the advisor admin access and let them move it to their own Google account, or (c) keep it read-only. Needs Alex's call; see questions.</li>
+<li><strong>Advisor access in Google Analytics:</strong> optional; the Admin API can add a user with Viewer role (<code>accessBindings</code>). Off by default in the mocks.</li>
+<li><strong>Check my site:</strong> server-side fetch of the homepage (and /insights for PHP sites) with a short timeout; look for <code>G-</code> IDs in <code>gtag/js?id=</code> or <code>gtag('config', …)</code>. Results: found, not found, different ID, couldn't reach.</li>
+<li><strong>No double count:</strong> the PHP renderer adds the tag only if the page header/footer files it includes don't already contain the advisor's ID; on FTT-hosted sites one shared tag covers every page. Last "Check my site" result is stored and shown.</li>
+<li><strong>Auto-insert:</strong> PHP Insights pages (#644 renderer, needs a folder version bump) and FTT-hosted static sites (#601: inserted in the shared template on deploy).</li>
+<li><strong>Skip preview:</strong> don't count preview or staging hosts, or <code>noindex</code> pages (from the issue). Optionally restrict the data stream to the saved domain.</li>
 </ul>
-<p><strong>Out of scope (optional in the issue, or not decided):</strong></p>
+<h2>7. Quebec Law 25 and consent</h2>
 <ul>
-<li>A Google Tag Manager container ID. C shows it as "Later".
-<li>Sharing GA property access with the advisor.
-<li>Pages outside <code>/insights</code>.
-<li>WordPress and article-list analytics.
-<li>Consent banners.
-<li>Any privacy copy.
-<li>GA reporting inside FC.
+<li>Tracking is <strong>off by default</strong> until the visitor agrees. The snippet sets Google consent mode default <code>denied</code> for analytics and ads storage.</li>
+<li>With the banner on, Google's script (<code>googletagmanager.com/gtag/js</code>) loads <strong>only after Accept</strong> (basic consent mode, nothing sent before). Decline means nothing loads. The choice is stored first-party on the advisor's domain, and a footer "Cookie settings" link reopens it.</li>
+<li>Show the banner to every visitor (we can't reliably detect Quebec).</li>
+<li>Banner text: <strong>placeholder, needs compliance review.</strong> It should link to the firm's privacy policy on its own site.</li>
+<li>Banner off: the advisor must use their own consent tool that calls <code>gtag('consent','update',…)</code>.</li>
+<li><strong>White-label:</strong> nothing a visitor can see (banner, snippet, site) mentions or links to financialcontent.ca. The only outside file is Google's.</li>
+<li><strong>Where the banner script lives:</strong> in the mocks it's inline in the snippet (no outside file). That makes the snippet longer and means wording changes need a re-paste. The alternative is a small script on a neutral, non-FC domain. That's an open question. On PHP Insights pages and FTT-hosted sites we serve it ourselves from the advisor's own domain.</li>
 </ul>
-<h2>7. Mobile</h2>
-<p>Each direction has a Phone view:</p>
-<ul>
-<li>Card header buttons wrap under the title.
-<li>The field and Save stack, with Save full width.
-<li>The status line wraps.
-<li>The collapsed sections stay collapsed.
-</ul>
-<h2>8. Estimate</h2>
-<ul>
-<li><strong>A1 or A2:</strong> about 2.5–3 days in total (no change from the first A; it's a lighter row instead of a card):
-<div style="margin-left:18px">&bull; 0.75–1 day of UI.</div>
-<div style="margin-left:18px">&bull; 0.25–0.5 day for storage and validation.</div>
-<div style="margin-left:18px">&bull; 0.75–1 day for renderer 1.3 and the API field ("live" detection, skip rules).</div>
-<div style="margin-left:18px">&bull; 0.5 day of tests and staging QA (including GA Realtime on a test property).</div>
-<li><strong>B:</strong> about the same, 2.5–3 days.
-<li><strong>C:</strong> about 3–3.5 days (the extra card structure and the "Later" rows).
-</ul>
-<h2>9. Open questions for Alex</h2>
+<h2>8. #601 (FTT-hosted sites)</h2>
+<p>When FTT hosts the site (the AI site builder idea in #601, Cloudways + Git), we add the tag and banner to the shared template on every deploy, so the advisor skips step 3: "We host your site, so we'll add it for you." Until #601 exists, this state is for sites FTT already hosts by hand.</p>
+<h2>9. Estimates (one developer)</h2>
+<table>
+<thead>
+<tr>
+<th>Piece</th>
+<th>Days</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Admin API provisioning (service account, property + stream, retries, sharding, storage)</td>
+<td>2–3</td>
+</tr>
+<tr>
+<td>Data API reports + caching + date ranges</td>
+<td>2–2.5</td>
+</tr>
+<tr>
+<td>Analytics Overview UI (tiles, chart, lists, empty/waiting/error states, phone)</td>
+<td>2–2.5</td>
+</tr>
+<tr>
+<td>Setup tab (ID, snippet, steps, Check my site, send to web person)</td>
+<td>1.5–2</td>
+</tr>
+<tr>
+<td>Cookie banner script + consent mode + settings + preview</td>
+<td>2–3</td>
+</tr>
+<tr>
+<td>Auto-insert: PHP renderer update + no double count; FTT-hosted template</td>
+<td>1–1.5</td>
+</tr>
+<tr>
+<td>Website tab line, nav item, QA</td>
+<td>0.5–1</td>
+</tr>
+<tr>
+<td><strong>A total</strong></td>
+<td><strong>11–15.5</strong></td>
+</tr>
+<tr>
+<td><strong>B</strong> (Home card + full page instead of a section)</td>
+<td>about the same, <strong>11.5–16</strong></td>
+</tr>
+</tbody>
+</table>
+<p>Banner legal text and compliance review aren't included.</p>
+<h2>10. Open questions for Alex</h2>
 <ol>
-<li><strong>"Every page" vs Insights pages.</strong> The issue says every page of the static site, but FC only builds the <code>&lt;head&gt;</code> for <code>/insights</code> pages. For the rest of the site, should we:
-<div style="margin-left:18px">&bull; (a) keep it to Insights pages (as mocked),</div>
-<div style="margin-left:18px">&bull; (b) also show a copy-paste snippet for their other pages, or</div>
-<div style="margin-left:18px">&bull; (c) inject it on publish for sites FTT hosts (the #601 pilot)?</div>
-<li><strong>The issue's "on save or publish".</strong> With PHP, a change applies within the 15-minute cache with no publish step. Is that OK?
-<li><strong>Tag Manager.</strong> Should a GTM container ID be in v1 (as an alternative field), or later?
-<li><strong>Privacy/consent.</strong> Do we need any consent wording or a banner? The mock leaves a placeholder only.
-<li><strong>GA access.</strong> Should advisors get read access to the GA property, or do we share reports the way we do for WordPress? Who owns the property?
-<li><strong>Other methods.</strong> In A1 and A2 the setting stays visible but dimmed when PHP isn't the method. Is that OK, or should it be hidden?
-<li><strong>A1 or A2?</strong> I recommend A2.
+<li><strong>Cancel:</strong> what happens to the property when an advisor leaves: delete after N days, hand it over, or keep it?</li>
+<li><strong>GA access:</strong> do advisors get Viewer access in Google Analytics, or only see numbers in FC?</li>
+<li><strong>Banner:</strong> build our own small banner (as mocked) or use a provider? And should the banner script be inline in the snippet or on a neutral non-FC domain?</li>
+<li><strong>Data retention:</strong> 2 or 14 months?</li>
+<li><strong>Quotas:</strong> OK to spread advisors across several FC Google accounts (2,000 properties each), and to cache reports a few hours?</li>
+<li><strong>Who writes the banner text?</strong> It's a placeholder until compliance reviews it.</li>
+<li><strong>Existing GA users:</strong> should we allow "Use my own ID" later for advisors who already have Google Analytics?</li>
+<li><strong>A or B?</strong></li>
 </ol></body></html>
