@@ -1,0 +1,175 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>#654 build contract</title><style>body{font-family:Inter,system-ui,sans-serif;max-width:960px;margin:24px auto;padding:0 16px;line-height:1.55;color:#2C3E50}a{color:#1976D2}table{border-collapse:collapse;width:100%;margin:8px 0;font-size:14px}td,th{border:1px solid #e0e5eb;padding:6px 8px;text-align:left;vertical-align:top}th{background:#f3f6f9}blockquote{background:#e8f5e9;border:2px solid #2e7d32;border-radius:10px;margin:10px 0;padding:4px 14px}code{background:#f3f6f9;padding:1px 4px;border-radius:4px}@media(max-width:600px){table{display:block;overflow-x:auto}}</style></head><body><p><a href="../">All mocks</a> · <a href="index.html">Hub</a> · <a href="build-contract.md">Markdown</a></p><h1>#654 Multiple email header &amp; footer templates: build contract</h1>
+<blockquote>
+<p><strong>Not agent-ready. Soft Dev hold until Alex picks.</strong> Mocks only. Generic names only (Your Firm Name, Partner Firm, Jane Advisor, example.com). The partner disclosure line is a <strong>placeholder that needs compliance review</strong>.</p>
+</blockquote>
+<p>Mocks: <a href="index.html">Hub</a> · <a href="today.html">Today</a> · <a href="a-template-list.html">A, template list + picker (recommended)</a> · <a href="b-compose-gallery.html">B, gallery in compose</a> · <a href="c-mix-match.html">C, separate headers and footers</a>. Every page has a Desktop / Phone toggle (<code>?phone</code>).</p>
+<h2>1. Today (staging, read from code)</h2>
+<ul>
+<li>One header and one footer per advisor, stored on <code>advisor_configs</code> (<code>emailHeaderMode</code> / <code>emailFooterMode</code>, <code>emailHeaderHtml</code>, <code>emailHeaderAdvancedHtml</code>, <code>emailHeaderSimpleImageUrl</code>, the <code>emailFooterSimple*</code> fields and others).</li>
+<li>They're edited in <strong>Email Campaigns › Settings › Headers &amp; Footers</strong> (<code>EmailHeaderFooterSettings.jsx</code>, used by both <code>SESSettings</code> and <code>MailchimpSettings</code>). Changes save as you type.</li>
+<li>In compose (<code>CreateCampaign.jsx</code>, <code>MailchimpCreateCampaignDialog.jsx</code>), "Header preview" › <strong>Edit</strong> writes to that same global config.</li>
+<li>FTT Mail (SES) builds the header and footer <strong>at send time</strong> from the advisor config (<code>server/ses-campaign-html.js</code> <code>buildWrappedCampaignEmailHtml</code>, also used for tests and compliance copies). A scheduled email picks up later edits.</li>
+<li>Mailchimp builds the full HTML in the dialog (<code>buildMailchimpTemplateHtml</code>) and pushes it to Mailchimp, so later edits don't reach campaigns already saved there.</li>
+</ul>
+<h2>2. Recommendation</h2>
+<p><strong>A: a "Header &amp; footer templates" list in Settings, and a "Header &amp; footer" drop-down in compose with a live preview.</strong> It's the smallest change to how advisors work today. One template is a header and footer pair, which matches the ask (co-branded vs own brand), and it works the same for FTT Mail and Mailchimp.</p>
+<ul>
+<li><strong>B</strong> puts a thumbnail gallery in compose, with "Save as new template / Update / Only this email" when editing. It's more visual but adds a 3-way save choice.</li>
+<li><strong>C</strong> has separate header and footer libraries that you mix and match. It's the most flexible, but it allows mismatches, like a co-branded header with an own-brand footer.</li>
+</ul>
+<h2>3. Screens (A)</h2>
+<table>
+<thead>
+<tr>
+<th>Screen</th>
+<th>What's on it</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Settings › Header &amp; footer templates</td>
+<td>Cards with a thumbnail, name, <strong>Default</strong> chip, "Used by N scheduled · N sent · edited date", and Edit, Duplicate, Set as default and Delete. <strong>+ New template</strong>. With only one template, a dashed card suggests a second one.</td>
+</tr>
+<tr>
+<td>Edit template</td>
+<td>Name (required, unique), Header Simple/Advanced, Footer Simple/Advanced (the same editors as today), live preview, Save. If scheduled emails use it: "Changes apply to the N scheduled emails using this template. Sent emails don't change."</td>
+</tr>
+<tr>
+<td>Delete dialog</td>
+<td>If it's the default: "Pick a new default" (required). If scheduled emails use it: "N scheduled emails use it. Switch them to: [template]". "Sent emails keep the header and footer they were sent with." You can't delete your last template.</td>
+</tr>
+<tr>
+<td>Compose (FTT Mail)</td>
+<td><strong>Header &amp; footer</strong> drop-down (default preselected, "(default)" label), live preview, "Edit this template" and "Manage templates" links. Test emails and compliance copies use the same pick.</td>
+</tr>
+<tr>
+<td>Compose (Mailchimp)</td>
+<td>Same picker and preview. "Mailchimp gets a copy when you save the campaign. Editing the template later doesn't change campaigns already in Mailchimp."</td>
+</tr>
+<tr>
+<td>Campaigns list</td>
+<td>Optional column showing the template name. Sent rows show "As sent".</td>
+</tr>
+</tbody>
+</table>
+<h2>4. States</h2>
+<table>
+<thead>
+<tr>
+<th>State</th>
+<th>Copy / behaviour</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>First visit after release (migration)</td>
+<td>"Your header and footer are now a template. We named it "My template" and made it your default. Nothing in your emails changed."</td>
+</tr>
+<tr>
+<td>Loading</td>
+<td>Skeleton cards</td>
+</tr>
+<tr>
+<td>Error loading</td>
+<td>"We couldn't load your templates. Your emails aren't affected." + Try again</td>
+</tr>
+<tr>
+<td>Save in progress / error / success</td>
+<td>Spinner on Save / "Couldn't save. Check your connection and try again." / toast "Template saved."</td>
+</tr>
+<tr>
+<td>Validation</td>
+<td>Empty name: "Give the template a name." Duplicate name: "You already have a template with that name."</td>
+</tr>
+<tr>
+<td>Set default</td>
+<td>Toast: ""X" is now your default. New emails start with it."</td>
+</tr>
+<tr>
+<td>Delete</td>
+<td>See the dialog. Toast: "Deleted. N scheduled emails now use "Y"."</td>
+</tr>
+</tbody>
+</table>
+<h2>5. Migration</h2>
+<p>On release, a one-time migration copies each advisor's current header and footer fields into a template called <strong>"My template"</strong>, marked default. Existing campaigns (drafts, scheduled) get that <code>templateId</code>. Keep the old <code>advisor_configs</code> fields read-only as a fallback for one release. Advisors with no header or footer still get an empty default template.</p>
+<h2>6. Scheduled and sent emails</h2>
+<ul>
+<li><strong>Sent:</strong> snapshot the final header and footer HTML on the campaign at send time, so history, reports and resends show what was actually sent, whatever happens to the template later. Today SES doesn't store it, so this is new.</li>
+<li><strong>Scheduled FTT Mail:</strong> uses the picked template at send time, so edits apply (as today, with a warning in the editor). Deleting it forces a reassign in the dialog.</li>
+<li><strong>Scheduled Mailchimp:</strong> keeps the copy already pushed to Mailchimp. Edits and deletes don't change it (see question 3).</li>
+<li><strong>Awaiting compliance:</strong> the compliance copy shows the picked template (see question 4).</li>
+</ul>
+<h2>7. In scope / out of scope</h2>
+<p><strong>In:</strong> templates per advisor (create, name, edit, duplicate, delete, set default); migration; picker and preview in FTT Mail and Mailchimp compose; test and compliance emails using the pick; delete and default rules; snapshot on send; acting-as / admin views use the advisor's own templates; unit tests, with no live sends in QA.</p>
+<p><strong>Out:</strong> per-list default templates; sharing templates between advisors or firms; templates for social or website; a template marketplace; changing body content templates.</p>
+<h2>8. Mobile</h2>
+<p>Cards stack in one column. The editor's preview moves below the form, and the compose picker is a full-width native select. The delete dialog is full width.</p>
+<h2>9. Backend notes</h2>
+<ul>
+<li>New <code>email_header_footer_templates</code> collection (<code>ownedBy</code>, <code>name</code>, <code>isDefault</code>, header/footer mode + html + simple fields, <code>updatedAt</code>), or an array on <code>advisor_configs</code>. A collection is cleaner for acting-as publications.</li>
+<li>Add <code>headerFooterTemplateId</code> to SES campaigns and Mailchimp scheduled campaigns. Add <code>sentHeaderHtml</code> / <code>sentFooterHtml</code> snapshots on send.</li>
+<li><code>resolveEffectiveCampaignHeaderHtml(config)</code> → <code>resolve…(template)</code>. Pass the campaign's template into <code>buildWrappedCampaignEmailHtml</code>, and fall back to the default if it's missing.</li>
+<li>Server methods: create, update, delete (with <code>reassignTo</code> and <code>newDefaultId</code>), set default. Each one checks ownership, including when acting as.</li>
+<li>Ory import (<code>ImportOryHeaderFooterControls</code>) imports into the template being edited.</li>
+</ul>
+<h2>10. Estimates (one developer)</h2>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>A</th>
+<th>B</th>
+<th>C</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Data model + migration</td>
+<td>1–1.5</td>
+<td>1–1.5</td>
+<td>1.5–2</td>
+</tr>
+<tr>
+<td>Settings list + editor (reuse editors)</td>
+<td>1.5–2</td>
+<td>1</td>
+<td>2–2.5</td>
+</tr>
+<tr>
+<td>Compose picker + preview (FTT Mail + Mailchimp)</td>
+<td>1.5–2</td>
+<td>2–2.5</td>
+<td>2–2.5</td>
+</tr>
+<tr>
+<td>Send pipeline, snapshot, test/compliance</td>
+<td>1–1.5</td>
+<td>1–1.5</td>
+<td>1.5–2</td>
+</tr>
+<tr>
+<td>Delete / default rules, acting-as, tests</td>
+<td>1.5–2</td>
+<td>2–2.5</td>
+<td>1.5–2</td>
+</tr>
+<tr>
+<td><strong>Total</strong></td>
+<td><strong>6.5–9</strong></td>
+<td><strong>7–9.5</strong></td>
+<td><strong>8.5–11</strong></td>
+</tr>
+</tbody>
+</table>
+<h2>11. Open questions</h2>
+<ol>
+<li>Should editing a template change <strong>scheduled</strong> FTT Mail emails that use it (as mocked), or lock each email to its version at schedule time?</li>
+<li>Is there a limit on how many templates an advisor can have (e.g. 10)?</li>
+<li><strong>Mailchimp:</strong> should we update scheduled Mailchimp campaigns when a template changes, or leave them (as mocked)?</li>
+<li>If the template changes after compliance approved an email, should it go back for approval? A partner disclosure could matter.</li>
+<li>Who writes the partner disclosure line, and is it required on co-branded templates? It's a placeholder for now.</li>
+<li>Should "Edit" in compose edit the template (A), or also offer "only this email"? B shows all three choices.</li>
+<li>Later, should each list have its own default template (e.g. partner clients → co-branded)?</li>
+<li>Should the migrated template be called "My template" or "Own brand"?</li>
+</ol></body></html>
