@@ -1,18 +1,68 @@
 <!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>#650 Analytics build contract</title><style>body{font-family:Inter,system-ui,sans-serif;max-width:960px;margin:24px auto;padding:0 16px;line-height:1.55;color:#2C3E50}a{color:#1976D2}table{border-collapse:collapse;width:100%;margin:8px 0;font-size:14px}td,th{border:1px solid #e0e5eb;padding:6px 8px;text-align:left;vertical-align:top}th{background:#f3f6f9}blockquote{background:#e8f5e9;border:2px solid #2e7d32;border-radius:10px;margin:10px 0;padding:4px 14px}code{background:#f3f6f9;padding:1px 4px;border-radius:4px}@media(max-width:600px){table{display:block;overflow-x:auto}}</style></head><body><p><a href="../">All mocks</a> · <a href="index.html">Hub</a> · <a href="build-contract.md">Markdown</a></p><h1>#650 Analytics: build contract (FC-owned Google Analytics, whole site)</h1>
 <blockquote>
 <p><strong>Direction locked by Alex, Oct 24, 2026:</strong> FC creates and looks after a Google Analytics 4 property for each advisor, tracks the <strong>whole</strong> advisor site, and shows the numbers inside FC in a new <strong>Analytics</strong> section. It is not a Website publishing method.</p>
-<p><strong>Not agent-ready. Soft Dev hold until Alex picks A or B.</strong> Mocks only, with generic names (Jane Advisor, Your Firm Name, example.com) and made-up example numbers.</p>
+<p><strong>Update Oct 26, 2026 (Alex):</strong> "Can we have the analytics section in the website tab first? We can do an analytics tab afterwards." So it's now <strong>C first (Phase 1), then A (Phase 2)</strong>. The A-vs-B choice is superseded.</p>
+<p><strong>Not agent-ready. Soft Dev hold until Alex picks.</strong> Mocks only, with generic names (Jane Advisor, Your Firm Name, example.com) and made-up example numbers.</p>
 </blockquote>
-<p>Mocks: <a href="index.html">Hub</a> · <a href="today.html">Today</a> · <a href="a-analytics-section.html">A, Analytics section (recommended)</a> · <a href="b-home-card.html">B, Home card + full page</a> · <a href="site-consent.html">Advisor site with cookie banner</a>. Every page has a Desktop / Phone toggle (<code>?phone</code>).</p>
-<h2>1. Recommendation</h2>
-<p><strong>A: an Analytics item in the sidebar, with Overview and Setup tabs.</strong> It's easy to find, it has room to grow (email and social numbers later), and it keeps setup away from the Website method cards. B (a Home card that opens a full page) is a good add-on later; the card can reuse A's data.</p>
+<p>Mocks: <a href="index.html">Hub</a> · <a href="today.html">Today</a> · <a href="c-website-analytics.html">C, Website tab section (Phase 1, current)</a> · <a href="a-analytics-section.html">A, own Analytics tab (Phase 2)</a> · <a href="b-home-card.html">B, Home card + full page</a> · <a href="site-consent.html">Advisor site with cookie banner</a>. Every page has a Desktop / Phone toggle (<code>?phone</code>).</p>
+<h2>1. Plan: C now, A later</h2>
+<p><strong>Phase 1, C (<a href="c-website-analytics.html">mock</a>):</strong> a <strong>Website analytics</strong> section inside Website › Settings, below the three publishing cards. It has its own heading ("Separate from publishing" / "Website analytics"), a 2px divider, and a lilac panel with a status bar. It has no radio, no "Publishing here" chip and no select button, so it doesn't read as a 4th method. It works with any publishing method.</p>
+<p><strong>Phase 2, A (<a href="a-analytics-section.html">mock</a>):</strong> the same section moves to its own <strong>Analytics</strong> sidebar tab with Overview and Setup tabs. The Website tab keeps one line: "Analytics: see visitors in Analytics →". The ID, setup and data stay the same, and nothing changes on the advisor's site. See C's <code>?phase=2</code> frame.</p>
+<p>B (Home card) is superseded and kept for reference.</p>
+<h2>1a. Phase 1 (C) screen and states</h2>
+<table>
+<thead>
+<tr>
+<th>State (<code>?st=</code>)</th>
+<th>Status bar</th>
+<th>Panel body</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>setup</code> / off</td>
+<td>Not set up</td>
+<td>"Visitors, top pages and where they came from, right here. We set it up for you." + <strong>Turn on analytics</strong></td>
+</tr>
+<tr>
+<td><code>prov</code></td>
+<td>Setting up…</td>
+<td>"Usually under a minute. You can leave this page."</td>
+</tr>
+<tr>
+<td><code>err</code></td>
+<td>Setup didn't finish</td>
+<td>"Nothing was changed on your site." + <strong>Try again</strong></td>
+</tr>
+<tr>
+<td><code>ready</code></td>
+<td><strong>Setup needed:</strong> add the code to your site</td>
+<td>"Setup and code" open: 1 ID (G-ABC1234XYZ, Copy) · 2 Cookie banner (on, Recommended, preview) · 3 snippet + 4 steps + <strong>Check my site</strong> + <strong>Send these steps to my web person</strong>, or "We'll add it for you" when we host the site. Insights pages are auto-inserted and not counted twice.</td>
+</tr>
+<tr>
+<td><code>waiting</code></td>
+<td>Connected. Waiting for first visitors (up to 48 hours)</td>
+<td>Setup folded ("done")</td>
+</tr>
+<tr>
+<td><code>data</code></td>
+<td>Connected · G-ABC1234XYZ</td>
+<td>Date range, Visitors, Page views, Top pages (Example data). <strong>See more ↓</strong> opens new visitors, Insights reads, chart, sources, devices and top Insights posts inline. Consent note. Setup folded.</td>
+</tr>
+</tbody>
+</table>
+<p>Check my site results (found / not found / wrong ID / couldn't reach), the banner on/off states, "Turn off analytics" and the cookie banner on the advisor's site (<a href="site-consent.html">site-consent.html</a>) are the same as A, below.</p>
+<p><strong>Phase 1 in scope:</strong> everything in section 5's "In" list, but shown in the Website tab panel instead of a sidebar tab. The full reports in the panel stay compact (behind See more).
+<strong>Phase 1 out of scope:</strong> the Analytics sidebar tab and Overview/Setup tabs (Phase 2), the Home card (B), and everything else in section 5's "Out" list.</p>
+<p><strong>Phase 1 estimate (C):</strong> about <strong>10 to 14.5 days</strong>. That's provisioning 2–3, reports + cache 2–2.5, Website-tab panel with compact numbers and See more 1.5–2, setup flow 1.5–2, banner + consent 2–3, auto-insert 1–1.5, QA 0.5–1. <strong>Phase 2 (move to A) later:</strong> about <strong>1.5 to 2.5 days</strong> extra (nav item, full-page layout reusing C's parts, one-line link).</p>
 <h2>2. Screens</h2>
+<p>Sections 2 to 4 describe A (Phase 2) and B. C reuses A's setup and states inside the Website tab.</p>
 <table>
 <thead>
 <tr>
 <th>Screen</th>
-<th>A (recommended)</th>
-<th>B</th>
+<th>A (Phase 2)</th>
+<th>B (superseded)</th>
 </tr>
 </thead>
 <tbody>
@@ -192,7 +242,7 @@
 <td>0.5–1</td>
 </tr>
 <tr>
-<td><strong>A total</strong></td>
+<td><strong>A total (if built directly)</strong></td>
 <td><strong>11–15.5</strong></td>
 </tr>
 <tr>
@@ -211,5 +261,7 @@
 <li><strong>Quotas:</strong> OK to spread advisors across several FC Google accounts (2,000 properties each), and to cache reports a few hours?</li>
 <li><strong>Who writes the banner text?</strong> It's a placeholder until compliance reviews it.</li>
 <li><strong>Existing GA users:</strong> should we allow "Use my own ID" later for advisors who already have Google Analytics?</li>
-<li><strong>A or B?</strong></li>
-</ol></body></html>
+<li><strong>"Send these steps to my web person":</strong> sent as the advisor (Jane Advisor &lt;jane@example.com&gt;) through our mail service. Is that OK?</li>
+<li><strong>When does Phase 2 happen?</strong> Right after Phase 1 ships, or when we add more reports (email, social)?</li>
+</ol>
+<p>~~A or B?~~ Answered Oct 26: C (Website tab) first, then A.</p></body></html>

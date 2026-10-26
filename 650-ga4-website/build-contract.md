@@ -2,17 +2,43 @@
 
 > **Direction locked by Alex, Oct 24, 2026:** FC creates and looks after a Google Analytics 4 property for each advisor, tracks the **whole** advisor site, and shows the numbers inside FC in a new **Analytics** section. It is not a Website publishing method.
 >
-> **Not agent-ready. Soft Dev hold until Alex picks A or B.** Mocks only, with generic names (Jane Advisor, Your Firm Name, example.com) and made-up example numbers.
+> **Update Oct 26, 2026 (Alex):** "Can we have the analytics section in the website tab first? We can do an analytics tab afterwards." So it's now **C first (Phase 1), then A (Phase 2)**. The A-vs-B choice is superseded.
+>
+> **Not agent-ready. Soft Dev hold until Alex picks.** Mocks only, with generic names (Jane Advisor, Your Firm Name, example.com) and made-up example numbers.
 
-Mocks: [Hub](index.html) · [Today](today.html) · [A, Analytics section (recommended)](a-analytics-section.html) · [B, Home card + full page](b-home-card.html) · [Advisor site with cookie banner](site-consent.html). Every page has a Desktop / Phone toggle (`?phone`).
+Mocks: [Hub](index.html) · [Today](today.html) · [C, Website tab section (Phase 1, current)](c-website-analytics.html) · [A, own Analytics tab (Phase 2)](a-analytics-section.html) · [B, Home card + full page](b-home-card.html) · [Advisor site with cookie banner](site-consent.html). Every page has a Desktop / Phone toggle (`?phone`).
 
-## 1. Recommendation
+## 1. Plan: C now, A later
 
-**A: an Analytics item in the sidebar, with Overview and Setup tabs.** It's easy to find, it has room to grow (email and social numbers later), and it keeps setup away from the Website method cards. B (a Home card that opens a full page) is a good add-on later; the card can reuse A's data.
+**Phase 1, C ([mock](c-website-analytics.html)):** a **Website analytics** section inside Website › Settings, below the three publishing cards. It has its own heading ("Separate from publishing" / "Website analytics"), a 2px divider, and a lilac panel with a status bar. It has no radio, no "Publishing here" chip and no select button, so it doesn't read as a 4th method. It works with any publishing method.
+
+**Phase 2, A ([mock](a-analytics-section.html)):** the same section moves to its own **Analytics** sidebar tab with Overview and Setup tabs. The Website tab keeps one line: "Analytics: see visitors in Analytics →". The ID, setup and data stay the same, and nothing changes on the advisor's site. See C's `?phase=2` frame.
+
+B (Home card) is superseded and kept for reference.
+
+## 1a. Phase 1 (C) screen and states
+
+| State (`?st=`) | Status bar | Panel body |
+|---|---|---|
+| `setup` / off | Not set up | "Visitors, top pages and where they came from, right here. We set it up for you." + **Turn on analytics** |
+| `prov` | Setting up… | "Usually under a minute. You can leave this page." |
+| `err` | Setup didn't finish | "Nothing was changed on your site." + **Try again** |
+| `ready` | **Setup needed:** add the code to your site | "Setup and code" open: 1 ID (G-ABC1234XYZ, Copy) · 2 Cookie banner (on, Recommended, preview) · 3 snippet + 4 steps + **Check my site** + **Send these steps to my web person**, or "We'll add it for you" when we host the site. Insights pages are auto-inserted and not counted twice. |
+| `waiting` | Connected. Waiting for first visitors (up to 48 hours) | Setup folded ("done") |
+| `data` | Connected · G-ABC1234XYZ | Date range, Visitors, Page views, Top pages (Example data). **See more ↓** opens new visitors, Insights reads, chart, sources, devices and top Insights posts inline. Consent note. Setup folded. |
+
+Check my site results (found / not found / wrong ID / couldn't reach), the banner on/off states, "Turn off analytics" and the cookie banner on the advisor's site ([site-consent.html](site-consent.html)) are the same as A, below.
+
+**Phase 1 in scope:** everything in section 5's "In" list, but shown in the Website tab panel instead of a sidebar tab. The full reports in the panel stay compact (behind See more).
+**Phase 1 out of scope:** the Analytics sidebar tab and Overview/Setup tabs (Phase 2), the Home card (B), and everything else in section 5's "Out" list.
+
+**Phase 1 estimate (C):** about **10 to 14.5 days**. That's provisioning 2–3, reports + cache 2–2.5, Website-tab panel with compact numbers and See more 1.5–2, setup flow 1.5–2, banner + consent 2–3, auto-insert 1–1.5, QA 0.5–1. **Phase 2 (move to A) later:** about **1.5 to 2.5 days** extra (nav item, full-page layout reusing C's parts, one-line link).
 
 ## 2. Screens
 
-| Screen | A (recommended) | B |
+Sections 2 to 4 describe A (Phase 2) and B. C reuses A's setup and states inside the Website tab.
+
+| Screen | A (Phase 2) | B (superseded) |
 |---|---|---|
 | Entry point | Sidebar **Analytics** (NEW badge), between Email Campaigns and Calendar. Phone: same item in the top nav. | **Website visitors** card on Home. "See all →" opens a full page (Home › Website visitors). No sidebar item. |
 | Overview | Date range, 4 number tiles, visitors-per-day chart, top pages, where visitors came from, devices, top Insights posts | Same content on the full page |
@@ -93,7 +119,7 @@ When FTT hosts the site (the AI site builder idea in #601, Cloudways + Git), we 
 | Cookie banner script + consent mode + settings + preview | 2–3 |
 | Auto-insert: PHP renderer update + no double count; FTT-hosted template | 1–1.5 |
 | Website tab line, nav item, QA | 0.5–1 |
-| **A total** | **11–15.5** |
+| **A total (if built directly)** | **11–15.5** |
 | **B** (Home card + full page instead of a section) | about the same, **11.5–16** |
 
 Banner legal text and compliance review aren't included.
@@ -107,4 +133,7 @@ Banner legal text and compliance review aren't included.
 5. **Quotas:** OK to spread advisors across several FC Google accounts (2,000 properties each), and to cache reports a few hours?
 6. **Who writes the banner text?** It's a placeholder until compliance reviews it.
 7. **Existing GA users:** should we allow "Use my own ID" later for advisors who already have Google Analytics?
-8. **A or B?**
+8. **"Send these steps to my web person":** sent as the advisor (Jane Advisor &lt;jane@example.com&gt;) through our mail service. Is that OK?
+9. **When does Phase 2 happen?** Right after Phase 1 ships, or when we add more reports (email, social)?
+
+~~A or B?~~ Answered Oct 26: C (Website tab) first, then A.
