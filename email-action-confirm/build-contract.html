@@ -40,22 +40,56 @@
 <li><code>confirm</code>: the preview is open.</li>
 <li><code>approved</code> ("Approved by jane@example.com at <time> PT"), <code>already</code> and <code>declined</code>/rejected: the preview collapses to "Show the preview ↓", with a Hide link.</li>
 <li><code>expired</code> (Request a new link and Sign in), <code>sent</code> and <code>error</code>: no preview.</li>
-<li><code>?focus=approve</code> puts focus on the Approve button. It still needs a click. <code>#preview</code> scrolls to the preview.</li>
-<li><strong><a href="approval-email.html">Approval email</a></strong> (<code>?type=ses|social</code>), shown in a mail-client frame:</li>
-<li>FC header "for Your Firm Name", then a summary: campaign, subject, recipients and send time, or the networks, time and post excerpt.</li>
-<li><strong>Approve</strong> goes to <code>b-&lt;type&gt;.html?focus=approve</code>, and <strong>Review</strong> goes to <code>b-&lt;type&gt;.html#preview</code>.</li>
-<li>The line "Nothing happens until you click Approve on the page that opens."</li>
-<li>"This link expires in 7 days and works once" (7 days is an open question), then a footer.</li>
-<li>It replaces today's Approve and Reject link pair. Reject is now on the page.</li>
+<li><code>?from=email</code> adds the step banner and the sticky phone bar. <code>#preview</code> scrolls to the preview.</li>
+<li><strong><a href="approval-email.html">Approval email</a></strong> (<code>?type=ses|social</code>, <code>&amp;to=</code>, <code>&amp;btn=rec|keep|two</code>), shown in a mail-client frame. It has an FC header "for Your Firm Name", a summary (campaign, subject, To, recipients and send time, or networks, time and post excerpt), the expiry line "This link expires in 7 days and works once" (7 days is an open question), and a footer. The buttons are covered under "Email button copy" below.</li>
+<li><strong>Landing from the email</strong> (<code>b-ses.html?from=email</code>, <code>b-social.html?from=email</code>):</li>
+<li>A slim highlighted step banner at the top: "One more step: click <strong>Approve campaign</strong> to finish." (social: "<strong>Approve post</strong>").</li>
+<li>The Approve button is the biggest thing right under the summary.</li>
+<li>On phone, an <strong>Approve / Don't approve bar sticks to the bottom</strong> while you scroll the preview.</li>
+<li>The success wording doesn't change.</li>
+</ul>
+<h3>Email button copy (Alex, 12:20 PM PT: one click in the email becomes two)</h3>
+<table>
+<thead>
+<tr>
+<th>Variant</th>
+<th>Email button(s)</th>
+<th>Line under it</th>
+<th>Lands on</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Recommended</strong> (<code>btn=rec</code>)</td>
+<td><strong>Review &amp; approve</strong> (social: <strong>Review &amp; approve post</strong>). One button, no separate Review.</td>
+<td>"Opens a page where you click Approve to finish. Nothing is approved until then."</td>
+<td><code>b-&lt;type&gt;.html?from=email</code></td>
+</tr>
+<tr>
+<td>Alternative: keep the label (<code>btn=keep</code>)</td>
+<td><strong>Approve</strong> (the familiar label)</td>
+<td>"You'll confirm on the next page."</td>
+<td>same</td>
+</tr>
+<tr>
+<td>Alternative: two actions (<code>btn=two</code>)</td>
+<td><strong>Review &amp; approve</strong>, plus a "Don't approve" text link</td>
+<td>same as Recommended</td>
+<td>Don't approve: <code>?from=email&amp;decline=1</code>, with the decline note open</td>
+</tr>
+</tbody>
+</table>
+<p>We recommend the first because the label tells people there's a second step, so the extra click doesn't feel like a broken link. "Keep" changes the fewest habits, but the button says one thing and does another. "Two" answers open question 11.</p>
+<ul>
 <li><strong><a href="unsubscribe.html">Unsubscribe</a></strong> (client-facing, white-label) and <strong><a href="slack-log.html">Slack lines</a></strong> are unchanged from the first round.</li>
 <li><strong>Reference:</strong> <a href="ses-approval.html">A full campaign</a>, <a href="social-approval.html">A full social</a>. <code>b-light.html</code> now redirects to <code>b-ses.html</code>.</li>
 </ul>
 <h2>Build note</h2>
 <ol>
 <li><strong>GET and HEAD only render the page.</strong> So do OPTIONS and prefetch requests (<code>Purpose</code>/<code>Sec-Purpose: prefetch</code>). Nothing writes to the DB or Slack. Send <code>Cache-Control: no-store</code>, <code>Referrer-Policy: no-referrer</code> and <code>X-Robots-Tag: noindex</code>.</li>
-<li><strong>The action is a POST</strong> from the button: a form post with the token in the body and a CSRF value tied to the rendered page, plus an <code>Origin</code>/<code>Referer</code> host check. Don't auto-submit, and <code>?focus=approve</code> only focuses the button.</li>
+<li><strong>The action is a POST</strong> from the button: a form post with the token in the body and a CSRF value tied to the rendered page, plus an <code>Origin</code>/<code>Referer</code> host check. Don't auto-submit. <code>?from=email</code> only changes the layout (banner, sticky bar).</li>
 <li><strong>Tokens</strong> are 32 or more random bytes, stored hashed in <code>action_tokens</code> (<code>kind</code>, <code>targetId</code>, <code>advisorId</code>, <code>recipientEmail</code>, <code>expiresAt</code>, <code>usedAt</code>, <code>revokedAt</code>).</li>
-<li>Each approver gets their own token. Approve and Review in the email share it.</li>
+<li>Each approver gets their own token. Every link in the email shares it.</li>
 <li>A token works once. A resend revokes the old one.</li>
 <li>The suggested default is <strong>7 days</strong>. Unsubscribe tokens are per contact and don't expire (needs a compliance check).</li>
 <li><strong>Idempotent:</strong> a repeat POST, or another approver's token after approval, shows <code>already</code>. Use a conditional update so <code>approvedAt</code> and the Slack post happen once.</li>
@@ -68,7 +102,7 @@
 <li>If the content changes after the email went out, the page shows the <strong>current</strong> version. Saving after the approval email went out revokes the token and sends a new email (open question).</li>
 <li><strong>Scanner GETs</strong> don't count. Log them as <code>link_open</code> (IP, UA, time) and keep one quiet line per campaign. Store the SES click IP, UA and timestamp from the SNS webhook.</li>
 <li><strong>"To" line:</strong> reuse the <code>recipientLine</code> logic in <code>ses-campaign-approval.js</code>. Tags come first and read "Tag:" or "Tags:" with their names. Then <code>listId</code> gives "List: <list name>". <code>all_subscribers</code> becomes "Audience: All contacts" (today it's "List: All subscribers"). If neither applies, leave the line out. The count is the same distinct-email query as today.</li>
-<li><strong>Approval email template</strong> (SES and social): replace the action links with Approve and Review links to the B page, add the summary block, the expiry date and the "nothing happens until you click" line.</li>
+<li><strong>Approval email template</strong> (SES and social): replace the action links with one "Review &amp; approve" link to the B page (<code>?from=email</code>), or the variant Alex picks, add the summary block, the expiry date and the "nothing happens until you click" line.</li>
 <li><strong>Unsubscribe:</strong></li>
 <li>A GET shows the confirm page. The page button POSTs.</li>
 <li>The <strong>RFC 8058 one-click</strong> POST (<code>List-Unsubscribe=One-Click</code>, sent by Gmail and Yahoo) unsubscribes <strong>without</strong> CSRF or a confirm step and returns 200.</li>
@@ -107,7 +141,7 @@
 <td>0.75–1</td>
 </tr>
 <tr>
-<td>Approval email template, SES and social (summary, Approve and Review, expiry)</td>
+<td>Approval email template, SES and social (summary, one Review &amp; approve button, expiry)</td>
 <td>0.75–1</td>
 </tr>
 <tr>
@@ -137,5 +171,5 @@
 <li>Should unsubscribe cover all of the advisor's emails, or one list? (The mock says all.)</li>
 <li>If the campaign or post is edited after the approval email goes out, should the old link be revoked and a new email sent, or should the page just show the latest version?</li>
 <li>Preview merge tags: sample values ("Hi {First name}") or the first recipient's real values?</li>
-<li>Should the approval email also have a "Don't approve" button, or is Approve plus Review enough? (Mocked: Approve plus Review only.)</li>
+<li>Email buttons: one "Review &amp; approve" (recommended), keep "Approve", or add a "Don't approve" link (<code>btn=two</code>)?</li>
 </ol></body></html>
