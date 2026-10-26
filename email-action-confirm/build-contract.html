@@ -1,0 +1,121 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Email action links: build contract</title><style>body{font-family:Inter,system-ui,sans-serif;max-width:960px;margin:24px auto;padding:0 16px;line-height:1.55;color:#2C3E50}a{color:#1976D2}table{border-collapse:collapse;width:100%;margin:8px 0;font-size:14px}td,th{border:1px solid #e0e5eb;padding:6px 8px;text-align:left;vertical-align:top}th{background:#f3f6f9}blockquote{background:#e8f5e9;border:2px solid #2e7d32;border-radius:10px;margin:10px 0;padding:4px 14px}code{background:#f3f6f9;padding:1px 4px;border-radius:4px}@media(max-width:600px){table{display:block;overflow-x:auto}}</style></head><body><p><a href="../">All mocks</a> · <a href="index.html">Hub</a> · <a href="build-contract.md">Markdown</a></p><h1>Email action links: confirm pages, build contract</h1>
+<p>Issue: <a href="https://github.com/kartboy16/content-library/issues/657">#657</a>. Mocks: <a href="index.html">hub</a>. <strong>Not agent-ready. Soft Dev hold until Alex picks.</strong></p>
+<h2>Problem (from the code, read-only at <code>6eabeaa</code>)</h2>
+<table>
+<thead>
+<tr>
+<th>Link</th>
+<th>Route today</th>
+<th>What a GET does</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>SES campaign Approve</td>
+<td><code>GET /api/ses/campaign-approval/:campaignId?advisorId=</code> (<code>server/api/ses-campaign-approval.js</code>)</td>
+<td>Sets <code>approved: true</code>, <code>approvedAt</code>, clears <code>reminderMilestonesSent</code>, posts "Approved!!" to <code>#email_campaign_approved</code>. Any method, no token, no expiry, re-runs on every hit, no IP or UA saved.</td>
+</tr>
+<tr>
+<td>Social Approve / Reject</td>
+<td><code>GET /api/social/post-approval/:queueItemId?advisorId=&amp;action=approve\|reject</code> (<code>server/api/social-post-approval.js</code> → <code>decideSocialPostApproval</code>, actor <code>email-link</code>)</td>
+<td>Approves or rejects right away. Has an <code>already</code> result, but still no token or confirm.</td>
+</tr>
+<tr>
+<td>Unsubscribe</td>
+<td><code>GET or POST /api/ses/unsubscribe/:token?t=</code> (<code>server/api/ses-unsubscribe.js</code>)</td>
+<td>Sets contact <code>status: 'unsubscribed'</code> and logs an <code>Unsubscribe</code> event on GET. The token is the contact's long-lived <code>unsubscribeToken</code>. <code>List-Unsubscribe</code> and <code>List-Unsubscribe-Post: List-Unsubscribe=One-Click</code> headers are already sent (<code>server/ses-campaign-service.js:144-145</code>).</td>
+</tr>
+</tbody>
+</table>
+<p>Data the pages can show: the campaign subject, list or tag name and recipient count (same distinct-email query as today), advisor name, scheduled send time, and an email preview. For social: the queue item's text, image, networks and scheduled time. For unsubscribe: the contact email (masked) and the advisor's firm name and branding.</p>
+<h2>Recommendation: A, a full confirm page</h2>
+<p><a href="ses-approval.html">SES approval</a>, <a href="social-approval.html">social post</a>, <a href="unsubscribe.html">unsubscribe</a>, <a href="slack-log.html">Slack lines</a>. Each page shows what you're approving, and only a button click changes anything. <a href="b-light.html">B (lighter)</a> has the same safety with only a title, an Approve button and "Open in FinancialContent". It saves about 1 day but drops decline notes and the preview.</p>
+<h2>Screens and states (<code>?st=</code>, plus <code>?phone</code>)</h2>
+<ul>
+<li><strong>Campaign approval</strong> (FC branding, advisor-facing):</li>
+<li><code>confirm</code>: campaign, subject, from, To (list or tag, recipient count), send time, a preview and "View the full email" (read-only). Buttons: <strong>Approve campaign</strong> and <strong>Don't approve</strong>. Don't approve opens an optional note.</li>
+<li><code>approved</code>: "Approved by jane@example.com at 11:42 AM PT" (the time the click happened, PT).</li>
+<li><code>already</code>: who approved and when. Nothing changed.</li>
+<li><code>declined</code>: won't send, team told, note attached, "Approve it instead".</li>
+<li><code>expired</code>: <strong>Request a new link</strong> (emails a fresh one to the same approver), then <code>sent</code>, plus Sign in.</li>
+<li><code>error</code>: nothing changed, Try again.</li>
+<li>If the campaign isn't scheduled, the primary button reads "Approve and send in 1 hour" (#649 flow).</li>
+<li><strong>Social post</strong>: the same states. Both email links (Approve, Reject) open this one page, and a Reject link pre-opens the reject note (<code>?pick=reject</code>).</li>
+<li><strong>Unsubscribe</strong> (client-facing, <strong>white-label</strong>: advisor branding only, no FC name, logo or link):</li>
+<li><code>confirm</code>: "Unsubscribe j<strong><em>@example.com from Your Firm Name emails?" with </em>*Unsubscribe</strong> and Keep me subscribed.</li>
+<li>Then <code>done</code> (with Undo), <code>already</code>, <code>resub</code>, <code>kept</code> and <code>error</code>.</li>
+<li>The footer address is a placeholder.</li>
+<li><strong>Slack</strong> <code>#email_campaign_approved</code>: approver email, method (button click, POST), IP, UA, token id. There's also a yellow "Link opened, no action (looks like a scanner)" line, which is optional.</li>
+</ul>
+<h2>Build note</h2>
+<ol>
+<li><strong>GET and HEAD only render.</strong> Neither writes to the DB or posts to Slack. OPTIONS and prefetch requests (<code>Purpose: prefetch</code>, <code>Sec-Purpose</code>) get no side effects either. Send <code>Cache-Control: no-store</code> and <code>Referrer-Policy: no-referrer</code>, and set <code>X-Robots-Tag: noindex</code>.</li>
+<li><strong>The action is a POST</strong> from the button: a form post to the same path with the token in the body and a CSRF token tied to the rendered page (a double-submit cookie, or an HMAC of token and nonce). Check <code>Origin</code>/<code>Referer</code> matches the host. No auto-submit JS.</li>
+<li><strong>Tokens</strong>: 32+ random bytes in the link, stored <strong>hashed</strong> in a new <code>action_tokens</code> collection (<code>kind</code>, <code>targetId</code>, <code>advisorId</code>, <code>recipientEmail</code>, <code>expiresAt</code>, <code>usedAt</code>, <code>revokedAt</code>).</li>
+<li>Each token is <strong>one per recipient</strong>, so we know which email approved.</li>
+<li>It's single use, and a <strong>resend issues a new token and revokes the old one</strong>.</li>
+<li>Default expiry: <strong>7 days</strong> for approvals (open question). Unsubscribe tokens are per contact and <strong>don't expire</strong> (needs a compliance check).</li>
+<li><strong>Idempotent</strong>: a second POST, or a different recipient's token after approval, shows <code>already</code>, doesn't change <code>approvedAt</code> and posts no second Slack line. Use a conditional update (<code>approved: {$ne: true}</code>).</li>
+<li><strong>Record</strong> on SES campaigns and social queue items: <code>approvedVia: 'email-button'</code>, <code>approvedAt</code>, <code>approvedBy</code> (email), <code>approvedIp</code> (first <code>X-Forwarded-For</code> hop behind the proxy), <code>approvedUserAgent</code> and <code>tokenId</code>. Do the same for declines (<code>declinedNote</code>). Add the UA and method to the Slack line.</li>
+<li><strong>Scanner GETs</strong> don't count. Optionally log them as <code>link_open</code> events (IP, UA, time) and roll them into one quiet Slack line per campaign, not one per hit. Also store SES click <code>ipAddress</code>/<code>userAgent</code>/<code>timestamp</code> from the SNS webhook (#657 AC 8).</li>
+<li><strong>Unsubscribe</strong>: a GET shows the confirm page. Two POSTs unsubscribe:</li>
+<li>The page button.</li>
+<li><strong>RFC 8058 one-click</strong>: a POST to the <code>List-Unsubscribe</code> URL with body <code>List-Unsubscribe=One-Click</code> unsubscribes <strong>without</strong> a CSRF token or confirm, because mail apps (Gmail, Yahoo) send it, and it returns 200.</li>
+<li>Keep the headers we already send, and make sure the handler takes this body (form-encoded) and doesn't render HTML for it.</li>
+<li>Log <code>source: 'one-click'</code> vs <code>'confirm-page'</code>. Undo (resubscribe) is a POST from the done page.</li>
+<li><strong>In-app buttons</strong> (campaign landing page, #649 "Approve and Send in 1 hour") call the Meteor method or POST, never the GET URL.</li>
+<li><strong>White-label</strong>: the unsubscribe page uses advisor branding. Its URL host is still FC's (<code>Meteor.absoluteUrl()</code>), so see the open questions.</li>
+</ol>
+<h2>In and out of scope</h2>
+<ul>
+<li><strong>In:</strong> the three confirm pages, tokens, the POST handlers, the audit fields, Slack line changes, one-click unsubscribe, approval email link changes, and tests (GET/HEAD/prefetch leave things unchanged, single use, expiry, resend).</li>
+<li><strong>Out:</strong> a branded unsubscribe domain per advisor, Mailchimp approval (Mailchimp's own links), and a preference center.</li>
+</ul>
+<h2>Estimate (A)</h2>
+<table>
+<thead>
+<tr>
+<th>Piece</th>
+<th>Days</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Token collection, sign and verify, hashing, expiry, resend and revoke</td>
+<td>1–1.5</td>
+</tr>
+<tr>
+<td>SES approval page: GET render, POST approve and decline, idempotent, audit</td>
+<td>1–1.5</td>
+</tr>
+<tr>
+<td>Social approve/reject page and POST, reusing <code>decideSocialPostApproval</code></td>
+<td>0.75–1</td>
+</tr>
+<tr>
+<td>Unsubscribe confirm, undo, RFC 8058 one-click POST</td>
+<td>0.75–1</td>
+</tr>
+<tr>
+<td>Slack line, scanner-open log, SNS click IP and UA</td>
+<td>0.5–0.75</td>
+</tr>
+<tr>
+<td>Email link updates, in-app buttons, tests (unit + <code>curl -I</code>/prefetch on staging)</td>
+<td>1–1.5</td>
+</tr>
+</tbody>
+</table>
+<p>That's about <strong>5 to 7.25 days</strong>. B is about 4 to 6 days.</p>
+<h2>Open questions</h2>
+<ol>
+<li>How long should approval links last: 7 days (suggested), 72 hours, or until the send time?</li>
+<li>If one recipient approves, are the other recipients' links done (<code>already</code>)? (Suggested: yes.)</li>
+<li>Should "Don't approve" go to FTT staff only, or also to other approvers? Where does the note show?</li>
+<li>Slack: should scanner-like opens get one quiet line per campaign, go to a separate channel, or only the DB log?</li>
+<li>Should expired approval links offer "Request a new link" (emails the same approver) or only Sign in?</li>
+<li>Unsubscribe tokens: no expiry, per contact? Is this OK with compliance (CASL / CAN-SPAM wording is not asserted here)?</li>
+<li>The unsubscribe URL host is FC's domain, which clients can see in the address bar. Is that OK for now, or should we add an advisor-domain or neutral host later?</li>
+<li>Should unsubscribe cover all of the advisor's emails or one list? (The mock says "Your Firm Name emails", which is all.)</li>
+<li>Should the social Reject link land on the same page with Reject pre-opened (mocked), or on a reject-only page?</li>
+</ol></body></html>
