@@ -1,0 +1,183 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>#655 build contract</title><style>body{font-family:Inter,system-ui,sans-serif;max-width:960px;margin:24px auto;padding:0 16px;line-height:1.55;color:#2C3E50}a{color:#1976D2}table{border-collapse:collapse;width:100%;margin:8px 0;font-size:14px}td,th{border:1px solid #e0e5eb;padding:6px 8px;text-align:left;vertical-align:top}th{background:#f3f6f9}blockquote{background:#e8f5e9;border:2px solid #2e7d32;border-radius:10px;margin:10px 0;padding:4px 14px}code{background:#f3f6f9;padding:1px 4px;border-radius:4px}@media(max-width:600px){table{display:block;overflow-x:auto}}</style></head><body><p><a href="../">All mocks</a> · <a href="index.html">Hub</a> · <a href="build-contract.md">Markdown</a></p><h1>#655 Only investment content goes to compliance: build contract</h1>
+<blockquote>
+<p><strong>Not agent-ready. Soft Dev hold until Alex picks.</strong> Mocks only, with generic names (Jane Advisor, Your Firm Name, example.com). <strong>We don't define compliance rules here.</strong> The definition of "investment content" and the advisor confirmation wording are <strong>placeholders that need compliance review</strong>.</p>
+</blockquote>
+<p>Mocks: <a href="index.html">Hub</a> · <a href="today.html">Today</a> · <a href="a-post-tag.html">A, tag on each post (recommended)</a> · <a href="b-category-rules.html">B, topics that skip compliance</a> · <a href="c-ask-at-send.html">C, ask at send</a>. Every page has a Desktop / Phone toggle (<code>?phone</code>).</p>
+<h2>1. Today (staging, read from code)</h2>
+<ul>
+<li>The per-advisor compliance mode is <code>email</code> / <code>external</code> / <code>off</code> (<code>imports/utils/complianceMode.js</code>), set by staff in Admin › Edit user. The legacy "compliance" advisor category maps to <code>email</code>.</li>
+<li>In <code>email</code> mode, "Send copy to compliance?" defaults <strong>on</strong> in Distribute (<code>DistributionEmailSection.jsx</code>, website + email) and in Create campaign (<code>CreateCampaign.jsx</code>, Mailchimp dialog), for every post. Website queue items carry <code>sendToCompliance</code> (<code>server/website-queue-helpers.js</code>). Social approval falls back to <code>complianceEmail</code> (<code>server/social-approval.js</code>).</li>
+<li>Library posts (<code>HTMLPosts</code>) have <code>postCategories</code>, but there's no investment flag.</li>
+<li>Related: #416 (advisor approves first, then compliance), which is locked as A and in build on playground. #415 (compliance Approve is final) leans B, campaigns only.</li>
+</ul>
+<h2>2. Recommendation</h2>
+<p><strong>A: a compliance tag on each post.</strong> Our content team sets it on library posts, and the advisor can change it before sending, with a confirmation. Untagged posts go to compliance, and each advisor has an "All content / Only investment content" setting.</p>
+<p>The tag is explicit and visible per post. The safe default covers legacy content, and firms that want to review everything keep today's behaviour.</p>
+<ul>
+<li><strong>B</strong> marks whole topics (categories) as skipping compliance. It's less work per post, but one wrong category affects every post in it, and categories weren't designed for compliance.</li>
+<li><strong>C</strong> asks the advisor every time ("Does this need compliance approval?" Yes / No / Not sure, with a suggestion). It adds a step to every send, and answers aren't consistent across advisors.</li>
+</ul>
+<h2>3. Screens (A)</h2>
+<table>
+<thead>
+<tr>
+<th>Screen</th>
+<th>What's on it</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Content library</td>
+<td>A badge per post: <strong>Investment · goes to compliance</strong>, <strong>Non-investment · skips compliance</strong>, <strong>Not tagged · goes to compliance</strong>. Filter: All / Goes to compliance / Skips compliance. If the advisor's setting is "All content", every row says "Goes to compliance".</td>
+</tr>
+<tr>
+<td>Distribute</td>
+<td>"This post is": Investment content / Not investment content (with a placeholder definition). The source note says "Tagged by our content team", or "You changed this… Undo". The route line and the "What happens next" tracker update.</td>
+</tr>
+<tr>
+<td>Override confirm</td>
+<td>Shown when marking an investment or untagged post as non-investment: "Mark as not investment content? This post won't go to your compliance contact." [Placeholder confirmation wording]. "We record who changed it and when."</td>
+</tr>
+<tr>
+<td>Create campaign (own email)</td>
+<td>"This email is" is <strong>required</strong>: Choose one / Investment / Not investment. "If you're not sure, choose investment content." Emails built from a library post start with that post's tag.</td>
+</tr>
+<tr>
+<td>Campaigns + tracker</td>
+<td>Tag badge per row. Tracker: Advisor ✓ → Compliance (struck through when skipped) → Scheduled. "Compliance not needed: marked non-investment by Jane Advisor, Oct 26."</td>
+</tr>
+<tr>
+<td>Admin › Edit user</td>
+<td>New "What goes to compliance: <strong>All content</strong> (today's behaviour) / <strong>Only investment content</strong>". Staff only, shown read-only to the advisor.</td>
+</tr>
+<tr>
+<td>Admin › Library post</td>
+<td>"Compliance tag: Investment / Non-investment / Not set (treated as investment)".</td>
+</tr>
+</tbody>
+</table>
+<h2>4. States</h2>
+<table>
+<thead>
+<tr>
+<th>State</th>
+<th>Behaviour</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Not tagged / legacy</td>
+<td>Treated as investment, so it <strong>goes to compliance</strong> (safe default).</td>
+</tr>
+<tr>
+<td>Investment</td>
+<td>Same as today: advisor approves, then compliance (#416 chain).</td>
+</tr>
+<tr>
+<td>Non-investment + "Only investment content"</td>
+<td><strong>Skips compliance.</strong> The advisor's own approval step stays the same (advisor-approved, not auto-approved).</td>
+</tr>
+<tr>
+<td>Non-investment + "All content"</td>
+<td>Goes to compliance (no change for that firm).</td>
+</tr>
+<tr>
+<td>Compliance mode Off / External</td>
+<td>No change in this issue (see question 8).</td>
+</tr>
+<tr>
+<td>Email with several posts</td>
+<td>If any post is investment or untagged, the whole email goes to compliance.</td>
+</tr>
+<tr>
+<td>List loading / empty / error</td>
+<td>Skeleton / "No posts yet. New posts show here with their compliance tag." / "We couldn't load posts." + Try again</td>
+</tr>
+<tr>
+<td>Tag save error</td>
+<td>"Couldn't save the tag. It still goes to compliance."</td>
+</tr>
+<tr>
+<td>Success</td>
+<td>Toasts: "Sent for approval." / "Scheduled. Compliance not needed for this post."</td>
+</tr>
+</tbody>
+</table>
+<h2>5. Copy notes</h2>
+<p>Plain and short: "Goes to compliance", "Skips compliance", "Not tagged · goes to compliance", "If you're not sure, choose investment content." <strong>Placeholders:</strong> the definition of investment content, and the override confirmation. Neither is written by us.</p>
+<h2>6. In scope / out of scope</h2>
+<p><strong>In:</strong> the tag on library posts (staff-set) with an advisor per-post and per-campaign override; the safe default for untagged posts; the per-advisor setting; routing in every compliance-copy path (FTT Mail, Mailchimp, website, social) for <code>email</code> mode; badges and tracker; an audit field (<code>complianceTagChangedBy/At</code>); tests with test accounts only.</p>
+<p><strong>Out:</strong> writing compliance definitions; automatic classification (AI); changes to External/Red Oak mode; compliance-side digests of skipped items (see question 5); bulk re-tagging tools beyond the admin field.</p>
+<h2>7. Mobile</h2>
+<p>The badges wrap under the title, the radios are full width, and the tracker wraps to two lines. The admin settings stack.</p>
+<h2>8. Backend notes</h2>
+<ul>
+<li><code>HTMLPosts.complianceTag: 'investment' | 'non_investment' | null</code> (null means investment).</li>
+<li>The campaign, queue item and social item get <code>complianceTag</code> copied from the post, plus <code>complianceTagOverride</code>, <code>complianceTagChangedBy</code> and <code>complianceTagChangedAt</code>.</li>
+<li><code>AdvisorPreferences.complianceScope: 'all' | 'investment_only'</code> (default <code>'all'</code>).</li>
+<li>One helper: <code>needsComplianceCopy(prefs, item)</code> = <code>isEmailComplianceMode(prefs) &amp;&amp; (prefs.complianceScope !== 'investment_only' || effectiveTag(item) !== 'non_investment')</code>. Use it to default the "Send copy to compliance?" switches and in the server send paths. Don't trust the client.</li>
+<li>Works with #416: advisor approve → <code>needsComplianceCopy</code> ? compliance request : schedule.</li>
+<li>Keep existing approve/deny and the #415 auto-approve for investment items unchanged.</li>
+</ul>
+<h2>9. Estimates (one developer)</h2>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>A</th>
+<th>B</th>
+<th>C</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Data fields + admin tag/settings</td>
+<td>1.5–2</td>
+<td>1.5–2</td>
+<td>0.5–1</td>
+</tr>
+<tr>
+<td>Routing helper in FTT Mail, Mailchimp, website, social</td>
+<td>2–3</td>
+<td>2–3</td>
+<td>2–3</td>
+</tr>
+<tr>
+<td>Advisor UI (badges, distribute, campaign, override + audit)</td>
+<td>2–2.5</td>
+<td>1–1.5</td>
+<td>1.5–2</td>
+</tr>
+<tr>
+<td>Tracker/status labels</td>
+<td>0.5–1</td>
+<td>0.5–1</td>
+<td>0.5–1</td>
+</tr>
+<tr>
+<td>Tests (test accounts, no live compliance emails)</td>
+<td>1</td>
+<td>1</td>
+<td>1</td>
+</tr>
+<tr>
+<td><strong>Total</strong></td>
+<td><strong>7–9.5</strong></td>
+<td><strong>6–8.5</strong></td>
+<td><strong>5.5–8</strong></td>
+</tr>
+</tbody>
+</table>
+<p>Tagging the existing library backlog is staff time and isn't included.</p>
+<h2>10. Open questions</h2>
+<ol>
+<li><strong>Who tags the library</strong>, including the backlog? Until a post is tagged, it goes to compliance.</li>
+<li><strong>At release:</strong> keep every advisor on "All content" and switch firms one by one (as mocked), or move all <code>email</code>-mode advisors to "Only investment content"?</li>
+<li>Can an advisor mark an <strong>investment</strong> post as non-investment (as mocked, with confirmation), or only make things stricter?</li>
+<li><strong>Non-investment path:</strong> advisor-approved only (as mocked), or auto-approved with no advisor step?</li>
+<li>Should compliance get an FYI list (for example weekly) of items that skipped them?</li>
+<li>Which surfaces: email campaigns, website and social (as mocked), or email only to start (#415 is campaigns only)?</li>
+<li>Who writes the definition of investment content and the confirmation wording? They're placeholders.</li>
+<li>Should External (Red Oak) mode follow the same tag?</li>
+<li>Is the mixed-email rule (any investment post means the email goes to compliance) right?</li>
+</ol></body></html>
