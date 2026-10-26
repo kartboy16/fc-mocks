@@ -2,9 +2,121 @@
 <blockquote>
 <p><strong>Direction locked by Alex, Oct 24, 2026:</strong> FC creates and looks after a Google Analytics 4 property for each advisor, tracks the <strong>whole</strong> advisor site, and shows the numbers inside FC in a new <strong>Analytics</strong> section. It is not a Website publishing method.</p>
 <p><strong>Update Oct 26, 2026 (Alex):</strong> "Can we have the analytics section in the website tab first? We can do an analytics tab afterwards." So it's now <strong>C first (Phase 1), then A (Phase 2)</strong>. The A-vs-B choice is superseded.</p>
+<p><strong>Update Oct 26, 2026, 11:06 AM PT (Alex):</strong> "I want to integrate this Properties creation and pull the analytics into financialcontent.ca. Can you mock up the properties creation and analytics view? When it's time to build, just add the property to my Financialcontent.ca account." The model is <strong>one GA4 property per advisor site</strong>, all in Alex's FC-owned Google Analytics account named <strong>"FinancialContent"</strong>, with <strong>2-month retention</strong>. C (Phase 1) stays the locked base. Consent changes to <strong>analytics on by default with an opt-out notice</strong> (OK / Opt out). New mocks: <a href="property-setup.html">Property setup</a> and <a href="analytics-view.html">Analytics view</a>. See section 0.</p>
 <p><strong>Not agent-ready. Soft Dev hold until Alex picks.</strong> Mocks only, with generic names (Jane Advisor, Your Firm Name, example.com) and made-up example numbers.</p>
 </blockquote>
-<p>Mocks: <a href="index.html">Hub</a> · <a href="today.html">Today</a> · <a href="c-website-analytics.html">C, Website tab section (Phase 1, current)</a> · <a href="a-analytics-section.html">A, own Analytics tab (Phase 2)</a> · <a href="b-home-card.html">B, Home card + full page</a> · <a href="site-consent.html">Advisor site with cookie banner</a>. Every page has a Desktop / Phone toggle (<code>?phone</code>).</p>
+<p>Mocks: <a href="index.html">Hub</a> · <a href="today.html">Today</a> · <a href="property-setup.html">Property setup</a> · <a href="analytics-view.html">Analytics view</a> · <a href="c-website-analytics.html">C, Website tab section (Phase 1, current)</a> · <a href="a-analytics-section.html">A, own Analytics tab (Phase 2)</a> · <a href="b-home-card.html">B, Home card + full page</a> · <a href="site-consent.html">Advisor site with cookie banner</a>. Every page has a Desktop / Phone toggle (<code>?phone</code>).</p>
+<h2>0. Property creation and analytics view (Oct 26), recommended</h2>
+<p>There's one direction, built on C.</p>
+<p><strong><a href="property-setup.html">property-setup.html</a></strong> lives in Website › Settings › Website analytics (C styling, below the publishing cards).</p>
+<table>
+<thead>
+<tr>
+<th>State (<code>?st=</code>)</th>
+<th>Status bar</th>
+<th>Panel</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>none</code></td>
+<td>Not set up</td>
+<td>"Count visitors to your whole site and see the numbers here. We set it up for you." <strong>Set up analytics</strong> opens "Your website" (prefilled from Website settings), then <strong>Create analytics</strong>. A bad URL shows "Enter a full web address, like https://example.com."</td>
+</tr>
+<tr>
+<td><code>creating</code></td>
+<td>Setting up…</td>
+<td>Checklist: Creating your analytics property → Adding your website (example.com) → Keeping detailed data for 2 months → Getting your analytics ID</td>
+</tr>
+<tr>
+<td><code>waiting</code></td>
+<td>Created. Waiting for the first visit</td>
+<td>ID <strong>G-ABC1234XYZ</strong> + Copy, then "How should we add it to your site?" with two options. <strong>Install for me</strong> (we host your site): "We add it to every page we serve." <strong>Copy the tag</strong> (own host): the tag, 4 steps, <strong>Check my site</strong> (found / not found / wrong ID / couldn't reach) and <strong>Send to my web person</strong>. Insights pages are auto-inserted without double counting. The privacy notice switch is folded.</td>
+</tr>
+<tr>
+<td><code>live</code></td>
+<td>Live · last visit 12 min ago</td>
+<td>"Working on example.com. See your numbers →"</td>
+</tr>
+<tr>
+<td><code>error</code></td>
+<td>Setup didn't finish</td>
+<td>"We couldn't set up analytics. Nothing was changed on your site." + Try again + a support reference</td>
+</tr>
+</tbody>
+</table>
+<p>The staff view (<code>?view=admin</code>, FTT staff only) is <strong>Admin › Analytics properties</strong>:
+- A meter for "Properties in the FinancialContent account: N of 2,000 · plan a second account at 1,800".
+- A report quota meter (busiest property's share of its daily Data API tokens, with reports cached 6 h).
+- A status filter and <strong>+ Set up for an advisor</strong>.
+- A table with advisor / firm / site, status (Live, Waiting for data, Creating, Error: permission denied, Paused (advisor left)), property ID, created date, last data, and actions (Retry, Open in Google, Re-check tag, Pause, Resume, Delete).</p>
+<p><strong><a href="analytics-view.html">analytics-view.html</a></strong> shows the reports from the Data API.
+- <strong><code>?phase=1</code>:</strong> the Website tab section card. Visitors, page views, new visitors, top 3 pages and sources. "See full report ↓" adds the chart, devices and top Insights posts.
+- <strong><code>?phase=2</code>:</strong> the full Analytics tab, with the same parts laid out in full.
+- <strong>Date range:</strong> 7 / 28 / 90 days or Custom. On 90 days and Custom: "We keep detailed data for 2 months. Totals for longer ranges still show."
+- <strong>States:</strong> has data (all numbers labelled <strong>Example data</strong>), no data yet ("Numbers show up 24 to 48 hours after your tag starts working."), loading (skeletons), and error ("We couldn't load your numbers right now. Your site is still being tracked." + Try again).</p>
+<h3>Build note</h3>
+<ul>
+<li><strong>Access:</strong> create an FC Google Cloud project and a <strong>service account</strong>, and grant it <strong>Editor</strong> on the "FinancialContent" GA account. Read access to reports comes with that.</li>
+<li><strong>Admin API (v1beta):</strong></li>
+<li><code>properties.create</code> (parent <code>accounts/&lt;FinancialContent&gt;</code>, display name = advisor site, time zone, CAD).</li>
+<li><code>properties.dataStreams.create</code> (web stream, default URI = advisor site, which returns the Measurement ID).</li>
+<li><code>properties.updateDataRetentionSettings</code> (event and user data: <strong>2 months</strong>).</li>
+<li>Store <code>propertyId</code>, <code>streamId</code> and <code>measurementId</code> on the advisor. Make it idempotent (look up by advisor before creating) so Retry never makes duplicates. Queue the calls with backoff.</li>
+<li><strong>Data API:</strong> <code>runReport</code> / <code>batchRunReports</code> (up to 5 reports per call) for activeUsers, newUsers, screenPageViews, pagePath, sessionDefaultChannelGroup and deviceCategory. <strong>Cache per property and date range</strong> (about 6 h) and refresh in the background. Use <code>returnPropertyQuota: true</code> to drive the staff quota meter. Handle <code>429 RESOURCE_EXHAUSTED</code> with backoff, and show the cached numbers plus the error state.</li>
+<li><strong>Quotas (checked Oct 26, 2026 on Google's docs):</strong></li>
+<li>Each GA account holds up to <strong>2,000 properties</strong>, and Google support can raise it. An organization can have up to 100 accounts.</li>
+<li>The Data API allows, <strong>per standard property</strong>: 200,000 core tokens per day, 40,000 per hour, 14,000 per project per hour and 10 concurrent requests. Most requests cost 10 tokens or fewer, so per-advisor numbers are comfortable with caching.</li>
+<li>Plan for <strong>multiple accounts</strong> ("FinancialContent 2", and so on) when an account reaches about 1,800, and record <code>accountId</code> per property.</li>
+<li><strong>Retention:</strong> Google's help says the 2-month setting affects explorations and funnel reports, <strong>not standard aggregated reports</strong>. Confirm at build that <code>runReport</code> totals for 90 days and Custom ranges still return. If they don't, cap ranges at about 60 days.</li>
+<li><strong>Secrets:</strong> keep the service-account key in server-only settings or a secret manager, never in the client or the repo. Rotate it, and prefer keyless or workload identity if hosting allows. Every Admin and Data API call stays server-side, behind advisor-ownership checks (including acting as).</li>
+<li><strong>White-label:</strong> the tag loads only <code>googletagmanager.com</code>. Nothing a visitor sees (notice, tag, site) mentions or links to FC or financialcontent.ca. The GA account name is visible to FTT staff only.</li>
+<li><strong>First build:</strong> per Alex, create the first property for <strong>Alex's own FC account</strong> as the pilot, before any advisor.</li>
+<li><strong>Estimate:</strong></li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>Piece</th>
+<th>Days</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Service account, secrets, Admin API create + retention + idempotency</td>
+<td>2–3</td>
+</tr>
+<tr>
+<td>Staff admin view (list, meters, retry, pause/resume)</td>
+<td>1.5–2</td>
+</tr>
+<tr>
+<td>Advisor setup flow in the Website tab</td>
+<td>1.5–2</td>
+</tr>
+<tr>
+<td>Data API reports, cache, quota handling</td>
+<td>2–2.5</td>
+</tr>
+<tr>
+<td>Analytics view (Phase 1 card + See full report)</td>
+<td>1.5–2</td>
+</tr>
+<tr>
+<td>Tag + opt-out notice script + Check my site + send</td>
+<td>2–2.5</td>
+</tr>
+<tr>
+<td>Auto-insert (PHP Insights, FTT-hosted) + no double count</td>
+<td>1–1.5</td>
+</tr>
+<tr>
+<td>QA</td>
+<td>1</td>
+</tr>
+</tbody>
+</table>
+<p>That's about <strong>12.5 to 16.5 days for Phase 1</strong>. Phase 2 (moving to its own tab) is about 1.5 to 2.5 days more.</p>
 <h2>1. Plan: C now, A later</h2>
 <p><strong>Phase 1, C (<a href="c-website-analytics.html">mock</a>):</strong> a <strong>Website analytics</strong> section inside Website › Settings, below the three publishing cards. It has its own heading ("Separate from publishing" / "Website analytics"), a 2px divider, and a lilac panel with a status bar. It has no radio, no "Publishing here" chip and no select button, so it doesn't read as a 4th method. It works with any publishing method.</p>
 <p><strong>Phase 2, A (<a href="a-analytics-section.html">mock</a>):</strong> the same section moves to its own <strong>Analytics</strong> sidebar tab with Overview and Setup tabs. The Website tab keeps one line: "Analytics: see visitors in Analytics →". The ID, setup and data stay the same, and nothing changes on the advisor's site. See C's <code>?phase=2</code> frame.</p>
@@ -88,7 +200,7 @@
 </tr>
 <tr>
 <td>Advisor site</td>
-<td><a href="site-consent.html">site-consent.html</a>: banner, settings, accepted, declined</td>
+<td><a href="site-consent.html">site-consent.html</a>: notice shown, OK, opted out</td>
 <td>Same</td>
 </tr>
 </tbody>
@@ -152,7 +264,7 @@
 </tr>
 <tr>
 <td><strong>Consent-limited</strong></td>
-<td>Under the numbers: "Only visitors who accept cookies are counted, so real traffic is higher."</td>
+<td>Under the numbers: "Visitors who opt out aren't counted."</td>
 </tr>
 <tr>
 <td><strong>Consent declined</strong> (site)</td>
@@ -173,7 +285,7 @@
 <li>Turn on: "See who visits your website" / "Turn on analytics" / "We set it up for you. It takes about a minute."</li>
 <li>Paste steps: 1. Copy the code. 2. Paste it in the &lt;head&gt; of every page (or once in your shared header). 3. Publish your site. 4. Click <strong>Check my site</strong>.</li>
 <li>"Send these steps to my web person": email field + editable message, sent from Jane Advisor &lt;jane@example.com&gt;, includes the code and 4 steps.</li>
-<li>Cookie banner: "Ask visitors first" (on, Recommended). "Nothing is tracked until a visitor clicks Accept. Preview the banner."</li>
+<li>Privacy notice: "Show an opt-out notice" (on, Recommended). "Visits are counted unless a visitor clicks Opt out. Preview the notice."</li>
 <li><strong>Banner text is a placeholder and needs compliance review.</strong> The mocks don't write legal or privacy wording.</li>
 </ul>
 <h2>5. In scope / out of scope</h2>
@@ -192,15 +304,16 @@
 <li><strong>Auto-insert:</strong> PHP Insights pages (#644 renderer, needs a folder version bump) and FTT-hosted static sites (#601: inserted in the shared template on deploy).</li>
 <li><strong>Skip preview:</strong> don't count preview or staging hosts, or <code>noindex</code> pages (from the issue). Optionally restrict the data stream to the saved domain.</li>
 </ul>
-<h2>7. Quebec Law 25 and consent</h2>
+<h2>7. Consent model and privacy (updated Oct 26)</h2>
 <ul>
-<li>Tracking is <strong>off by default</strong> until the visitor agrees. The snippet sets Google consent mode default <code>denied</code> for analytics and ads storage.</li>
-<li>With the banner on, Google's script (<code>googletagmanager.com/gtag/js</code>) loads <strong>only after Accept</strong> (basic consent mode, nothing sent before). Decline means nothing loads. The choice is stored first-party on the advisor's domain, and a footer "Cookie settings" link reopens it.</li>
-<li>Show the banner to every visitor (we can't reliably detect Quebec).</li>
-<li>Banner text: <strong>placeholder, needs compliance review.</strong> It should link to the firm's privacy policy on its own site.</li>
-<li>Banner off: the advisor must use their own consent tool that calls <code>gtag('consent','update',…)</code>.</li>
-<li><strong>White-label:</strong> nothing a visitor can see (banner, snippet, site) mentions or links to financialcontent.ca. The only outside file is Google's.</li>
-<li><strong>Where the banner script lives:</strong> in the mocks it's inline in the snippet (no outside file). That makes the snippet longer and means wording changes need a re-paste. The alternative is a small script on a neutral, non-FC domain. That's an open question. On PHP Insights pages and FTT-hosted sites we serve it ourselves from the advisor's own domain.</li>
+<li><strong>Analytics is on by default, with an opt-out notice</strong> (OK / Opt out). See <a href="site-consent.html">site-consent.html</a>.</li>
+<li>OK hides the notice. Opt out stops Google Analytics loading on later pages, and the choice is remembered first-party on the advisor's domain.</li>
+<li>"Privacy choices" in the footer reopens the notice.</li>
+<li><strong>We don't make a legal call here.</strong> Whether an opt-out notice is acceptable in each province, including Quebec's Law 25, needs privacy and compliance review (open question 1). If review says opt-in is needed somewhere, the earlier Accept/Decline design can come back.</li>
+<li>Notice text is a <strong>placeholder that needs compliance and privacy review</strong>. It should link to the firm's privacy policy on its own site.</li>
+<li>With the notice off, the advisor uses their own privacy notice and opt-out.</li>
+<li><strong>White-label:</strong> nothing a visitor sees mentions or links to financialcontent.ca. The only outside file is Google's.</li>
+<li><strong>Where the notice script lives:</strong> inline in the tag (as mocked), or on a neutral non-FC domain. On PHP Insights pages and FTT-hosted sites we serve it from the advisor's own domain.</li>
 </ul>
 <h2>8. #601 (FTT-hosted sites)</h2>
 <p>When FTT hosts the site (the AI site builder idea in #601, Cloudways + Git), we add the tag and banner to the shared template on every deploy, so the advisor skips step 3: "We host your site, so we'll add it for you." Until #601 exists, this state is for sites FTT already hosts by hand.</p>
@@ -254,14 +367,14 @@
 <p>Banner legal text and compliance review aren't included.</p>
 <h2>10. Open questions for Alex</h2>
 <ol>
-<li><strong>Cancel:</strong> what happens to the property when an advisor leaves: delete after N days, hand it over, or keep it?</li>
+<li><strong>Privacy review:</strong> Law 25 and privacy review should confirm that analytics on by default with an opt-out notice is acceptable in each province where advisors' visitors are, including Quebec. We aren't asserting a conclusion.</li>
+<li><strong>Cancel:</strong> when an advisor leaves, should the property pause and then be deleted after N days, be handed over, or be kept?</li>
 <li><strong>GA access:</strong> do advisors get Viewer access in Google Analytics, or only see numbers in FC?</li>
-<li><strong>Banner:</strong> build our own small banner (as mocked) or use a provider? And should the banner script be inline in the snippet or on a neutral non-FC domain?</li>
-<li><strong>Data retention:</strong> 2 or 14 months?</li>
-<li><strong>Quotas:</strong> OK to spread advisors across several FC Google accounts (2,000 properties each), and to cache reports a few hours?</li>
-<li><strong>Who writes the banner text?</strong> It's a placeholder until compliance reviews it.</li>
-<li><strong>Existing GA users:</strong> should we allow "Use my own ID" later for advisors who already have Google Analytics?</li>
-<li><strong>"Send these steps to my web person":</strong> sent as the advisor (Jane Advisor &lt;jane@example.com&gt;) through our mail service. Is that OK?</li>
-<li><strong>When does Phase 2 happen?</strong> Right after Phase 1 ships, or when we add more reports (email, social)?</li>
+<li><strong>Who can click "Set up analytics":</strong> advisors and staff (as mocked), or staff only at first?</li>
+<li><strong>Notice:</strong> inline in the tag or on a neutral non-FC domain? Who writes and reviews the notice text?</li>
+<li><strong>More accounts:</strong> OK to open "FinancialContent 2" at about 1,800 properties, and to cache reports for about 6 hours?</li>
+<li><strong>"Send to my web person":</strong> sent as the advisor (Jane Advisor &lt;jane@example.com&gt;) through our mail service. Is that OK?</li>
+<li><strong>Existing GA users:</strong> later, should advisors who already have Google Analytics get a "Use my own ID" option?</li>
+<li><strong>When does Phase 2 happen?</strong></li>
 </ol>
-<p>~~A or B?~~ Answered Oct 26: C (Website tab) first, then A.</p></body></html>
+<p>Answered: data retention is 2 months (Alex, Oct 26). One property per advisor site in the FinancialContent account (Alex, Oct 26). C first, then A (Oct 26). ~~A or B~~.</p></body></html>

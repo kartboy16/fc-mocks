@@ -44,7 +44,7 @@ table.t{width:100%;border-collapse:collapse;font-size:13px}table.t td,table.t th
 .tp3 td{padding:5px 4px}
 .ph2{border:2px dashed #7b1fa2;border-radius:12px;background:#fbf7fc;padding:14px 16px;margin-top:14px}
 #dev.phone .mini{grid-template-columns:1fr 1fr}#dev.phone .mini .tpc{grid-column:1/3}#dev.phone .anh{font-size:12.5px}
-</style></head><body><div class="mockbar"><a href="../">All mocks</a> · #650 Analytics · <a href="index.html">Hub</a> · <a href="today.html">Today</a> · <b>C (now, Phase 1)</b> · <a href="a-analytics-section.html">A (Phase 2)</a> · <a href="b-home-card.html">B</a> · <a href="site-consent.html">Advisor site + banner</a> · <a href="build-contract.html">Contract</a><span class="sp"></span><span class="grp"><button data-dev="desk" onclick="setDev('desk')">Desktop</button><button data-dev="phone" onclick="setDev('phone')">Phone</button></span><span class="grp">Phase: <button data-pb="1" onclick="setPhase('1')">1 Website tab (now)</button><button data-pb="2" onclick="setPhase('2')">2 Own tab (later)</button></span><span class="row2">State: <button data-sb="st:off" onclick="set('st','off')">Not set up</button><button data-sb="st:prov" onclick="set('st','prov')">Setting up</button><button data-sb="st:err" onclick="set('st','err')">Setup error</button><button data-sb="st:ready" onclick="set('st','ready')">ID ready</button><button data-sb="st:waiting" onclick="set('st','waiting')">Waiting for data</button><button data-sb="st:data" onclick="set('st','data')">Has data</button>
+</style></head><body><div class="mockbar"><a href="../">All mocks</a> · #650 Analytics · <a href="index.html">Hub</a> · <a href="today.html">Today</a> · <b>C (now, Phase 1)</b> · <a href="a-analytics-section.html">A (Phase 2)</a> · <a href="b-home-card.html">B</a> · <a href="property-setup.html">Property setup</a> · <a href="analytics-view.html">Analytics view</a> · <a href="site-consent.html">Advisor site + notice</a> · <a href="build-contract.html">Contract</a><span class="sp"></span><span class="grp"><button data-dev="desk" onclick="setDev('desk')">Desktop</button><button data-dev="phone" onclick="setDev('phone')">Phone</button></span><span class="grp">Phase: <button data-pb="1" onclick="setPhase('1')">1 Website tab (now)</button><button data-pb="2" onclick="setPhase('2')">2 Own tab (later)</button></span><span class="row2">State: <button data-sb="st:off" onclick="set('st','off')">Not set up</button><button data-sb="st:prov" onclick="set('st','prov')">Setting up</button><button data-sb="st:err" onclick="set('st','err')">Setup error</button><button data-sb="st:ready" onclick="set('st','ready')">ID ready</button><button data-sb="st:waiting" onclick="set('st','waiting')">Waiting for data</button><button data-sb="st:data" onclick="set('st','data')">Has data</button>
 <span class="grp">Site: <button data-sb="host:self" onclick="set('host','self')">Advisor hosts it</button><button data-sb="host:ftt" onclick="set('host','ftt')">We host it (#601)</button></span>
 <span class="grp">Check result: <button data-rb="found" onclick="setResult('found')">Found</button><button data-rb="notfound" onclick="setResult('notfound')">Not found</button><button data-rb="wrongid" onclick="setResult('wrongid')">Wrong ID</button><button data-rb="unreach" onclick="setResult('unreach')">Can't reach</button></span></span></div><div id="dev" class="desk"><div class="pnav"><span>Content</span><span class="on">Website</span><span>Social</span><span>Email</span><span data-phase="2">Analytics</span><span>Calendar</span></div><div class="app"><div class="side"><div>Content</div><div data-phw class="on">Website</div><div>Social Media</div><div>Email Campaigns</div><div data-phase="2" data-pha>Analytics<br><span class="nw">NEW</span></div><div>Calendar</div><div>Settings</div></div><div class="main"><h1>Website</h1><div class="tabs"><div class="tab">Already Posted</div><div class="tab">Schedule</div><div class="tab on">Settings</div></div>
 <div data-phase="2" class="res info" style="margin-bottom:12px"><b>Phase 2 frame.</b> Analytics has moved to its own sidebar tab.</div>
@@ -75,7 +75,7 @@ table.t{width:100%;border-collapse:collapse;font-size:13px}table.t td,table.t th
 <div class="card"><h3>Top Insights posts</h3><table class="t"><tbody id="ti"></tbody></table></div>
 <p class="help">More reports get their own Analytics tab later.</p></div>
 <p style="margin:10px 0 4px"><a href="#" id="morelink" onclick="toggleMore();return false">See more &darr;</a></p>
-<p class="help">&#9432; Only visitors who accept cookies are counted, so real traffic is higher. <a href="site-consent.html">See the banner</a></p>
+<p class="help">&#9432; Visitors who opt out aren't counted. <a href="site-consent.html">See the notice</a></p>
 <p class="exnote">All numbers here are made-up example data.</p></div>
 <details id="csetup" data-st="ready waiting data"><summary>Setup and code <span class="help" data-st="ready">&middot; 1 step left</span><span class="help" data-st="waiting data">&middot; done</span></summary><div class="dbody" style="font-size:13.5px">
 <div class="card">
@@ -88,10 +88,10 @@ table.t{width:100%;border-collapse:collapse;font-size:13px}table.t td,table.t th
 </div></div>
 
 <div class="sec" data-lock="1"><div class="num" id="n2">2</div><div>
-<h3>Cookie banner</h3>
-<label class="sw on" id="bsw" onclick="toggleBanner()"><span class="tr"></span><span>Ask visitors first</span></label> <span class="chip g" data-banner="on">Recommended</span>
-<p class="help" data-banner="on">Nothing is tracked until a visitor clicks Accept. <a href="site-consent.html">Preview the banner</a></p>
-<div class="res warn" data-banner="off"><b>Banner off.</b> Use your own cookie tool. Nothing is tracked until it says a visitor agreed.</div>
+<h3>Privacy notice</h3>
+<label class="sw on" id="bsw" onclick="toggleBanner()"><span class="tr"></span><span>Show an opt-out notice</span></label> <span class="chip g" data-banner="on">Recommended</span>
+<p class="help" data-banner="on">Visits are counted unless a visitor clicks Opt out. <a href="site-consent.html">Preview the notice</a></p>
+<div class="res warn" data-banner="off"><b>Notice off.</b> Use your own privacy notice and opt-out.</div>
 </div></div>
 
 <div class="sec" data-lock="1"><div class="num" id="n3">3</div><div>
@@ -114,7 +114,7 @@ table.t{width:100%;border-collapse:collapse;font-size:13px}table.t td,table.t th
 </div>
 <div data-st="ready waiting data"><details><summary>Developer details</summary><div class="dbody"><ul>
 <li>The code loads only from googletagmanager.com. Nothing mentions or links to us.</li>
-<li>Google consent mode starts as <code>denied</code>. With the banner on, Google Analytics loads only after Accept.</li>
+<li>Analytics is on by default. If a visitor clicks Opt out, Google Analytics isn't loaded on their next pages and the choice is remembered.</li>
 <li>Insights pages: our PHP folder adds the same tag unless your page already has <code>G-ABC1234XYZ</code>.</li>
 <li>Check my site loads your homepage and looks for your ID.</li>
 <li>Test in Google's Tag Assistant. Preview and staging hosts aren't counted.</li></ul></div></details>
@@ -133,8 +133,8 @@ function qs(s){return document.querySelectorAll(s)}
 function setDev(d){document.getElementById('dev').className=d;qs('[data-dev]').forEach(function(b){b.classList.toggle('on',b.getAttribute('data-dev')===d)})}
 function toast(m){var t=document.getElementById('toast');t.textContent=m;t.style.display='block';clearTimeout(t._t);t._t=setTimeout(function(){t.style.display='none'},2800)}
 function copyText(b,txt){try{navigator.clipboard&&navigator.clipboard.writeText(txt).catch(function(){})}catch(e){}var o=b.textContent;b.textContent='Copied';setTimeout(function(){b.textContent=o},1400)}
-var SNIP_ON="<!-- Website analytics. Paste once in the <head> of every page. -->\n<script>\nwindow.dataLayer=window.dataLayer||[];\nfunction gtag(){dataLayer.push(arguments);}\ngtag('consent','default',{analytics_storage:'denied',ad_storage:'denied',\n  ad_user_data:'denied',ad_personalization:'denied'});\ngtag('js',new Date());\ngtag('config','G-ABC1234XYZ');\n<\/script>\n<script>\n/* Cookie banner: asks first. After Accept it loads\n   https://www.googletagmanager.com/gtag/js?id=G-ABC1234XYZ */\n(function(){ /* banner code, about 4 KB */ })();\n<\/script>";
-var SNIP_OFF="<!-- Website analytics. Paste once in the <head> of every page. -->\n<script>\nwindow.dataLayer=window.dataLayer||[];\nfunction gtag(){dataLayer.push(arguments);}\ngtag('consent','default',{analytics_storage:'denied',ad_storage:'denied',\n  ad_user_data:'denied',ad_personalization:'denied'});\ngtag('js',new Date());\ngtag('config','G-ABC1234XYZ');\n/* Your cookie tool must call gtag('consent','update',...) */\n<\/script>\n<script async src=\"https://www.googletagmanager.com/gtag/js?id=G-ABC1234XYZ\"><\/script>";
+var SNIP_ON="<!-- Website analytics. Paste once in the <head> of every page. -->\n<script>\nwindow.dataLayer=window.dataLayer||[];\nfunction gtag(){dataLayer.push(arguments);}\nif(localStorage.getItem('analytics-opt-out')!=='1'){\n  var s=document.createElement('script');s.async=1;\n  s.src='https://www.googletagmanager.com/gtag/js?id=G-ABC1234XYZ';\n  document.head.appendChild(s);\n  gtag('js',new Date());gtag('config','G-ABC1234XYZ');\n}\n/* Privacy notice with OK / Opt out (about 3 KB, inline) */\n(function(){ /* notice code */ })();\n<\/script>";
+var SNIP_OFF="<!-- Website analytics. Paste once in the <head> of every page. -->\n<script async src=\"https://www.googletagmanager.com/gtag/js?id=G-ABC1234XYZ\"><\/script>\n<script>\nwindow.dataLayer=window.dataLayer||[];\nfunction gtag(){dataLayer.push(arguments);}\ngtag('js',new Date());gtag('config','G-ABC1234XYZ');\n/* Your own notice handles opt-out */\n<\/script>";
 function apply(){
  ['st','tab','host','chk','banner','view'].forEach(function(k){qs('[data-'+k+']').forEach(function(e){e.style.display=e.getAttribute('data-'+k).split(' ').indexOf(String(S[k]))>-1?'':'none'})});
  qs('[data-sb]').forEach(function(b){var p=b.getAttribute('data-sb').split(':');b.classList.toggle('on',String(S[p[0]])===p[1])});
