@@ -1,0 +1,235 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>#665 Multi-photo posts: build contract</title><style>body{font-family:Inter,system-ui,sans-serif;max-width:960px;margin:24px auto;padding:0 16px;line-height:1.55;color:#2C3E50}a{color:#1976D2}table{border-collapse:collapse;width:100%;margin:8px 0;font-size:14px}td,th{border:1px solid #e0e5eb;padding:6px 8px;text-align:left;vertical-align:top}th{background:#f3f6f9}blockquote{background:#e8f5e9;border:2px solid #2e7d32;border-radius:10px;margin:10px 0;padding:4px 14px}code{background:#f3f6f9;padding:1px 4px;border-radius:4px}@media(max-width:600px){table{display:block;overflow-x:auto}}</style></head><body><p><a href="../">All mocks</a> · <a href="index.html">Hub</a> · <a href="build-contract.md">Markdown</a></p><h1>#665 Up to 5 photos in one social post: build contract</h1>
+<p>Issue: <a href="https://github.com/kartboy16/content-library/issues/665">#665</a>. Related: #153 (drag-drop, shipped), #260 and #417 (media library). Mocks: <a href="index.html">hub</a>. <strong>Not agent-ready. Soft Dev hold until Alex picks.</strong></p>
+<h2>Today (from the code, read-only at <code>38b2983</code>)</h2>
+<ul>
+<li>Social compose (<code>CreatePostFlow.jsx</code>) holds <strong>one</strong> <code>imageState</code>, or one <code>videoState</code>.</li>
+<li><code>ComposeMediaDropZone</code> (#153) accepts a drop anywhere on the compose card. The overlay reads "Drop to attach" or "Drop to replace".</li>
+<li><code>ComposeMediaToolbar</code> has "Add image" (Upload, My library, Stock photos) and "Add video".</li>
+<li>Images are JPEG, PNG, GIF or WebP (<code>composeMediaFiles.js</code>). The upload goes through <code>social.uploadImageToLibrary</code>, which stores files in GridFS with a <strong>20MB</strong> cap.</li>
+<li>Existing messages we reuse: "Please select a JPEG, PNG, GIF, or WebP image" and "Image must be under 20MB".</li>
+<li>Publishing:</li>
+<li>Facebook: <code>/{page}/photos</code>, one photo.</li>
+<li>Instagram: a single <code>image_url</code> container.</li>
+<li>LinkedIn: legacy <code>ugcPosts</code> with <code>shareMediaCategory: IMAGE</code> for images (video already uses <code>/rest/posts</code>).</li>
+<li>FC connects <strong>LinkedIn, Facebook and Instagram</strong> today. There is no X.</li>
+</ul>
+<h2>Recommendation: A, a photo strip in the existing composer</h2>
+<p><strong><a href="a-photo-strip.html">A</a>:</strong> the same compose card and the same #153 drop target, with a row of up to 5 thumbnails under the text.
+- Drag to reorder (arrow buttons on phone). × removes a photo, and an "+ Add photos" tile sits at the end.
+- A "3 of 5 photos" counter, with a "First" tag on photo 1.
+- Short per-network notes under the strip, and the preview tabs (LinkedIn, Facebook, Instagram) show the layout for each network.
+- It's the smallest change for advisors and keeps one screen.</p>
+<p><strong><a href="b-gallery-step.html">B</a>:</strong> compose shows a small summary ("3 of 5 photos · Edit photos"). An "Arrange your photos" step has big tiles and a preview, then Done. It's roomier for reordering, but adds a step and hides the photos while you write.</p>
+<p><strong><a href="c-per-network.html">C</a>:</strong> one photo pool, plus a checkbox per photo for each network. It gives the most control, but every post gets more complex, and approval has to show a different set for each network.</p>
+<h2>Screens and states (<code>?st=</code>, plus <code>?phone</code>)</h2>
+<table>
+<thead>
+<tr>
+<th>State</th>
+<th>What shows</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>empty</code></td>
+<td>Drop zone: "<strong>Drag photos here</strong> or choose files". Up to 5 photos · JPEG, PNG, GIF or WebP · under 20MB each.</td>
+</tr>
+<tr>
+<td><code>filled</code></td>
+<td>3 thumbnails, counter "3 of 5 photos · drag to change the order", per-network notes, preview.</td>
+</tr>
+<tr>
+<td><code>uploading</code></td>
+<td>Thumbnails with a progress bar. × is hidden while a photo uploads.</td>
+</tr>
+<tr>
+<td><code>error</code></td>
+<td>"<strong>"statement.pdf" wasn't added.</strong> Please select a JPEG, PNG, GIF, or WebP image." / "<strong>"Big-banner.png" wasn't added.</strong> Image must be under 20MB." Any good files in the same drop are still added.</td>
+</tr>
+<tr>
+<td><code>limit</code></td>
+<td>5 of 5, and the Add tile reads "5 of 5 · Full". The 6th photo gets: "<strong>You can add up to 5 photos to one post.</strong> "Extra photo.jpg" wasn't added. Remove a photo to add a different one." Dropping several files at once: "We added 2. 1 more didn't fit…"</td>
+</tr>
+<tr>
+<td><code>mixed</code></td>
+<td>"<strong>A post can have photos or one video, not both.</strong> Remove the photos to add a video, or remove the video to keep your photos."</td>
+</tr>
+</tbody>
+</table>
+<p>The mock also has an <code>x=1</code> toggle (an X account connected, future) that shows how a network with a lower limit is handled:
+- "<strong>X</strong> shows up to 4 photos. Photo 5 won't be posted on X."
+- "Networks that only take one photo get <strong>the first photo only</strong>. We'll say so here before you post."</p>
+<p>The mock's top bar can add 1 photo, drop 2 files, or drop a bad file plus a too-big file. Real files work too: pick or drop images from your computer.</p>
+<h3>Copy</h3>
+<table>
+<thead>
+<tr>
+<th>Where</th>
+<th>Text</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Counter</td>
+<td>"3 of 5 photos · drag to change the order" (on phone: "(or use the arrows)")</td>
+</tr>
+<tr>
+<td>First tile</td>
+<td>"First" tag (it leads the post, and Instagram crops the others to its shape)</td>
+</tr>
+<tr>
+<td>LinkedIn / Facebook note</td>
+<td>"LinkedIn and Facebook post all 3 photos together."</td>
+</tr>
+<tr>
+<td>Instagram note</td>
+<td>"Instagram posts them as a swipeable post. It crops every photo to the shape of the first one (square by default)."</td>
+</tr>
+<tr>
+<td>Lower-limit network</td>
+<td>"X shows up to 4 photos. Photo 5 won't be posted on X."</td>
+</tr>
+<tr>
+<td>One-photo network</td>
+<td>"Networks that only take one photo get the first photo only."</td>
+</tr>
+<tr>
+<td>Remove</td>
+<td>Toast: "Photo removed"</td>
+</tr>
+</tbody>
+</table>
+<p>No compliance or legal copy is involved. The approval email just shows all the photos.</p>
+<h2>In and out of scope</h2>
+<ul>
+<li><strong>In:</strong></li>
+<li>Up to 5 images per post in create and edit (<code>ScheduledPostEditDialog</code> too): upload, drop, library and stock add to the strip.</li>
+<li>Reorder and remove, the 6th-photo block, and the per-network preview.</li>
+<li>Publish as one multi-photo post on FB, IG and LinkedIn.</li>
+<li>Approval email and compliance views show all photos. Scheduled posts keep them all.</li>
+<li>Single-image and video posts don't regress.</li>
+<li><strong>Out:</strong></li>
+<li>Mixing a video with photos.</li>
+<li>More than 5 photos.</li>
+<li>Per-photo captions or alt text (an open question).</li>
+<li>Cropping or editing tools.</li>
+<li>Media library redesign (#260, #417).</li>
+<li>X publishing (not connected today; the copy is ready for it).</li>
+</ul>
+<h2>Mobile (390px)</h2>
+<ul>
+<li>Tiles show 3 per row and keep their square shape.</li>
+<li>HTML5 drag doesn't work on touch, so each tile has ◀ ▶ move buttons. × stays at the top right with a 22px target (consider 32px).</li>
+<li>The preview stacks under the composer.</li>
+<li>B's "Arrange your photos" step has a sticky Cancel / Done bar.</li>
+</ul>
+<h2>Build note</h2>
+<ul>
+<li><strong>Data:</strong> <code>images: [{fileId, url, thumbnailUrl, width, height, sizeBytes, mime}]</code>, ordered, max 5, on the draft and on <code>social_post_queue</code>.</li>
+<li>Keep <code>imageState</code> (or <code>imageUrl</code>) as <code>images[0]</code> for older readers and the approval email until everything has moved over.</li>
+<li>Validate the count server-side (<code>Meteor.Error('too-many-images')</code>), and reject images together with a video.</li>
+<li><strong>Upload:</strong> reuse <code>social.uploadImageToLibrary</code> (GridFS, 20MB) once per file, running in parallel (2–3 at a time) with per-tile progress.</li>
+<li>Drop handling reuses <code>ComposeMediaDropZone</code> and <code>bindComposeFormFileDrop</code>. Change "Drop to replace" to "Drop to add" when there's room, and treat a drop as "Full" at 5.</li>
+<li>Reordering inside the strip must not trigger the file-drop overlay: check for <code>text/x-fc-photo</code>, not <code>Files</code>.</li>
+<li><strong>Facebook Page:</strong></li>
+<li>Upload each photo with <code>POST /{page-id}/photos</code> and <code>published=false</code> (add <code>temporary=true</code> if Facebook does the scheduling).</li>
+<li>Then <code>POST /{page-id}/feed</code> with <code>message</code> and <code>attached_media[i]={"media_fbid":…}</code>.</li>
+<li>Unpublished photos expire after about 24 hours, so upload them at publish time, not at schedule time.</li>
+<li>Video and photos can't be mixed. Meta's docs don't state a hard maximum; third-party docs say 10, which is above 5 (open question).</li>
+<li><strong>Instagram:</strong></li>
+<li>Create a container per image with <code>is_carousel_item=true</code> (<code>image_url</code> on a public URL).</li>
+<li>Create the parent with <code>media_type=CAROUSEL</code> and <code>children</code>.</li>
+<li>Publish with <code>media_publish</code>.</li>
+<li>Limits: 2–10 items. Every item is cropped to the first item's aspect ratio (1:1 by default). A carousel counts as 1 of the 50 posts allowed per 24 hours.</li>
+<li>Images must be ≤ 8MB (error 2207004) and in an allowed type. The code allows jpeg, png and gif for Instagram, so <strong>WebP needs converting</strong> to JPEG server-side. Anything over 8MB needs downscaling.</li>
+<li><strong>LinkedIn:</strong></li>
+<li>Images API <code>initializeUpload</code> per image, giving <code>urn:li:image:…</code>.</li>
+<li><code>POST /rest/posts</code> with <code>content.multiImage.images[]</code> (2–20, organic only).</li>
+<li>Supported formats are JPG, GIF and PNG, so <strong>WebP needs converting</strong>.</li>
+<li>This means moving the image path off legacy <code>ugcPosts</code> onto <code>/rest/posts</code>. That's already done for video.</li>
+<li>Check that it works for both organization and personal (member) authors.</li>
+<li><strong>X</strong> (future, not connected): up to 4 images per post. Send the first 4 and show the notice.</li>
+<li><strong>One photo:</strong> keep today's single-image calls. Multi-image paths only run for 2 or more.</li>
+<li><strong>Partial failure:</strong> if one network fails, the others still post, and that network's status gets a retry (same as today). Don't silently fall back to one image.</li>
+<li><strong>Storage:</strong> 5 × 20MB worst case per post in GridFS. Add cleanup for uploads removed before saving (an orphan sweep).</li>
+</ul>
+<h2>Estimate (days)</h2>
+<table>
+<thead>
+<tr>
+<th>Piece</th>
+<th>A</th>
+<th>B</th>
+<th>C</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Data model, migration shim (<code>images[]</code> + <code>imageState</code>), server validation</td>
+<td>1</td>
+<td>1</td>
+<td>1.5</td>
+</tr>
+<tr>
+<td>Compose UI: strip or step, reorder (mouse and touch), remove, limit, errors, parallel upload</td>
+<td>1.5–2</td>
+<td>2–2.5</td>
+<td>2.5–3</td>
+</tr>
+<tr>
+<td>Per-network preview (grid, FB +N, IG carousel) and notes</td>
+<td>0.75–1</td>
+<td>1</td>
+<td>1.5</td>
+</tr>
+<tr>
+<td>Facebook multi-photo publish</td>
+<td>0.75–1</td>
+<td>0.75–1</td>
+<td>1</td>
+</tr>
+<tr>
+<td>Instagram carousel (containers, WebP/8MB convert)</td>
+<td>1–1.5</td>
+<td>1–1.5</td>
+<td>1–1.5</td>
+</tr>
+<tr>
+<td>LinkedIn multiImage (Images API, <code>/rest/posts</code> for images)</td>
+<td>1–1.5</td>
+<td>1–1.5</td>
+<td>1–1.5</td>
+</tr>
+<tr>
+<td>Edit-scheduled dialog, approval email, compliance view</td>
+<td>0.5–0.75</td>
+<td>0.5–0.75</td>
+<td>1–1.5</td>
+</tr>
+<tr>
+<td>QA (staging, draft only, no live posts)</td>
+<td>0.5</td>
+<td>0.5</td>
+<td>0.75</td>
+</tr>
+<tr>
+<td><strong>Total</strong></td>
+<td><strong>≈7–9.25</strong></td>
+<td><strong>≈7.75–9.75</strong></td>
+<td><strong>≈10.25–12.25</strong></td>
+</tr>
+</tbody>
+</table>
+<h2>Open questions</h2>
+<ol>
+<li>Facebook Pages: what's the real maximum for <code>attached_media</code>? We need 5 (third-party docs say 10, and Meta's docs don't say). Verify on staging.</li>
+<li>LinkedIn: does multiImage work for <strong>personal</strong> (member) posts as well as company pages, with our current scopes? Verify.</li>
+<li>Instagram crops to the first photo's shape. Should we warn when shapes differ, or let advisors pick square vs portrait?</li>
+<li>WebP and large files: convert silently on the server (suggested), or block at upload?</li>
+<li>Is 5 a hard product limit? All 3 networks allow more (Instagram 10, LinkedIn 20).</li>
+<li>Alt text per photo (LinkedIn, Facebook and Instagram support it): now, or later?</li>
+<li>If a network rejects the multi-photo post at publish time, should it retry, post only the first photo, or fail that network and tell the advisor? (Suggested: fail with retry, and never silently drop photos.)</li>
+<li>X: when it's connected later, confirm "first 4 photos plus a notice" is the behaviour Alex wants.</li>
+<li>Should "My library" and "Stock photos" let you pick several at once (multi-select), or one at a time into the strip?</li>
+<li>Approval email: show all photos in a row, or the first one plus "+2 more"?</li>
+</ol></body></html>
