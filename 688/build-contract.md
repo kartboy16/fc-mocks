@@ -13,12 +13,18 @@ Issue: [#688](https://github.com/kartboy16/content-library/issues/688), which pa
 
 ## Recommendation: A, one card per post
 
-- **[A](a-digest.html)** gives each post a card with a thumbnail, summary and reading time, plus **Approve**, **Rewrite in my voice**, **Skip** and **Download copy + images (.zip)**.
+- **[A](a-digest.html)** gives each post a card with a thumbnail, summary and reading time, plus **Review & Approve**, **Rewrite in my voice**, **Skip** and **Download copy + images (.zip)**.
   - Each button opens a **[light confirm page](landing.html)** with a "One more step" banner. One click there finishes the action.
   - After an action, the page lists the **other picks this week**, so the advisor can finish the rest without going back to the email. Those on-page buttons finish in one click.
   - It matches the spec's "one-click actions per post" while staying safe from scanners.
 - **[B](b-digest.html)** is a compact list with one **"Review this week's picks"** button that opens a **[board](b-board.html)** where every post can be actioned. It's the simplest email and the fewest links. But the email has no per-post action, and it needs a page session built from a token.
 - **[C](c-digest.html)** puts the **top pick** in a hero card with full buttons, and shows the other picks as small rows with text links. It's good for engagement, but it needs ranking reasons ("matches your Retirement service"), and the small links are harder to tap.
+
+## Button copy (Alex, Oct 29)
+
+- The approve button reads **Review & Approve** everywhere: the email in A, B and C, the B board, the confirm pages (button, "One more step" banner and the sticky bar on phone), the "other picks" list and the rewrite page.
+- Its behaviour doesn't change: the email link opens the confirm page (GET renders only), and one click on **Review & Approve** there sends the POST that finishes it.
+- Headings, statuses and permission names keep the plain word ("Approve this post?", "✓ Approved", "Can approve").
 
 ## Screens and states
 
@@ -29,7 +35,7 @@ Issue: [#688](https://github.com/kartboy16/content-library/issues/688), which pa
 - **Subject:** "3 posts picked for you this week".
 - **Header:** the firm logo, "Your Firm Name", "Post suggestions for your Insights page".
 - **How-it-works line:** "Each button opens a page where **one click finishes**. Nothing happens from the email itself. **Nothing publishes automatically**: approved posts go to compliance review first."
-- **Each card:** a thumbnail (with alt text), the title, a summary (about 150 characters), the reading time and the topic. Buttons: Approve (primary), Rewrite in my voice, and Skip (muted). Below them: "⬇ Download copy + images (.zip) to post it yourself". At the bottom of the email: "Download all 3 (.zip)" and "See all picks on one page".
+- **Each card:** a thumbnail (with alt text), the title, a summary (about 150 characters), the reading time and the topic. Buttons: **Review & Approve** (primary), Rewrite in my voice, and Skip (muted). Below them: "⬇ Download copy + images (.zip) to post it yourself". At the bottom of the email: "Download all 3 (.zip)" and "See all picks on one page".
 - **View-only recipient** (`rcp=view`): "Hi Sam, you can view this week's suggestions for Jane Advisor and download them. **Jane approves them.**" They get Preview and Download only.
 - **Footer** (marked **PLACEHOLDER: needs compliance review**):
   - Why they're getting it.
@@ -45,7 +51,7 @@ Each page has a light confirm on top and a post preview below (the #657 B patter
 
 | Act | State | Copy |
 |---|---|---|
-| approve | `confirm` | Banner: "One more step: click **Approve post** to finish." Heading: "Approve this post?" Body: "It goes to compliance review first… Nothing publishes automatically." Buttons: **Approve post** (big), "Rewrite in my voice instead". On phone the button sticks to the bottom. |
+| approve | `confirm` | Banner: "One more step: click **Review & Approve** to finish." Heading: "Approve this post?" Body: "It goes to compliance review first… Nothing publishes automatically." Buttons: **Review & Approve** (big), "Rewrite in my voice instead". On phone the button sticks to the bottom. |
 | approve | `done` | "✓ Approved. … approved by Jane Advisor at 8:14 AM PT. It's queued for **compliance review**. We'll email you when it's cleared, then it's scheduled. **Nothing is published until it's cleared and scheduled.**" With compliance off: "Pick when it goes on your website." Below that, the **Other picks this week**. |
 | skip | `confirm` → `done` → `undone` | "Skip this post? It won't come back in your picks. You can undo this." Then "Skipped" with **Undo**. Then "↩ Undone. The post is back in this week's picks." |
 | download | `confirm` → `working` → `done` | "Download copy and images. A .zip with the post text (.txt and .html), the images, and your disclaimer… Downloading doesn't approve or publish anything." Then "✓ Your download started (2.4 MB)" and a reminder to follow the usual compliance steps. |
@@ -61,9 +67,9 @@ Every action page says: "Nothing publishes automatically. Opening this page did 
 
 - `start` (from the email): "One more step: click **Rewrite in my voice** to start. Nothing changes until you approve." Below it, a preview of the post.
 - After that, the **#687 A side-by-side view, reused as is**: `loading`, `ready`, `blocked`, `claim`, `regenerating`, `error`, `approved`, plus `expired`.
-  - Locked values are highlighted, and Approve is disabled while blocked.
+  - Locked values are highlighted, and **Review & Approve** is disabled while blocked.
   - The disclaimer is shown verbatim and marked identical.
-  - Approve hands off to compliance or schedule.
+  - **Review & Approve** (the button, and the confirm in its dialog) hands off to compliance or schedule. In #687 these buttons read "Approve rewrite" and "Approve and send for review". The 688 copy renames them.
 - AI generation starts only from the button, so a scanner opening the link doesn't spend an AI call.
 
 ### 4. Digest settings ([settings.html](settings.html) `?freq=weekly|biweekly|monthly|off&st=normal|adding|removed|test`)
@@ -78,7 +84,7 @@ Every action page says: "Nothing publishes automatically. Opening this page did 
   - Sam Assistant: **View only** or **Can approve**, with Remove.
   - "+ Add person" adds a name, email and permission.
   - "Removed: their old links stop working now" with Undo.
-  - Help text: view-only people get Preview and Download, not Approve, Rewrite or Skip. Approvals by an assistant show their name "on behalf of Jane Advisor". Each person gets their own links.
+  - Help text: view-only people get Preview and Download, not Review & Approve, Rewrite or Skip. Approvals by an assistant show their name "on behalf of Jane Advisor". Each person gets their own links.
 - **Preview email** and **Send a test to me** ("It's marked TEST, and its buttons don't change anything").
 - **What's picked:** a link to topics.
 - A warning: "**Nothing publishes automatically.** Approving from the email only queues a post for compliance review (or scheduling, if compliance is off)."
@@ -146,7 +152,7 @@ All sample posts are **example data**.
 6. **Assistant permissions:**
    - Each recipient is `view` or `approve` (the advisor is always `approve`). The permission is checked **on the server when the POST arrives**, not just baked into the email.
    - Assistant actions are recorded as `actedBy: recipientId, onBehalfOf: advisorId`.
-   - View-only emails have no Approve, Rewrite or Skip links, and their tokens can't approve.
+   - View-only emails have no Review & Approve, Rewrite or Skip links, and their tokens can't approve.
 7. **Approve hand-off:**
    - Approve calls the **existing** path: compliance email/PDF in `email` mode, the external queue in `external` mode, or `insertScheduledWebsitePost` at the next free slot or "pick a time" when compliance is `off`.
    - **No code path publishes from the digest.** Add a test for that.

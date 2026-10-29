@@ -11,12 +11,18 @@
 </ul>
 <h2>Recommendation: A, one card per post</h2>
 <ul>
-<li><strong><a href="a-digest.html">A</a></strong> gives each post a card with a thumbnail, summary and reading time, plus <strong>Approve</strong>, <strong>Rewrite in my voice</strong>, <strong>Skip</strong> and <strong>Download copy + images (.zip)</strong>.</li>
+<li><strong><a href="a-digest.html">A</a></strong> gives each post a card with a thumbnail, summary and reading time, plus <strong>Review &amp; Approve</strong>, <strong>Rewrite in my voice</strong>, <strong>Skip</strong> and <strong>Download copy + images (.zip)</strong>.</li>
 <li>Each button opens a <strong><a href="landing.html">light confirm page</a></strong> with a "One more step" banner. One click there finishes the action.</li>
 <li>After an action, the page lists the <strong>other picks this week</strong>, so the advisor can finish the rest without going back to the email. Those on-page buttons finish in one click.</li>
 <li>It matches the spec's "one-click actions per post" while staying safe from scanners.</li>
 <li><strong><a href="b-digest.html">B</a></strong> is a compact list with one <strong>"Review this week's picks"</strong> button that opens a <strong><a href="b-board.html">board</a></strong> where every post can be actioned. It's the simplest email and the fewest links. But the email has no per-post action, and it needs a page session built from a token.</li>
 <li><strong><a href="c-digest.html">C</a></strong> puts the <strong>top pick</strong> in a hero card with full buttons, and shows the other picks as small rows with text links. It's good for engagement, but it needs ranking reasons ("matches your Retirement service"), and the small links are harder to tap.</li>
+</ul>
+<h2>Button copy (Alex, Oct 29)</h2>
+<ul>
+<li>The approve button reads <strong>Review &amp; Approve</strong> everywhere: the email in A, B and C, the B board, the confirm pages (button, "One more step" banner and the sticky bar on phone), the "other picks" list and the rewrite page.</li>
+<li>Its behaviour doesn't change: the email link opens the confirm page (GET renders only), and one click on <strong>Review &amp; Approve</strong> there sends the POST that finishes it.</li>
+<li>Headings, statuses and permission names keep the plain word ("Approve this post?", "✓ Approved", "Can approve").</li>
 </ul>
 <h2>Screens and states</h2>
 <h3>1. Digest email (A <code>?img=on|off&amp;dk=off|on&amp;rcp=owner|view</code>, B, C)</h3>
@@ -26,7 +32,7 @@
 <li><strong>Subject:</strong> "3 posts picked for you this week".</li>
 <li><strong>Header:</strong> the firm logo, "Your Firm Name", "Post suggestions for your Insights page".</li>
 <li><strong>How-it-works line:</strong> "Each button opens a page where <strong>one click finishes</strong>. Nothing happens from the email itself. <strong>Nothing publishes automatically</strong>: approved posts go to compliance review first."</li>
-<li><strong>Each card:</strong> a thumbnail (with alt text), the title, a summary (about 150 characters), the reading time and the topic. Buttons: Approve (primary), Rewrite in my voice, and Skip (muted). Below them: "⬇ Download copy + images (.zip) to post it yourself". At the bottom of the email: "Download all 3 (.zip)" and "See all picks on one page".</li>
+<li><strong>Each card:</strong> a thumbnail (with alt text), the title, a summary (about 150 characters), the reading time and the topic. Buttons: <strong>Review &amp; Approve</strong> (primary), Rewrite in my voice, and Skip (muted). Below them: "⬇ Download copy + images (.zip) to post it yourself". At the bottom of the email: "Download all 3 (.zip)" and "See all picks on one page".</li>
 <li><strong>View-only recipient</strong> (<code>rcp=view</code>): "Hi Sam, you can view this week's suggestions for Jane Advisor and download them. <strong>Jane approves them.</strong>" They get Preview and Download only.</li>
 <li><strong>Footer</strong> (marked <strong>PLACEHOLDER: needs compliance review</strong>):</li>
 <li>Why they're getting it.</li>
@@ -50,7 +56,7 @@
 <tr>
 <td>approve</td>
 <td><code>confirm</code></td>
-<td>Banner: "One more step: click <strong>Approve post</strong> to finish." Heading: "Approve this post?" Body: "It goes to compliance review first… Nothing publishes automatically." Buttons: <strong>Approve post</strong> (big), "Rewrite in my voice instead". On phone the button sticks to the bottom.</td>
+<td>Banner: "One more step: click <strong>Review &amp; Approve</strong> to finish." Heading: "Approve this post?" Body: "It goes to compliance review first… Nothing publishes automatically." Buttons: <strong>Review &amp; Approve</strong> (big), "Rewrite in my voice instead". On phone the button sticks to the bottom.</td>
 </tr>
 <tr>
 <td>approve</td>
@@ -99,9 +105,9 @@
 <ul>
 <li><code>start</code> (from the email): "One more step: click <strong>Rewrite in my voice</strong> to start. Nothing changes until you approve." Below it, a preview of the post.</li>
 <li>After that, the <strong>#687 A side-by-side view, reused as is</strong>: <code>loading</code>, <code>ready</code>, <code>blocked</code>, <code>claim</code>, <code>regenerating</code>, <code>error</code>, <code>approved</code>, plus <code>expired</code>.</li>
-<li>Locked values are highlighted, and Approve is disabled while blocked.</li>
+<li>Locked values are highlighted, and <strong>Review &amp; Approve</strong> is disabled while blocked.</li>
 <li>The disclaimer is shown verbatim and marked identical.</li>
-<li>Approve hands off to compliance or schedule.</li>
+<li><strong>Review &amp; Approve</strong> (the button, and the confirm in its dialog) hands off to compliance or schedule. In #687 these buttons read "Approve rewrite" and "Approve and send for review". The 688 copy renames them.</li>
 <li>AI generation starts only from the button, so a scanner opening the link doesn't spend an AI call.</li>
 </ul>
 <h3>4. Digest settings (<a href="settings.html">settings.html</a> <code>?freq=weekly|biweekly|monthly|off&amp;st=normal|adding|removed|test</code>)</h3>
@@ -116,7 +122,7 @@
 <li>Sam Assistant: <strong>View only</strong> or <strong>Can approve</strong>, with Remove.</li>
 <li>"+ Add person" adds a name, email and permission.</li>
 <li>"Removed: their old links stop working now" with Undo.</li>
-<li>Help text: view-only people get Preview and Download, not Approve, Rewrite or Skip. Approvals by an assistant show their name "on behalf of Jane Advisor". Each person gets their own links.</li>
+<li>Help text: view-only people get Preview and Download, not Review &amp; Approve, Rewrite or Skip. Approvals by an assistant show their name "on behalf of Jane Advisor". Each person gets their own links.</li>
 <li><strong>Preview email</strong> and <strong>Send a test to me</strong> ("It's marked TEST, and its buttons don't change anything").</li>
 <li><strong>What's picked:</strong> a link to topics.</li>
 <li>A warning: "<strong>Nothing publishes automatically.</strong> Approving from the email only queues a post for compliance review (or scheduling, if compliance is off)."</li>
@@ -183,7 +189,7 @@
 <li><strong>Assistant permissions:</strong></li>
 <li>Each recipient is <code>view</code> or <code>approve</code> (the advisor is always <code>approve</code>). The permission is checked <strong>on the server when the POST arrives</strong>, not just baked into the email.</li>
 <li>Assistant actions are recorded as <code>actedBy: recipientId, onBehalfOf: advisorId</code>.</li>
-<li>View-only emails have no Approve, Rewrite or Skip links, and their tokens can't approve.</li>
+<li>View-only emails have no Review &amp; Approve, Rewrite or Skip links, and their tokens can't approve.</li>
 <li><strong>Approve hand-off:</strong></li>
 <li>Approve calls the <strong>existing</strong> path: compliance email/PDF in <code>email</code> mode, the external queue in <code>external</code> mode, or <code>insertScheduledWebsitePost</code> at the next free slot or "pick a time" when compliance is <code>off</code>.</li>
 <li><strong>No code path publishes from the digest.</strong> Add a test for that.</li>
