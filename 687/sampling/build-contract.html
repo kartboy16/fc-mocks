@@ -1,0 +1,235 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>#687 Voice sampling: build contract</title><style>body{font-family:Inter,system-ui,sans-serif;max-width:960px;margin:24px auto;padding:0 16px;line-height:1.55;color:#2C3E50}a{color:#1976D2}table{border-collapse:collapse;width:100%;margin:8px 0;font-size:14px}td,th{border:1px solid #e0e5eb;padding:6px 8px;text-align:left;vertical-align:top}th{background:#f3f6f9}blockquote{background:#e8f5e9;border:2px solid #2e7d32;border-radius:10px;margin:10px 0;padding:4px 14px}code{background:#f3f6f9;padding:1px 4px;border-radius:4px}@media(max-width:600px){table{display:block;overflow-x:auto}}code{overflow-wrap:anywhere}td{overflow-wrap:anywhere}</style></head><body><p><a href="../../">All mocks</a> · <a href="../index.html">#687 hub</a> · <a href="index.html">Hub</a> · <a href="build-contract.md">Markdown</a></p><h1>#687 Voice sampling: build contract</h1>
+<p>Follow-up to <a href="https://github.com/kartboy16/content-library/issues/687">#687</a>, based on <a href="https://github.com/kartboy16/content-library/issues/687#issuecomment-6507553785">Alex's voice-sampling direction</a> (Oct 29, 2026). Mocks: <a href="index.html">hub</a>. The first #687 mocks are in the <a href="../index.html">#687 hub</a>. <strong>Not agent-ready. Soft Dev hold until Alex picks.</strong></p>
+<h2>The rule</h2>
+<ul>
+<li>Learn the voice <strong>only from writing the advisor did themselves</strong>: their website, plus links or text they add.</li>
+<li><strong>Never use library posts.</strong> Those are our voice, not theirs.</li>
+<li>With fewer than about 3 usable samples, prompt the advisor to add more, so rewrites don't echo our house style.</li>
+<li>Numbers, rates, dates, tax rules and compliance wording stay locked, as in #687. The advisor approves every post, and <strong>nothing publishes automatically.</strong></li>
+</ul>
+<h2>Recommendation: A, one page</h2>
+<ul>
+<li><strong><a href="a-one-page.html">A</a>:</strong> Settings › Voice, with four numbered sections on one page:</li>
+<li>Your website</li>
+<li>Your other writing</li>
+<li>Check what we found</li>
+<li>Your voice, in plain words</li>
+</ul>
+<p>Everything is visible at once, it's easy to come back to and edit, and it's the fewest screens. It replaces the #687 A voice-profile page and keeps its look.
+- <strong><a href="b-steps.html">B</a>:</strong> the same four sections as guided steps (<code>?step=1..4</code>). Clear for the first time, but slower every time after. Step 3's Next button says "Continue with 2 samples" when there are too few.
+- <strong><a href="c-sources.html">C</a>:</strong> source cards on the left (the site card opens a review dialog) and a sticky <strong>live profile</strong> on the right that updates as items are ticked and added. Friendly, but the profile has to rebuild on every change (AI cost and latency), and it's a bigger build.</p>
+<h2>Screens and states (<code>?st=crawling|done|few|error|unreachable</code>)</h2>
+<h3>1. Your website</h3>
+<table>
+<thead>
+<tr>
+<th>State</th>
+<th>Copy</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>crawling</code></td>
+<td>"Reading <strong>yourfirm.ca</strong>… found <strong>14 pages</strong>, reading 9 of 14. Skipping 22 Insights posts. You can leave this page. We'll email you when it's done." Shows a progress bar.</td>
+</tr>
+<tr>
+<td><code>done</code></td>
+<td>"✓ Read <strong>yourfirm.ca</strong> on Oct 29, 2026, 1:40 PM PT. Found <strong>12 pages</strong> with your writing. Skipped <strong>22 Insights posts</strong> (library posts)."</td>
+</tr>
+<tr>
+<td><code>few</code></td>
+<td>"…Found <strong>4 pages</strong>. Most are short."</td>
+</tr>
+<tr>
+<td><code>error</code> (partial)</td>
+<td>"<strong>We read 3 pages, then yourfirm.ca stopped responding.</strong> We kept the 3 pages we got." Try again, "or add links and paste text below."</td>
+</tr>
+<tr>
+<td><code>unreachable</code></td>
+<td>"<strong>We couldn't reach yourfirm.ca.</strong> Check the address is right. If the site is up, it may be blocking automated visits." Buttons: Try again, Add links or paste text instead.</td>
+</tr>
+</tbody>
+</table>
+<p>The domain field (prefilled from <code>websiteAddress</code>) has a <strong>Read my site again</strong> button.</p>
+<h3>2. Your other writing</h3>
+<ul>
+<li>Help text: "Add links to articles, columns or social posts you wrote. If we can't open a link, paste the text."</li>
+<li>Each link row shows its status:</li>
+<li>"✓ Read: 1,100 words"</li>
+<li>"Couldn't open this link", followed by "LinkedIn and Facebook usually block us from reading posts. Paste the text of the post here instead:" and a text box</li>
+<li>"Pasted: 164 words"</li>
+<li>Buttons: <strong>+ Add a link</strong>, <strong>+ Paste text without a link</strong>, and × to remove a row.</li>
+</ul>
+<h3>3. Check what we found</h3>
+<ul>
+<li>Help text: "Untick anything you didn't write yourself, like legal pages or copy a designer or someone else wrote. Only ticked items are used."</li>
+<li>Each item shows a tickbox, the title, the URL and a word count.</li>
+<li>Tags:</li>
+<li><strong>Looks like legal text</strong> (Privacy, Terms): unticked by default.</li>
+<li><strong>Too short to learn from</strong> (under 150 words): disabled.</li>
+<li><strong>Bios: untick if someone else wrote them</strong> (team page).</li>
+<li>Shown below the list: "🚫 <strong>Skipped automatically: 22 Insights posts</strong> at yourfirm.ca/insights/. These are library posts, so they aren't your writing." There's a "See the list" link, but those posts can't be ticked.</li>
+<li>A meter: "<strong>N</strong> usable samples · about <strong>W</strong> words". Usable means ticked and at least 150 words. Pasted text and links count too.</li>
+<li><strong>Fewer than 3</strong> (live, recounted on every tick and paste): "⚠ <strong>We need a bit more of your writing.</strong> We only have <strong>2</strong> usable samples. With fewer than 3, rewrites may sound like our standard style instead of you." Buttons: <strong>Add a link</strong>, Paste some text, Continue anyway.</li>
+</ul>
+<h3>4. Your voice, in plain words (editable)</h3>
+<ul>
+<li><strong>While crawling:</strong> "Your voice profile appears when we finish reading."</li>
+<li><strong>Too few samples:</strong> "Add a bit more of your writing (at least 3 samples) and we'll describe your voice here."</li>
+<li><strong>Ready:</strong></li>
+<li>"Built from N samples (about W words). None from library posts. Change anything that doesn't sound like you."</li>
+<li>An <strong>editable plain-words paragraph</strong>, for example: "You write warmly and plainly, in short sentences (about 13 words)…"</li>
+<li>Phrases you use and words you avoid, as removable chips with <strong>+ Add</strong>.</li>
+<li>How you sign off.</li>
+<li>A "Sounds like" sample line, never published.</li>
+<li>Locked note: "🔒 Your voice never changes numbers, rates, dates, tax rules or compliance wording… You still approve every post, and <strong>nothing publishes automatically</strong>."</li>
+<li>Buttons: Rebuild from my samples, Reset my edits, <strong>Save voice profile</strong>.</li>
+</ul>
+<p>All sites, posts and figures are <strong>example data</strong> with generic names (Jane Advisor, Your Firm Name, yourfirm.ca, example.com). There's no compliance or legal copy here.</p>
+<h2>In and out of scope</h2>
+<ul>
+<li><strong>In:</strong></li>
+<li>Crawling the advisor's own domain (WordPress and static sites), skipping Insights and library posts.</li>
+<li>Text extraction, legal and short auto-untick, and dedupe.</li>
+<li>Adding links, with fetch and a paste fallback.</li>
+<li>The review list with ticks, the usable-sample count and the fewer-than-3 prompt.</li>
+<li>Building the plain-words profile from ticked samples only, with editing, rebuild and reset.</li>
+<li>Saving and re-crawling, and the phone layout.</li>
+<li><strong>Out:</strong></li>
+<li>Learning from the advisor's edits to rewrites. Alex marked that "later".</li>
+<li>Logging in to LinkedIn or Facebook, or using their APIs (the paste box covers it).</li>
+<li>Crawling other domains from the advisor's site.</li>
+<li>Any auto-publish (never).</li>
+<li>The rewrite screen itself, which is #687 A, unchanged.</li>
+<li>Compliance wording (placeholders only).</li>
+</ul>
+<h2>Mobile (390px)</h2>
+<ul>
+<li>The sections stack.</li>
+<li>The domain buttons go full width.</li>
+<li>Review rows hide the word count (it's still in the meter), and long URLs wrap.</li>
+<li>Paste boxes are full width.</li>
+<li>B's steps wrap onto two lines.</li>
+<li>C's live profile moves below the sources and stops being sticky. The review dialog fills the screen.</li>
+</ul>
+<h2>Build note</h2>
+<ol>
+<li><strong>Crawl:</strong></li>
+<li>Run it as a background job (<code>voice_crawls</code>: status, found, read, skipped, error, startedAt and finishedAt in PT), and poll it from the page. Email when it finishes, if the advisor left.</li>
+<li>Order: <code>sitemap.xml</code> and sitemap index, then WordPress REST (<code>/wp-json/wp/v2/pages</code> and <code>/posts</code>, <code>content.rendered</code>) if it's available, then a same-domain link crawl from <code>/</code>.</li>
+<li>Respect <code>robots.txt</code>, use about 1 request a second and an identifying user agent, cap it at about 60 pages and 2 MB per page, and set timeouts.</li>
+<li>Follow redirects within the domain, including www and non-www.</li>
+<li>Static sites that render text with JavaScript may come back empty. Show them as short pages, and the prompt for links or paste covers it (open question: use a headless browser?).</li>
+<li><strong>Skip library posts:</strong></li>
+<li>Skip the advisor's Insights path (where the website publisher posts).</li>
+<li>Skip any URL in <code>WebsitePostQueue</code> (published) for this advisor.</li>
+<li>Skip any page whose main text closely matches an <code>HTMLPosts</code> post (shingle or embedding similarity above a threshold).</li>
+<li>Show the count as "Skipped automatically". These are never ticked or counted.</li>
+<li><strong>Extract text:</strong></li>
+<li>Use readability-style main content. Strip nav, header, footer, cookie banners, forms and repeated blocks across pages, and dedupe.</li>
+<li>Store the text, word count and hash in <code>voice_samples</code> (<code>advisorId</code>, <code>source</code>: <code>site|link|paste</code>, <code>url</code>, <code>title</code>, <code>words</code>, <code>included</code>, <code>autoReason</code>: <code>legal|short|bio|null</code>, <code>fetchedAt</code>).</li>
+<li>Paste text is stored as typed. <strong>No text from library posts is ever stored as a sample.</strong></li>
+<li><strong>Auto-untick:</strong> legal pages (privacy, terms, disclaimer, accessibility, cookie, by URL and title keywords), pages under 150 words (disabled), and team or bio pages (ticked, but tagged). The advisor's tick always wins.</li>
+<li><strong>Links:</strong></li>
+<li>Fetch on Add. LinkedIn and Facebook URLs, a 4xx login wall or an empty body all show "Couldn't open this link" with a paste box.</li>
+<li>The link is kept as the source label for pasted text.</li>
+<li><strong>Threshold:</strong></li>
+<li>Usable means included and at least 150 words.</li>
+<li>Warn below 3. "Continue anyway" builds the profile but flags it <code>thin: true</code>, and we remind the advisor later (open question).</li>
+<li><strong>Profile:</strong></li>
+<li>Built only from included samples. Use #687's structured output plus a <strong>plain-words summary</strong> paragraph.</li>
+<li>Advisor edits overwrite fields, and a rebuild keeps edited fields unless the advisor clicks Reset.</li>
+<li>The profile records which samples and versions it came from, for the #687 audit trail.</li>
+<li><strong>Privacy:</strong> only the advisor's own domain and the URLs they enter are fetched. Samples are deleted when the advisor removes them or deletes the profile.</li>
+</ol>
+<h2>Estimate (days)</h2>
+<table>
+<thead>
+<tr>
+<th>Piece</th>
+<th>A</th>
+<th>B</th>
+<th>C</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Crawler (sitemap, WP REST, link crawl, robots, limits, job and progress)</td>
+<td>2–2.5</td>
+<td>2–2.5</td>
+<td>2–2.5</td>
+</tr>
+<tr>
+<td>Text extraction, dedupe, word counts, <code>voice_samples</code></td>
+<td>1–1.5</td>
+<td>1–1.5</td>
+<td>1–1.5</td>
+</tr>
+<tr>
+<td>Library-post skip (Insights path, queue URLs, similarity)</td>
+<td>1–1.5</td>
+<td>1–1.5</td>
+<td>1–1.5</td>
+</tr>
+<tr>
+<td>Auto-untick (legal, short, bio)</td>
+<td>0.5</td>
+<td>0.5</td>
+<td>0.5</td>
+</tr>
+<tr>
+<td>Add links, fetch, blocked detection, paste fallback</td>
+<td>1–1.5</td>
+<td>1–1.5</td>
+<td>1–1.5</td>
+</tr>
+<tr>
+<td>Review list, ticks, live count, fewer-than-3 prompt</td>
+<td>1.5–2</td>
+<td>1.5–2</td>
+<td>1.5–2 (dialog)</td>
+</tr>
+<tr>
+<td>Plain-words profile build, edit, rebuild, reset</td>
+<td>1–1.5</td>
+<td>1–1.5</td>
+<td>1–1.5</td>
+</tr>
+<tr>
+<td>Crawl error and unreachable states, email when done</td>
+<td>0.75–1</td>
+<td>0.75–1</td>
+<td>0.75–1</td>
+</tr>
+<tr>
+<td>Wizard shell (B) or live-rebuilding profile (C)</td>
+<td>—</td>
+<td>0.75–1</td>
+<td>1.5–2</td>
+</tr>
+<tr>
+<td>Phone layout and QA (WordPress, static, blocked links)</td>
+<td>1–1.5</td>
+<td>1–1.5</td>
+<td>1–1.5</td>
+</tr>
+<tr>
+<td><strong>Total</strong></td>
+<td><strong>≈10–13.75</strong></td>
+<td><strong>≈10.75–14.75</strong></td>
+<td><strong>≈11.5–15.75</strong></td>
+</tr>
+</tbody>
+</table>
+<p>This replaces the #687 A lines for fetching the advisor's posts and for profile extraction and UI (≈4–5.5 days). The net addition to #687 A is about <strong>+6–8.25 days</strong>.</p>
+<h2>Open questions</h2>
+<ol>
+<li>Should JavaScript-rendered static sites be read with a headless browser (more cost and time), or should we rely on links and paste?</li>
+<li>Is "usable" right at 150 words per sample, with a warning below 3 samples? Should "Continue anyway" be allowed, or should it block?</li>
+<li>How strict should library-post detection be? Should pages that quote a library post in part be skipped or flagged?</li>
+<li>Should team bios be ticked by default (as mocked) or unticked?</li>
+<li>How often should we re-crawl? Only when the advisor clicks, or monthly, with new pages showing up for review?</li>
+<li>Can staff or assistants run the setup for an advisor? If they do, whose writing is it?</li>
+<li>When we add "learn from their edits" later, should edits count as samples automatically or show up in this review list?</li>
+<li>A, B or C?</li>
+</ol></body></html>
