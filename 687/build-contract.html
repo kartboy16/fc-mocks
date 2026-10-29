@@ -1,0 +1,240 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>#687 Rewrite in my voice: build contract</title><style>body{font-family:Inter,system-ui,sans-serif;max-width:960px;margin:24px auto;padding:0 16px;line-height:1.55;color:#2C3E50}a{color:#1976D2}table{border-collapse:collapse;width:100%;margin:8px 0;font-size:14px}td,th{border:1px solid #e0e5eb;padding:6px 8px;text-align:left;vertical-align:top}th{background:#f3f6f9}blockquote{background:#e8f5e9;border:2px solid #2e7d32;border-radius:10px;margin:10px 0;padding:4px 14px}code{background:#f3f6f9;padding:1px 4px;border-radius:4px}@media(max-width:600px){table{display:block;overflow-x:auto}}</style></head><body><p><a href="../">All mocks</a> · <a href="index.html">Hub</a> · <a href="build-contract.md">Markdown</a></p><h1>#687 Rewrite in my voice: build contract</h1>
+<p>Issue: <a href="https://github.com/kartboy16/content-library/issues/687">#687</a>. Mocks: <a href="index.html">hub</a>. <strong>Not agent-ready. Soft Dev hold until Alex picks.</strong></p>
+<h2>Today (read-only, at <code>6499dd7</code>)</h2>
+<ul>
+<li>Library posts use FC's wording, and advisors edit them by hand.</li>
+<li>AI already adapts social copy: <code>ai.adaptPostForSocial</code>, <code>ai.rewriteSocialPost(originalText, instruction)</code> and <code>ai.generateWebsiteShareCopy</code> in <code>server/ai-service.js</code>. But there's <strong>no saved voice profile</strong> and no guardrail checks.</li>
+<li>The disclaimer is <code>advisor_configs.disclaimer</code>, shown by the editor's disclaimer plugin (<code>ory_editor/disclaimer</code>).</li>
+<li>Website posts follow the advisor's compliance mode (<code>email</code>, <code>external</code> or <code>off</code>, in <code>imports/utils/complianceMode.js</code>). The email mode sends a PDF for approval (<code>server/website-compliance-pdf.js</code>).</li>
+</ul>
+<h2>Recommendation: A, a rewrite panel in the post editor plus a Voice profile settings page</h2>
+<ul>
+<li><strong><a href="a-voice-profile.html">A voice profile</a></strong> (Settings › Voice) and <strong><a href="a-rewrite.html">A rewrite</a></strong> (Content › post › Rewrite in my voice).</li>
+<li>It's a one-time setup that you edit when you like, and the rewrite opens where the post already lives. It's the fewest new screens, and the same profile can later serve email and social.</li>
+<li><strong><a href="b-wizard.html">B</a>:</strong> guided steps (1 Your voice, 2 Pick a post, 3 Compare, 4 Approve). It's good for the first time, but slow every time after that.</li>
+<li><strong><a href="c-style-card.html">C</a>:</strong> the profile as one editable "style card" with sample sentences, and the rewrite in a full-screen compare view. It's friendly and visual, but less precise to edit, and full screen is a bigger build.</li>
+</ul>
+<h2>Screens and states</h2>
+<h3>1. Voice profile (<code>?st=</code>)</h3>
+<table>
+<thead>
+<tr>
+<th>State</th>
+<th>What shows</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>building</code></td>
+<td>"Reading your posts… We found 8 posts on example.com/insights. Analysing post 5 of 8", with a progress bar. "You can leave this page."</td>
+</tr>
+<tr>
+<td><code>ready</code></td>
+<td>Tone chips (Warm, Plain-spoken, Encouraging), phrases you use, words you avoid, a sentence-length slider ("Yours average about 13 words"), how you sign off ("Talk soon, Jane"), and how you address readers. <strong>Built from 8 posts</strong>, each with a tickbox to leave it out. "Rebuild from my posts" and the last-built time (PT). A "Sounds like" sample, never published. Save. "Changes apply to future rewrites only."</td>
+</tr>
+<tr>
+<td><code>empty</code></td>
+<td>"Not enough posts yet. We found 1 post… we need at least 3." Buttons: Paste some of your writing, Use a different page.</td>
+</tr>
+<tr>
+<td><code>error</code></td>
+<td>"We couldn't read example.com/insights… Your current voice profile hasn't changed." Buttons: Try again, Use a different page.</td>
+</tr>
+</tbody>
+</table>
+<h3>2. Side by side (<code>?st=</code>, <code>&amp;comp=on|off</code>)</h3>
+<table>
+<thead>
+<tr>
+<th>State</th>
+<th>What shows</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>loading</code></td>
+<td>"Rewriting in your voice… then checking locked values and the disclaimer", with skeletons on the right.</td>
+</tr>
+<tr>
+<td><code>ready</code></td>
+<td>Original on the left, "In your voice" (Draft) on the right. <strong>Locked values are highlighted 🔒 in both columns.</strong> A locked-values table shows every value as "✓ same". The disclaimer is shown verbatim, locked 🔒, with a "✓ Identical to original" badge. <strong>Approve rewrite</strong> is enabled.</td>
+</tr>
+<tr>
+<td><code>blocked</code></td>
+<td>A red banner: "<strong>We stopped this rewrite.</strong> It changed a number that has to stay the same: the TFSA limit <strong>$7,000</strong> became <strong>$7,500</strong>. You can't approve it until that's fixed." Buttons: <strong>Put back $7,000</strong>, Rewrite again, Edit it myself. The changed value is red in the rewrite, the table says "✗ became $7,500", and <strong>Approve is disabled</strong> ("Fix the blocked item to approve").</td>
+</tr>
+<tr>
+<td><code>claim</code></td>
+<td>Orange: "The rewrite added something the original didn't say: "it's a safe way to beat inflation". New claims aren't allowed." Buttons: Remove it, Rewrite again, Edit it myself. "This check is best effort. Compliance review still applies." Approve is disabled.</td>
+</tr>
+<tr>
+<td><code>regenerating</code></td>
+<td>"Rewriting again…"</td>
+</tr>
+<tr>
+<td><code>error</code></td>
+<td>"We couldn't rewrite this post right now. Nothing was changed. The original is still in your library." with Try again.</td>
+</tr>
+<tr>
+<td><code>approved</code></td>
+<td>"✓ Rewrite approved by Jane Advisor at 9:42 AM PT. It's been sent for compliance review, the same as any other post." (Compliance off: "Next, pick when it goes on your website.") "<strong>Nothing is published until</strong> it's approved and scheduled."</td>
+</tr>
+</tbody>
+</table>
+<p>The approve dialog says:
+- It replaces the wording for <strong>your copy</strong> of this post only.
+- All 6 locked values match, and the disclaimer is identical.
+- Next comes compliance review, or picking a time.
+- <strong>Nothing is published automatically.</strong></p>
+<p>A banner above the compare also says nothing publishes from this screen.</p>
+<p>Sample figures (TFSA $7,000, RRSP deadline March 1, 2027, 18%, $33,810, "Example Balanced Fund") are <strong>example data</strong>, labelled in the mock, and not current limits or advice. The disclaimer is a <strong>marked placeholder</strong>.</p>
+<h2>In and out of scope</h2>
+<ul>
+<li><strong>In:</strong></li>
+<li>Voice profile (build, review, edit, rebuild, tick posts in or out, paste samples).</li>
+<li>"Rewrite in my voice" on library and suggested posts.</li>
+<li>Side by side with locked-value highlighting, the locked-value diff check and blocking, the new-claim check (best effort), and the byte-for-byte disclaimer check.</li>
+<li>Approve, which hands off to the existing compliance or schedule flow.</li>
+<li>Audit trail and phone layout.</li>
+<li><strong>Out:</strong></li>
+<li>Auto-publish (never).</li>
+<li>Rewriting email or social with the profile (later, but reuse the profile).</li>
+<li>Bulk rewrite of many posts.</li>
+<li>Writing new posts from scratch.</li>
+<li>Changing the disclaimer.</li>
+<li>Any wording on legal or compliance meaning (placeholders only).</li>
+</ul>
+<h2>Mobile (390px)</h2>
+<ul>
+<li>The side by side becomes an <strong>Original | Rewrite</strong> switch (default Rewrite). Highlights and the locked-values table stay.</li>
+<li>The action bar (Keep the original, Rewrite again, Approve) sticks to the bottom.</li>
+<li>The voice profile stacks into one column.</li>
+<li>B's steps wrap, and C's full screen becomes a normal page.</li>
+</ul>
+<h2>Build note</h2>
+<ol>
+<li><strong>Voice profile extraction:</strong></li>
+<li>Fetch the advisor's own posts (WordPress REST <code>/wp-json/wp/v2/posts</code> when available, otherwise crawl the Insights page links on their domain only, up to about 20 posts). Strip navigation, boilerplate and disclaimers.</li>
+<li><strong>Exclude FC library posts the advisor has published</strong>, so we don't learn FC's voice. Match them against <code>HTMLPosts</code> by title or embedding.</li>
+<li>One AI call returns structured JSON: <code>{tone[], phrases[], avoid[], avgSentenceWords, signOff, address, samples[]}</code>. Also compute sentence length and sign-off directly, not by AI.</li>
+<li>Store it on a new <code>voice_profiles</code> record (<code>advisorId</code>, <code>sourceUrls[]</code>, <code>excluded[]</code>, <code>profile</code>, <code>builtAt</code>, <code>editedAt</code>, <code>version</code>). Advisor edits overwrite fields. A rebuild keeps edited fields unless reset.</li>
+<li>Need at least 3 posts, or pasted samples (at least about 300 words).</li>
+<li><strong>Locked-value detection (before rewriting):</strong> extract from the original:</li>
+<li>Money and percentages (<code>$7,000</code>, <code>18%</code>, <code>4.5%</code>).</li>
+<li>Dates and tax years (<code>March 1, 2027</code>, <code>2026 tax year</code>).</li>
+<li>Numbers attached to rule words (limit, deadline, maximum, minimum, age, rate, contribution, withdrawal).</li>
+<li>Account and tax terms (TFSA, RRSP, RRIF, RESP, FHSA, CPP, OAS).</li>
+<li>Named products: a list per post or category, plus capitalised fund and product names.</li>
+</ol>
+<p>Wrap each value in a placeholder token (<code>⟦L1⟧</code>) when prompting, and tell the model to keep tokens unchanged.</p>
+<p><strong>Limits:</strong>
+   - Regex and lists miss values written in words ("seven thousand dollars") and rules that are paraphrased ("you can contribute up to…" turned into "the cap is…").
+   - They can over-lock incidental numbers.
+   - Detection is a guardrail, <strong>not</strong> compliance sign-off. Compliance review stays required when the advisor's mode needs it.
+3. <strong>Diff check after generation:</strong>
+   - Re-extract from the rewrite and compare it with the original's locked set.
+   - Every original token must appear exactly once, unchanged. If any value is missing, changed or extra, the rewrite is <strong>blocked</strong> (<code>blocked</code> state).
+   - "Put back" swaps the original value in and runs the check again.
+   - The new-claim check: a second model pass, or rules (guarantee, safe, risk-free, beat, always, never, best), flags sentences with no support in the original (<code>claim</code> state). It's best effort, so mark it that way.
+   - Approve stays disabled while anything is blocked. The server also re-runs the checks on approve, and never trusts the client.
+4. <strong>Disclaimer:</strong>
+   - Never send it to the model. Remove it before rewriting and re-attach the <strong>stored string</strong> afterwards.
+   - On approve, assert <code>sha256(rewrite.disclaimer) === sha256(advisor_configs.disclaimer at approve time)</code>, byte for byte. If it fails, block.
+   - The "Identical to original" badge reflects this check.
+5. <strong>Audit trail</strong> per rewrite, in <code>post_rewrites</code>:
+   - <code>advisorId</code>, <code>sourcePostId</code>, <code>voiceProfileVersion</code>, model and provider, prompt hash.
+   - Original and rewrite text, the locked set, the check results (each value, claim flags, disclaimer hash).
+   - Each regenerate, and who approved, when (PT), and their IP.
+   - The id handed to compliance or scheduling.
+   - Keep the history even if the advisor rejects it.
+6. <strong>No auto-publish:</strong>
+   - Approval creates the advisor's draft copy and calls the <strong>existing</strong> path: compliance send in email mode, the external queue, or schedule when compliance is off.
+   - No code path publishes from the rewrite screen. Add a test for that.
+7. <strong>White-label:</strong> rewritten Insights posts and share links never link to financialcontent.ca. Reuse the existing rule.</p>
+<h2>Estimate (days)</h2>
+<table>
+<thead>
+<tr>
+<th>Piece</th>
+<th>A</th>
+<th>B</th>
+<th>C</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Fetch the advisor's posts (WP REST or crawl), exclude FC posts</td>
+<td>1.5–2</td>
+<td>1.5–2</td>
+<td>1.5–2</td>
+</tr>
+<tr>
+<td>Profile extraction, <code>voice_profiles</code>, edit and rebuild</td>
+<td>1.5–2</td>
+<td>1.5–2</td>
+<td>1.5–2</td>
+</tr>
+<tr>
+<td>Voice profile UI (states, chips, post list, sample)</td>
+<td>1–1.5</td>
+<td>1–1.5 (in step 1)</td>
+<td>1.5–2 (style card, editable samples)</td>
+</tr>
+<tr>
+<td>Rewrite call with locked tokens, regenerate</td>
+<td>1–1.5</td>
+<td>1–1.5</td>
+<td>1–1.5</td>
+</tr>
+<tr>
+<td>Locked-value extract and diff, put back, claim check, disclaimer hash</td>
+<td>2–2.5</td>
+<td>2–2.5</td>
+<td>2–2.5</td>
+</tr>
+<tr>
+<td>Side-by-side UI with highlights, blocked and claim states, phone switch</td>
+<td>1.5–2</td>
+<td>1.5–2</td>
+<td>2–2.5 (full screen)</td>
+</tr>
+<tr>
+<td>Approve, hand off to compliance or schedule, audit trail</td>
+<td>1–1.5</td>
+<td>1–1.5</td>
+<td>1–1.5</td>
+</tr>
+<tr>
+<td>Wizard shell (steps, back and next, resume)</td>
+<td>—</td>
+<td>1–1.5</td>
+<td>—</td>
+</tr>
+<tr>
+<td>QA (staging, no publishing)</td>
+<td>1</td>
+<td>1</td>
+<td>1</td>
+</tr>
+<tr>
+<td><strong>Total</strong></td>
+<td><strong>≈10.5–14</strong></td>
+<td><strong>≈11.5–15.5</strong></td>
+<td><strong>≈11.5–15</strong></td>
+</tr>
+</tbody>
+</table>
+<h2>Open questions</h2>
+<ol>
+<li>Which posts count as "theirs"? Only posts on their own domain, and should we exclude FC library posts they've published? (Suggested: yes, exclude.)</li>
+<li>Minimum to build a profile: 3 posts, or pasted samples of about 300 words?</li>
+<li>Who can approve a rewrite: the advisor only, or assistants and FTT staff acting as the advisor?</li>
+<li>In compliance email mode, should the compliance PDF show the original <strong>and</strong> the rewrite, or just the rewrite?</li>
+<li>Which values are locked? Confirm the list: money, %, dates, tax years, ages, account types, named products. Should account names like "TFSA" also be locked as words?</li>
+<li>New-claim check: block (as mocked) or only warn? Who decides what counts as a claim?</li>
+<li>"Edit it myself": should hand edits re-run every check before approve? (Suggested: yes.)</li>
+<li>Should the rewrite update when FC updates the library post (for example, a new TFSA limit)? Or flag the rewrite as "out of date", or keep it frozen?</li>
+<li>How long do we keep the audit trail, and who can see it (advisor, FTT staff, compliance)?</li>
+<li>Can the advisor rewrite the same post again later (versions), and is there a limit per month (AI cost)?</li>
+<li>Should the voice profile also be used for social and email now, or later?</li>
+</ol></body></html>
