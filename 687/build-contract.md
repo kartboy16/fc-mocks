@@ -112,7 +112,7 @@ Sample figures (TFSA $7,000, RRSP deadline March 1, 2027, 18%, $33,810, "Example
 6. **No auto-publish:**
    - Approval creates the advisor's draft copy and calls the **existing** path: compliance send in email mode, the external queue, or schedule when compliance is off.
    - No code path publishes from the rewrite screen. Add a test for that.
-7. **White-label:** rewritten Insights posts and share links never link to financialcontent.ca. Reuse the existing rule.
+7. **White-label:** rewritten Insights posts and share links never link to FC's own domain. Reuse the existing white-label rule.
 
 ## Estimate (days)
 
