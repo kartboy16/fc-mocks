@@ -1,0 +1,340 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>#688 Post suggestions email: build contract</title><style>body{font-family:Inter,system-ui,sans-serif;max-width:960px;margin:24px auto;padding:0 16px;line-height:1.55;color:#2C3E50}a{color:#1976D2}table{border-collapse:collapse;width:100%;margin:8px 0;font-size:14px}td,th{border:1px solid #e0e5eb;padding:6px 8px;text-align:left;vertical-align:top}th{background:#f3f6f9}blockquote{background:#e8f5e9;border:2px solid #2e7d32;border-radius:10px;margin:10px 0;padding:4px 14px}code{background:#f3f6f9;padding:1px 4px;border-radius:4px}@media(max-width:600px){table{display:block;overflow-x:auto}}code{overflow-wrap:anywhere}td{overflow-wrap:anywhere}</style></head><body><p><a href="../">All mocks</a> · <a href="index.html">Hub</a> · <a href="build-contract.md">Markdown</a></p><h1>#688 Email advisors their post suggestions: build contract</h1>
+<p>Issue: <a href="https://github.com/kartboy16/content-library/issues/688">#688</a>, which pairs with <a href="../687/index.html">#687 Rewrite in my voice</a>. Mocks: <a href="index.html">hub</a>. <strong>Not agent-ready. Soft Dev hold until Alex picks.</strong></p>
+<h2>Today (read-only, at <code>6499dd7</code>)</h2>
+<ul>
+<li><code>server/email-suggestions.js</code> is built but <strong>turned off</strong>. Its import in <code>server/main.js</code> is commented out, and so is the <code>/content-library/add-and-share</code> route in <code>client/main.jsx</code>.</li>
+<li>When it was on, a daily 9:00 cron (with a scheduler lock and a claim-before-send) emailed advisors who had <strong>no website post in 14+ days</strong>, at most every 14 days. It sent 3 posts, each with one "Add &amp; Share This Post" button.</li>
+<li>Links are built with <code>Meteor.absoluteUrl()</code>, which is <strong>FC's own domain</strong>. The <code>token</code> is <code>Random.id()</code>, which is never stored or checked. The unsubscribe link is <code>?advisorId=&amp;token=Random.id()</code>, also unchecked. There's no mailing address and no <code>List-Unsubscribe</code> header.</li>
+<li>Settings are only <code>emailSuggestionsEnabled</code> and <code>emailSuggestionPreferences</code> (product types, date range) on <code>advisor_configs</code>. There's no frequency, day/time or recipients setting.</li>
+<li>The in-app picks engine lives in <code>server/api/post-suggestions.js</code> (services match, recency, <code>user_hidden_posts</code>, Pick for me). The approve path is <code>insertScheduledWebsitePost</code> plus the compliance mode (<code>email</code>, <code>external</code> or <code>off</code>). SES unsubscribe is <code>/api/ses/unsubscribe/:token</code>, and the <code>List-Unsubscribe</code> and <code>List-Unsubscribe-Post</code> headers are set in <code>server/ses-campaign-service.js</code>.</li>
+<li><strong>#657 carry-over:</strong> today's approval email buttons act on a plain GET. Link scanners (Outlook Safe Links, Mimecast, Proofpoint, Gmail prefetch) open links, so a GET can approve by itself. The light confirm page (#657 B) was picked. <strong>This digest uses the same pattern: no email link changes anything on GET.</strong></li>
+</ul>
+<h2>Recommendation: A, one card per post</h2>
+<ul>
+<li><strong><a href="a-digest.html">A</a></strong> gives each post a card with a thumbnail, summary and reading time, plus <strong>Approve</strong>, <strong>Rewrite in my voice</strong>, <strong>Skip</strong> and <strong>Download copy + images (.zip)</strong>.</li>
+<li>Each button opens a <strong><a href="landing.html">light confirm page</a></strong> with a "One more step" banner. One click there finishes the action.</li>
+<li>After an action, the page lists the <strong>other picks this week</strong>, so the advisor can finish the rest without going back to the email. Those on-page buttons finish in one click.</li>
+<li>It matches the spec's "one-click actions per post" while staying safe from scanners.</li>
+<li><strong><a href="b-digest.html">B</a></strong> is a compact list with one <strong>"Review this week's picks"</strong> button that opens a <strong><a href="b-board.html">board</a></strong> where every post can be actioned. It's the simplest email and the fewest links. But the email has no per-post action, and it needs a page session built from a token.</li>
+<li><strong><a href="c-digest.html">C</a></strong> puts the <strong>top pick</strong> in a hero card with full buttons, and shows the other picks as small rows with text links. It's good for engagement, but it needs ranking reasons ("matches your Retirement service"), and the small links are harder to tap.</li>
+</ul>
+<h2>Screens and states</h2>
+<h3>1. Digest email (A <code>?img=on|off&amp;dk=off|on&amp;rcp=owner|view</code>, B, C)</h3>
+<ul>
+<li><strong>From:</strong> "Your Firm Name · Post suggestions" <code>&lt;suggestions@your-firm.example.com&gt;</code>. The sending domain is an open question.</li>
+<li><strong>To:</strong> Jane Advisor, or each recipient on their own copy.</li>
+<li><strong>Subject:</strong> "3 posts picked for you this week".</li>
+<li><strong>Header:</strong> the firm logo, "Your Firm Name", "Post suggestions for your Insights page".</li>
+<li><strong>How-it-works line:</strong> "Each button opens a page where <strong>one click finishes</strong>. Nothing happens from the email itself. <strong>Nothing publishes automatically</strong>: approved posts go to compliance review first."</li>
+<li><strong>Each card:</strong> a thumbnail (with alt text), the title, a summary (about 150 characters), the reading time and the topic. Buttons: Approve (primary), Rewrite in my voice, and Skip (muted). Below them: "⬇ Download copy + images (.zip) to post it yourself". At the bottom of the email: "Download all 3 (.zip)" and "See all picks on one page".</li>
+<li><strong>View-only recipient</strong> (<code>rcp=view</code>): "Hi Sam, you can view this week's suggestions for Jane Advisor and download them. <strong>Jane approves them.</strong>" They get Preview and Download only.</li>
+<li><strong>Footer</strong> (marked <strong>PLACEHOLDER: needs compliance review</strong>):</li>
+<li>Why they're getting it.</li>
+<li>The sent-to address.</li>
+<li>The firm name, mailing address (123 Example Street…), contact email and phone.</li>
+<li><strong>Manage digest preferences</strong> and <strong>Unsubscribe from suggestion emails</strong>.</li>
+<li>Link expiry date.</li>
+<li>A <strong>TEST</strong> banner appears on test sends, and their buttons do nothing.</li>
+</ul>
+<h3>2. Action pages (<a href="landing.html">landing.html</a> <code>?act=approve|skip|download|unsub|view&amp;st=…&amp;from=email|app&amp;comp=on|off</code>)</h3>
+<p>Each page has a light confirm on top and a post preview below (the #657 B pattern). The address shows <code>links.example.com</code>, a white-label placeholder.</p>
+<table>
+<thead>
+<tr>
+<th>Act</th>
+<th>State</th>
+<th>Copy</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>approve</td>
+<td><code>confirm</code></td>
+<td>Banner: "One more step: click <strong>Approve post</strong> to finish." Heading: "Approve this post?" Body: "It goes to compliance review first… Nothing publishes automatically." Buttons: <strong>Approve post</strong> (big), "Rewrite in my voice instead". On phone the button sticks to the bottom.</td>
+</tr>
+<tr>
+<td>approve</td>
+<td><code>done</code></td>
+<td>"✓ Approved. … approved by Jane Advisor at 8:14 AM PT. It's queued for <strong>compliance review</strong>. We'll email you when it's cleared, then it's scheduled. <strong>Nothing is published until it's cleared and scheduled.</strong>" With compliance off: "Pick when it goes on your website." Below that, the <strong>Other picks this week</strong>.</td>
+</tr>
+<tr>
+<td>skip</td>
+<td><code>confirm</code> → <code>done</code> → <code>undone</code></td>
+<td>"Skip this post? It won't come back in your picks. You can undo this." Then "Skipped" with <strong>Undo</strong>. Then "↩ Undone. The post is back in this week's picks."</td>
+</tr>
+<tr>
+<td>download</td>
+<td><code>confirm</code> → <code>working</code> → <code>done</code></td>
+<td>"Download copy and images. A .zip with the post text (.txt and .html), the images, and your disclaimer… Downloading doesn't approve or publish anything." Then "✓ Your download started (2.4 MB)" and a reminder to follow the usual compliance steps.</td>
+</tr>
+<tr>
+<td>unsub</td>
+<td><code>confirm</code> → <code>done</code> → <code>undone</code></td>
+<td>"Stop post suggestion emails? For jane@example.com only. Others on the list keep getting them." Then "You're unsubscribed", with Undo.</td>
+</tr>
+<tr>
+<td>view</td>
+<td>—</td>
+<td>"Jane Advisor approves these posts. Your access is view only." The only button is Download.</td>
+</tr>
+<tr>
+<td>any</td>
+<td><code>already</code></td>
+<td>"Already done. This post was already approved by <strong>Sam Assistant</strong> on behalf of Jane Advisor, Nov 2, 2026, 9:05 AM PT. Nothing changed. Each link works once."</td>
+</tr>
+<tr>
+<td>any</td>
+<td><code>expired</code></td>
+<td>"This link has expired. Links in the suggestions email work for 7 days, and each one works once. Nothing was changed." Button: <strong>Sign in to see your picks</strong>.</td>
+</tr>
+<tr>
+<td>any</td>
+<td><code>error</code></td>
+<td>"Something went wrong. We couldn't finish that. <strong>Nothing was changed.</strong>" Buttons: Try again, Sign in.</td>
+</tr>
+</tbody>
+</table>
+<p>Every action page says: "Nothing publishes automatically. Opening this page did nothing. Only the button does."</p>
+<h3>3. Rewrite page (<a href="rewrite.html">rewrite.html</a>)</h3>
+<ul>
+<li><code>start</code> (from the email): "One more step: click <strong>Rewrite in my voice</strong> to start. Nothing changes until you approve." Below it, a preview of the post.</li>
+<li>After that, the <strong>#687 A side-by-side view, reused as is</strong>: <code>loading</code>, <code>ready</code>, <code>blocked</code>, <code>claim</code>, <code>regenerating</code>, <code>error</code>, <code>approved</code>, plus <code>expired</code>.</li>
+<li>Locked values are highlighted, and Approve is disabled while blocked.</li>
+<li>The disclaimer is shown verbatim and marked identical.</li>
+<li>Approve hands off to compliance or schedule.</li>
+<li>AI generation starts only from the button, so a scanner opening the link doesn't spend an AI call.</li>
+</ul>
+<h3>4. Digest settings (<a href="settings.html">settings.html</a> <code>?freq=weekly|biweekly|monthly|off&amp;st=normal|adding|removed|test</code>)</h3>
+<ul>
+<li>Settings › <strong>Suggestions email</strong>.</li>
+<li><strong>How often:</strong> Weekly (the default), Every 2 weeks, Monthly or Off.</li>
+<li><strong>Day, time (PT) and posts per email</strong> (3, 4 or 5).</li>
+<li>The next send date, for example "Monday, Nov 2, 2026, 8:00 AM PT". "Links in each email work for 7 days."</li>
+<li><strong>Off:</strong> "Suggestion emails are off. Your picks still show in Content › Suggested."</li>
+<li><strong>Who gets it:</strong></li>
+<li>Jane Advisor (You): approve, rewrite, skip.</li>
+<li>Sam Assistant: <strong>View only</strong> or <strong>Can approve</strong>, with Remove.</li>
+<li>"+ Add person" adds a name, email and permission.</li>
+<li>"Removed: their old links stop working now" with Undo.</li>
+<li>Help text: view-only people get Preview and Download, not Approve, Rewrite or Skip. Approvals by an assistant show their name "on behalf of Jane Advisor". Each person gets their own links.</li>
+<li><strong>Preview email</strong> and <strong>Send a test to me</strong> ("It's marked TEST, and its buttons don't change anything").</li>
+<li><strong>What's picked:</strong> a link to topics.</li>
+<li>A warning: "<strong>Nothing publishes automatically.</strong> Approving from the email only queues a post for compliance review (or scheduling, if compliance is off)."</li>
+</ul>
+<p>All sample posts are <strong>example data</strong>.</p>
+<h2>In and out of scope</h2>
+<ul>
+<li><strong>In:</strong></li>
+<li>A new digest job (replacing the old inactive-advisor email).</li>
+<li>The email template, in HTML and plain text.</li>
+<li>Per-action tokens, the light confirm pages and their POST handlers.</li>
+<li>Approve hand-off, Skip with undo, the Download zip and the Rewrite entry point (#687).</li>
+<li>Settings: frequency, day/time, count, recipients and permissions, preview and test.</li>
+<li>The CASL footer and unsubscribe, including RFC 8058.</li>
+<li>Scanner logging, audit and phone layout.</li>
+<li><strong>Out:</strong></li>
+<li>Auto-publish (never).</li>
+<li>Building #687 itself. This only links into it, so #688's rewrite button is hidden until #687 ships.</li>
+<li>Changing the picks algorithm.</li>
+<li>Social or email-campaign suggestions.</li>
+<li>Any legal or compliance wording (the footer is a placeholder).</li>
+<li>Per-advisor custom sending domains, unless that option is picked (open question).</li>
+</ul>
+<h2>Mobile and email clients</h2>
+<ul>
+<li><strong>Phone:</strong> cards stack, the thumbnail goes full width, and the buttons form a 2×2 grid at least 44px tall. Action pages show the main button in a sticky bottom bar when opened from the email. The rewrite page uses the #687 Original/Rewrite switch.</li>
+<li><strong>Outlook (Windows):</strong></li>
+<li>Use table layout with inline styles, and bulletproof buttons (VML or padded <code>&lt;a&gt;</code>). No flexbox, no CSS gradients, no web fonts.</li>
+<li>Images need set <code>width</code> and <code>height</code>. Max width is 600px.</li>
+<li><strong>Safe Links rewrites URLs and prefetches them.</strong> That's the main reason for the confirm page.</li>
+<li><strong>Gmail:</strong> clips messages over about 102KB, so keep it small (3–5 posts, no inline CSS blocks repeated). <code>&lt;style&gt;</code> in the head is supported, but inline is safest. Gmail proxies images, so the open pixel isn't reliable.</li>
+<li><strong>Dark mode</strong> (<code>?dk=on</code>): avoid pure-black text on transparent backgrounds. Use a logo with a transparent background and a light outline. Buttons keep enough contrast. Add <code>color-scheme</code> meta tags and test Outlook.com and Apple Mail inversions.</li>
+<li><strong>Images off</strong> (<code>?img=off</code>): every thumbnail has meaningful alt text, and the layout still reads without images. The logo falls back to the firm name as text.</li>
+<li>A <strong>plain-text part</strong> carries the same links (each still opens a confirm page).</li>
+</ul>
+<h2>Build note</h2>
+<ol>
+<li><strong>Token per action:</strong></li>
+<li>Each recipient gets their own token for each post and action (<code>approve</code>, <code>skip</code>, <code>rewrite</code>, <code>download</code>, <code>view</code>). The digest also gets one token per recipient for "see all picks" (B board, or the A "other picks" list).</li>
+<li>Use 32 or more random bytes, stored <strong>hashed</strong> in <code>action_tokens</code> (<code>kind</code>, <code>digestId</code>, <code>postId</code>, <code>advisorId</code>, <code>recipientId</code>, <code>recipientEmail</code>, <code>permission</code>, <code>expiresAt</code>, <code>usedAt</code>, <code>revokedAt</code>). Reuse the #657 collection if it ships first.</li>
+<li><strong>Single use and expiry:</strong></li>
+<li>The default expiry is <strong>7 days</strong> (open question).</li>
+<li>Approve and skip tokens are single use. Download and view tokens can be reused until they expire.</li>
+<li>Re-sending a digest revokes that recipient's earlier tokens.</li>
+<li>Removing a recipient revokes their tokens straight away.</li>
+<li>An expired or revoked token shows the <code>expired</code> page. A used token shows <code>already</code>.</li>
+<li><strong>Confirm POST:</strong></li>
+<li>A <strong>GET only renders</strong> the page. It never approves, skips, unsubscribes or starts AI work.</li>
+<li>The page button sends a <strong>POST</strong> with the token in the body, a CSRF value tied to the rendered page, and an <code>Origin</code>/<code>Referer</code> check. Don't auto-submit.</li>
+<li><code>?from=email</code> only changes the layout (the banner and sticky bar).</li>
+<li>The on-page "other picks" buttons POST with the digest token plus CSRF.</li>
+<li>Rewrite generation starts from a POST, then the #687 flow runs.</li>
+<li><strong>Scanner logging:</strong></li>
+<li>Log every GET (<code>tokenId</code>, IP, user agent, time, <code>HEAD</code> or <code>GET</code>, <code>prefetch</code> header).</li>
+<li>Flag scanner-like hits: a GET within a few seconds of send, known scanner user agents, or many links opened at once.</li>
+<li>Scanner hits are never treated as clicks or actions.</li>
+<li>Tests: GET, HEAD and prefetch change nothing.</li>
+<li><strong>Idempotency:</strong></li>
+<li>Use a conditional update keyed on <code>digestId + postId</code> (<code>status: 'suggested' → 'approved'|'skipped'</code>).</li>
+<li>A repeat POST, or a second recipient acting after the first, returns <code>already</code> with who did it and when (PT).</li>
+<li>Approve runs the hand-off <strong>once</strong>.</li>
+<li>Skip writes <code>user_hidden_posts</code> (reason <code>digest-skip</code>). Undo removes it.</li>
+<li>Approving a post that was skipped earlier clears the skip.</li>
+<li><strong>Assistant permissions:</strong></li>
+<li>Each recipient is <code>view</code> or <code>approve</code> (the advisor is always <code>approve</code>). The permission is checked <strong>on the server when the POST arrives</strong>, not just baked into the email.</li>
+<li>Assistant actions are recorded as <code>actedBy: recipientId, onBehalfOf: advisorId</code>.</li>
+<li>View-only emails have no Approve, Rewrite or Skip links, and their tokens can't approve.</li>
+<li><strong>Approve hand-off:</strong></li>
+<li>Approve calls the <strong>existing</strong> path: compliance email/PDF in <code>email</code> mode, the external queue in <code>external</code> mode, or <code>insertScheduledWebsitePost</code> at the next free slot or "pick a time" when compliance is <code>off</code>.</li>
+<li><strong>No code path publishes from the digest.</strong> Add a test for that.</li>
+<li>Audit fields: <code>approvedVia: 'digest-email'</code>, <code>approvedAt</code>, <code>approvedBy</code>, IP, user agent, <code>tokenId</code>.</li>
+<li><strong>Schedule job:</strong></li>
+<li>Replace the old inactive-advisor cron with an hourly job that finds advisors due by <strong>frequency + day + time in their timezone</strong> (default Monday 8:00 AM PT).</li>
+<li>Keep the scheduler lock and claim-before-send (<code>lastDigestSentAt</code>, <code>nextDigestAt</code>).</li>
+<li>Picks come from <code>post-suggestions.js</code>. Exclude posts already on the website, skipped or hidden posts, and posts in earlier digests that weren't acted on (open question). If there are no picks, send nothing.</li>
+<li>Store a <code>post_digests</code> record (<code>advisorId</code>, <code>postIds</code>, <code>recipients</code>, <code>sentAt</code>, <code>messageIds</code>).</li>
+<li>Send test: a <code>TEST</code> banner, and tokens with <code>kind: 'test'</code> that never act.</li>
+<li><strong>Zip generation:</strong></li>
+<li>Built on demand after the POST, then cached per post and version for 24 hours. It's streamed from object storage with a short-lived signed URL on the <strong>white-label domain</strong>.</li>
+<li>Contents: <code>post.txt</code>, <code>post.html</code> (no FC links), the original images (resized to 2048px max), <code>disclaimer.txt</code> (the stored disclaimer string, verbatim) and <code>README.txt</code> ("Follow your usual compliance steps").</li>
+<li>"Download all" zips the digest.</li>
+<li><strong>White-label link domain:</strong><ul>
+<li>Every link in the email and on the post links uses a neutral domain (placeholder <strong><code>links.example.com</code></strong>), or the advisor's own domain (<code>your-firm.example.com</code>). <strong>Nothing links to FC's own domain</strong>, and <code>Meteor.absoluteUrl()</code> must not be used for these links.</li>
+<li>Per the issue, form endpoints and images may still be served from FC.</li>
+<li>Which domain to use, and whether DNS/TLS is per advisor or shared, is an open question.</li>
+</ul>
+</li>
+<li><strong>CASL and unsubscribe:</strong><ul>
+<li>The footer has the sender (the firm name), a mailing address, contact details and a working unsubscribe plus manage-preferences link. <strong>Wording is a placeholder pending compliance review.</strong> Whether CASL applies to this advisor-facing email at all is an open question, but treat it as if it does.</li>
+<li>Each recipient's unsubscribe only affects them.</li>
+<li>Send <code>List-Unsubscribe: &lt;https://links.example.com/u/TOKEN&gt;, &lt;mailto:…&gt;</code> and <strong><code>List-Unsubscribe-Post: List-Unsubscribe=One-Click</code></strong> (RFC 8058). The one-click POST unsubscribes <strong>without</strong> CSRF or a confirm step and returns 200. A GET shows the confirm page, and the button POSTs.</li>
+<li>Process unsubscribes within 10 business days (CASL); we do it immediately.</li>
+<li>Log the <code>source</code> as <code>one-click</code> or <code>confirm-page</code>.</li>
+</ul>
+</li>
+<li><strong>Sending:</strong><ul>
+<li>Use SES (the same as advisor campaigns), not Elastic Email, unless decided otherwise.</li>
+<li>The From display name is the firm name, and Reply-To is the advisor or support (open question).</li>
+<li>Handle bounces and complaints through the existing SNS handling. A hard bounce pauses that recipient.</li>
+</ul>
+</li>
+</ol>
+<h2>Estimate (days)</h2>
+<table>
+<thead>
+<tr>
+<th>Piece</th>
+<th>A</th>
+<th>B</th>
+<th>C</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Email template (HTML and text, Outlook, Gmail, dark mode, images off)</td>
+<td>1.5–2</td>
+<td>1–1.5</td>
+<td>1.5–2</td>
+</tr>
+<tr>
+<td>Schedule job (frequency, timezone, lock, picks, <code>post_digests</code>)</td>
+<td>1–1.5</td>
+<td>1–1.5</td>
+<td>1–1.5</td>
+</tr>
+<tr>
+<td>Action tokens (hashed, per action, expiry, revoke)</td>
+<td>1–1.5</td>
+<td>1–1.5</td>
+<td>1–1.5</td>
+</tr>
+<tr>
+<td>Confirm pages and POST handlers (approve, skip, undo, download, view, already, expired, error)</td>
+<td>1.5–2</td>
+<td>1–1.5</td>
+<td>1.5–2</td>
+</tr>
+<tr>
+<td>"Other picks" list (A, C) or full board (B)</td>
+<td>0.25–0.5</td>
+<td>1.5–2</td>
+<td>0.25–0.5</td>
+</tr>
+<tr>
+<td>Top-pick ranking reason and hero</td>
+<td>—</td>
+<td>—</td>
+<td>0.5</td>
+</tr>
+<tr>
+<td>Approve hand-off to compliance or schedule, audit, idempotency</td>
+<td>1–1.5</td>
+<td>1–1.5</td>
+<td>1–1.5</td>
+</tr>
+<tr>
+<td>Rewrite entry point into #687 (not #687 itself)</td>
+<td>0.5–1</td>
+<td>0.5–1</td>
+<td>0.5–1</td>
+</tr>
+<tr>
+<td>Zip generation and signed download</td>
+<td>1–1.5</td>
+<td>1–1.5</td>
+<td>1–1.5</td>
+</tr>
+<tr>
+<td>Settings UI (frequency, recipients and permissions, preview, test)</td>
+<td>1.5–2</td>
+<td>1.5–2</td>
+<td>1.5–2</td>
+</tr>
+<tr>
+<td>White-label link domain routing</td>
+<td>0.5–1</td>
+<td>0.5–1</td>
+<td>0.5–1</td>
+</tr>
+<tr>
+<td>CASL footer, unsubscribe, RFC 8058, preferences</td>
+<td>0.5–1</td>
+<td>0.5–1</td>
+<td>0.5–1</td>
+</tr>
+<tr>
+<td>Scanner logging</td>
+<td>0.25–0.5</td>
+<td>0.25–0.5</td>
+<td>0.25–0.5</td>
+</tr>
+<tr>
+<td>QA (Gmail, Outlook, Apple Mail, phone, dark mode, staging, no publishing)</td>
+<td>1–1.5</td>
+<td>1–1.5</td>
+<td>1–1.5</td>
+</tr>
+<tr>
+<td><strong>Total</strong></td>
+<td><strong>≈11.5–17.5</strong></td>
+<td><strong>≈11.75–17.5</strong></td>
+<td><strong>≈12–18</strong></td>
+</tr>
+</tbody>
+</table>
+<p>If the #657 tokens and confirm POST handlers ship first, subtract about 1–1.5 days. #687 is estimated separately (A ≈10.5–14).</p>
+<h2>Open questions</h2>
+<ol>
+<li><strong>Link domain:</strong> should we use one neutral shared domain (like <code>links.example.com</code>), or each advisor's own subdomain (DNS and TLS per advisor)? And which sending domain (From and DKIM)?</li>
+<li>How long should links last: is <strong>7 days</strong> right? Should approve and skip be single use (as mocked)?</li>
+<li>Should the digest replace the old "inactive 14 days" email completely? Should it be on by default for everyone, or opt-in?</li>
+<li>Should picks that weren't acted on carry over to the next digest, or drop off?</li>
+<li>Can assistants with "Can approve" approve on their own, or should the advisor also confirm? Who else (FTT staff) can act?</li>
+<li><strong>CASL:</strong> does it apply to this advisor-facing operational email? Who signs off the footer wording? Should the sender shown be the firm or FC?</li>
+<li>Should the Download zip include the disclaimer and a compliance reminder? Should downloading be logged as an action?</li>
+<li>In compliance email mode, should one digest approval send one PDF per post or batch them?</li>
+<li>Should the default send time be Monday 8:00 AM in the advisor's timezone? And should the default be 3 posts per email?</li>
+<li>While #687 isn't built, should we hide "Rewrite in my voice" or show "Edit in FC" instead?</li>
+<li>Where should scanner-like hits be reported: only the log, or a Slack line?</li>
+<li>A, B or C?</li>
+</ol></body></html>
