@@ -1,170 +1,128 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>#687 Voice sampling: build contract</title><style>body{font-family:Inter,system-ui,sans-serif;max-width:960px;margin:24px auto;padding:0 16px;line-height:1.55;color:#2C3E50}a{color:#1976D2}table{border-collapse:collapse;width:100%;margin:8px 0;font-size:14px}td,th{border:1px solid #e0e5eb;padding:6px 8px;text-align:left;vertical-align:top}th{background:#f3f6f9}blockquote{background:#e8f5e9;border:2px solid #2e7d32;border-radius:10px;margin:10px 0;padding:4px 14px}code{background:#f3f6f9;padding:1px 4px;border-radius:4px}@media(max-width:600px){table{display:block;overflow-x:auto}}code{overflow-wrap:anywhere}td{overflow-wrap:anywhere}</style></head><body><p><a href="../../">All mocks</a> · <a href="../index.html">#687 hub</a> · <a href="index.html">Hub</a> · <a href="build-contract.md">Markdown</a></p><h1>#687 Voice sampling: build contract (v2, Oct 29, 2026)</h1>
-<p>Follow-up to <a href="https://github.com/kartboy16/content-library/issues/687">#687</a>, based on <a href="https://github.com/kartboy16/content-library/issues/687#issuecomment-6507553785">Alex's voice-sampling direction</a>. Mocks: <a href="index.html">hub</a>. <strong>Not agent-ready. Soft Dev hold until Alex picks.</strong></p>
-<p><strong>What changed in v2:</strong> connected accounts are now the main way in (section 1). Links are one field that we try to read, with an inline paste box only on a row we couldn't read. There's one general paste section. The per-network "paste instead" was dropped.</p>
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>#687 Voice sampling: build contract</title><style>body{font-family:Inter,system-ui,sans-serif;max-width:960px;margin:24px auto;padding:0 16px;line-height:1.55;color:#2C3E50}a{color:#1976D2}table{border-collapse:collapse;width:100%;margin:8px 0;font-size:14px}td,th{border:1px solid #e0e5eb;padding:6px 8px;text-align:left;vertical-align:top}th{background:#f3f6f9}blockquote{background:#e8f5e9;border:2px solid #2e7d32;border-radius:10px;margin:10px 0;padding:4px 14px}code{background:#f3f6f9;padding:1px 4px;border-radius:4px}@media(max-width:600px){table{display:block;overflow-x:auto}}code{overflow-wrap:anywhere}td{overflow-wrap:anywhere}</style></head><body><p><a href="../../">All mocks</a> · <a href="../index.html">#687 hub</a> · <a href="index.html">Hub</a> · <a href="build-contract.md">Markdown</a></p><h1>#687 Voice sampling: build contract (v3, simple, Oct 29, 2026)</h1>
+<p>Follow-up to <a href="https://github.com/kartboy16/content-library/issues/687">#687</a> and <a href="https://github.com/kartboy16/content-library/issues/687#issuecomment-6507553785">Alex's voice-sampling direction</a>. Mocks: <a href="index.html">hub</a>. Earlier version: <a href="a-one-page-v2.html">A v2</a>, <a href="b-steps-v2.html">B v2</a>, <a href="c-sources-v2.html">C v2</a>. <strong>Not agent-ready. Soft Dev hold until Alex picks.</strong></p>
 <h2>The rule</h2>
 <ul>
-<li>Learn the voice <strong>only from writing the advisor did themselves</strong>: posts on their connected accounts, their website, and links or text they add.</li>
-<li><strong>Never use library posts.</strong> Posts we scheduled for them and their Insights pages are skipped automatically.</li>
-<li>With fewer than about 3 usable samples, prompt the advisor to add more.</li>
-<li>Numbers, rates, dates, tax rules and compliance wording stay locked, as in #687. The advisor approves every post, and <strong>nothing publishes automatically.</strong></li>
+<li>Learn the voice <strong>only from the advisor's own writing</strong>: their connected accounts, their website, and any link or text they add.</li>
+<li><strong>Never use library posts.</strong> Posts we scheduled (<code>social_post_queue</code>) and the site's Insights pages are skipped automatically.</li>
+<li>Numbers, rates, dates, tax rules and compliance wording stay locked, as in #687. The advisor approves every post. <strong>Nothing publishes automatically.</strong></li>
 </ul>
-<h2>Recommendation: A, one page</h2>
+<h2>Recommendation: A</h2>
 <ul>
-<li><strong><a href="a-one-page.html">A</a>:</strong> Settings › Voice, one page, in this order:</li>
-<li>Import from your connected accounts</li>
-<li>Your website (with the page review list under it)</li>
-<li>Add a link to any post or article</li>
-<li>Paste your own writing</li>
-<li>Then the sample count with the fewer-than-3 warning, and <strong>Your voice, in plain words</strong></li>
-<li><strong><a href="b-steps.html">B</a>:</strong> the same pieces as guided steps (<code>?step=1..4</code>): 1 Your accounts, 2 Your website, 3 Links and pasted text, 4 Your voice. Updated for v2.</li>
-<li><strong><a href="c-sources.html">C</a>:</strong> accounts, site card (review in a dialog), link and paste on the left, and a sticky <strong>live profile</strong> on the right. Updated for v2.</li>
+<li><strong><a href="a-one-page.html">A</a>:</strong> Settings › Voice. One card: heading, one line, one <strong>Learn my voice</strong> button. The result is one line plus two collapsed sections and Save.</li>
+<li><strong><a href="b-steps.html">B</a>:</strong> the same start, but the result opens as <strong>one summary panel</strong>: the voice in plain words is shown straight away, with Edit and "Review what we found" opening dialogs. It's the only alternative kept.</li>
+<li>C was dropped: in the simple flow it no longer differed meaningfully. It's kept as an <a href="c-sources-v2.html">earlier version</a>.</li>
 </ul>
-<h2>Screens and states</h2>
-<p>State switches: <code>?acct=connected|importing|failed|none</code>, <code>?st=crawling|done|few|error|unreachable</code> (website), <code>?link=reading|ok|failed</code>.</p>
-<h3>1. Import from your connected accounts (main way)</h3>
-<ul>
-<li>Help text: "We read posts you published on your connected accounts. Posts we scheduled for you from the library are skipped. Short posts are pooled: about every 150 words of ticked posts counts as 1 sample."</li>
-<li>Each connected account shows the network, the page name, "<strong>N posts</strong> imported", the ticked words and samples, "🚫 Skipped N posts we scheduled for you from the library", and an expandable list of posts with tickboxes ("untick any you didn't write").</li>
-<li>Networks that aren't connected show "Not connected" and <strong>Connect</strong>. There's also <strong>+ Connect an account</strong> and <strong>Import again</strong>.</li>
-</ul>
+<h2>Screens and states (<code>?st=start|working|done|few|linkfailed</code>, <code>?phone</code>)</h2>
 <table>
 <thead>
 <tr>
 <th>State</th>
-<th>Copy</th>
+<th>What shows</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><code>connected</code></td>
-<td>LinkedIn Company Page: 24 posts, 9 skipped. Facebook Page: 18 posts, 6 skipped. Instagram: 12 posts. X: Not connected, Connect.</td>
+<td><code>start</code></td>
+<td>"Learn your writing voice", "We'll read your connected accounts and your website to learn how you write.", <strong>Learn my voice</strong>. One quiet line: "Using: Facebook Page, LinkedIn page, Instagram, yourfirm.ca · Connect another account". Under it, two optional inputs: "Add a link to something you wrote" (URL + Add) and a collapsed "Paste your own writing".</td>
 </tr>
 <tr>
-<td><code>importing</code></td>
-<td>"Importing posts… 14 of 24" with a progress bar, other accounts "Waiting…". "You can leave this page. We'll email you when it's done."</td>
-</tr>
-<tr>
-<td><code>failed</code></td>
-<td>On the account that failed: "<strong>We couldn't import posts from your Facebook Page.</strong> The connection may have expired. Nothing else changed." Buttons: Reconnect, Try again. Other accounts stay imported.</td>
-</tr>
-<tr>
-<td><code>none</code></td>
-<td>"<strong>No accounts connected yet.</strong> Connect the accounts you post to, and we'll learn from posts you wrote yourself. You can also use your website, links or pasted text below." Connect buttons for each network.</td>
-</tr>
-</tbody>
-</table>
-<h3>2. Your website (unchanged from v1)</h3>
-<table>
-<thead>
-<tr>
-<th>State</th>
-<th>Copy</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>crawling</code></td>
-<td>"Reading <strong>yourfirm.ca</strong>… found <strong>14 pages</strong>, reading 9 of 14. Skipping 22 Insights posts." Progress bar.</td>
+<td><code>working</code></td>
+<td>"Reading your posts and website…" with a progress bar. The page can be left (email when done).</td>
 </tr>
 <tr>
 <td><code>done</code></td>
-<td>"✓ Read <strong>yourfirm.ca</strong> on Oct 29, 2026, 1:40 PM PT. Found <strong>12 pages</strong> with your writing. Skipped <strong>22 Insights posts</strong> (library posts)."</td>
+<td>"✓ Learned from <strong>38</strong> samples". Collapsed <strong>Review what we found</strong> and <strong>Your voice profile</strong>, then Learn again and <strong>Save</strong>.</td>
 </tr>
 <tr>
 <td><code>few</code></td>
-<td>"…Found <strong>4 pages</strong>. Most are short."</td>
+<td>As done, plus one line: "⚠ That's not much yet. Add a link or paste some writing so rewrites sound like you." Shown only when there are fewer than 3 samples.</td>
 </tr>
 <tr>
-<td><code>error</code> (partial)</td>
-<td>"<strong>We read 3 pages, then yourfirm.ca stopped responding.</strong> We kept the 3 pages we got." Try again.</td>
-</tr>
-<tr>
-<td><code>unreachable</code></td>
-<td>"<strong>We couldn't reach yourfirm.ca.</strong>" Try again, or add links or paste text instead.</td>
+<td><code>linkfailed</code></td>
+<td>A link row: "Couldn't read" and, on that row, "We couldn't read this link. Paste the text instead:" with a text box. The mock uses an X link.</td>
 </tr>
 </tbody>
 </table>
-<p>Under it, <strong>Check the pages we found</strong>: tickboxes, title, URL, word count. Tags: Looks like legal text (unticked), Too short to learn from (disabled), Bios: untick if someone else wrote them. "🚫 Skipped automatically: 22 Insights posts."</p>
-<h3>3. Add a link to any post or article</h3>
 <ul>
-<li>One URL field and <strong>Add link</strong>. We try to read the link when it's added.</li>
+<li><strong>Review what we found</strong> (collapsed): one line per source, with its list behind "Show posts" or "Show pages".</li>
+<li>"Facebook Page · 50 posts read · 6 we scheduled for you skipped", and the same for the LinkedIn page and Instagram. Posts can be unticked.</li>
+<li>"yourfirm.ca · 7 pages read · 22 Insights posts skipped". Legal pages are unticked, pages under 150 words are disabled, and team bios are tagged.</li>
+<li>"Your links and pasted writing", listing each with its word count.</li>
+<li>If an account or the site fails, its line says so, for example "Couldn't read your LinkedIn page. Reconnect", and the rest still counts. Not mocked as a separate state.</li>
+<li><strong>Your voice profile</strong> (collapsed): an editable plain-words paragraph and the 🔒 line "Numbers, rates, dates and compliance wording are never changed. You approve every post."</li>
+<li>Counting: a ticked page, link or pasted piece of at least 150 words counts as 1 sample. Short social posts are pooled per account, so every 150 ticked words counts as 1.</li>
+<li>There are no estimates or explainer notes on the mock pages. Example data uses generic names only (Jane Advisor, Your Firm Name, yourfirm.ca, example.com).</li>
 </ul>
+<h2>What we can read (per Software developer)</h2>
 <table>
 <thead>
 <tr>
-<th>State</th>
-<th>Row shows</th>
+<th>Source</th>
+<th>Readable?</th>
+<th>In the flow</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><code>reading</code></td>
-<td>The link, then "Reading…" with a spinner.</td>
+<td>Facebook Page</td>
+<td><strong>Readable today</strong></td>
+<td>Imported automatically, last 50 posts</td>
 </tr>
 <tr>
-<td><code>ok</code></td>
-<td>"✓ Read: 1,100 words", × to remove.</td>
+<td>LinkedIn company page</td>
+<td><strong>Probable</strong></td>
+<td>Imported automatically, last 50 posts</td>
 </tr>
 <tr>
-<td><code>failed</code></td>
-<td>"Couldn't read", then <strong>on the same row</strong>: "We couldn't read this link. Paste the text instead:" with a text box and "Pasted: N words". The link is kept as the source label.</td>
+<td>Instagram business account</td>
+<td><strong>Probable</strong></td>
+<td>Imported automatically, last 50 captions</td>
+</tr>
+<tr>
+<td>Personal LinkedIn profile</td>
+<td><strong>Can't be read</strong></td>
+<td>Not an account. A link to it fails and asks for the text.</td>
+</tr>
+<tr>
+<td>X</td>
+<td><strong>Can't be read</strong></td>
+<td><strong>Not an account (left out).</strong> A link to it fails and asks for the text.</td>
+</tr>
+<tr>
+<td>The advisor's website</td>
+<td>Crawled (WordPress or static)</td>
+<td>Automatic. Insights pages skipped.</td>
+</tr>
+<tr>
+<td>Other links</td>
+<td>Tried with a plain fetch</td>
+<td>If it fails, the row asks for the text.</td>
 </tr>
 </tbody>
 </table>
-<p>The paste box only appears on a row that failed. There's no per-network paste field.</p>
-<h3>4. Paste your own writing</h3>
 <ul>
-<li>"Anything you wrote yourself: a newsletter, a speech, an email to clients. Not legal or compliance text." One text box with "Pasted: N words", and <strong>+ Paste another piece</strong>.</li>
+<li><strong>Default import: the last 50 posts per account</strong>, minus posts in <code>social_post_queue</code> and posts closely matching an <code>HTMLPosts</code> post.</li>
 </ul>
-<h3>Sample count and fewer-than-3 warning</h3>
-<ul>
-<li>"<strong>N</strong> usable samples · about <strong>W</strong> words", counted across accounts, website, links and pasted text.</li>
-<li>Usable: a ticked page, link or pasted piece of at least 150 words, <strong>or</strong> every 150 words of ticked posts from one account (pooled, since social posts are short).</li>
-<li><strong>Fewer than 3</strong> (live): "⚠ <strong>We need a bit more of your writing.</strong> We only have <strong>2</strong> usable samples. With fewer than 3, rewrites may sound like our standard style instead of you." Buttons: Add a link, Paste some text, Continue anyway. Demo: <code>?acct=none&amp;st=few&amp;link=failed</code>.</li>
-</ul>
-<h3>5. Your voice, in plain words (editable, unchanged from v1)</h3>
-<ul>
-<li>While reading: "Your voice profile appears when we finish reading." Too few: "Add a bit more of your writing (at least 3 samples)…"</li>
-<li>Ready: "Built from N samples (about W words). None from library posts." An editable paragraph, phrase and avoid chips with <strong>+ Add</strong>, sign-off, a "Sounds like" line (never published), the 🔒 locked note ("…nothing publishes automatically"), and Rebuild, Reset my edits, <strong>Save voice profile</strong>.</li>
-</ul>
-<p>All accounts, sites, posts and figures are <strong>example data</strong> with generic names (Jane Advisor, Your Firm Name, yourfirm.ca, example.com). There's no compliance or legal copy here.</p>
 <h2>In and out of scope</h2>
 <ul>
 <li><strong>In:</strong></li>
-<li>Importing the advisor's own posts from connected LinkedIn company pages, Facebook Pages and Instagram (existing OAuth), skipping posts in <code>social_post_queue</code>.</li>
-<li>Account states (connected, importing, failed with reconnect, none), and pooled counting for short posts.</li>
-<li>Crawling the advisor's own domain (WordPress and static), skipping Insights and library posts.</li>
-<li>Text extraction, legal and short auto-untick, and dedupe.</li>
-<li>One link field: read, then inline paste on failure. One general paste section.</li>
-<li>The review lists, usable count, fewer-than-3 prompt, and the editable plain-words profile.</li>
-<li>Phone layout.</li>
+<li>The one-button flow, with a background job reading all connected accounts (last 50 posts each) and crawling the site.</li>
+<li>Skipping library posts.</li>
+<li>The optional link field (with inline paste on failure) and the paste box.</li>
+<li>The result line, the fewer-than-3 line, the collapsed review with ticks, the collapsed editable profile, and Save.</li>
+<li>Per-source failure lines, and the phone layout.</li>
 <li><strong>Out:</strong></li>
-<li>X/Twitter import (no X connection exists today; "Connect" is shown as a placeholder, open question).</li>
-<li>Personal LinkedIn profiles (today's connection is company pages).</li>
+<li>An X account and personal LinkedIn.</li>
 <li>Learning from the advisor's edits ("later").</li>
-<li>Crawling other domains, any auto-publish (never), the rewrite screen (#687 A, unchanged), compliance wording.</li>
-</ul>
-<h2>Mobile (390px)</h2>
-<ul>
-<li>Sections stack. Account cards wrap; post lists open full width.</li>
-<li>The domain and link fields' buttons go full width. Review rows hide the word count, and long URLs wrap.</li>
-<li>B's steps wrap onto two lines. C's live profile moves below the sources and stops being sticky.</li>
+<li>Any auto-publish (never), the rewrite screen (#687 A), and compliance wording.</li>
 </ul>
 <h2>Build note</h2>
 <ol>
-<li><strong>Account import:</strong></li>
-<li>Use the stored tokens from <code>oauth-social.js</code>. Pull the last ~50 posts per account in a background job (<code>voice_imports</code>: account, status, found, skipped, error), with progress shown and an email when done.</li>
-<li>LinkedIn: the organization's posts for the admin page. Facebook: Page posts. Instagram: media captions.</li>
-<li><strong>Skip any post matching <code>social_post_queue</code></strong> for this advisor (by platform post id where stored, otherwise by text similarity), and any post closely matching an <code>HTMLPosts</code> post. Show the count as "Skipped N posts we scheduled for you".</li>
-<li>An expired token or permission error marks just that account <code>failed</code> with Reconnect; other accounts stay.</li>
-<li>Store each post in <code>voice_samples</code> with <code>source: social</code>, <code>network</code>, <code>postId</code>, <code>words</code>, <code>included</code>.</li>
-<li><strong>Crawl</strong> (as v1): background job, sitemap then WordPress REST then same-domain crawl, robots, ~1 req/s, ~60 pages, timeouts. Skip the Insights path, <code>WebsitePostQueue</code> URLs and pages matching <code>HTMLPosts</code>.</li>
-<li><strong>Extract text:</strong> readability-style main content, dedupe, word counts, hash in <code>voice_samples</code> (<code>source</code>: <code>social|site|link|paste</code>). <strong>No text from library posts is ever stored as a sample.</strong></li>
-<li><strong>Auto-untick:</strong> legal pages, pages under 150 words (disabled), team or bio pages (ticked, tagged). The advisor's tick always wins.</li>
-<li><strong>Links:</strong> fetch on Add (timeout ~10s). A login wall, 4xx/5xx, or an empty or too-short body shows the inline paste box on that row. Which links we can read is an open question for Software developer.</li>
-<li><strong>Threshold:</strong> usable means included and at least 150 words, with social posts pooled per account (every 150 ticked words = 1). Warn below 3. "Continue anyway" builds a profile flagged <code>thin: true</code>.</li>
-<li><strong>Profile:</strong> built only from included samples, #687's structured output plus a plain-words paragraph. Edits survive a rebuild unless Reset. Records which samples it came from.</li>
-<li><strong>Privacy:</strong> only the advisor's own accounts, domain and entered URLs are read. Samples are deleted when removed or when the profile is deleted.</li>
+<li><strong>One job</strong> (<code>voice_learn</code>: status, per-source counts, skipped, errors) starts on Learn my voice. It imports the last 50 posts from each connected Facebook Page, LinkedIn company page and Instagram business account, using the stored tokens. It crawls the website: sitemap, then WordPress REST, then same-domain links, respecting robots, about 1 request a second, about 60 pages, with timeouts.</li>
+<li><strong>Skips:</strong> <code>social_post_queue</code> posts, the Insights path, <code>WebsitePostQueue</code> URLs, and anything closely matching <code>HTMLPosts</code>. Library text is never stored as a sample.</li>
+<li>Text goes into <code>voice_samples</code> (<code>source</code>: <code>social|site|link|paste</code>, <code>included</code>, <code>autoReason</code>). Legal pages are unticked, pages under 150 words are disabled, and bios are tagged.</li>
+<li><strong>Links:</strong> fetched on Add. A login wall, an error, or an empty or short body shows the inline paste box on that row.</li>
+<li><strong>Profile:</strong> built from included samples only. It's #687's structured output plus a plain-words paragraph, and the advisor's edits survive Learn again.</li>
 </ol>
 <h2>Estimate (days)</h2>
 <table>
@@ -173,49 +131,31 @@
 <th>Piece</th>
 <th>A</th>
 <th>B</th>
-<th>C</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><strong>New:</strong> social import (LinkedIn company page, Facebook Page, Instagram), job, progress, token errors</td>
+<td>Social import (FB, LinkedIn company, IG business; last 50; job; token errors)</td>
 <td>2–3</td>
 <td>2–3</td>
-<td>2–3</td>
 </tr>
 <tr>
-<td><strong>New:</strong> skip library-scheduled posts (<code>social_post_queue</code>, similarity)</td>
+<td>Skip library-scheduled posts (<code>social_post_queue</code>, similarity)</td>
 <td>0.5–0.75</td>
 <td>0.5–0.75</td>
-<td>0.5–0.75</td>
 </tr>
 <tr>
-<td><strong>New:</strong> accounts UI and states (connected, importing, failed, none, post review)</td>
-<td>1–1.5</td>
-<td>1–1.5</td>
-<td>1–1.5</td>
-</tr>
-<tr>
-<td><strong>New:</strong> pooled counting for short posts</td>
-<td>0.25</td>
-<td>0.25</td>
-<td>0.25</td>
-</tr>
-<tr>
-<td>Crawler (sitemap, WP REST, link crawl, robots, limits, job and progress)</td>
-<td>2–2.5</td>
+<td>Site crawler (sitemap, WP REST, link crawl, robots, limits)</td>
 <td>2–2.5</td>
 <td>2–2.5</td>
 </tr>
 <tr>
-<td>Text extraction, dedupe, word counts, <code>voice_samples</code></td>
-<td>1–1.5</td>
+<td>Text extraction, dedupe, <code>voice_samples</code></td>
 <td>1–1.5</td>
 <td>1–1.5</td>
 </tr>
 <tr>
-<td>Site library-post skip (Insights path, queue URLs, similarity)</td>
-<td>1–1.5</td>
+<td>Site library-post skip (Insights, queue URLs, similarity)</td>
 <td>1–1.5</td>
 <td>1–1.5</td>
 </tr>
@@ -223,67 +163,63 @@
 <td>Auto-untick (legal, short, bio)</td>
 <td>0.5</td>
 <td>0.5</td>
-<td>0.5</td>
 </tr>
 <tr>
-<td>Link field: read, reading/ok/failed, inline paste (simpler than v1)</td>
-<td>0.75–1</td>
+<td>Link field with inline paste</td>
 <td>0.75–1</td>
 <td>0.75–1</td>
 </tr>
 <tr>
-<td><strong>New:</strong> general paste section</td>
-<td>0.25</td>
+<td>Paste box</td>
 <td>0.25</td>
 <td>0.25</td>
 </tr>
 <tr>
-<td>Review lists, live count, fewer-than-3 prompt</td>
-<td>1.5–2</td>
-<td>1.5–2</td>
-<td>1.5–2 (dialog)</td>
+<td>One-button flow, working state, result line, few line, collapsed review</td>
+<td>1.25–1.75</td>
+<td>1.25–1.75</td>
 </tr>
 <tr>
-<td>Plain-words profile build, edit, rebuild, reset</td>
-<td>1–1.5</td>
+<td>Pooled counting for short posts</td>
+<td>0.25</td>
+<td>0.25</td>
+</tr>
+<tr>
+<td>Plain-words profile: build, edit, save</td>
 <td>1–1.5</td>
 <td>1–1.5</td>
 </tr>
 <tr>
-<td>Crawl error and unreachable states, email when done</td>
-<td>0.75–1</td>
-<td>0.75–1</td>
-<td>0.75–1</td>
+<td>Per-source failure lines, email when done</td>
+<td>0.5–0.75</td>
+<td>0.5–0.75</td>
 </tr>
 <tr>
-<td>Wizard shell (B) or live-rebuilding profile (C)</td>
+<td>Summary panel and dialogs (B)</td>
 <td>—</td>
-<td>0.75–1</td>
-<td>1.5–2</td>
+<td>0.25–0.5</td>
 </tr>
 <tr>
-<td>Phone layout and QA (WordPress, static, links, each network)</td>
-<td>1.25–1.75</td>
-<td>1.25–1.75</td>
-<td>1.25–1.75</td>
+<td>Phone layout and QA</td>
+<td>1–1.5</td>
+<td>1–1.5</td>
 </tr>
 <tr>
 <td><strong>Total</strong></td>
-<td><strong>≈13.75–19</strong></td>
-<td><strong>≈14.5–20</strong></td>
-<td><strong>≈15.25–21</strong></td>
+<td><strong>≈12–16.75</strong></td>
+<td><strong>≈12.25–17.25</strong></td>
 </tr>
 </tbody>
 </table>
-<p>v1 was ≈10–13.75 for A (the rows actually summed to ≈9.75–13.5). v2 adds <strong>≈4–5.5 days</strong> for account import. This replaces the #687 A lines for fetching the advisor's posts and profile extraction and UI (≈4–5.5 days), so the net addition to #687 A is about <strong>+9.75–13.5 days</strong>.</p>
+<ul>
+<li>The simple version is about 1.75 to 2.25 days less than v2's A (≈13.75–19), mainly because one flow and one collapsed review replace the per-account cards and states.</li>
+<li>It replaces the #687 A lines for fetching posts and the profile UI (≈4–5.5), so the <strong>net addition to #687 A is about +8–11.25 days</strong>.</li>
+</ul>
 <h2>Open questions</h2>
 <ol>
-<li><strong>Which links we can read (pending Software developer).</strong> Which sites return readable text to a plain fetch, which need a headless browser, and which (for example social posts behind a login) always fall back to paste?</li>
-<li>Should X be offered at all? There's no X connection today, so "Connect" would need new OAuth work (not in the estimate).</li>
-<li>How many posts per account to import (mocked as all recent, about 50 max), and how far back?</li>
-<li>Is pooling right for short posts (every 150 ticked words from one account = 1 sample)? And 150 words per sample with a warning below 3: should "Continue anyway" be allowed?</li>
-<li>Should JavaScript-rendered static sites be read with a headless browser, or rely on links and paste?</li>
-<li>How strict should library-post detection be for posts the advisor edited before posting?</li>
-<li>Team bios ticked by default (as mocked) or unticked? How often to re-import and re-crawl?</li>
-<li>A, B or C?</li>
+<li>Can LinkedIn company pages and Instagram business accounts actually be read with today's scopes? Software developer says probable.</li>
+<li>Is 150 words per sample, pooled for social posts, with a line below 3 samples, right?</li>
+<li>Should the last 50 posts be capped by age too (for example 2 years)?</li>
+<li>Do we read JavaScript-rendered static sites with a headless browser, or rely on links and paste?</li>
+<li>A or B?</li>
 </ol></body></html>
