@@ -2,29 +2,37 @@
 
 Follow-up to [#696](https://github.com/kartboy16/content-library/issues/696) and staging [PR #698](https://github.com/kartboy16/content-library/pull/698), which shows cards below 1280 px with a ⋮ menu. Page: `/content-library/admin/users` (`imports/ui/AdminUserList.jsx`). Mocks: [hub](index.html). **Not agent-ready. Soft Dev hold until Alex picks.**
 
+## Decided (per Alex, Oct 30)
+
+1. **⋮ menu everywhere**, in A and B at every width, including 1280 and up. The button column is dropped.
+2. **1 card per row** at about 1000 px (and at every width that shows cards).
+3. **No User ID on cards or in the table.** "Copy user ID" is the last item in the ⋮ menu and shows a small "Copied" toast.
+
+Still open: **A or B**.
+
 ## What each row shows (from `AdminUserList.jsx`)
 
 - **Name** and **company** (`profile.companyName`).
 - **Email**, and **website** (`websiteAddress`, linked, or "—" if there isn't one).
-- **User ID**, with Copy.
+- **User ID:** not shown. Use "Copy user ID" in the ⋮ menu.
 - **Advisor Categories:** `advisorSourceNames` chips, or "None".
 - **Social:** one line per token, with the network icon, `profileLabel`, an expiry chip (red if expired, amber if it needs reconnecting) and a "Send {network} refresh email" button. If there are no tokens: "No social accounts".
 - **Section access:** chips for Calendar, Content, Email Campaigns, Social Media and Website, or "No section access".
-- **Actions:** Edit, Section Access, Send login invite, Reset Password, Log in as this user, Open Email Campaigns as user, Open Social Settings as user.
+- **Actions (⋮ menu):** Edit, Section Access, Send login invite, Reset Password, Log in as this user, Open Email Campaigns as user, Open Social Settings as user, Copy user ID.
 
 The filters stay as they are: search, Advisor Categories, LinkedIn connected, Facebook connected, and Has any section access. Pagination stays at 30 per page.
 
 ## A: cards below 1280 ([a-cards.html](a-cards.html), recommended)
 
-- **Breakpoints:** 1280 and up keeps **today's desktop table, unchanged**, with the button column. Below 1280, cards (as in #698, including its "list box under 1100 px" rule).
-  - Cards go **2 per row** when the list is at least ~820 px wide (about 1000 px viewport), otherwise 1 per row.
+- **Breakpoints:** 1280 and up keeps today's desktop table columns, but the button column becomes a **⋮** column (60 px). Below 1280, cards (as in #698, including its "list box under 1100 px" rule).
+  - Cards are always **1 per row** (decided).
   - Inside a card, the fields pair up in 2 columns (Email | Website, Advisor Categories | Section Access). Below ~600 px they stack in 1 column.
 - **Card layout:**
   - The **name** (bold) and **company** are at the top left, with a **⋮** button at the top right (44 px tap target).
-  - Quiet labels in small grey uppercase: **Email**, **Website**, **Social accounts**, **Advisor Categories**, **Section Access** and **User ID**.
+  - Quiet labels in small grey uppercase: **Email**, **Website**, **Social accounts**, **Advisor Categories** and **Section Access**.
   - Social accounts keep the expiry chip and the refresh-email button, which the #698 cards currently drop.
 - **Truncation:**
-  - Name, company, email, website, social account names and the user ID each stay on one line, with an ellipsis and the full value in `title`.
+  - Name, company, email, website, and social account names each stay on one line, with an ellipsis and the full value in `title`.
   - Use `min-width: 0` all the way up the flex and grid chain.
   - Never `word-break: break-all` or `overflow-wrap: anywhere`. That's what caused the one-letter-per-line URL in the failure screenshots.
 - **Chips** wrap onto as many lines as they need. Cards show every chip.
@@ -34,7 +42,7 @@ The filters stay as they are: search, Advisor Categories, LinkedIn connected, Fa
 - **Breakpoints:**
   - **900 px and up** (list ≥ ~780 px): a compact table with a **⋮** column.
   - **Below 900 px: B falls back to A's cards**, the same cards and rules. A 5-column table can't stay readable at 720 or 390 without crushing text.
-  - The mock uses the compact table at 1280 too (open question 1).
+  - At 1280 and up it's the same table with all chips shown (⋮ column, decided).
 - **Columns** (`table-layout: fixed`):
   - Name / Company / Email / Website: flexible, about 300 px at a 1000 px viewport. Each line is one-line ellipsis.
   - Advisor Categories: 140 px.
@@ -48,7 +56,8 @@ The filters stay as they are: search, Advisor Categories, LinkedIn connected, Fa
 
 - An IconButton with `aria-haspopup="menu"`, `aria-expanded`, `aria-label="More actions for {name}"` and a 44 px target.
 - It opens anchored to the button's bottom right. It flips up when there's no room below and stays inside the viewport (MUI `Menu` does this).
-- The menu header is the user's name, then Edit, Section Access, Send login invite, Reset Password, a divider, and the three "as user" actions.
+- The menu header is the user's name, then Edit, Section Access, Send login invite, Reset Password, a divider, the three "as user" actions, a divider, and **Copy user ID**.
+- **Copy user ID** copies the ID to the clipboard and shows a small "Copied" toast (about 2 s).
 - Each item is at least 44 px tall. Disabled while a related action is loading (as now).
 - It closes on choosing an item, a click outside, Esc (focus goes back to ⋮) or scrolling. Arrow keys move between items.
 
@@ -78,21 +87,20 @@ The top bar has 390 / 720 / 1000 / 1280 buttons, and `?w=390|720|1000|1280` does
 
 - At 390 the rail becomes the app's phone header. The filters go full width and stack.
 - Cards are 1 column, and their fields stack.
-- Every tap target (⋮, copy, refresh email, menu items) is at least 44 px.
+- Every tap target (⋮, refresh email, menu items) is at least 44 px.
 
 ## Estimate (days)
 
 | Piece | A | B |
 |---|---|---|
-| Card polish on top of #698 (labels, 2-up grid, socials with expiry and refresh, ellipsis audit) | 0.5–0.75 | 0.5–0.75 |
-| ⋮ menu header, divider, flip and keyboard (mostly MUI) | 0.25 | 0.25 |
-| Compact table 900–1279: fixed columns, ellipsis, +N chips with tooltip | — | 1–1.5 |
+| Card polish on top of #698 (labels, 1 per row, socials with expiry and refresh, ellipsis audit, User ID removed) | 0.5 | 0.5 |
+| ⋮ menu header, dividers, flip, keyboard, Copy user ID and toast (mostly MUI) | 0.25–0.5 | 0.25–0.5 |
+| Desktop table at 1280 and up: button column replaced by ⋮, User ID removed | 0.25 | (in the row below) |
+| Compact table from 900: fixed columns, ellipsis, +N chips with tooltip | — | 1–1.5 |
 | Breakpoint switching (viewport and list width) | 0.25 | 0.25–0.5 |
 | Tests and QA at 4 widths, plus device checks | 0.5 | 0.5–0.75 |
-| **Total** | **≈1.5–1.75** | **≈2.5–3.75** |
+| **Total** | **≈1.75–2** | **≈2.5–3.75** |
 
 ## Open questions
 
-1. For **B at 1280 and up**: keep today's button column, so desktop is unchanged (as #696 asks), or use ⋮ everywhere for consistency? The mock shows ⋮.
-2. At about 1000 px, should cards be **2 per row** (as mocked) or 1 per row with more room for long URLs?
-3. Should **User ID** stay on every card, or move into the ⋮ menu as "Copy user ID" to make cards shorter?
+1. **A or B?** Alex to pick. (The three earlier questions are decided; see the top.)

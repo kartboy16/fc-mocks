@@ -1,27 +1,32 @@
 <!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>#696 user list: build contract</title><style>body{font-family:Inter,system-ui,sans-serif;max-width:880px;margin:24px auto;padding:0 16px;line-height:1.55;color:#2C3E50}a{color:#1976D2}h1{color:#1976d2;font-size:24px}h2{font-size:18px;margin-top:22px}table{border-collapse:collapse;width:100%;font-size:14px}td,th{border:1px solid #dde3ea;padding:6px 8px;text-align:left;overflow-wrap:anywhere}code{background:#f1f3f5;padding:0 4px;border-radius:3px;overflow-wrap:anywhere}li{margin:3px 0}</style></head><body><p><a href="../../">All mocks</a> · <a href="index.html">Hub</a></p><h1>#696 Admin user list at tablet and phone widths: build contract</h1>
 <p>Follow-up to <a href="https://github.com/kartboy16/content-library/issues/696">#696</a> and staging <a href="https://github.com/kartboy16/content-library/pull/698">PR #698</a>, which shows cards below 1280 px with a ⋮ menu. Page: <code>/content-library/admin/users</code> (<code>imports/ui/AdminUserList.jsx</code>). Mocks: <a href="index.html">hub</a>. <b>Not agent-ready. Soft Dev hold until Alex picks.</b></p>
+<h2>Decided (per Alex, Oct 30)</h2>
+<p style="margin:4px 0">1. <b>⋮ menu everywhere</b>, in A and B at every width, including 1280 and up. The button column is dropped.</p>
+<p style="margin:4px 0">2. <b>1 card per row</b> at about 1000 px (and at every width that shows cards).</p>
+<p style="margin:4px 0">3. <b>No User ID on cards or in the table.</b> "Copy user ID" is the last item in the ⋮ menu and shows a small "Copied" toast.</p>
+<p>Still open: <b>A or B</b>.</p>
 <h2>What each row shows (from <code>AdminUserList.jsx</code>)</h2>
 <ul>
 <li><b>Name</b> and <b>company</b> (<code>profile.companyName</code>).</li>
 <li><b>Email</b>, and <b>website</b> (<code>websiteAddress</code>, linked, or "—" if there isn't one).</li>
-<li><b>User ID</b>, with Copy.</li>
+<li><b>User ID:</b> not shown. Use "Copy user ID" in the ⋮ menu.</li>
 <li><b>Advisor Categories:</b> <code>advisorSourceNames</code> chips, or "None".</li>
 <li><b>Social:</b> one line per token, with the network icon, <code>profileLabel</code>, an expiry chip (red if expired, amber if it needs reconnecting) and a "Send {network} refresh email" button. If there are no tokens: "No social accounts".</li>
 <li><b>Section access:</b> chips for Calendar, Content, Email Campaigns, Social Media and Website, or "No section access".</li>
-<li><b>Actions:</b> Edit, Section Access, Send login invite, Reset Password, Log in as this user, Open Email Campaigns as user, Open Social Settings as user.</li>
+<li><b>Actions (⋮ menu):</b> Edit, Section Access, Send login invite, Reset Password, Log in as this user, Open Email Campaigns as user, Open Social Settings as user, Copy user ID.</li>
 </ul>
 <p>The filters stay as they are: search, Advisor Categories, LinkedIn connected, Facebook connected, and Has any section access. Pagination stays at 30 per page.</p>
 <h2>A: cards below 1280 (<a href="a-cards.html">a-cards.html</a>, recommended)</h2>
 <ul>
-<li><b>Breakpoints:</b> 1280 and up keeps <b>today's desktop table, unchanged</b>, with the button column. Below 1280, cards (as in #698, including its "list box under 1100 px" rule).</li>
-<li style="margin-left:18px">Cards go <b>2 per row</b> when the list is at least ~820 px wide (about 1000 px viewport), otherwise 1 per row.</li>
+<li><b>Breakpoints:</b> 1280 and up keeps today's desktop table columns, but the button column becomes a <b>⋮</b> column (60 px). Below 1280, cards (as in #698, including its "list box under 1100 px" rule).</li>
+<li style="margin-left:18px">Cards are always <b>1 per row</b> (decided).</li>
 <li style="margin-left:18px">Inside a card, the fields pair up in 2 columns (Email | Website, Advisor Categories | Section Access). Below ~600 px they stack in 1 column.</li>
 <li><b>Card layout:</b></li>
 <li style="margin-left:18px">The <b>name</b> (bold) and <b>company</b> are at the top left, with a <b>⋮</b> button at the top right (44 px tap target).</li>
-<li style="margin-left:18px">Quiet labels in small grey uppercase: <b>Email</b>, <b>Website</b>, <b>Social accounts</b>, <b>Advisor Categories</b>, <b>Section Access</b> and <b>User ID</b>.</li>
+<li style="margin-left:18px">Quiet labels in small grey uppercase: <b>Email</b>, <b>Website</b>, <b>Social accounts</b>, <b>Advisor Categories</b> and <b>Section Access</b>.</li>
 <li style="margin-left:18px">Social accounts keep the expiry chip and the refresh-email button, which the #698 cards currently drop.</li>
 <li><b>Truncation:</b></li>
-<li style="margin-left:18px">Name, company, email, website, social account names and the user ID each stay on one line, with an ellipsis and the full value in <code>title</code>.</li>
+<li style="margin-left:18px">Name, company, email, website, and social account names each stay on one line, with an ellipsis and the full value in <code>title</code>.</li>
 <li style="margin-left:18px">Use <code>min-width: 0</code> all the way up the flex and grid chain.</li>
 <li style="margin-left:18px">Never <code>word-break: break-all</code> or <code>overflow-wrap: anywhere</code>. That's what caused the one-letter-per-line URL in the failure screenshots.</li>
 <li><b>Chips</b> wrap onto as many lines as they need. Cards show every chip.</li>
@@ -31,7 +36,7 @@
 <li><b>Breakpoints:</b></li>
 <li style="margin-left:18px"><b>900 px and up</b> (list ≥ ~780 px): a compact table with a <b>⋮</b> column.</li>
 <li style="margin-left:18px"><b>Below 900 px: B falls back to A's cards</b>, the same cards and rules. A 5-column table can't stay readable at 720 or 390 without crushing text.</li>
-<li style="margin-left:18px">The mock uses the compact table at 1280 too (open question 1).</li>
+<li style="margin-left:18px">At 1280 and up it's the same table with all chips shown (⋮ column, decided).</li>
 <li><b>Columns</b> (<code>table-layout: fixed</code>):</li>
 <li style="margin-left:18px">Name / Company / Email / Website: flexible, about 300 px at a 1000 px viewport. Each line is one-line ellipsis.</li>
 <li style="margin-left:18px">Advisor Categories: 140 px.</li>
@@ -45,7 +50,8 @@
 <ul>
 <li>An IconButton with <code>aria-haspopup="menu"</code>, <code>aria-expanded</code>, <code>aria-label="More actions for {name}"</code> and a 44 px target.</li>
 <li>It opens anchored to the button's bottom right. It flips up when there's no room below and stays inside the viewport (MUI <code>Menu</code> does this).</li>
-<li>The menu header is the user's name, then Edit, Section Access, Send login invite, Reset Password, a divider, and the three "as user" actions.</li>
+<li>The menu header is the user's name, then Edit, Section Access, Send login invite, Reset Password, a divider, the three "as user" actions, a divider, and <b>Copy user ID</b>.</li>
+<li><b>Copy user ID</b> copies the ID to the clipboard and shows a small "Copied" toast (about 2 s).</li>
 <li>Each item is at least 44 px tall. Disabled while a related action is loading (as now).</li>
 <li>It closes on choosing an item, a click outside, Esc (focus goes back to ⋮) or scrolling. Arrow keys move between items.</li>
 </ul>
@@ -73,19 +79,18 @@
 <ul>
 <li>At 390 the rail becomes the app's phone header. The filters go full width and stack.</li>
 <li>Cards are 1 column, and their fields stack.</li>
-<li>Every tap target (⋮, copy, refresh email, menu items) is at least 44 px.</li>
+<li>Every tap target (⋮, refresh email, menu items) is at least 44 px.</li>
 </ul>
 <h2>Estimate (days)</h2>
 <table>
 <tr><th>Piece</th><th>A</th><th>B</th></tr>
-<tr><td>Card polish on top of #698 (labels, 2-up grid, socials with expiry and refresh, ellipsis audit)</td><td>0.5–0.75</td><td>0.5–0.75</td></tr>
-<tr><td>⋮ menu header, divider, flip and keyboard (mostly MUI)</td><td>0.25</td><td>0.25</td></tr>
-<tr><td>Compact table 900–1279: fixed columns, ellipsis, +N chips with tooltip</td><td>—</td><td>1–1.5</td></tr>
+<tr><td>Card polish on top of #698 (labels, 1 per row, socials with expiry and refresh, ellipsis audit, User ID removed)</td><td>0.5</td><td>0.5</td></tr>
+<tr><td>⋮ menu header, dividers, flip, keyboard, Copy user ID and toast (mostly MUI)</td><td>0.25–0.5</td><td>0.25–0.5</td></tr>
+<tr><td>Desktop table at 1280 and up: button column replaced by ⋮, User ID removed</td><td>0.25</td><td>(in the row below)</td></tr>
+<tr><td>Compact table from 900: fixed columns, ellipsis, +N chips with tooltip</td><td>—</td><td>1–1.5</td></tr>
 <tr><td>Breakpoint switching (viewport and list width)</td><td>0.25</td><td>0.25–0.5</td></tr>
 <tr><td>Tests and QA at 4 widths, plus device checks</td><td>0.5</td><td>0.5–0.75</td></tr>
-<tr><td><b>Total</b></td><td><b>≈1.5–1.75</b></td><td><b>≈2.5–3.75</b></td></tr>
+<tr><td><b>Total</b></td><td><b>≈1.75–2</b></td><td><b>≈2.5–3.75</b></td></tr>
 </table>
 <h2>Open questions</h2>
-<p style="margin:4px 0">1. For <b>B at 1280 and up</b>: keep today's button column, so desktop is unchanged (as #696 asks), or use ⋮ everywhere for consistency? The mock shows ⋮.</p>
-<p style="margin:4px 0">2. At about 1000 px, should cards be <b>2 per row</b> (as mocked) or 1 per row with more room for long URLs?</p>
-<p style="margin:4px 0">3. Should <b>User ID</b> stay on every card, or move into the ⋮ menu as "Copy user ID" to make cards shorter?</p></body></html>
+<p style="margin:4px 0">1. <b>A or B?</b> Alex to pick. (The three earlier questions are decided; see the top.)</p></body></html>
