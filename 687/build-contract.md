@@ -114,20 +114,24 @@ Sample figures (TFSA $7,000, RRSP deadline March 1, 2027, 18%, $33,810, "Example
    - No code path publishes from the rewrite screen. Add a test for that.
 7. **White-label:** rewritten Insights posts and share links never link to FC's own domain. Reuse the existing white-label rule.
 
-## Estimate (days)
+## Estimate (agent time, per Alex's Oct 30 rule)
 
-| Piece | A | B | C |
-|---|---|---|---|
-| Fetch the advisor's posts (WP REST or crawl), exclude FC posts | 1.5–2 | 1.5–2 | 1.5–2 |
-| Profile extraction, `voice_profiles`, edit and rebuild | 1.5–2 | 1.5–2 | 1.5–2 |
-| Voice profile UI (states, chips, post list, sample) | 1–1.5 | 1–1.5 (in step 1) | 1.5–2 (style card, editable samples) |
-| Rewrite call with locked tokens, regenerate | 1–1.5 | 1–1.5 | 1–1.5 |
-| Locked-value extract and diff, put back, claim check, disclaimer hash | 2–2.5 | 2–2.5 | 2–2.5 |
-| Side-by-side UI with highlights, blocked and claim states, phone switch | 1.5–2 | 1.5–2 | 2–2.5 (full screen) |
-| Approve, hand off to compliance or schedule, audit trail | 1–1.5 | 1–1.5 | 1–1.5 |
-| Wizard shell (steps, back and next, resume) | — | 1–1.5 | — |
-| QA (staging, no publishing) | 1 | 1 | 1 |
-| **Total** | **≈10.5–14** | **≈11.5–15.5** | **≈11.5–15** |
+This is the Cursor cloud agent build plus FC Tester time, with 1–2 review and fix loops per run, in minutes and hours (not developer days). For calibration, #699 took about 30 min from handoff to tested. It's split into **4 cloud-agent runs**.
+
+| Run | Covers | Build | FC Tester | Fix loops (1–2) | Run total |
+|---|---|---|---|---|---|
+| 1. Voice profile backend | Fetch the advisor's posts (WP REST or crawl, own domain only), exclude FC library posts, the extraction call, `voice_profiles`, edit and rebuild | 45–60 min | 20–30 min | 20–40 min | **≈1.5–2.25 h** |
+| 2. Rewrite and guardrails | Locked-value tokens, the rewrite call and regenerate, the diff check, put back, the claim check, the disclaimer hash, and a server re-check on approve | 60–75 min | 30–40 min | 30–60 min | **≈2–3 h** |
+| 3. Screens (A) | Voice profile page (states, chips, post list, sample) and the side-by-side with highlights, blocked and claim states, and the phone switch | 45–60 min | 20–30 min | 20–40 min | **≈1.5–2.25 h** |
+| 4. Approve and audit | Hand-off to compliance, the queue or schedule through the existing paths, `post_rewrites` audit trail, a no-auto-publish test, the white-label rule | 30–45 min | 20–30 min | 10–30 min | **≈1–1.75 h** |
+| **Total A** | | | | | **≈6–9.25 h** |
+| B: wizard shell (steps, back and next, resume) in run 3 | | +15–20 min | +5–10 min | +0–10 min | **+20–40 min, so B ≈6.25–9.75 h** |
+| C: style card with editable samples and the full-screen compare in run 3 | | +15–20 min | +5–10 min | +0–10 min | **+20–40 min, so C ≈6.25–9.75 h** |
+
+- **Order:** runs 1 and 2 can go in parallel (run 2 uses a stub profile), then run 3, then run 4. That's about **4.5–7 h of wall-clock time** for A.
+- **With voice sampling ([sampling contract](sampling/build-contract.html), A ≈5.25–8 h):** sampling replaces run 1 and the profile part of run 3, so #687 A plus sampling A is about **10–16 h** in total.
+- **Test dependency (not included):** FC Tester needs a test advisor with a few of their own posts on a test site, at least one FC library post to exclude, and both compliance modes (email and off). Nothing is published.
+- Replaces the earlier human-developer estimate (A ≈10.5–14 days, B ≈11.5–15.5 days, C ≈11.5–15 days).
 
 ## Open questions
 

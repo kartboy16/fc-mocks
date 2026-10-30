@@ -151,79 +151,84 @@
    - Approval creates the advisor's draft copy and calls the <strong>existing</strong> path: compliance send in email mode, the external queue, or schedule when compliance is off.
    - No code path publishes from the rewrite screen. Add a test for that.
 7. <strong>White-label:</strong> rewritten Insights posts and share links never link to FC's own domain. Reuse the existing white-label rule.</p>
-<h2>Estimate (days)</h2>
+<h2>Estimate (agent time, per Alex's Oct 30 rule)</h2>
+<p>This is the Cursor cloud agent build plus FC Tester time, with 1–2 review and fix loops per run, in minutes and hours (not developer days). For calibration, #699 took about 30 min from handoff to tested. It's split into <strong>4 cloud-agent runs</strong>.</p>
 <table>
 <thead>
 <tr>
-<th>Piece</th>
-<th>A</th>
-<th>B</th>
-<th>C</th>
+<th>Run</th>
+<th>Covers</th>
+<th>Build</th>
+<th>FC Tester</th>
+<th>Fix loops (1–2)</th>
+<th>Run total</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>Fetch the advisor's posts (WP REST or crawl), exclude FC posts</td>
-<td>1.5–2</td>
-<td>1.5–2</td>
-<td>1.5–2</td>
+<td>1. Voice profile backend</td>
+<td>Fetch the advisor's posts (WP REST or crawl, own domain only), exclude FC library posts, the extraction call, <code>voice_profiles</code>, edit and rebuild</td>
+<td>45–60 min</td>
+<td>20–30 min</td>
+<td>20–40 min</td>
+<td><strong>≈1.5–2.25 h</strong></td>
 </tr>
 <tr>
-<td>Profile extraction, <code>voice_profiles</code>, edit and rebuild</td>
-<td>1.5–2</td>
-<td>1.5–2</td>
-<td>1.5–2</td>
+<td>2. Rewrite and guardrails</td>
+<td>Locked-value tokens, the rewrite call and regenerate, the diff check, put back, the claim check, the disclaimer hash, and a server re-check on approve</td>
+<td>60–75 min</td>
+<td>30–40 min</td>
+<td>30–60 min</td>
+<td><strong>≈2–3 h</strong></td>
 </tr>
 <tr>
-<td>Voice profile UI (states, chips, post list, sample)</td>
-<td>1–1.5</td>
-<td>1–1.5 (in step 1)</td>
-<td>1.5–2 (style card, editable samples)</td>
+<td>3. Screens (A)</td>
+<td>Voice profile page (states, chips, post list, sample) and the side-by-side with highlights, blocked and claim states, and the phone switch</td>
+<td>45–60 min</td>
+<td>20–30 min</td>
+<td>20–40 min</td>
+<td><strong>≈1.5–2.25 h</strong></td>
 </tr>
 <tr>
-<td>Rewrite call with locked tokens, regenerate</td>
-<td>1–1.5</td>
-<td>1–1.5</td>
-<td>1–1.5</td>
+<td>4. Approve and audit</td>
+<td>Hand-off to compliance, the queue or schedule through the existing paths, <code>post_rewrites</code> audit trail, a no-auto-publish test, the white-label rule</td>
+<td>30–45 min</td>
+<td>20–30 min</td>
+<td>10–30 min</td>
+<td><strong>≈1–1.75 h</strong></td>
 </tr>
 <tr>
-<td>Locked-value extract and diff, put back, claim check, disclaimer hash</td>
-<td>2–2.5</td>
-<td>2–2.5</td>
-<td>2–2.5</td>
+<td><strong>Total A</strong></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td><strong>≈6–9.25 h</strong></td>
 </tr>
 <tr>
-<td>Side-by-side UI with highlights, blocked and claim states, phone switch</td>
-<td>1.5–2</td>
-<td>1.5–2</td>
-<td>2–2.5 (full screen)</td>
+<td>B: wizard shell (steps, back and next, resume) in run 3</td>
+<td></td>
+<td>+15–20 min</td>
+<td>+5–10 min</td>
+<td>+0–10 min</td>
+<td><strong>+20–40 min, so B ≈6.25–9.75 h</strong></td>
 </tr>
 <tr>
-<td>Approve, hand off to compliance or schedule, audit trail</td>
-<td>1–1.5</td>
-<td>1–1.5</td>
-<td>1–1.5</td>
-</tr>
-<tr>
-<td>Wizard shell (steps, back and next, resume)</td>
-<td>—</td>
-<td>1–1.5</td>
-<td>—</td>
-</tr>
-<tr>
-<td>QA (staging, no publishing)</td>
-<td>1</td>
-<td>1</td>
-<td>1</td>
-</tr>
-<tr>
-<td><strong>Total</strong></td>
-<td><strong>≈10.5–14</strong></td>
-<td><strong>≈11.5–15.5</strong></td>
-<td><strong>≈11.5–15</strong></td>
+<td>C: style card with editable samples and the full-screen compare in run 3</td>
+<td></td>
+<td>+15–20 min</td>
+<td>+5–10 min</td>
+<td>+0–10 min</td>
+<td><strong>+20–40 min, so C ≈6.25–9.75 h</strong></td>
 </tr>
 </tbody>
 </table>
+<ul>
+<li><strong>Order:</strong> runs 1 and 2 can go in parallel (run 2 uses a stub profile), then run 3, then run 4. That's about <strong>4.5–7 h of wall-clock time</strong> for A.</li>
+<li><strong>With voice sampling (<a href="sampling/build-contract.html">sampling contract</a>, A ≈5.25–8 h):</strong> sampling replaces run 1 and the profile part of run 3, so #687 A plus sampling A is about <strong>10–16 h</strong> in total.</li>
+<li><strong>Test dependency (not included):</strong> FC Tester needs a test advisor with a few of their own posts on a test site, at least one FC library post to exclude, and both compliance modes (email and off). Nothing is published.</li>
+<li>Replaces the earlier human-developer estimate (A ≈10.5–14 days, B ≈11.5–15.5 days, C ≈11.5–15 days).</li>
+</ul>
 <h2>Open questions</h2>
 <ol>
 <li>Which posts count as "theirs"? Only posts on their own domain, and should we exclude FC library posts they've published? (Suggested: yes, exclude.)</li>
