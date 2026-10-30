@@ -1,6 +1,6 @@
 # #700 Campaign report: bounced addresses (Mailchimp): build contract
 
-For [#700](https://github.com/kartboy16/content-library/issues/700). Mocks: [hub](index.html), [A](a-tab.html), [B](b-drawer.html), [today](today.html). **Not agent-ready. Soft Dev hold until Alex picks.**
+For [#700](https://github.com/kartboy16/content-library/issues/700). Mocks: [hub](index.html), [A](a-tab.html), [B](b-drawer.html), [today](today.html). **Picked: A** (Alex, Oct 30, 12:31 PM PT, via CoS). **Not agent-ready. Soft Dev hold until the Dev handoff.**
 
 ## Where this lives today (read-only, staging `64a794e`)
 
@@ -15,7 +15,7 @@ For [#700](https://github.com/kartboy16/content-library/issues/700). Mocks: [hub
 - **No reason (decided, Alex Oct 30, 12:25 PM PT):** the Marketing API does **not** return the SMTP bounce reason, so there's **no Reason column** and no reason or type-explainer text. Each row shows only the Hard/Soft type and the time. Mailchimp shows reasons only in its own UI, one address at a time, kept for 30 days, and they can't be exported.
 - **New method:** `mailchimp.getCampaignBounces(campaignId, advisorId, passphrase)` with `assertAdvisorOrAdmin`, the same as the other report methods. It returns `[{ email, type, bouncedAt }]`, sorted hard first, then by email. The admin-only `getEmailActivity` stays as it is.
 
-## A: "Bounced (N)" tab in the report ([a-tab.html](a-tab.html), recommended)
+## A: "Bounced (N)" tab in the report ([a-tab.html](a-tab.html), picked)
 
 - The Campaign report dialog gets tabs: **Overview** (today's content, unchanged) and **Bounced (N)**. This mirrors the SES report's **Bounces (n)** tab from #420.
 - On Overview, the Bounced metric gets a small **View list** link that switches to the tab.
@@ -54,8 +54,8 @@ For [#700](https://github.com/kartboy16/content-library/issues/700). Mocks: [hub
 ## Out of scope
 
 - Bounce reasons of any kind (not in the API; decided, no Reason column), and changing member status in Mailchimp from FC.
-- The SES Bounces tab (#420, done), bounce alerts, and the password-protected emailed report page (see open question 3).
-- Syntax-error addresses: they're counted in Bounced but not returned as addresses by email-activity (see open question 4).
+- The SES Bounces tab (#420, done), bounce alerts, and the password-protected emailed report page (decided: it doesn't list addresses).
+- Listing syntax-error addresses: they're counted in Bounced but not returned by email-activity. The tab shows "+ n syntax errors (not listed)" under the count when n > 0 (decided).
 
 ## Mobile notes (390)
 
@@ -79,17 +79,21 @@ Dropping the Reason column (Oct 30, 12:25 PM PT) trims about 5 min of build from
 
 **Dependency (not included):** FC Tester needs a Mailchimp test audience and a sent campaign with at least one hard and one soft bounce. Without one, QA runs against a stubbed response, and the real check waits until a test campaign exists.
 
-## Pick: A
+## Picked: A (Alex, Oct 30, 12:31 PM PT, via CoS)
 
 - It puts Mailchimp bounces in the same place as SES bounces (#420's **Bounces** tab), so advisors learn one pattern.
 - It's one surface: B stacks a drawer on top of a modal dialog, which on a phone is a sheet over a full-screen dialog.
 - It's about 15 min less agent time.
 
+## Decided (Alex, Oct 30)
+
+- **No Reason column** (12:25 PM PT).
+- **Direction A**, a "Bounced (N)" tab in the report (12:31 PM PT, via CoS). These defaults also stand:
+  - **Hard / Soft** type labels are kept, the same as today's "{n} hard · {n} soft" caption.
+  - The **password-protected emailed report** doesn't list addresses (privacy).
+  - When syntax errors are above 0, show **"+ n syntax errors (not listed)"** under the Bounced count.
+  - A **10-min server cache** per campaign is OK for paging email-activity (about 1 call per 1,000 recipients).
+
 ## Open questions
 
-**Decided:** no Reason column (Alex, Oct 30, 12:25 PM PT).
-
-2. #420's plain-language rule keeps the phrases "hard bounce" and "soft bounce" out of advisor copy. The mock uses Mailchimp's **Hard** and **Soft** type labels, the same as today's "{n} hard · {n} soft" caption. Is that OK?
-3. Should the **password-protected emailed report** (the "Email report" link) also list the addresses? The default is no, because it's a privacy concern.
-4. **Syntax errors** count toward Bounced but aren't returned as addresses. Should we show "+ n syntax errors (not listed)" under the count when it's above 0?
-5. **Large campaigns:** paging email-activity is about 1 call per 1,000 recipients. Is a short server cache per campaign (for example 10 min) OK?
+None. Design is decided; this waits for the Dev handoff.

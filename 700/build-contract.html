@@ -1,5 +1,5 @@
 <!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>#700 bounced list: build contract</title><style>body{font-family:Inter,system-ui,sans-serif;max-width:880px;margin:24px auto;padding:0 16px;line-height:1.55;color:#2C3E50}a{color:#1976D2}h1{color:#1976d2;font-size:24px}h2{font-size:18px;margin-top:22px}table{border-collapse:collapse;width:100%;font-size:14px}td,th{border:1px solid #dde3ea;padding:6px 8px;text-align:left;overflow-wrap:anywhere}code{background:#f1f3f5;padding:0 4px;border-radius:3px;overflow-wrap:anywhere}li{margin:3px 0}.r{background:#e8f5e9;border:1px solid #a5d6a7;border-radius:10px;padding:10px 14px}</style></head><body><p><a href="../">All mocks</a> · <a href="index.html">Hub</a> · <a href="https://github.com/kartboy16/content-library/issues/700">#700</a></p><h1>#700 Campaign report: bounced addresses (Mailchimp): build contract</h1>
-<p>For <a href="https://github.com/kartboy16/content-library/issues/700">#700</a>. Mocks: <a href="index.html">hub</a>, <a href="a-tab.html">A</a>, <a href="b-drawer.html">B</a>, <a href="today.html">today</a>. <b>Not agent-ready. Soft Dev hold until Alex picks.</b></p>
+<p>For <a href="https://github.com/kartboy16/content-library/issues/700">#700</a>. Mocks: <a href="index.html">hub</a>, <a href="a-tab.html">A</a>, <a href="b-drawer.html">B</a>, <a href="today.html">today</a>. <b>Picked: A</b> (Alex, Oct 30, 12:31 PM PT, via CoS). <b>Not agent-ready. Soft Dev hold until the Dev handoff.</b></p>
 <h2>Where this lives today (read-only, staging <code>64a794e</code>)</h2>
 <ul>
 <li><b>Mailchimp reports:</b> <code>imports/ui/EmailCampaigns/mailchimp/MailchimpReports.jsx</code>. <b>View</b> opens a "Campaign report" dialog that renders <code>MailchimpReportDetail.jsx</code>. The dialog shows a metrics grid where <b>Bounced</b> is a count with a "{n} hard · {n} soft" caption, plus Top links and Top openers. There's <b>no list of addresses</b>.</li>
@@ -13,7 +13,7 @@
 <li><b>No reason (decided, Alex Oct 30, 12:25 PM PT):</b> the Marketing API does <b>not</b> return the SMTP bounce reason, so there's <b>no Reason column</b> and no reason or type-explainer text. Each row shows only the Hard/Soft type and the time. Mailchimp shows reasons only in its own UI, one address at a time, kept for 30 days, and they can't be exported.</li>
 <li><b>New method:</b> <code>mailchimp.getCampaignBounces(campaignId, advisorId, passphrase)</code> with <code>assertAdvisorOrAdmin</code>, the same as the other report methods. It returns <code>[{ email, type, bouncedAt }]</code>, sorted hard first, then by email. The admin-only <code>getEmailActivity</code> stays as it is.</li>
 </ul>
-<h2>A: "Bounced (N)" tab in the report (<a href="a-tab.html">a-tab.html</a>, recommended)</h2>
+<h2>A: "Bounced (N)" tab in the report (<a href="a-tab.html">a-tab.html</a>, picked)</h2>
 <ul>
 <li>The Campaign report dialog gets tabs: <b>Overview</b> (today's content, unchanged) and <b>Bounced (N)</b>. This mirrors the SES report's <b>Bounces (n)</b> tab from #420.</li>
 <li>On Overview, the Bounced metric gets a small <b>View list</b> link that switches to the tab.</li>
@@ -51,8 +51,8 @@
 <h2>Out of scope</h2>
 <ul>
 <li>Bounce reasons of any kind (not in the API; decided, no Reason column), and changing member status in Mailchimp from FC.</li>
-<li>The SES Bounces tab (#420, done), bounce alerts, and the password-protected emailed report page (see open question 3).</li>
-<li>Syntax-error addresses: they're counted in Bounced but not returned as addresses by email-activity (see open question 4).</li>
+<li>The SES Bounces tab (#420, done), bounce alerts, and the password-protected emailed report page (decided: it doesn't list addresses).</li>
+<li>Listing syntax-error addresses: they're counted in Bounced but not returned by email-activity. The tab shows "+ n syntax errors (not listed)" under the count when n &gt; 0 (decided).</li>
 </ul>
 <h2>Mobile notes (390)</h2>
 <ul>
@@ -72,15 +72,20 @@
 </table>
 <p>Dropping the Reason column (Oct 30, 12:25 PM PT) trims about 5 min of build from each: no reason mapping, a narrower table and a 3-column CSV.</p>
 <p><b>Dependency (not included):</b> FC Tester needs a Mailchimp test audience and a sent campaign with at least one hard and one soft bounce. Without one, QA runs against a stubbed response, and the real check waits until a test campaign exists.</p>
-<h2>Pick: A</h2>
+<h2>Picked: A (Alex, Oct 30, 12:31 PM PT, via CoS)</h2>
 <ul>
 <li>It puts Mailchimp bounces in the same place as SES bounces (#420's <b>Bounces</b> tab), so advisors learn one pattern.</li>
 <li>It's one surface: B stacks a drawer on top of a modal dialog, which on a phone is a sheet over a full-screen dialog.</li>
 <li>It's about 15 min less agent time.</li>
 </ul>
+<h2>Decided (Alex, Oct 30)</h2>
+<ul>
+<li><b>No Reason column</b> (12:25 PM PT).</li>
+<li><b>Direction A</b>, a "Bounced (N)" tab in the report (12:31 PM PT, via CoS). These defaults also stand:</li>
+<li style="margin-left:18px"><b>Hard / Soft</b> type labels are kept, the same as today's "{n} hard · {n} soft" caption.</li>
+<li style="margin-left:18px">The <b>password-protected emailed report</b> doesn't list addresses (privacy).</li>
+<li style="margin-left:18px">When syntax errors are above 0, show <b>"+ n syntax errors (not listed)"</b> under the Bounced count.</li>
+<li style="margin-left:18px">A <b>10-min server cache</b> per campaign is OK for paging email-activity (about 1 call per 1,000 recipients).</li>
+</ul>
 <h2>Open questions</h2>
-<p><b>Decided:</b> no Reason column (Alex, Oct 30, 12:25 PM PT).</p>
-<p style="margin:4px 0">2. #420's plain-language rule keeps the phrases "hard bounce" and "soft bounce" out of advisor copy. The mock uses Mailchimp's <b>Hard</b> and <b>Soft</b> type labels, the same as today's "{n} hard · {n} soft" caption. Is that OK?</p>
-<p style="margin:4px 0">3. Should the <b>password-protected emailed report</b> (the "Email report" link) also list the addresses? The default is no, because it's a privacy concern.</p>
-<p style="margin:4px 0">4. <b>Syntax errors</b> count toward Bounced but aren't returned as addresses. Should we show "+ n syntax errors (not listed)" under the count when it's above 0?</p>
-<p style="margin:4px 0">5. <b>Large campaigns:</b> paging email-activity is about 1 call per 1,000 recipients. Is a short server cache per campaign (for example 10 min) OK?</p></body></html>
+<p>None. Design is decided; this waits for the Dev handoff.</p></body></html>
