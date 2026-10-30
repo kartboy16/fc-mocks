@@ -1,0 +1,178 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>#599 Weekly picks email: build contract</title><style>body{font-family:Inter,system-ui,sans-serif;max-width:960px;margin:24px auto;padding:0 16px;line-height:1.55;color:#2C3E50}a{color:#1976D2}table{border-collapse:collapse;width:100%;margin:8px 0;font-size:14px}td,th{border:1px solid #e0e5eb;padding:6px 8px;text-align:left;vertical-align:top}th{background:#f3f6f9}blockquote{background:#e8f5e9;border:2px solid #2e7d32;border-radius:10px;margin:10px 0;padding:4px 14px}code{background:#f3f6f9;padding:1px 4px;border-radius:4px}@media(max-width:600px){table{display:block;overflow-x:auto}}code{overflow-wrap:anywhere}td{overflow-wrap:anywhere}</style></head><body><p><a href="../../">All mocks</a> · <a href="index.html">Hub</a> · <a href="build-contract.md">Markdown</a></p><h1>#599 Weekly picks email: build contract</h1>
+<p>Based on <a href="https://github.com/kartboy16/content-library/issues/599#issuecomment-6527617708">the spec comment</a> (Oct 30, 2026) and <a href="https://github.com/kartboy16/content-library/issues/599">#599</a>. Mocks: <a href="index.html">hub</a>. It reuses the <a href="../../688/a-digest.html">#688 A digest</a> layout and its "Review &amp; Approve" wording. <strong>Not agent-ready. Soft Dev hold until Alex picks.</strong></p>
+<p>Depends on:
+- the #599 Monday slate job
+- #602 landing on main
+- Alex picking a #688 direction</p>
+<p>Don't build this until Alex confirms.</p>
+<h2>Rules</h2>
+<ul>
+<li><strong>Off by default</strong>, per advisor.</li>
+<li>The email goes to the advisor's approval recipients (<code>sendTestEmailsTo</code>), the same list the approval email uses.</li>
+<li><strong>No button acts on a GET.</strong> Every link opens a light confirm page with one POST click (the #657, #688 and #602 pattern), so link scanners can't approve, swap or skip anything.</li>
+<li><strong>Nothing is scheduled until a post is approved, and nothing auto-publishes.</strong> Approving hands the post to the normal scheduling flow.</li>
+<li>White-label: the advisor's own name and logo, links on <code>links.example.com</code> (a placeholder for the white-label link domain), and no FC branding, links or FC's own domain.</li>
+<li>Generic test data only. QA uses the test advisors and the test inbox named in the spec, never real advisors.</li>
+</ul>
+<h2>Screens and states</h2>
+<h3>1. Settings (<a href="settings.html">settings.html</a>, <code>?st=off|on|norecipients</code>)</h3>
+<p>Placement: Email Campaigns › Settings › <strong>Email Approvals</strong>. The toggle sits directly under the existing field "Emails to send Email Campaign approvals" and matches its style. It needs to be in both <code>SESSettings.jsx</code> and <code>MailchimpSettings.jsx</code>.</p>
+<table>
+<thead>
+<tr>
+<th>State</th>
+<th>Shows</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>off</code> (default)</td>
+<td>The toggle "Email weekly picks to approval recipients", off.</td>
+</tr>
+<tr>
+<td><code>on</code></td>
+<td>"Goes to [jane@yourfirm.ca] [assistant@yourfirm.ca] every Monday." The chips are parsed live from the field.</td>
+</tr>
+<tr>
+<td><code>norecipients</code></td>
+<td>The toggle is on but the field is empty: "⚠ Add an approval email above so the weekly picks have somewhere to go."</td>
+</tr>
+</tbody>
+</table>
+<p>It saves with the same debounced save as the field. New preference: <code>emailWeeklyPicks: boolean</code>, default <code>false</code>.</p>
+<h3>2. Email (<a href="email.html">email.html</a>)</h3>
+<ul>
+<li>Subject: "This week's pick: {title}". From: the advisor's name, on the advisor's sending address (placeholder <code>picks@yourfirm.ca</code>). To: each approval recipient, each with their own links. Sent after the Monday slate is built (mock: 5:30 AM PT).</li>
+<li>Header: the advisor's logo and name, then "Weekly picks".</li>
+<li>"Hi Jane, here's this week's pick". "Plus 2 backups. Nothing is scheduled until you approve one."</li>
+<li>Three cards: <strong>This week's pick</strong>, <strong>Backup 1</strong> and <strong>Backup 2</strong>. Each has a thumbnail, title, short excerpt, "Created {date} · Updated {date}", "<strong>Why:</strong> {reason}" (from <code>slateItems.reason</code>), and <strong>Review &amp; Approve</strong>, <strong>Swap</strong> and <strong>Skip</strong>.</li>
+<li>Footer: a <strong>placeholder</strong> CASL block (needs compliance review) with the advisor's name and address, "Change who gets this" and "Unsubscribe from weekly picks", plus "Links go to links.example.com (placeholder) and expire Nov 9, 2026."</li>
+<li>Light and dark mode, and a phone layout. A plain-text part has the same links.</li>
+</ul>
+<h3>3. Confirm page (<a href="confirm.html">confirm.html</a>, <code>?act=approve|swap|skip|unsub&amp;st=confirm|done|already|expired</code>)</h3>
+<table>
+<thead>
+<tr>
+<th>Action</th>
+<th>Confirm</th>
+<th>Done</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Review &amp; Approve</td>
+<td>"Approve this post?" Shows the post's title, dates and Why. "It goes into your normal scheduling. Nothing publishes until it's scheduled." Button: <strong>Review &amp; Approve</strong></td>
+<td>"✓ Approved. {title} was approved by Jane Advisor at 8:14 AM PT. It's in your normal scheduling now."</td>
+</tr>
+<tr>
+<td>Swap</td>
+<td>"Swap this week's pick. Choose the post to use instead." Two radio options (backup 1 and backup 2, each with its Why). Button: <strong>Swap</strong></td>
+<td>"✓ Swapped. This week's pick is now {title}. It still needs your approval." Button: Review &amp; Approve it</td>
+</tr>
+<tr>
+<td>Skip</td>
+<td>"Skip this week? No post is picked for you this week. You'll get new picks next Monday." Button: <strong>Skip this week</strong></td>
+<td>"Skipped. No post this week. New picks come next Monday, Nov 9." Button: Undo</td>
+</tr>
+<tr>
+<td>Unsubscribe</td>
+<td>"Stop weekly picks emails? For jane@yourfirm.ca only."</td>
+<td>"You're unsubscribed."</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li><strong>Already done:</strong> "This week's pick was already approved by Jane Advisor, Nov 2, 2026, 9:05 AM PT. Nothing changed."</li>
+<li><strong>Expired:</strong> "This link has expired. Nothing was changed." Button: Sign in.</li>
+<li>From #602 (not mocked again): if the user isn't signed in, they sign in and come back to the same URL. A wrong account gets the wrong-account state.</li>
+</ul>
+<h2>In scope</h2>
+<ul>
+<li>The preference and toggle, in both settings screens.</li>
+<li>The send step at the end of the Monday slate job: for each advisor with the toggle on and at least 1 recipient, send one email per recipient through the <strong>Elastic-else-SES</strong> path, and log it (no duplicates per slate).</li>
+<li>The email template (reusing the #688 A layout), with HTML and plain text.</li>
+<li>Signed, per-recipient links that expire after 7 days and work once, with a read-only link check on GET.</li>
+<li>The confirm page actions, which write <code>slateItems.status</code> (<code>approved | swapped | skipped</code>), <code>reviewedBy</code> and <code>reviewedAt</code>. Approve hands off to the normal scheduling flow.</li>
+<li>Unsubscribe per address.</li>
+</ul>
+<h2>Out of scope</h2>
+<ul>
+<li>Building the slate job itself (#599 part 3).</li>
+<li>Search on Swap (the email offers only the 2 backups).</li>
+<li>Bulk approve from email.</li>
+<li>Any auto-scheduling or auto-publishing (never).</li>
+<li>Final CASL and compliance wording (placeholders only).</li>
+</ul>
+<h2>Mobile (390px)</h2>
+<ul>
+<li>Cards stack, and the thumbnail goes full width.</li>
+<li>Buttons go 2 per row, at least 44px tall.</li>
+<li>The confirm buttons are full width.</li>
+<li>The settings toggle wraps under the field, and the recipient chips wrap.</li>
+</ul>
+<h2>If #688 B or C is picked instead</h2>
+<ul>
+<li><strong>B (list plus board):</strong> the email becomes a compact list of the pick and 2 backups with one "Review this week's picks" button. That opens the board page, where Review &amp; Approve, Swap and Skip each finish with one click. The board needs a Swap control (a choice between the backups), and the confirm page is replaced by the board. The estimate is about the same, +0.25 days.</li>
+<li><strong>C (hero):</strong> the pick is the hero, with all three buttons, and the 2 backups are small rows underneath, each with a "Use this instead" link that opens the Swap confirm. The confirm page stays as mocked. The estimate is about the same.</li>
+</ul>
+<h2>Estimate (days)</h2>
+<table>
+<thead>
+<tr>
+<th>Piece</th>
+<th>Days</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Preference and toggle in SES and Mailchimp settings, with the no-recipients line</td>
+<td>0.5</td>
+</tr>
+<tr>
+<td>Email template (#688 A layout, pick plus 2 backups, dates, Why, plain text, dark mode)</td>
+<td>1–1.5</td>
+</tr>
+<tr>
+<td>Send step after the Monday slate (Elastic-else-SES, per recipient, dedupe, log)</td>
+<td>1–1.5</td>
+</tr>
+<tr>
+<td>Signed per-recipient links (7-day expiry, single use, read-only check)</td>
+<td>0.75–1</td>
+</tr>
+<tr>
+<td>Confirm page: approve, swap, skip, unsubscribe; done, already and expired; sign-in and wrong account</td>
+<td>1.5–2</td>
+</tr>
+<tr>
+<td><code>slateItems</code> status writes and the scheduling handoff</td>
+<td>0.5–0.75</td>
+</tr>
+<tr>
+<td>Unsubscribe per address</td>
+<td>0.25–0.5</td>
+</tr>
+<tr>
+<td>Phone layout and QA (test advisors only)</td>
+<td>0.75–1</td>
+</tr>
+<tr>
+<td><strong>Total</strong></td>
+<td><strong>≈6.25–8.75</strong></td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>If the #688 digest and its confirm pages are built first, reuse saves about 1–1.5 days.</li>
+<li>None of this is in the #599 6–9 day estimate.</li>
+</ul>
+<h2>Open questions</h2>
+<ol>
+<li><strong>Field name.</strong> The code's label is "Emails to send Email Campaign approvals" (Email Approvals section). "Send approval emails to" isn't a label in the code today. Do we keep the code's wording?</li>
+<li>Should the toggle also be in MAP for admins, or only in Settings?</li>
+<li><strong>Who can act.</strong> Recipients like assistant@yourfirm.ca may not have an FC sign-in. #602 requires a signed-in owner or admin. Should non-owners get view-only buttons, as in #688?</li>
+<li>Does approving from the email schedule the post through the normal flow straight away, or does it mark it approved for the admin to schedule in MAP (see 599-map-picks)?</li>
+<li>Should Skip mean this week, or this month (the review queue says "Skip this month")?</li>
+<li>Which sending address and domain should be used for each advisor on the Elastic or SES path?</li>
+<li>Should an approved pick go to compliance review first for advisors with compliance on?</li>
+</ol></body></html>
