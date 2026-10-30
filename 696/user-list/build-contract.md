@@ -16,7 +16,7 @@ Still open: **A or B**.
 - **Email**, and **website** (`websiteAddress`, linked, or "—" if there isn't one).
 - **User ID:** not shown. Use "Copy user ID" in the ⋮ menu.
 - **Advisor Categories:** `advisorSourceNames` chips, or "None".
-- **Social:** one line per token, with the network icon, `profileLabel`, an expiry chip (red if expired, amber if it needs reconnecting) and a "Send {network} refresh email" button. If there are no tokens: "No social accounts".
+- **Social:** one item per token, with the network icon, `profileLabel`, a status and a "Send {network} refresh email" action that belongs to that account (see "Social accounts: refresh email" below). If there are no tokens: "No social accounts".
 - **Section access:** chips for Calendar, Content, Email Campaigns, Social Media and Website, or "No section access".
 - **Actions (⋮ menu):** Edit, Section Access, Send login invite, Reset Password, Log in as this user, Open Email Campaigns as user, Open Social Settings as user, Copy user ID.
 
@@ -30,7 +30,7 @@ The filters stay as they are: search, Advisor Categories, LinkedIn connected, Fa
 - **Card layout:**
   - The **name** (bold) and **company** are at the top left, with a **⋮** button at the top right (44 px tap target).
   - Quiet labels in small grey uppercase: **Email**, **Website**, **Social accounts**, **Advisor Categories** and **Section Access**.
-  - Social accounts keep the expiry chip and the refresh-email button, which the #698 cards currently drop.
+  - Social accounts keep the status and the refresh-email action, which the #698 cards currently drop.
 - **Truncation:**
   - Name, company, email, website, and social account names each stay on one line, with an ellipsis and the full value in `title`.
   - Use `min-width: 0` all the way up the flex and grid chain.
@@ -46,11 +46,30 @@ The filters stay as they are: search, Advisor Categories, LinkedIn connected, Fa
 - **Columns** (`table-layout: fixed`):
   - Name / Company / Email / Website: flexible, about 300 px at a 1000 px viewport. Each line is one-line ellipsis.
   - Advisor Categories: 140 px.
-  - Social: 240 px. The account name gets the ellipsis, while the expiry chip and refresh button stay whole.
+  - Social: 280 px. The account name gets the ellipsis, while the status label and refresh action stay whole. The label wraps under the name if it's tight.
   - Section access: 140 px.
   - ⋮: 60 px.
 - **Chips:** below 1180 px, the table shows the first 2 chips, then a **"+N"** chip whose `title` lists the rest. From 1180 px up it shows all of them, wrapped.
 - Headers stay on one line, with an ellipsis if they ever get too tight.
+
+## Social accounts: refresh email (A and B, `?social=a|b|c`)
+
+Per Alex (Oct 30, 11:11 AM PT), the envelope has to clearly belong to one account. All three options use the same status rule:
+
+- **Expired** (token past expiry): a red outline plus the label **"Expired"**.
+- **Needs refresh** (the existing warning window): an amber outline plus the label **"Needs refresh"**.
+- The label text means colour isn't the only signal. The expiry date is in the chip's `title` and, in option c, in the menu header.
+- **Healthy accounts soften the action instead of hiding it** (my call). There's no label, and the action is grey but still tappable, so an admin can send an early refresh. Only expired or needs-refresh accounts get a coloured action.
+
+Options:
+
+- **(a) Pill (recommended, the default):** `[icon + page name (+ label) | ✉]`. A divider separates the name from the envelope, which is its own button (`aria-label="Send {network} refresh email for {name}"`). The envelope is at least 44 × 44 px at 390. Pills stack one per line in the 280 px table column.
+- **(b) Row:** a bordered row per account, with the name and label on the left and a **"Send refresh email"** text button on the right. The button drops below the name when the column is narrow, as in the table. For expired or needs-refresh accounts it's an outlined coloured button. This is the clearest option but the tallest, and it roughly doubles the social cell height in the table.
+- **(c) Chip with menu:** tapping the account chip (▾) opens a small menu anchored to it. The header shows "{network} · {name}" and the status or expiry. The items are **Send refresh email** and **Copy page name** (with a "Copied" toast). The menu behaves like the ⋮ menu: it flips and stays on screen, and Esc, a click outside or scrolling closes it. This is the cleanest look, but it takes two taps and the action is hidden.
+
+**Recommendation: (a).** The action is physically inside the account's own chip, so it can't be read as belonging to the next row. It's one tap, it fits both the 280 px table column and 390 cards without making rows taller, and it reuses the chip styling. Option b is the fallback if Alex wants the words "Send refresh email" visible.
+
+**Agent time (on top of A or B):** (a) cloud agent 15–20 min + FC Tester 10 min + about 1 loop at 0–10 min, so **≈25–40 min**. (b) **≈20–35 min**. (c) **≈35–55 min**, because of the menu and keyboard work.
 
 ## ⋮ menu (A and B)
 
@@ -87,7 +106,7 @@ The top bar has 390 / 720 / 1000 / 1280 buttons, and `?w=390|720|1000|1280` does
 
 - At 390 the rail becomes the app's phone header. The filters go full width and stack.
 - Cards are 1 column, and their fields stack.
-- Every tap target (⋮, refresh email, menu items) is at least 44 px.
+- Every tap target (⋮, refresh email, account chips, menu items) is at least 44 px at 390. Nothing depends on hover. The `title` text is a bonus only, because every action is visible or one tap away.
 
 ## Estimate (agent time, per Alex's Oct 30 rule)
 
@@ -99,6 +118,8 @@ This is how long a Cursor cloud agent takes to build it, plus FC Tester time. Fo
 | FC Tester: 390, 720, 1000 and 1280, the menu, Copy user ID, empty and no-socials states | 10–15 min | 15–20 min |
 | Review and fix loops (A: about 1; B: 1–2, for truncation and +N edge cases) | 10–20 min | 15–30 min |
 | **Total** | **≈40–65 min** | **≈65–100 min** |
+| Plus social refresh option (a), recommended | +25–40 min | +25–40 min |
+| **Total with (a)** | **≈65–105 min** | **≈90–140 min** |
 
 One agent run each. It builds on PR #698, which is already on staging, so there's no dependency.
 

@@ -11,7 +11,7 @@
 <li><b>Email</b>, and <b>website</b> (<code>websiteAddress</code>, linked, or "—" if there isn't one).</li>
 <li><b>User ID:</b> not shown. Use "Copy user ID" in the ⋮ menu.</li>
 <li><b>Advisor Categories:</b> <code>advisorSourceNames</code> chips, or "None".</li>
-<li><b>Social:</b> one line per token, with the network icon, <code>profileLabel</code>, an expiry chip (red if expired, amber if it needs reconnecting) and a "Send {network} refresh email" button. If there are no tokens: "No social accounts".</li>
+<li><b>Social:</b> one item per token, with the network icon, <code>profileLabel</code>, a status and a "Send {network} refresh email" action that belongs to that account (see "Social accounts: refresh email" below). If there are no tokens: "No social accounts".</li>
 <li><b>Section access:</b> chips for Calendar, Content, Email Campaigns, Social Media and Website, or "No section access".</li>
 <li><b>Actions (⋮ menu):</b> Edit, Section Access, Send login invite, Reset Password, Log in as this user, Open Email Campaigns as user, Open Social Settings as user, Copy user ID.</li>
 </ul>
@@ -24,7 +24,7 @@
 <li><b>Card layout:</b></li>
 <li style="margin-left:18px">The <b>name</b> (bold) and <b>company</b> are at the top left, with a <b>⋮</b> button at the top right (44 px tap target).</li>
 <li style="margin-left:18px">Quiet labels in small grey uppercase: <b>Email</b>, <b>Website</b>, <b>Social accounts</b>, <b>Advisor Categories</b> and <b>Section Access</b>.</li>
-<li style="margin-left:18px">Social accounts keep the expiry chip and the refresh-email button, which the #698 cards currently drop.</li>
+<li style="margin-left:18px">Social accounts keep the status and the refresh-email action, which the #698 cards currently drop.</li>
 <li><b>Truncation:</b></li>
 <li style="margin-left:18px">Name, company, email, website, and social account names each stay on one line, with an ellipsis and the full value in <code>title</code>.</li>
 <li style="margin-left:18px">Use <code>min-width: 0</code> all the way up the flex and grid chain.</li>
@@ -40,12 +40,28 @@
 <li><b>Columns</b> (<code>table-layout: fixed</code>):</li>
 <li style="margin-left:18px">Name / Company / Email / Website: flexible, about 300 px at a 1000 px viewport. Each line is one-line ellipsis.</li>
 <li style="margin-left:18px">Advisor Categories: 140 px.</li>
-<li style="margin-left:18px">Social: 240 px. The account name gets the ellipsis, while the expiry chip and refresh button stay whole.</li>
+<li style="margin-left:18px">Social: 280 px. The account name gets the ellipsis, while the status label and refresh action stay whole. The label wraps under the name if it's tight.</li>
 <li style="margin-left:18px">Section access: 140 px.</li>
 <li style="margin-left:18px">⋮: 60 px.</li>
 <li><b>Chips:</b> below 1180 px, the table shows the first 2 chips, then a <b>"+N"</b> chip whose <code>title</code> lists the rest. From 1180 px up it shows all of them, wrapped.</li>
 <li>Headers stay on one line, with an ellipsis if they ever get too tight.</li>
 </ul>
+<h2>Social accounts: refresh email (A and B, <code>?social=a|b|c</code>)</h2>
+<p>Per Alex (Oct 30, 11:11 AM PT), the envelope has to clearly belong to one account. All three options use the same status rule:</p>
+<ul>
+<li><b>Expired</b> (token past expiry): a red outline plus the label <b>"Expired"</b>.</li>
+<li><b>Needs refresh</b> (the existing warning window): an amber outline plus the label <b>"Needs refresh"</b>.</li>
+<li>The label text means colour isn't the only signal. The expiry date is in the chip's <code>title</code> and, in option c, in the menu header.</li>
+<li><b>Healthy accounts soften the action instead of hiding it</b> (my call). There's no label, and the action is grey but still tappable, so an admin can send an early refresh. Only expired or needs-refresh accounts get a coloured action.</li>
+</ul>
+<p>Options:</p>
+<ul>
+<li><b>(a) Pill (recommended, the default):</b> <code>[icon + page name (+ label) | ✉]</code>. A divider separates the name from the envelope, which is its own button (<code>aria-label="Send {network} refresh email for {name}"</code>). The envelope is at least 44 × 44 px at 390. Pills stack one per line in the 280 px table column.</li>
+<li><b>(b) Row:</b> a bordered row per account, with the name and label on the left and a <b>"Send refresh email"</b> text button on the right. The button drops below the name when the column is narrow, as in the table. For expired or needs-refresh accounts it's an outlined coloured button. This is the clearest option but the tallest, and it roughly doubles the social cell height in the table.</li>
+<li><b>(c) Chip with menu:</b> tapping the account chip (▾) opens a small menu anchored to it. The header shows "{network} · {name}" and the status or expiry. The items are <b>Send refresh email</b> and <b>Copy page name</b> (with a "Copied" toast). The menu behaves like the ⋮ menu: it flips and stays on screen, and Esc, a click outside or scrolling closes it. This is the cleanest look, but it takes two taps and the action is hidden.</li>
+</ul>
+<p><b>Recommendation: (a).</b> The action is physically inside the account's own chip, so it can't be read as belonging to the next row. It's one tap, it fits both the 280 px table column and 390 cards without making rows taller, and it reuses the chip styling. Option b is the fallback if Alex wants the words "Send refresh email" visible.</p>
+<p><b>Agent time (on top of A or B):</b> (a) cloud agent 15–20 min + FC Tester 10 min + about 1 loop at 0–10 min, so <b>≈25–40 min</b>. (b) <b>≈20–35 min</b>. (c) <b>≈35–55 min</b>, because of the menu and keyboard work.</p>
 <h2>⋮ menu (A and B)</h2>
 <ul>
 <li>An IconButton with <code>aria-haspopup="menu"</code>, <code>aria-expanded</code>, <code>aria-label="More actions for {name}"</code> and a 44 px target.</li>
@@ -79,7 +95,7 @@
 <ul>
 <li>At 390 the rail becomes the app's phone header. The filters go full width and stack.</li>
 <li>Cards are 1 column, and their fields stack.</li>
-<li>Every tap target (⋮, refresh email, menu items) is at least 44 px.</li>
+<li>Every tap target (⋮, refresh email, account chips, menu items) is at least 44 px at 390. Nothing depends on hover. The <code>title</code> text is a bonus only, because every action is visible or one tap away.</li>
 </ul>
 <h2>Estimate (agent time, per Alex's Oct 30 rule)</h2>
 <p>This is how long a Cursor cloud agent takes to build it, plus FC Tester time. For calibration, #699 went from handoff to tested in about 30 minutes. It's one file (<code>AdminUserList.jsx</code>) and its layout test, with no backend.</p>
@@ -89,6 +105,8 @@
 <tr><td>FC Tester: 390, 720, 1000 and 1280, the menu, Copy user ID, empty and no-socials states</td><td>10–15 min</td><td>15–20 min</td></tr>
 <tr><td>Review and fix loops (A: about 1; B: 1–2, for truncation and +N edge cases)</td><td>10–20 min</td><td>15–30 min</td></tr>
 <tr><td><b>Total</b></td><td><b>≈40–65 min</b></td><td><b>≈65–100 min</b></td></tr>
+<tr><td>Plus social refresh option (a), recommended</td><td>+25–40 min</td><td>+25–40 min</td></tr>
+<tr><td><b>Total with (a)</b></td><td><b>≈65–105 min</b></td><td><b>≈90–140 min</b></td></tr>
 </table>
 <p>One agent run each. It builds on PR #698, which is already on staging, so there's no dependency.</p>
 <h2>Open questions</h2>
