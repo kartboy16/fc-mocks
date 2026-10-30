@@ -133,7 +133,7 @@ Alex (Oct 30): the Name / Company / Email / Website column takes too much room o
 | Option | 1000 | 1280 | 1440 | 1920 | Agent time |
 |---|---|---|---|---|---|
 | Today (PR #701) | cards | 30% | 38% | 55% | — |
-| **1. Capped name column, recommended** | 25% | 25% | 22% | 16% | ≈20–30 min |
+| **1. Capped name column, picked** | 25% | 25% | 22% | 16% | ≈20–30 min |
 | 2. Weighted % (22 / 22 / 32 / 20) | 21% | 22% | 22% | 22% | ≈25–40 min |
 | 3. Name 300, social 400, table capped at 1400 | 25% | 26% | 23% | 21% (blank space on the right) | ≈25–35 min |
 | Table cutoff 1280 → 960 (any of options 1–3) | table | | | | +15–30 min |
@@ -141,7 +141,7 @@ Alex (Oct 30): the Name / Company / Email / Website column takes too much room o
 
 Percentages are the name column's share of the table, measured headless. With today's fixed widths the cutoff can't come down: at 1000 the name column would be 68 px.
 
-**Pick: option 1 with the table from 960.** It's the smallest change, and the name column stays the same at every width. The extra width goes to chips and social pills, so rows get shorter on wide screens. Option 2 still lets the name column grow at 1920. Option 3 leaves blank space on wide monitors.
+**Picked (Alex, Oct 30, about 1:10 PM PT, via CoS): option 1 + 960 cutoff.** Name column 220px under 1280 and 280px above, table from 960. Handed to Software developer. It's the smallest change, and the name column stays the same at every width. The extra width goes to chips and social pills, so rows get shorter on wide screens. Option 2 still lets the name column grow at 1920. Option 3 leaves blank space on wide monitors.
 
 **CSS / MUI for the agent (option 1 + cutoff):**
 - `ADMIN_USER_TABLE_VIEWPORT_MIN_PX` 1280 → **960**; `ADMIN_USER_TABLE_MIN_PX` (container) 1100 → **820**. In the mock, the list is about 862 px wide at 1000 and about 822 px at 960. Check this against the real rail and padding.
