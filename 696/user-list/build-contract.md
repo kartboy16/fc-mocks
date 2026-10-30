@@ -32,10 +32,11 @@ The filters stay as they are: search, Advisor Categories, LinkedIn connected, Fa
   - Quiet labels in small grey uppercase: **Email**, **Website**, **Social accounts**, **Advisor Categories** and **Section Access**.
   - Social accounts keep the status and the refresh-email action, which the #698 cards currently drop.
 - **Truncation:**
-  - Name, company, email, website, and social account names each stay on one line, with an ellipsis and the full value in `title`.
+  - Name, company, email and website each stay on one line, with an ellipsis and the full value in `title`. These are text, not chips.
+  - **Social account names wrap** inside their chip (pill, row or chip-menu). They're never cut off.
   - Use `min-width: 0` all the way up the flex and grid chain.
   - Never `word-break: break-all` or `overflow-wrap: anywhere`. That's what caused the one-letter-per-line URL in the failure screenshots.
-- **Chips** wrap onto as many lines as they need. Cards show every chip.
+- **Chips always wrap, never truncate** (per Alex, Oct 30, 11:51 AM PT). Advisor Categories, Section Access and social accounts show every item, wrapping onto as many lines as they need, in both cards and the table. There's no "+N" and no hidden chips anywhere. A long chip label wraps inside the chip.
 
 ## B: compact table from 900 ([b-table.html](b-table.html))
 
@@ -45,11 +46,11 @@ The filters stay as they are: search, Advisor Categories, LinkedIn connected, Fa
   - At 1280 and up it's the same table with all chips shown (⋮ column, decided).
 - **Columns** (`table-layout: fixed`):
   - Name / Company / Email / Website: flexible, about 300 px at a 1000 px viewport. Each line is one-line ellipsis.
-  - Advisor Categories: 140 px.
-  - Social: 280 px. The account name gets the ellipsis, while the status label and refresh action stay whole. The label wraps under the name if it's tight.
-  - Section access: 140 px.
+  - Advisor Categories: 150 px (210 px at 1280 and up). Chips wrap.
+  - Social: 280 px (320 px at 1280 and up). Every account is shown, and names wrap. The status label and refresh action stay whole, and the label wraps under the name if it's tight.
+  - Section access: 150 px (210 px at 1280 and up). Chips wrap.
   - ⋮: 60 px.
-- **Chips:** below 1180 px, the table shows the first 2 chips, then a **"+N"** chip whose `title` lists the rest. From 1180 px up it shows all of them, wrapped.
+- **Chips:** every chip is shown at every width, wrapped. **Rows grow taller** to fit, and the ⋮ stays at the top right of the row. With the heavy sample user (9 categories, 7 sections, 5 social accounts), the row is about 3–4× a normal row at 1000 px. That's accepted, so everything is visible at a glance.
 - Headers stay on one line, with an ellipsis if they ever get too tight.
 
 ## Social accounts: refresh email (A and B, `?social=a|b|c`)
@@ -114,12 +115,14 @@ This is how long a Cursor cloud agent takes to build it, plus FC Tester time. Fo
 
 | Piece | A | B |
 |---|---|---|
-| Cloud agent build: labels, 1 card per row, socials with expiry and refresh, ⋮ menu everywhere, Copy user ID and toast, User ID removed (B adds the compact table, fixed columns and +N chips) | 20–30 min | 35–50 min |
+| Cloud agent build: labels, 1 card per row, socials with expiry and refresh, ⋮ menu everywhere, Copy user ID and toast, User ID removed (B adds the compact table and fixed columns) | 20–30 min | 35–50 min |
 | FC Tester: 390, 720, 1000 and 1280, the menu, Copy user ID, empty and no-socials states | 10–15 min | 15–20 min |
-| Review and fix loops (A: about 1; B: 1–2, for truncation and +N edge cases) | 10–20 min | 15–30 min |
+| Review and fix loops (A: about 1; B: 1–2, for column widths and tall rows) | 10–20 min | 15–30 min |
 | **Total** | **≈40–65 min** | **≈65–100 min** |
 | Plus social refresh option (a), recommended | +25–40 min | +25–40 min |
 | **Total with (a)** | **≈65–105 min** | **≈90–140 min** |
+| Never-hide chips (Oct 30, 11:51 AM PT): wrap everywhere, social names wrap, tall rows, heavy-user QA. Build 5–10 min (A) / 10–15 min (B, which drops the +N logic), FC Tester 5–10 / 10–15 min | +10–20 min | +15–25 min, minus about 5–10 min for no +N tooltip |
+| **New total with social (a)** | **≈75–125 min** | **≈100–155 min** |
 
 One agent run each. It builds on PR #698, which is already on staging, so there's no dependency.
 

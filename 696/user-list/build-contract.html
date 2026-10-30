@@ -26,10 +26,11 @@
 <li style="margin-left:18px">Quiet labels in small grey uppercase: <b>Email</b>, <b>Website</b>, <b>Social accounts</b>, <b>Advisor Categories</b> and <b>Section Access</b>.</li>
 <li style="margin-left:18px">Social accounts keep the status and the refresh-email action, which the #698 cards currently drop.</li>
 <li><b>Truncation:</b></li>
-<li style="margin-left:18px">Name, company, email, website, and social account names each stay on one line, with an ellipsis and the full value in <code>title</code>.</li>
+<li style="margin-left:18px">Name, company, email and website each stay on one line, with an ellipsis and the full value in <code>title</code>. These are text, not chips.</li>
+<li style="margin-left:18px"><b>Social account names wrap</b> inside their chip (pill, row or chip-menu). They're never cut off.</li>
 <li style="margin-left:18px">Use <code>min-width: 0</code> all the way up the flex and grid chain.</li>
 <li style="margin-left:18px">Never <code>word-break: break-all</code> or <code>overflow-wrap: anywhere</code>. That's what caused the one-letter-per-line URL in the failure screenshots.</li>
-<li><b>Chips</b> wrap onto as many lines as they need. Cards show every chip.</li>
+<li><b>Chips always wrap, never truncate</b> (per Alex, Oct 30, 11:51 AM PT). Advisor Categories, Section Access and social accounts show every item, wrapping onto as many lines as they need, in both cards and the table. There's no "+N" and no hidden chips anywhere. A long chip label wraps inside the chip.</li>
 </ul>
 <h2>B: compact table from 900 (<a href="b-table.html">b-table.html</a>)</h2>
 <ul>
@@ -39,11 +40,11 @@
 <li style="margin-left:18px">At 1280 and up it's the same table with all chips shown (⋮ column, decided).</li>
 <li><b>Columns</b> (<code>table-layout: fixed</code>):</li>
 <li style="margin-left:18px">Name / Company / Email / Website: flexible, about 300 px at a 1000 px viewport. Each line is one-line ellipsis.</li>
-<li style="margin-left:18px">Advisor Categories: 140 px.</li>
-<li style="margin-left:18px">Social: 280 px. The account name gets the ellipsis, while the status label and refresh action stay whole. The label wraps under the name if it's tight.</li>
-<li style="margin-left:18px">Section access: 140 px.</li>
+<li style="margin-left:18px">Advisor Categories: 150 px (210 px at 1280 and up). Chips wrap.</li>
+<li style="margin-left:18px">Social: 280 px (320 px at 1280 and up). Every account is shown, and names wrap. The status label and refresh action stay whole, and the label wraps under the name if it's tight.</li>
+<li style="margin-left:18px">Section access: 150 px (210 px at 1280 and up). Chips wrap.</li>
 <li style="margin-left:18px">⋮: 60 px.</li>
-<li><b>Chips:</b> below 1180 px, the table shows the first 2 chips, then a <b>"+N"</b> chip whose <code>title</code> lists the rest. From 1180 px up it shows all of them, wrapped.</li>
+<li><b>Chips:</b> every chip is shown at every width, wrapped. <b>Rows grow taller</b> to fit, and the ⋮ stays at the top right of the row. With the heavy sample user (9 categories, 7 sections, 5 social accounts), the row is about 3–4× a normal row at 1000 px. That's accepted, so everything is visible at a glance.</li>
 <li>Headers stay on one line, with an ellipsis if they ever get too tight.</li>
 </ul>
 <h2>Social accounts: refresh email (A and B, <code>?social=a|b|c</code>)</h2>
@@ -101,12 +102,14 @@
 <p>This is how long a Cursor cloud agent takes to build it, plus FC Tester time. For calibration, #699 went from handoff to tested in about 30 minutes. It's one file (<code>AdminUserList.jsx</code>) and its layout test, with no backend.</p>
 <table>
 <tr><th>Piece</th><th>A</th><th>B</th></tr>
-<tr><td>Cloud agent build: labels, 1 card per row, socials with expiry and refresh, ⋮ menu everywhere, Copy user ID and toast, User ID removed (B adds the compact table, fixed columns and +N chips)</td><td>20–30 min</td><td>35–50 min</td></tr>
+<tr><td>Cloud agent build: labels, 1 card per row, socials with expiry and refresh, ⋮ menu everywhere, Copy user ID and toast, User ID removed (B adds the compact table and fixed columns)</td><td>20–30 min</td><td>35–50 min</td></tr>
 <tr><td>FC Tester: 390, 720, 1000 and 1280, the menu, Copy user ID, empty and no-socials states</td><td>10–15 min</td><td>15–20 min</td></tr>
-<tr><td>Review and fix loops (A: about 1; B: 1–2, for truncation and +N edge cases)</td><td>10–20 min</td><td>15–30 min</td></tr>
+<tr><td>Review and fix loops (A: about 1; B: 1–2, for column widths and tall rows)</td><td>10–20 min</td><td>15–30 min</td></tr>
 <tr><td><b>Total</b></td><td><b>≈40–65 min</b></td><td><b>≈65–100 min</b></td></tr>
 <tr><td>Plus social refresh option (a), recommended</td><td>+25–40 min</td><td>+25–40 min</td></tr>
 <tr><td><b>Total with (a)</b></td><td><b>≈65–105 min</b></td><td><b>≈90–140 min</b></td></tr>
+<tr><td>Never-hide chips (Oct 30, 11:51 AM PT): wrap everywhere, social names wrap, tall rows, heavy-user QA. Build 5–10 min (A) / 10–15 min (B, which drops the +N logic), FC Tester 5–10 / 10–15 min</td><td>+10–20 min</td><td>+15–25 min, minus about 5–10 min for no +N tooltip</td></tr>
+<tr><td><b>New total with social (a)</b></td><td><b>≈75–125 min</b></td><td><b>≈100–155 min</b></td></tr>
 </table>
 <p>One agent run each. It builds on PR #698, which is already on staging, so there's no dependency.</p>
 <h2>Open questions</h2>
