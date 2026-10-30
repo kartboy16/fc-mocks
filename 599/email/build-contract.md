@@ -106,30 +106,26 @@ New preference: `emailWeeklyPicks: boolean`, default `false`.
 
 ## If #688 B or C is picked instead
 
-- **B (list plus board):** the email becomes a compact list with a "Review this week's picks" button that opens the board. On the board, Approve & Publish Now, Approve & Schedule (with the same date field), Swap and Skip each finish in one click, and the board replaces this confirm page. About +0.25 days.
+- **B (list plus board):** the email becomes a compact list with a "Review this week's picks" button that opens the board. On the board, Approve & Publish Now, Approve & Schedule (with the same date field), Swap and Skip each finish in one click, and the board replaces this confirm page. About +15–20 min of agent time.
 - **C (hero):** the pick is the hero with all three buttons, and the backups are small rows with "Use this instead", which opens Swap. The confirm page stays as mocked, and the estimate is about the same.
 
-## Estimate (days)
+## Estimate (agent time, per Alex's Oct 30 rule)
 
-| Piece | Days |
-|---|---|
-| Preference and toggle in SES and Mailchimp settings, renamed label, no-recipients line | 0.5 |
-| The same toggle in MAP advisor settings | 0.25 |
-| Email template (pick plus 2 backups, dates, Why, plain text, dark mode, view-only variant) | 1.25–1.75 |
-| Send step after the Monday slate (Elastic-else-SES, per recipient, dedupe, log) | 1–1.5 |
-| Signed per-recipient links and the can-approve check (owner or admin, otherwise view-only) | 0.75–1.25 |
-| Confirm page: Publish Now, Schedule with the date default, swap, skip this week with undo, unsubscribe; done, already, expired and view-only states; sign-in and wrong account | 2–2.75 |
-| Publish-now and schedule handoff, and `slateItems` writes | 0.75–1 |
-| Posts to chips (Website, each social account, Email), Edit mode, and the none-selected disabled state; passing destinations to publish and schedule | 0.5–0.75 |
-| "Send to compliance" options reusing the posting code (contact summary and Edit) | 0.25–0.5 |
-| Usual-time-or-9 AM and next-free-day logic | 0.25 |
-| Unsubscribe per address | 0.25–0.5 |
-| Phone layout and QA (test advisors only) | 0.75–1 |
-| **Total** | **≈8.5–12** |
+This is how long a Cursor cloud agent takes to build it, plus FC Tester time. For calibration, #699 went from handoff to tested in about 30 minutes. This job has new backend work (a send step, signed tokens, email sending and publish handoff), so it's planned as **3 agent runs**.
 
-- The previous version was ≈7.75–11. This adds the destination chips, the send-to-compliance options and next-free-day logic, and drops compliance-first routing (+0.75–1).
-- If the #688 digest and confirm pages are built first, reuse saves about 1–1.5 days.
-- None of this is in the #599 6–9 day estimate.
+| Run | Scope | Cloud agent build | FC Tester |
+|---|---|---|---|
+| 1. Settings | `emailWeeklyPicks` preference, toggle in SES and Mailchimp settings and MAP, the "Send approval emails to" rename, no-recipients line | 20–30 min | 10–15 min |
+| 2. Email and send | Template (pick plus 2 backups, Why, view-only variant, plain text, dark mode), the send step after the slate (Elastic-else-SES from FTT's own sending address, one email per recipient, dedupe, log), signed per-recipient links (7 days, single use), unsubscribe | 60–90 min | 20–30 min (test inbox) |
+| 3. Confirm page | Publish Now and Schedule (1st of next month, usual time or 9 AM PT, next free day), Posts to chips with Edit and none-selected, send-to-compliance options, swap, skip with undo, view-only, already, expired, `slateItems` writes | 60–90 min | 25–35 min |
+| Review and fix loops | 2–3 loops across the runs (tokens and send dedupe are the likely ones) | 30–90 min | (included) |
+| **Total** | | **≈170–300 min** | **≈55–80 min** |
+
+**Overall: ≈4–6.5 hours of agent and tester time**, run in sequence.
+
+- If the #688 confirm pages are built first, run 3 can reuse them, saving about 20–30 min.
+- If #688 B (list plus board) is picked, add about 15–20 min to run 3.
+- **Dependencies (not in the total, rough agent time):** the #599 Monday slate job is about 1–2 h (one run plus test). #602 landing on main is about 15–30 min to merge and retest. The #688 pick is Alex's decision, not agent time.
 
 ## Open questions
 

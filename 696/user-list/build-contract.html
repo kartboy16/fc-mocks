@@ -81,16 +81,15 @@
 <li>Cards are 1 column, and their fields stack.</li>
 <li>Every tap target (⋮, refresh email, menu items) is at least 44 px.</li>
 </ul>
-<h2>Estimate (days)</h2>
+<h2>Estimate (agent time, per Alex's Oct 30 rule)</h2>
+<p>This is how long a Cursor cloud agent takes to build it, plus FC Tester time. For calibration, #699 went from handoff to tested in about 30 minutes. It's one file (<code>AdminUserList.jsx</code>) and its layout test, with no backend.</p>
 <table>
 <tr><th>Piece</th><th>A</th><th>B</th></tr>
-<tr><td>Card polish on top of #698 (labels, 1 per row, socials with expiry and refresh, ellipsis audit, User ID removed)</td><td>0.5</td><td>0.5</td></tr>
-<tr><td>⋮ menu header, dividers, flip, keyboard, Copy user ID and toast (mostly MUI)</td><td>0.25–0.5</td><td>0.25–0.5</td></tr>
-<tr><td>Desktop table at 1280 and up: button column replaced by ⋮, User ID removed</td><td>0.25</td><td>(in the row below)</td></tr>
-<tr><td>Compact table from 900: fixed columns, ellipsis, +N chips with tooltip</td><td>—</td><td>1–1.5</td></tr>
-<tr><td>Breakpoint switching (viewport and list width)</td><td>0.25</td><td>0.25–0.5</td></tr>
-<tr><td>Tests and QA at 4 widths, plus device checks</td><td>0.5</td><td>0.5–0.75</td></tr>
-<tr><td><b>Total</b></td><td><b>≈1.75–2</b></td><td><b>≈2.5–3.75</b></td></tr>
+<tr><td>Cloud agent build: labels, 1 card per row, socials with expiry and refresh, ⋮ menu everywhere, Copy user ID and toast, User ID removed (B adds the compact table, fixed columns and +N chips)</td><td>20–30 min</td><td>35–50 min</td></tr>
+<tr><td>FC Tester: 390, 720, 1000 and 1280, the menu, Copy user ID, empty and no-socials states</td><td>10–15 min</td><td>15–20 min</td></tr>
+<tr><td>Review and fix loops (A: about 1; B: 1–2, for truncation and +N edge cases)</td><td>10–20 min</td><td>15–30 min</td></tr>
+<tr><td><b>Total</b></td><td><b>≈40–65 min</b></td><td><b>≈65–100 min</b></td></tr>
 </table>
+<p>One agent run each. It builds on PR #698, which is already on staging, so there's no dependency.</p>
 <h2>Open questions</h2>
 <p style="margin:4px 0">1. <b>A or B?</b> Alex to pick. (The three earlier questions are decided; see the top.)</p></body></html>

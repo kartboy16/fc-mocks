@@ -162,76 +162,58 @@
 </ul>
 <h2>If #688 B or C is picked instead</h2>
 <ul>
-<li><strong>B (list plus board):</strong> the email becomes a compact list with a "Review this week's picks" button that opens the board. On the board, Approve &amp; Publish Now, Approve &amp; Schedule (with the same date field), Swap and Skip each finish in one click, and the board replaces this confirm page. About +0.25 days.</li>
+<li><strong>B (list plus board):</strong> the email becomes a compact list with a "Review this week's picks" button that opens the board. On the board, Approve &amp; Publish Now, Approve &amp; Schedule (with the same date field), Swap and Skip each finish in one click, and the board replaces this confirm page. About +15–20 min of agent time.</li>
 <li><strong>C (hero):</strong> the pick is the hero with all three buttons, and the backups are small rows with "Use this instead", which opens Swap. The confirm page stays as mocked, and the estimate is about the same.</li>
 </ul>
-<h2>Estimate (days)</h2>
+<h2>Estimate (agent time, per Alex's Oct 30 rule)</h2>
+<p>This is how long a Cursor cloud agent takes to build it, plus FC Tester time. For calibration, #699 went from handoff to tested in about 30 minutes. This job has new backend work (a send step, signed tokens, email sending and publish handoff), so it's planned as <strong>3 agent runs</strong>.</p>
 <table>
 <thead>
 <tr>
-<th>Piece</th>
-<th>Days</th>
+<th>Run</th>
+<th>Scope</th>
+<th>Cloud agent build</th>
+<th>FC Tester</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>Preference and toggle in SES and Mailchimp settings, renamed label, no-recipients line</td>
-<td>0.5</td>
+<td>1. Settings</td>
+<td><code>emailWeeklyPicks</code> preference, toggle in SES and Mailchimp settings and MAP, the "Send approval emails to" rename, no-recipients line</td>
+<td>20–30 min</td>
+<td>10–15 min</td>
 </tr>
 <tr>
-<td>The same toggle in MAP advisor settings</td>
-<td>0.25</td>
+<td>2. Email and send</td>
+<td>Template (pick plus 2 backups, Why, view-only variant, plain text, dark mode), the send step after the slate (Elastic-else-SES from FTT's own sending address, one email per recipient, dedupe, log), signed per-recipient links (7 days, single use), unsubscribe</td>
+<td>60–90 min</td>
+<td>20–30 min (test inbox)</td>
 </tr>
 <tr>
-<td>Email template (pick plus 2 backups, dates, Why, plain text, dark mode, view-only variant)</td>
-<td>1.25–1.75</td>
+<td>3. Confirm page</td>
+<td>Publish Now and Schedule (1st of next month, usual time or 9 AM PT, next free day), Posts to chips with Edit and none-selected, send-to-compliance options, swap, skip with undo, view-only, already, expired, <code>slateItems</code> writes</td>
+<td>60–90 min</td>
+<td>25–35 min</td>
 </tr>
 <tr>
-<td>Send step after the Monday slate (Elastic-else-SES, per recipient, dedupe, log)</td>
-<td>1–1.5</td>
-</tr>
-<tr>
-<td>Signed per-recipient links and the can-approve check (owner or admin, otherwise view-only)</td>
-<td>0.75–1.25</td>
-</tr>
-<tr>
-<td>Confirm page: Publish Now, Schedule with the date default, swap, skip this week with undo, unsubscribe; done, already, expired and view-only states; sign-in and wrong account</td>
-<td>2–2.75</td>
-</tr>
-<tr>
-<td>Publish-now and schedule handoff, and <code>slateItems</code> writes</td>
-<td>0.75–1</td>
-</tr>
-<tr>
-<td>Posts to chips (Website, each social account, Email), Edit mode, and the none-selected disabled state; passing destinations to publish and schedule</td>
-<td>0.5–0.75</td>
-</tr>
-<tr>
-<td>"Send to compliance" options reusing the posting code (contact summary and Edit)</td>
-<td>0.25–0.5</td>
-</tr>
-<tr>
-<td>Usual-time-or-9 AM and next-free-day logic</td>
-<td>0.25</td>
-</tr>
-<tr>
-<td>Unsubscribe per address</td>
-<td>0.25–0.5</td>
-</tr>
-<tr>
-<td>Phone layout and QA (test advisors only)</td>
-<td>0.75–1</td>
+<td>Review and fix loops</td>
+<td>2–3 loops across the runs (tokens and send dedupe are the likely ones)</td>
+<td>30–90 min</td>
+<td>(included)</td>
 </tr>
 <tr>
 <td><strong>Total</strong></td>
-<td><strong>≈8.5–12</strong></td>
+<td></td>
+<td><strong>≈170–300 min</strong></td>
+<td><strong>≈55–80 min</strong></td>
 </tr>
 </tbody>
 </table>
+<p><strong>Overall: ≈4–6.5 hours of agent and tester time</strong>, run in sequence.</p>
 <ul>
-<li>The previous version was ≈7.75–11. This adds the destination chips, the send-to-compliance options and next-free-day logic, and drops compliance-first routing (+0.75–1).</li>
-<li>If the #688 digest and confirm pages are built first, reuse saves about 1–1.5 days.</li>
-<li>None of this is in the #599 6–9 day estimate.</li>
+<li>If the #688 confirm pages are built first, run 3 can reuse them, saving about 20–30 min.</li>
+<li>If #688 B (list plus board) is picked, add about 15–20 min to run 3.</li>
+<li><strong>Dependencies (not in the total, rough agent time):</strong> the #599 Monday slate job is about 1–2 h (one run plus test). #602 landing on main is about 15–30 min to merge and retest. The #688 pick is Alex's decision, not agent time.</li>
 </ul>
 <h2>Open questions</h2>
 <p>None beyond the #688 direction and Alex's go-ahead. The earlier questions (Publish Now destinations, time of day, a clash on the 1st, view-only rule, compliance and sending address) are decided above.</p></body></html>

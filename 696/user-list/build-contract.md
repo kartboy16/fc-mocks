@@ -89,17 +89,18 @@ The top bar has 390 / 720 / 1000 / 1280 buttons, and `?w=390|720|1000|1280` does
 - Cards are 1 column, and their fields stack.
 - Every tap target (⋮, refresh email, menu items) is at least 44 px.
 
-## Estimate (days)
+## Estimate (agent time, per Alex's Oct 30 rule)
+
+This is how long a Cursor cloud agent takes to build it, plus FC Tester time. For calibration, #699 went from handoff to tested in about 30 minutes. It's one file (`AdminUserList.jsx`) and its layout test, with no backend.
 
 | Piece | A | B |
 |---|---|---|
-| Card polish on top of #698 (labels, 1 per row, socials with expiry and refresh, ellipsis audit, User ID removed) | 0.5 | 0.5 |
-| ⋮ menu header, dividers, flip, keyboard, Copy user ID and toast (mostly MUI) | 0.25–0.5 | 0.25–0.5 |
-| Desktop table at 1280 and up: button column replaced by ⋮, User ID removed | 0.25 | (in the row below) |
-| Compact table from 900: fixed columns, ellipsis, +N chips with tooltip | — | 1–1.5 |
-| Breakpoint switching (viewport and list width) | 0.25 | 0.25–0.5 |
-| Tests and QA at 4 widths, plus device checks | 0.5 | 0.5–0.75 |
-| **Total** | **≈1.75–2** | **≈2.5–3.75** |
+| Cloud agent build: labels, 1 card per row, socials with expiry and refresh, ⋮ menu everywhere, Copy user ID and toast, User ID removed (B adds the compact table, fixed columns and +N chips) | 20–30 min | 35–50 min |
+| FC Tester: 390, 720, 1000 and 1280, the menu, Copy user ID, empty and no-socials states | 10–15 min | 15–20 min |
+| Review and fix loops (A: about 1; B: 1–2, for truncation and +N edge cases) | 10–20 min | 15–30 min |
+| **Total** | **≈40–65 min** | **≈65–100 min** |
+
+One agent run each. It builds on PR #698, which is already on staging, so there's no dependency.
 
 ## Open questions
 
