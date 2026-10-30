@@ -68,28 +68,23 @@ Follow-up to [#687](https://github.com/kartboy16/content-library/issues/687) and
 4. **Links:** fetched on Add. A login wall, an error, or an empty or short body shows the inline paste box on that row.
 5. **Profile:** built from included samples only. It's #687's structured output plus a plain-words paragraph, and the advisor's edits survive Learn again.
 
-## Estimate (days)
+## Estimate (agent time, per Alex's Oct 30 rule)
 
-| Piece | A | B |
-|---|---|---|
-| Social import (FB, LinkedIn company, IG business; last 50; job; token errors) | 2–3 | 2–3 |
-| Skip library-scheduled posts (`social_post_queue`, similarity) | 0.5–0.75 | 0.5–0.75 |
-| Site crawler (sitemap, WP REST, link crawl, robots, limits) | 2–2.5 | 2–2.5 |
-| Text extraction, dedupe, `voice_samples` | 1–1.5 | 1–1.5 |
-| Site library-post skip (Insights, queue URLs, similarity) | 1–1.5 | 1–1.5 |
-| Auto-untick (legal, short, bio) | 0.5 | 0.5 |
-| Link field with inline paste | 0.75–1 | 0.75–1 |
-| Paste box | 0.25 | 0.25 |
-| One-button flow, working state, result line, few line, collapsed review | 1.25–1.75 | 1.25–1.75 |
-| Pooled counting for short posts | 0.25 | 0.25 |
-| Plain-words profile: build, edit, save | 1–1.5 | 1–1.5 |
-| Per-source failure lines, email when done | 0.5–0.75 | 0.5–0.75 |
-| Summary panel and dialogs (B) | — | 0.25–0.5 |
-| Phone layout and QA | 1–1.5 | 1–1.5 |
-| **Total** | **≈12–16.75** | **≈12.25–17.25** |
+This is the Cursor cloud agent build plus FC Tester time, with 1–2 review and fix loops per run, in minutes and hours (not developer days). For calibration, #699 took about 30 min from handoff to tested. This is too big for one run, so it's split into **4 cloud-agent runs**, based on v3 (`a7ef1dc`) A and B.
 
-- The simple version is about 1.75 to 2.25 days less than v2's A (≈13.75–19), mainly because one flow and one collapsed review replace the per-account cards and states.
-- It replaces the #687 A lines for fetching posts and the profile UI (≈4–5.5), so the **net addition to #687 A is about +8–11.25 days**.
+| Run | Covers | Build | FC Tester | Fix loops (1–2) | Run total |
+|---|---|---|---|---|---|
+| 1. Connected-account import | `voice_learn` job (status, counts, errors), `voice_samples` model, last 50 posts from the FB Page, LinkedIn company page and IG business account with stored tokens, token and reconnect errors, skip `social_post_queue` and posts close to `HTMLPosts` | 45–60 min | 20–30 min | 20–40 min | **≈1.5–2.25 h** |
+| 2. Site crawl | Sitemap, then WP REST, then same-domain links, robots, about 1 request a second, about 60 pages, timeouts. Text extraction and dedupe, skip Insights and `WebsitePostQueue` URLs, auto-untick legal pages, short pages and bios | 45–75 min | 20–30 min | 20–40 min | **≈1.5–2.5 h** |
+| 3. Link and paste input | Link field fetched on Add, inline paste when it fails (login wall, error, short body), paste box, word counts, 150-word samples with pooled counting for social posts | 20–30 min | 10–15 min | 10–20 min | **≈40–65 min** |
+| 4. Voice profile and review UI | Profile from included samples (#687 structured output plus the plain-words paragraph, edits survive Learn again). Settings › Voice one-button flow, working state with email when done, result line, fewer-than-3 line, collapsed review with ticks, per-source failure lines, editable profile and Save, phone layout | 45–60 min | 20–30 min | 20–40 min | **≈1.5–2.25 h** |
+| **Total A** | | | | | **≈5.25–8 h** |
+| B adds the summary panel with Edit and Review dialogs (run 4) | | +10–15 min | +5–10 min | +0–10 min | **+15–35 min, so B ≈5.5–8.5 h** |
+
+- **Order:** run 1 first, because it sets up `voice_learn` and `voice_samples`. Runs 2 and 3 can then go in parallel, and run 4 goes last. That's about **4.5–7 h of wall-clock time** when 2 and 3 run in parallel.
+- **Against #687 A:** this replaces #687 A's fetch-posts and profile-UI pieces (about 1–1.5 h of agent time), so it adds **about 4–7 h net** to #687 A.
+- **Test dependency (not included):** FC Tester needs a test advisor with a connected FB Page, LinkedIn company page and IG business account that have posts, including some library-scheduled ones, plus a test WordPress site with an Insights section. Without these, QA runs against stubs, and the real check waits until the accounts exist. LinkedIn and IG scopes are still "probable" (open question 1). If they're blocked, run 1 shrinks to Facebook only (about 20–30 min less).
+- Replaces the earlier human-developer estimate (A ≈12–16.75 days, B ≈12.25–17.25 days).
 
 ## Open questions
 
