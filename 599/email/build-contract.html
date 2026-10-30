@@ -1,4 +1,4 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>#599 Weekly picks email: build contract</title><style>body{font-family:Inter,system-ui,sans-serif;max-width:960px;margin:24px auto;padding:0 16px;line-height:1.55;color:#2C3E50}a{color:#1976D2}table{border-collapse:collapse;width:100%;margin:8px 0;font-size:14px}td,th{border:1px solid #e0e5eb;padding:6px 8px;text-align:left;vertical-align:top}th{background:#f3f6f9}blockquote{background:#e8f5e9;border:2px solid #2e7d32;border-radius:10px;margin:10px 0;padding:4px 14px}code{background:#f3f6f9;padding:1px 4px;border-radius:4px}@media(max-width:600px){table{display:block;overflow-x:auto}}code{overflow-wrap:anywhere}td{overflow-wrap:anywhere}</style></head><body><p><a href="../../">All mocks</a> · <a href="index.html">Hub</a> · <a href="build-contract.md">Markdown</a></p><h1>#599 Weekly picks email: build contract (updated Oct 30, 2026)</h1>
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>#599 Weekly picks email: build contract</title><style>body{font-family:Inter,system-ui,sans-serif;max-width:960px;margin:24px auto;padding:0 16px;line-height:1.55;color:#2C3E50}a{color:#1976D2}table{border-collapse:collapse;width:100%;margin:8px 0;font-size:14px}td,th{border:1px solid #e0e5eb;padding:6px 8px;text-align:left;vertical-align:top}th{background:#f3f6f9}blockquote{background:#e8f5e9;border:2px solid #2e7d32;border-radius:10px;margin:10px 0;padding:4px 14px}code{background:#f3f6f9;padding:1px 4px;border-radius:4px}@media(max-width:600px){table{display:block;overflow-x:auto}}code{overflow-wrap:anywhere}td{overflow-wrap:anywhere}</style></head><body><p><a href="../../">All mocks</a> · <a href="index.html">Hub</a> · <a href="build-contract.md">Markdown</a></p><h1>#599 Weekly picks email: build contract (v4, simplified Oct 30, 2026)</h1>
 <p>Based on <a href="https://github.com/kartboy16/content-library/issues/599#issuecomment-6527617708">the spec comment</a> and <a href="https://github.com/kartboy16/content-library/issues/599">#599</a>. Mocks: <a href="index.html">hub</a>. It reuses the <a href="../../688/a-digest.html">#688 A digest</a> layout and its "Review &amp; Approve" wording. <strong>Not agent-ready. Soft Dev hold until Alex picks.</strong></p>
 <p>Depends on the #599 Monday slate job, #602 landing on main, and Alex picking a #688 direction. Don't build this until Alex confirms.</p>
 <h2>Decided (working defaults per Alex, Oct 30, 2026)</h2>
@@ -8,12 +8,13 @@
 <li><strong>Review &amp; Approve</strong> opens a page with <strong>Approve &amp; Publish Now</strong> and <strong>Approve &amp; Schedule</strong>. Schedule's date defaults to the <strong>1st of next month</strong>, counted from the day the page is opened.</li>
 <li><strong>Compliance reviewers don't use this page.</strong> There's no compliance routing. When the advisor has the Compliance category, the confirm page shows the same "send to compliance" options as posting on FC (see the confirm page section). The post itself publishes as normal.</li>
 <li>Recipients who can't sign in are <strong>view-only</strong>. They see the post with the buttons disabled and "Only Jane Advisor or an admin can approve. Forward this email to them."</li>
-<li><strong>Skip is this week only.</strong></li>
+<li><strong>All 3 suggestions are equals</strong> (Alex, Oct 30, 4:50 PM PT). There's no main pick and no backups. Each has its own <strong>Review &amp; Approve</strong>, and the advisor can approve any one, or several.</li>
 <li><strong>Where it posts:</strong> the confirm page shows chips for Website, each of the advisor's social accounts and Email. All are selected by default, and <strong>Edit</strong> lets the advisor deselect or reselect each one. This applies to both Publish Now and Schedule.</li>
 <li><strong>Time:</strong> the post publishes at the advisor's usual posting time, or <strong>9:00 AM PT</strong> if there isn't one.</li>
 <li><strong>Clashes:</strong> if the chosen day already has a scheduled pick, the post moves to the <strong>next free day</strong>.</li>
 <li><strong>View-only</strong> means any recipient who isn't the owner or an admin.</li>
 <li><strong>Sender:</strong> the email comes from <strong>FTT's own sending address (not the advisor's domain)</strong>. The mock shows a neutral placeholder, <code>Weekly Picks &lt;picks@sending-domain.example&gt;</code>.</li>
+<li><strong>No Swap and no Skip</strong> (removed Oct 30, 4:50 PM PT). Anything not approved is ignored. The email says "Not approving? Do nothing — nothing publishes without you."</li>
 </ol>
 <h2>Rules</h2>
 <ul>
@@ -55,12 +56,13 @@
 <p>New preference: <code>emailWeeklyPicks: boolean</code>, default <code>false</code>.</p>
 <h3>2. Email (<a href="email.html">email.html</a>, plus <a href="email.html?viewonly">view-only</a>)</h3>
 <ul>
-<li>Subject: "This week's pick: {title}". From: FTT's own sending address (not the advisor's domain), shown on the mock as <code>Weekly Picks &lt;picks@sending-domain.example&gt;</code>. Each recipient gets their own links. Sent after the Monday slate is built (5:30 AM PT in the mock).</li>
-<li><strong>This week's pick</strong>, <strong>Backup 1</strong> and <strong>Backup 2</strong>. Each has a thumbnail, title, excerpt, "Created {date} · Updated {date}" and "<strong>Why:</strong> {reason}", plus <strong>Review &amp; Approve</strong>, <strong>Swap</strong> and <strong>Skip</strong>.</li>
-<li><strong>View-only recipient:</strong> the heading is "This week's pick for Jane Advisor", followed by "Only Jane Advisor or an admin can approve. Forward this email to them." Each card has only <strong>View post</strong>, which opens the view-only confirm state.</li>
+<li>Subject: "This week's picks: 3 posts to review". From: FTT's own sending address (not the advisor's domain), shown on the mock as <code>Weekly Picks &lt;picks@sending-domain.example&gt;</code>. Each recipient gets their own links. Sent after the Monday slate is built (5:30 AM PT in the mock).</li>
+<li>Heading "Hi Jane, here are this week's picks", then "Approve any one, or more than one." and "Not approving? Do nothing — nothing publishes without you."</li>
+<li><strong>3 equal cards</strong>, all the same size, with no label or ranking. Each has a thumbnail, title, excerpt, "Created {date} · Updated {date}" and "<strong>Why:</strong> {reason}", plus one button, <strong>Review &amp; Approve</strong>, which opens that post's own confirm page (<code>?p=</code> in the mock).</li>
+<li><strong>View-only recipient:</strong> the heading is "This week's picks for Jane Advisor", followed by "Only Jane Advisor or an admin can approve. Forward this email to them." Each card has only <strong>View post</strong>, which opens the view-only confirm state.</li>
 <li>The footer is a <strong>placeholder</strong> CASL block with "Change who gets this" and "Unsubscribe from weekly picks". The email has a phone layout and a dark mode, and a plain-text part with the same links.</li>
 </ul>
-<h3>3. Confirm page (<a href="confirm.html">confirm.html</a>, <code>?act=approve|swap|skip|unsub&amp;st=…&amp;comp=off|on</code>)</h3>
+<h3>3. Confirm page (<a href="confirm.html">confirm.html</a>, <code>?act=approve|unsub&amp;st=…&amp;comp=off|on&amp;p=0|1|2&amp;prev=off|on</code>)</h3>
 <p><code>comp=on</code> means the advisor has the Compliance category (<code>isEmailComplianceMode</code>).</p>
 <table>
 <thead>
@@ -103,20 +105,16 @@
 <td>The post, both buttons disabled, and "Only Jane Advisor or an admin can approve. Forward this email to them."</td>
 </tr>
 <tr>
-<td><code>swap</code> + <code>confirm</code> / <code>done</code></td>
-<td>"Swap this week's pick": choose backup 1 or backup 2 (each with its Why), then <strong>Swap</strong>. Done: "✓ Swapped… It still needs your approval", with a button, Review &amp; Approve it.</td>
+<td><strong>This week's other picks</strong> (under confirm, schedule, published, scheduled, already)</td>
+<td>The other 2 posts, one line each. If one is approved, it shows its status ("✓ Scheduled for Nov 1", or "✓ Published"). If not, it shows a <strong>Review &amp; Approve</strong> link to its own confirm page.</td>
 </tr>
 <tr>
-<td><code>skip</code> + <code>confirm</code> / <code>done</code></td>
-<td>"Skip this week? This week only. You'll get new picks next Monday, Nov 9." Button: <strong>Skip this week</strong>. Done: "<strong>Skipped for this week</strong>", with <strong>Undo</strong>.</td>
-</tr>
-<tr>
-<td><code>unsub</code></td>
+<td><code>unsub</code> (+ <code>done</code>)</td>
 <td>"Stop weekly picks emails? For jane@yourfirm.ca only." Done: "You're unsubscribed."</td>
 </tr>
 <tr>
 <td><code>already</code></td>
-<td>"This week's pick was already approved by Jane Advisor, Nov 2, 2026, 9:05 AM PT. Nothing changed."</td>
+<td>Per post: "<strong>Already approved.</strong> {title} was already approved by Jane Advisor, Nov 2, 2026, 9:05 AM PT. Nothing changed." Approving one post never blocks the others.</td>
 </tr>
 <tr>
 <td><code>expired</code></td>
@@ -126,6 +124,11 @@
 </table>
 <ul>
 <li>From #602 (not mocked again): if the user isn't signed in, they sign in and come back to the same URL. A wrong account gets the wrong-account state.</li>
+<li><strong>Approving more than one</strong> (<code>prev=on</code>, post 2 after post 1):</li>
+<li>Each post has its own signed link and its own <code>slateItems</code> row. Approving post 1 marks only post 1 approved, and post 2's link still works.</li>
+<li>Publish Now for a second post publishes it straight away, like the first. They don't block or queue each other.</li>
+<li>Schedule: the date still defaults to the 1st of next month. If post 1 is already scheduled on the 1st, the page says "'{post 1}' is already scheduled for Nov 1. This one moves to the next free day, Nov 2." and schedules it for Nov 2 (rule 9). A third post would go to Nov 3. (The mock is opened Oct 30, so the 1st of next month is Nov 1.)</li>
+<li>Re-opening a link for a post that's already approved shows <code>already</code> for that post only.</li>
 <li><strong>Who can approve:</strong> a signed-in advisor owner or an admin. Any recipient who isn't one gets the view-only email and state.</li>
 </ul>
 <h2>In scope</h2>
@@ -140,14 +143,14 @@
 <li>The selected destinations (Website, each social account, Email) are passed to the normal publish and schedule paths.</li>
 <li>With the Compliance category, the two "send to compliance" options reuse the existing posting code. There's no review gate.</li>
 <li>Usual posting time or 9:00 AM PT, and next free day if the day is taken.</li>
-<li>Swap and Skip (this week only, with undo).</li>
+<li>Approving one, two or all three posts, each through its own link, with "This week's other picks" status lines and the next-free-day shift when two land on the 1st.</li>
 <li>It writes <code>slateItems.status</code>, <code>reviewedBy</code>, <code>reviewedAt</code> and <code>requestedPublishAt</code>.</li>
 <li>Unsubscribe per address.</li>
 </ul>
 <h2>Out of scope</h2>
 <ul>
 <li>The slate job itself (#599 part 3).</li>
-<li>Search on Swap.</li>
+<li>Swap and Skip (removed; anything not approved is just ignored).</li>
 <li>Bulk approve from email.</li>
 <li>Any auto-publish (never).</li>
 <li>Final CASL and compliance wording (placeholders only).</li>
@@ -162,18 +165,20 @@
 </ul>
 <h2>If #688 B or C is picked instead</h2>
 <ul>
-<li><strong>B (list plus board):</strong> the email becomes a compact list with a "Review this week's picks" button that opens the board. On the board, Approve &amp; Publish Now, Approve &amp; Schedule (with the same date field), Swap and Skip each finish in one click, and the board replaces this confirm page. About +15–20 min of agent time.</li>
-<li><strong>C (hero):</strong> the pick is the hero with all three buttons, and the backups are small rows with "Use this instead", which opens Swap. The confirm page stays as mocked, and the estimate is about the same.</li>
+<li><strong>B (list plus board):</strong> the email becomes a compact list with a "Review this week's picks" button that opens the board. On the board, Approve &amp; Publish Now and Approve &amp; Schedule (with the same date field) finish in one click per post, and the board replaces this confirm page. About +15–20 min of agent time.</li>
+<li><strong>C (hero):</strong> doesn't fit "3 equals" well, because it has one hero post. If it's picked, the 3 posts would be shown as 3 equal hero cards, and the confirm page stays as mocked.</li>
 </ul>
 <h2>Estimate (agent time, per Alex's Oct 30 rule)</h2>
-<p>This is how long a Cursor cloud agent takes to build it, plus FC Tester time. For calibration, #699 went from handoff to tested in about 30 minutes. This job has new backend work (a send step, signed tokens, email sending and publish handoff), so it's planned as <strong>3 agent runs</strong>.</p>
+<p>This is the Cursor cloud agent build plus FC Tester time, plus fix loops, in minutes and hours. For calibration, #699 went from handoff to tested in about 30 minutes. Dropping Swap and Skip (two confirm flows, undo, and the swap and skip writes) and the pick-versus-backup layout brings it down from about 4–6.5 h. It's still <strong>3 runs</strong>.</p>
 <table>
 <thead>
 <tr>
 <th>Run</th>
 <th>Scope</th>
-<th>Cloud agent build</th>
+<th>Build</th>
 <th>FC Tester</th>
+<th>Fix loops</th>
+<th>Run total</th>
 </tr>
 </thead>
 <tbody>
@@ -182,38 +187,44 @@
 <td><code>emailWeeklyPicks</code> preference, toggle in SES and Mailchimp settings and MAP, the "Send approval emails to" rename, no-recipients line</td>
 <td>20–30 min</td>
 <td>10–15 min</td>
+<td>0–10 min</td>
+<td><strong>≈30–55 min</strong></td>
 </tr>
 <tr>
 <td>2. Email and send</td>
-<td>Template (pick plus 2 backups, Why, view-only variant, plain text, dark mode), the send step after the slate (Elastic-else-SES from FTT's own sending address, one email per recipient, dedupe, log), signed per-recipient links (7 days, single use), unsubscribe</td>
-<td>60–90 min</td>
+<td>Template (3 equal cards with one Review &amp; Approve each, Why, the "nothing publishes without you" line, view-only variant, plain text, dark mode). Send step after the slate (Elastic-else-SES from FTT's sending address, one email per recipient, dedupe, log). Signed links per recipient per post (7 days, single use). Unsubscribe</td>
+<td>50–75 min</td>
 <td>20–30 min (test inbox)</td>
+<td>15–30 min (tokens, dedupe)</td>
+<td><strong>≈1.5–2.25 h</strong></td>
 </tr>
 <tr>
 <td>3. Confirm page</td>
-<td>Publish Now and Schedule (1st of next month, usual time or 9 AM PT, next free day), Posts to chips with Edit and none-selected, send-to-compliance options, swap, skip with undo, view-only, already, expired, <code>slateItems</code> writes</td>
-<td>60–90 min</td>
-<td>25–35 min</td>
-</tr>
-<tr>
-<td>Review and fix loops</td>
-<td>2–3 loops across the runs (tokens and send dedupe are the likely ones)</td>
-<td>30–90 min</td>
-<td>(included)</td>
+<td>Publish Now and Schedule (1st of next month, usual time or 9 AM PT, next free day), Posts to chips with Edit and none-selected, send-to-compliance options, view-only, already approved (per post), expired, "This week's other picks" status, <code>slateItems</code> writes per post</td>
+<td>45–60 min</td>
+<td>20–30 min (incl. approving 2 posts, both on the 1st)</td>
+<td>15–30 min</td>
+<td><strong>≈1.25–2 h</strong></td>
 </tr>
 <tr>
 <td><strong>Total</strong></td>
 <td></td>
-<td><strong>≈170–300 min</strong></td>
-<td><strong>≈55–80 min</strong></td>
+<td></td>
+<td></td>
+<td></td>
+<td><strong>≈3.25–5 h</strong></td>
 </tr>
 </tbody>
 </table>
-<p><strong>Overall: ≈4–6.5 hours of agent and tester time</strong>, run in sequence.</p>
 <ul>
-<li>If the #688 confirm pages are built first, run 3 can reuse them, saving about 20–30 min.</li>
-<li>If #688 B (list plus board) is picked, add about 15–20 min to run 3.</li>
-<li><strong>Dependencies (not in the total, rough agent time):</strong> the #599 Monday slate job is about 1–2 h (one run plus test). #602 landing on main is about 15–30 min to merge and retest. The #688 pick is Alex's decision, not agent time.</li>
+<li>Run in sequence. Runs 2 and 3 share the token format, so run 3 starts after run 2's link format is merged.</li>
+<li>If the #688 confirm pages are built first, run 3 can reuse them, saving about 20–30 min. If #688 B (list plus board) is picked, add about 15–20 min to run 3.</li>
+<li><strong>Dependencies (not in the total, rough agent time):</strong> the #599 Monday slate job is about 1–2 h. #602 landing on main is about 15–30 min. The #688 pick is Alex's decision.</li>
 </ul>
 <h2>Open questions</h2>
-<p>None beyond the #688 direction and Alex's go-ahead. The earlier questions (Publish Now destinations, time of day, a clash on the 1st, view-only rule, compliance and sending address) are decided above.</p></body></html>
+<ol>
+<li><strong>Two or three posts on the 1st:</strong> the mock uses rule 9, where the second one approved moves to the next free day (Nov 2, then Nov 3). Is that right, or should the date field already default to the next free day, or should two posts be allowed on the same day?</li>
+<li><strong>Publish Now more than once:</strong> if the advisor publishes two posts straight away on the same day, both go out now (as mocked). Should there be any spacing?</li>
+<li><strong>Order in the email:</strong> with no ranking, should the 3 cards keep the slate job's order, or go oldest-updated first?</li>
+<li>The #688 direction and Alex's go-ahead.</li>
+</ol></body></html>
