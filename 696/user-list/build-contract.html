@@ -112,5 +112,28 @@
 <tr><td><b>New total with social (a)</b></td><td><b>≈75–125 min</b></td><td><b>≈100–155 min</b></td></tr>
 </table>
 <p>One agent run each. It builds on PR #698, which is already on staging, so there's no dependency.</p>
+<h2>Desktop column widths and table cutoff (fix on top of PR #701, <a href="columns.html">columns.html</a>)</h2>
+<p>Alex (Oct 30): the Name / Company / Email / Website column takes too much room on wide screens. On an unfolded foldable (about 1000 CSS px) he expected the table but got cards. Today the first column is <code>auto</code> while the other columns are fixed (210 / 320 / 210 / 60), so all spare width goes to the name column: 30% of the table at 1280, 38% at 1440 and 55% at 1920.</p>
+<table>
+<tr><th>Option</th><th>1000</th><th>1280</th><th>1440</th><th>1920</th><th>Agent time</th></tr>
+<tr><td>Today (PR #701)</td><td>cards</td><td>30%</td><td>38%</td><td>55%</td><td>—</td></tr>
+<tr><td><b>1. Capped name column, recommended</b></td><td>25%</td><td>25%</td><td>22%</td><td>16%</td><td>≈20–30 min</td></tr>
+<tr><td>2. Weighted % (22 / 22 / 32 / 20)</td><td>21%</td><td>22%</td><td>22%</td><td>22%</td><td>≈25–40 min</td></tr>
+<tr><td>3. Name 300, social 400, table capped at 1400</td><td>25%</td><td>26%</td><td>23%</td><td>21% (blank space on the right)</td><td>≈25–35 min</td></tr>
+<tr><td>Table cutoff 1280 → 960 (any of options 1–3)</td><td>table</td><td></td><td></td><td></td><td>+15–30 min</td></tr>
+<tr><td><b>Option 1 + cutoff 960 (one run, one tester pass)</b></td><td></td><td></td><td></td><td></td><td><b>≈35–55 min</b></td></tr>
+</table>
+<p>Percentages are the name column's share of the table, measured headless. With today's fixed widths the cutoff can't come down: at 1000 the name column would be 68 px.</p>
+<p><b>Pick: option 1 with the table from 960.</b> It's the smallest change, and the name column stays the same at every width. The extra width goes to chips and social pills, so rows get shorter on wide screens. Option 2 still lets the name column grow at 1920. Option 3 leaves blank space on wide monitors.</p>
+<p><b>CSS / MUI for the agent (option 1 + cutoff):</b></p>
+<ul>
+<li><code>ADMIN_USER_TABLE_VIEWPORT_MIN_PX</code> 1280 → <b>960</b>; <code>ADMIN_USER_TABLE_MIN_PX</code> (container) 1100 → <b>820</b>. In the mock, the list is about 862 px wide at 1000 and about 822 px at 960. Check this against the real rail and padding.</li>
+<li>Keep <code>tableLayout: 'fixed'</code>, <code>width: '100%'</code>.</li>
+<li>Name cell (header and body): <code>width: { xs: 220, lg: 280 }</code>, plus <code>WRAP_SX</code> so the email and website wrap (no ellipsis).</li>
+<li>Social: <code>width: { xs: 250, lg: 'auto' }</code>. Advisor Categories and Section access: drop the fixed 210, so they're <code>auto</code> and split the rest evenly. ⋮ stays 60.</li>
+<li>Header cells wrap (<code>whiteSpace: 'normal'</code>), with no ellipsis.</li>
+<li>Unchanged: chips wrap with no +N, the ⋮ menu, the social pill with ✉, and cards at 390 and 720.</li>
+</ul>
+<p><b>FC Tester:</b> check 1000, 1280, 1440 and 1920 (name share ≤ 26%, no horizontal scroll, all chips visible). Check that 390 and 720 still show cards and that 959 shows cards. Check the heavy user (Casey) and the long email and URL (Priya).</p>
 <h2>Open questions</h2>
 <p style="margin:4px 0">1. <b>A or B?</b> Alex to pick. (The three earlier questions are decided; see the top.)</p></body></html>

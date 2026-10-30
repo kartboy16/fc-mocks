@@ -126,6 +126,33 @@ This is how long a Cursor cloud agent takes to build it, plus FC Tester time. Fo
 
 One agent run each. It builds on PR #698, which is already on staging, so there's no dependency.
 
+## Desktop column widths and table cutoff (fix on top of PR #701, [columns.html](columns.html))
+
+Alex (Oct 30): the Name / Company / Email / Website column takes too much room on wide screens. On an unfolded foldable (about 1000 CSS px) he expected the table but got cards. Today the first column is `auto` while the other columns are fixed (210 / 320 / 210 / 60), so all spare width goes to the name column: 30% of the table at 1280, 38% at 1440 and 55% at 1920.
+
+| Option | 1000 | 1280 | 1440 | 1920 | Agent time |
+|---|---|---|---|---|---|
+| Today (PR #701) | cards | 30% | 38% | 55% | — |
+| **1. Capped name column, recommended** | 25% | 25% | 22% | 16% | ≈20–30 min |
+| 2. Weighted % (22 / 22 / 32 / 20) | 21% | 22% | 22% | 22% | ≈25–40 min |
+| 3. Name 300, social 400, table capped at 1400 | 25% | 26% | 23% | 21% (blank space on the right) | ≈25–35 min |
+| Table cutoff 1280 → 960 (any of options 1–3) | table | | | | +15–30 min |
+| **Option 1 + cutoff 960 (one run, one tester pass)** | | | | | **≈35–55 min** |
+
+Percentages are the name column's share of the table, measured headless. With today's fixed widths the cutoff can't come down: at 1000 the name column would be 68 px.
+
+**Pick: option 1 with the table from 960.** It's the smallest change, and the name column stays the same at every width. The extra width goes to chips and social pills, so rows get shorter on wide screens. Option 2 still lets the name column grow at 1920. Option 3 leaves blank space on wide monitors.
+
+**CSS / MUI for the agent (option 1 + cutoff):**
+- `ADMIN_USER_TABLE_VIEWPORT_MIN_PX` 1280 → **960**; `ADMIN_USER_TABLE_MIN_PX` (container) 1100 → **820**. In the mock, the list is about 862 px wide at 1000 and about 822 px at 960. Check this against the real rail and padding.
+- Keep `tableLayout: 'fixed'`, `width: '100%'`.
+- Name cell (header and body): `width: { xs: 220, lg: 280 }`, plus `WRAP_SX` so the email and website wrap (no ellipsis).
+- Social: `width: { xs: 250, lg: 'auto' }`. Advisor Categories and Section access: drop the fixed 210, so they're `auto` and split the rest evenly. ⋮ stays 60.
+- Header cells wrap (`whiteSpace: 'normal'`), with no ellipsis.
+- Unchanged: chips wrap with no +N, the ⋮ menu, the social pill with ✉, and cards at 390 and 720.
+
+**FC Tester:** check 1000, 1280, 1440 and 1920 (name share ≤ 26%, no horizontal scroll, all chips visible). Check that 390 and 720 still show cards and that 959 shows cards. Check the heavy user (Casey) and the long email and URL (Priya).
+
 ## Open questions
 
 1. **A or B?** Alex to pick. (The three earlier questions are decided; see the top.)
