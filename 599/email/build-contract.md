@@ -9,9 +9,14 @@ Depends on the #599 Monday slate job, #602 landing on main, and Alex picking a #
 1. The settings field is renamed **"Send approval emails to"**. It's still `sendTestEmailsTo`.
 2. The toggle is in the advisor's Email Settings **and in MAP**, under the admin's advisor settings.
 3. **Review & Approve** opens a page with **Approve & Publish Now** and **Approve & Schedule**. Schedule's date defaults to the **1st of next month**, counted from the day the page is opened.
-4. **Compliance comes first when it's on.** Both buttons send the post for compliance review instead. Schedule keeps the chosen date as the **requested date**.
+4. **Compliance reviewers don't use this page.** There's no compliance routing. When the advisor has the Compliance category, the confirm page shows the same "send to compliance" options as posting on FC (see the confirm page section). The post itself publishes as normal.
 5. Recipients who can't sign in are **view-only**. They see the post with the buttons disabled and "Only Jane Advisor or an admin can approve. Forward this email to them."
 6. **Skip is this week only.**
+7. **Where it posts:** the confirm page shows chips for Website, each of the advisor's social accounts and Email. All are selected by default, and **Edit** lets the advisor deselect or reselect each one. This applies to both Publish Now and Schedule.
+8. **Time:** the post publishes at the advisor's usual posting time, or **9:00 AM PT** if there isn't one.
+9. **Clashes:** if the chosen day already has a scheduled pick, the post moves to the **next free day**.
+10. **View-only** means any recipient who isn't the owner or an admin.
+11. **Sender:** the email comes from **FTT's own sending address (not the advisor's domain)**. The mock shows a neutral placeholder, `Weekly Picks <picks@sending-domain.example>`.
 
 ## Rules
 
@@ -39,20 +44,24 @@ New preference: `emailWeeklyPicks: boolean`, default `false`.
 
 ### 2. Email ([email.html](email.html), plus [view-only](email.html?viewonly))
 
-- Subject: "This week's pick: {title}". From: the advisor's name. Each recipient gets their own links. Sent after the Monday slate is built (5:30 AM PT in the mock).
+- Subject: "This week's pick: {title}". From: FTT's own sending address (not the advisor's domain), shown on the mock as `Weekly Picks <picks@sending-domain.example>`. Each recipient gets their own links. Sent after the Monday slate is built (5:30 AM PT in the mock).
 - **This week's pick**, **Backup 1** and **Backup 2**. Each has a thumbnail, title, excerpt, "Created {date} · Updated {date}" and "**Why:** {reason}", plus **Review & Approve**, **Swap** and **Skip**.
 - **View-only recipient:** the heading is "This week's pick for Jane Advisor", followed by "Only Jane Advisor or an admin can approve. Forward this email to them." Each card has only **View post**, which opens the view-only confirm state.
 - The footer is a **placeholder** CASL block with "Change who gets this" and "Unsubscribe from weekly picks". The email has a phone layout and a dark mode, and a plain-text part with the same links.
 
 ### 3. Confirm page ([confirm.html](confirm.html), `?act=approve|swap|skip|unsub&st=…&comp=off|on`)
 
+`comp=on` means the advisor has the Compliance category (`isEmailComplianceMode`).
+
 | State | Shows |
 |---|---|
-| `approve` + `confirm` | "Approve this post?" with the post (thumbnail, title, excerpt, dates, Why). Buttons: **Approve & Publish Now** and **Approve & Schedule**. |
-| `schedule` | The post and a "Publish on" date field that defaults to the **1st of next month**, computed in JS from today. The earliest date is tomorrow. Buttons: **Confirm schedule** and Back. |
-| `published` | "✓ Published. {title} was approved and published by Jane Advisor at 8:14 AM PT." |
-| `scheduled` | "✓ Scheduled for {date}. {title} was approved by Jane Advisor and will publish on {date}." |
-| `compliance` (when compliance is on, for either button) | "✓ Sent for compliance review. {title} was approved by Jane Advisor and sent for compliance review." Then "Requested date: {date}" or "Requested: publish as soon as it's cleared". "Nothing publishes until compliance clears it." |
+| `approve` + `confirm` | "Approve this post?" with the post (thumbnail, title, excerpt, dates, Why). Then **Posts to** chips: Website, Facebook Page, LinkedIn page, Instagram, Email (all selected) and **Edit**. Buttons: **Approve & Publish Now** and **Approve & Schedule**. |
+| `edit` | Edit mode: every destination is a toggle chip (✓ when selected), then **Done**. |
+| `none` | Everything is deselected. Both buttons are disabled, with the hint "Select at least one destination" (the same text as the posting dialog). |
+| Compliance (`comp=on`, in `confirm` and `schedule`) | It mirrors posting on FC. "Send website post as PDF to compliance?" shows if Website is selected, and "Send copy to compliance?" shows if Email is selected. Both are checked by default. Below them: "Pat Reviewer · compliance@yourfirm.ca · Edit", which opens the Officer name and Compliance email fields. It uses the existing `sendToCompliance` / `website.sendCompliancePdf` paths and the advisor's `complianceEmail`. There's no review gate. |
+| `schedule` | The post and a "Publish on" date field that defaults to the **1st of next month**, computed in JS from today. The earliest date is tomorrow. One line underneath: "Publishes at your usual posting time, or 9:00 AM PT. If that day already has a post, it moves to the next free day." Then the same Posts to chips (and compliance options). Buttons: **Confirm schedule** and Back. |
+| `published` | "✓ Published. {title} was approved and published by Jane Advisor at 8:14 AM PT. Published to Website, Facebook, LinkedIn, Instagram and Email." The list shows only the selected destinations. With compliance options checked: "A copy goes to compliance (compliance@yourfirm.ca)." |
+| `scheduled` | "✓ Scheduled for {date}. {title} was approved by Jane Advisor and will publish on {date} at 9:00 AM PT. Will publish to {destinations}." Plus the compliance line when it applies. |
 | `viewonly` | The post, both buttons disabled, and "Only Jane Advisor or an admin can approve. Forward this email to them." |
 | `swap` + `confirm` / `done` | "Swap this week's pick": choose backup 1 or backup 2 (each with its Why), then **Swap**. Done: "✓ Swapped… It still needs your approval", with a button, Review & Approve it. |
 | `skip` + `confirm` / `done` | "Skip this week? This week only. You'll get new picks next Monday, Nov 9." Button: **Skip this week**. Done: "**Skipped for this week**", with **Undo**. |
@@ -72,7 +81,9 @@ New preference: `emailWeeklyPicks: boolean`, default `false`.
 - The confirm page:
   - Publish now goes through the normal publish path.
   - Schedule goes through the normal scheduling path, with the date defaulting to the 1st of next month in Pacific time.
-  - With compliance on, either button sends the post for compliance review and stores the requested date.
+  - The selected destinations (Website, each social account, Email) are passed to the normal publish and schedule paths.
+  - With the Compliance category, the two "send to compliance" options reuse the existing posting code. There's no review gate.
+  - Usual posting time or 9:00 AM PT, and next free day if the day is taken.
   - Swap and Skip (this week only, with undo).
   - It writes `slateItems.status`, `reviewedBy`, `reviewedAt` and `requestedPublishAt`.
 - Unsubscribe per address.
@@ -84,6 +95,7 @@ New preference: `emailWeeklyPicks: boolean`, default `false`.
 - Bulk approve from email.
 - Any auto-publish (never).
 - Final CASL and compliance wording (placeholders only).
+- A compliance review step or compliance users on this page (compliance reviewers don't use it).
 
 ## Mobile (390px)
 
@@ -108,20 +120,17 @@ New preference: `emailWeeklyPicks: boolean`, default `false`.
 | Signed per-recipient links and the can-approve check (owner or admin, otherwise view-only) | 0.75–1.25 |
 | Confirm page: Publish Now, Schedule with the date default, swap, skip this week with undo, unsubscribe; done, already, expired and view-only states; sign-in and wrong account | 2–2.75 |
 | Publish-now and schedule handoff, and `slateItems` writes | 0.75–1 |
-| Compliance-first routing with the requested date | 0.25–0.5 |
+| Posts to chips (Website, each social account, Email), Edit mode, and the none-selected disabled state; passing destinations to publish and schedule | 0.5–0.75 |
+| "Send to compliance" options reusing the posting code (contact summary and Edit) | 0.25–0.5 |
+| Usual-time-or-9 AM and next-free-day logic | 0.25 |
 | Unsubscribe per address | 0.25–0.5 |
 | Phone layout and QA (test advisors only) | 0.75–1 |
-| **Total** | **≈7.75–11** |
+| **Total** | **≈8.5–12** |
 
-- The earlier version was ≈6.25–8.75. The extra comes from Publish Now and Schedule, compliance routing, view-only, and MAP.
+- The previous version was ≈7.75–11. This adds the destination chips, the send-to-compliance options and next-free-day logic, and drops compliance-first routing (+0.75–1).
 - If the #688 digest and confirm pages are built first, reuse saves about 1–1.5 days.
 - None of this is in the #599 6–9 day estimate.
 
 ## Open questions
 
-1. **Publish Now:** should it publish only to the website, or also to the social accounts the post would normally go to?
-2. **Schedule:** what time of day on the chosen date? The mock asks for a date only. Proposed: the advisor's usual posting time, or 9:00 AM PT.
-3. If the 1st of next month already has a scheduled pick (for example, from last week's email), do we allow two posts on one day or move to the next free day?
-4. **View-only:** is it decided by "the recipient's email isn't the owner's or an admin's sign-in"? Can an admin's approval from MAP recipients count "on behalf of" the advisor?
-5. When compliance is on, can compliance change the requested date, and who is told when the post clears?
-6. Which sending address and domain should each advisor use on the Elastic or SES path?
+None beyond the #688 direction and Alex's go-ahead. The earlier questions (Publish Now destinations, time of day, a clash on the 1st, view-only rule, compliance and sending address) are decided above.
