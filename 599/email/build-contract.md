@@ -1,111 +1,127 @@
-# #599 Weekly picks email: build contract
+# #599 Weekly picks email: build contract (updated Oct 30, 2026)
 
-Based on [the spec comment](https://github.com/kartboy16/content-library/issues/599#issuecomment-6527617708) (Oct 30, 2026) and [#599](https://github.com/kartboy16/content-library/issues/599). Mocks: [hub](index.html). It reuses the [#688 A digest](../../688/a-digest.html) layout and its "Review & Approve" wording. **Not agent-ready. Soft Dev hold until Alex picks.**
+Based on [the spec comment](https://github.com/kartboy16/content-library/issues/599#issuecomment-6527617708) and [#599](https://github.com/kartboy16/content-library/issues/599). Mocks: [hub](index.html). It reuses the [#688 A digest](../../688/a-digest.html) layout and its "Review & Approve" wording. **Not agent-ready. Soft Dev hold until Alex picks.**
 
-Depends on:
-- the #599 Monday slate job
-- #602 landing on main
-- Alex picking a #688 direction
+Depends on the #599 Monday slate job, #602 landing on main, and Alex picking a #688 direction. Don't build this until Alex confirms.
 
-Don't build this until Alex confirms.
+## Decided (working defaults per Alex, Oct 30, 2026)
+
+1. The settings field is renamed **"Send approval emails to"**. It's still `sendTestEmailsTo`.
+2. The toggle is in the advisor's Email Settings **and in MAP**, under the admin's advisor settings.
+3. **Review & Approve** opens a page with **Approve & Publish Now** and **Approve & Schedule**. Schedule's date defaults to the **1st of next month**, counted from the day the page is opened.
+4. **Compliance comes first when it's on.** Both buttons send the post for compliance review instead. Schedule keeps the chosen date as the **requested date**.
+5. Recipients who can't sign in are **view-only**. They see the post with the buttons disabled and "Only Jane Advisor or an admin can approve. Forward this email to them."
+6. **Skip is this week only.**
 
 ## Rules
 
 - **Off by default**, per advisor.
-- The email goes to the advisor's approval recipients (`sendTestEmailsTo`), the same list the approval email uses.
-- **No button acts on a GET.** Every link opens a light confirm page with one POST click (the #657, #688 and #602 pattern), so link scanners can't approve, swap or skip anything.
-- **Nothing is scheduled until a post is approved, and nothing auto-publishes.** Approving hands the post to the normal scheduling flow.
-- White-label: the advisor's own name and logo, links on `links.example.com` (a placeholder for the white-label link domain), and no FC branding, links or FC's own domain.
-- Generic test data only. QA uses the test advisors and the test inbox named in the spec, never real advisors.
+- Recipients are the advisor's approval recipients (`sendTestEmailsTo`).
+- **No button acts on a GET.** Every link opens a light confirm page, and one POST click finishes (the #657, #688 and #602 pattern).
+- Nothing is published or scheduled until someone who can approve clicks. **Nothing auto-publishes.**
+- White-label: links go on `links.example.com` (a placeholder for the white-label link domain), with no FC branding, links or FC's own domain.
+- Generic test data only. QA uses the spec's test advisors and test inbox, never real advisors.
 
 ## Screens and states
 
-### 1. Settings ([settings.html](settings.html), `?st=off|on|norecipients`)
+### 1. Settings ([settings.html](settings.html) and [map-settings.html](map-settings.html), `?st=off|on|norecipients`)
 
-Placement: Email Campaigns › Settings › **Email Approvals**. The toggle sits directly under the existing field "Emails to send Email Campaign approvals" and matches its style. It needs to be in both `SESSettings.jsx` and `MailchimpSettings.jsx`.
+- **Advisor:** Email Campaigns › Settings › Email Approvals. The field label becomes **"Send approval emails to"**, in both `SESSettings.jsx` and `MailchimpSettings.jsx`.
+- **MAP (admin):** Manage Advisor Posts › {advisor} › Settings, in a section called "Approvals and weekly picks". It has the same field and toggle and saves to the same advisor's preferences.
 
 | State | Shows |
 |---|---|
 | `off` (default) | The toggle "Email weekly picks to approval recipients", off. |
 | `on` | "Goes to [jane@yourfirm.ca] [assistant@yourfirm.ca] every Monday." The chips are parsed live from the field. |
-| `norecipients` | The toggle is on but the field is empty: "⚠ Add an approval email above so the weekly picks have somewhere to go." |
+| `norecipients` | "⚠ Add an approval email above so the weekly picks have somewhere to go." |
 
-It saves with the same debounced save as the field. New preference: `emailWeeklyPicks: boolean`, default `false`.
+New preference: `emailWeeklyPicks: boolean`, default `false`.
 
-### 2. Email ([email.html](email.html))
+### 2. Email ([email.html](email.html), plus [view-only](email.html?viewonly))
 
-- Subject: "This week's pick: {title}". From: the advisor's name, on the advisor's sending address (placeholder `picks@yourfirm.ca`). To: each approval recipient, each with their own links. Sent after the Monday slate is built (mock: 5:30 AM PT).
-- Header: the advisor's logo and name, then "Weekly picks".
-- "Hi Jane, here's this week's pick". "Plus 2 backups. Nothing is scheduled until you approve one."
-- Three cards: **This week's pick**, **Backup 1** and **Backup 2**. Each has a thumbnail, title, short excerpt, "Created {date} · Updated {date}", "**Why:** {reason}" (from `slateItems.reason`), and **Review & Approve**, **Swap** and **Skip**.
-- Footer: a **placeholder** CASL block (needs compliance review) with the advisor's name and address, "Change who gets this" and "Unsubscribe from weekly picks", plus "Links go to links.example.com (placeholder) and expire Nov 9, 2026."
-- Light and dark mode, and a phone layout. A plain-text part has the same links.
+- Subject: "This week's pick: {title}". From: the advisor's name. Each recipient gets their own links. Sent after the Monday slate is built (5:30 AM PT in the mock).
+- **This week's pick**, **Backup 1** and **Backup 2**. Each has a thumbnail, title, excerpt, "Created {date} · Updated {date}" and "**Why:** {reason}", plus **Review & Approve**, **Swap** and **Skip**.
+- **View-only recipient:** the heading is "This week's pick for Jane Advisor", followed by "Only Jane Advisor or an admin can approve. Forward this email to them." Each card has only **View post**, which opens the view-only confirm state.
+- The footer is a **placeholder** CASL block with "Change who gets this" and "Unsubscribe from weekly picks". The email has a phone layout and a dark mode, and a plain-text part with the same links.
 
-### 3. Confirm page ([confirm.html](confirm.html), `?act=approve|swap|skip|unsub&st=confirm|done|already|expired`)
+### 3. Confirm page ([confirm.html](confirm.html), `?act=approve|swap|skip|unsub&st=…&comp=off|on`)
 
-| Action | Confirm | Done |
-|---|---|---|
-| Review & Approve | "Approve this post?" Shows the post's title, dates and Why. "It goes into your normal scheduling. Nothing publishes until it's scheduled." Button: **Review & Approve** | "✓ Approved. {title} was approved by Jane Advisor at 8:14 AM PT. It's in your normal scheduling now." |
-| Swap | "Swap this week's pick. Choose the post to use instead." Two radio options (backup 1 and backup 2, each with its Why). Button: **Swap** | "✓ Swapped. This week's pick is now {title}. It still needs your approval." Button: Review & Approve it |
-| Skip | "Skip this week? No post is picked for you this week. You'll get new picks next Monday." Button: **Skip this week** | "Skipped. No post this week. New picks come next Monday, Nov 9." Button: Undo |
-| Unsubscribe | "Stop weekly picks emails? For jane@yourfirm.ca only." | "You're unsubscribed." |
+| State | Shows |
+|---|---|
+| `approve` + `confirm` | "Approve this post?" with the post (thumbnail, title, excerpt, dates, Why). Buttons: **Approve & Publish Now** and **Approve & Schedule**. |
+| `schedule` | The post and a "Publish on" date field that defaults to the **1st of next month**, computed in JS from today. The earliest date is tomorrow. Buttons: **Confirm schedule** and Back. |
+| `published` | "✓ Published. {title} was approved and published by Jane Advisor at 8:14 AM PT." |
+| `scheduled` | "✓ Scheduled for {date}. {title} was approved by Jane Advisor and will publish on {date}." |
+| `compliance` (when compliance is on, for either button) | "✓ Sent for compliance review. {title} was approved by Jane Advisor and sent for compliance review." Then "Requested date: {date}" or "Requested: publish as soon as it's cleared". "Nothing publishes until compliance clears it." |
+| `viewonly` | The post, both buttons disabled, and "Only Jane Advisor or an admin can approve. Forward this email to them." |
+| `swap` + `confirm` / `done` | "Swap this week's pick": choose backup 1 or backup 2 (each with its Why), then **Swap**. Done: "✓ Swapped… It still needs your approval", with a button, Review & Approve it. |
+| `skip` + `confirm` / `done` | "Skip this week? This week only. You'll get new picks next Monday, Nov 9." Button: **Skip this week**. Done: "**Skipped for this week**", with **Undo**. |
+| `unsub` | "Stop weekly picks emails? For jane@yourfirm.ca only." Done: "You're unsubscribed." |
+| `already` | "This week's pick was already approved by Jane Advisor, Nov 2, 2026, 9:05 AM PT. Nothing changed." |
+| `expired` | "This link has expired. Nothing was changed." Button: Sign in. |
 
-- **Already done:** "This week's pick was already approved by Jane Advisor, Nov 2, 2026, 9:05 AM PT. Nothing changed."
-- **Expired:** "This link has expired. Nothing was changed." Button: Sign in.
 - From #602 (not mocked again): if the user isn't signed in, they sign in and come back to the same URL. A wrong account gets the wrong-account state.
+- **Who can approve:** a signed-in advisor owner or an admin. Any recipient who isn't one gets the view-only email and state.
 
 ## In scope
 
-- The preference and toggle, in both settings screens.
-- The send step at the end of the Monday slate job: for each advisor with the toggle on and at least 1 recipient, send one email per recipient through the **Elastic-else-SES** path, and log it (no duplicates per slate).
-- The email template (reusing the #688 A layout), with HTML and plain text.
-- Signed, per-recipient links that expire after 7 days and work once, with a read-only link check on GET.
-- The confirm page actions, which write `slateItems.status` (`approved | swapped | skipped`), `reviewedBy` and `reviewedAt`. Approve hands off to the normal scheduling flow.
+- The preference and toggle in both advisor settings screens and in MAP, including the renamed field label.
+- The send step after the Monday slate: Elastic-else-SES, one email per recipient, can-approve or view-only per recipient, and no duplicates per slate.
+- The email template (#688 A layout), including the view-only variant and a plain-text part.
+- Signed per-recipient links that expire after 7 days and work once, with a read-only check on GET.
+- The confirm page:
+  - Publish now goes through the normal publish path.
+  - Schedule goes through the normal scheduling path, with the date defaulting to the 1st of next month in Pacific time.
+  - With compliance on, either button sends the post for compliance review and stores the requested date.
+  - Swap and Skip (this week only, with undo).
+  - It writes `slateItems.status`, `reviewedBy`, `reviewedAt` and `requestedPublishAt`.
 - Unsubscribe per address.
 
 ## Out of scope
 
-- Building the slate job itself (#599 part 3).
-- Search on Swap (the email offers only the 2 backups).
+- The slate job itself (#599 part 3).
+- Search on Swap.
 - Bulk approve from email.
-- Any auto-scheduling or auto-publishing (never).
+- Any auto-publish (never).
 - Final CASL and compliance wording (placeholders only).
 
 ## Mobile (390px)
 
 - Cards stack, and the thumbnail goes full width.
-- Buttons go 2 per row, at least 44px tall.
-- The confirm buttons are full width.
-- The settings toggle wraps under the field, and the recipient chips wrap.
+- The email buttons go 2 per row. The confirm buttons are full width, one per row.
+- The date field is full width.
+- Recipient chips wrap.
 
 ## If #688 B or C is picked instead
 
-- **B (list plus board):** the email becomes a compact list of the pick and 2 backups with one "Review this week's picks" button. That opens the board page, where Review & Approve, Swap and Skip each finish with one click. The board needs a Swap control (a choice between the backups), and the confirm page is replaced by the board. The estimate is about the same, +0.25 days.
-- **C (hero):** the pick is the hero, with all three buttons, and the 2 backups are small rows underneath, each with a "Use this instead" link that opens the Swap confirm. The confirm page stays as mocked. The estimate is about the same.
+- **B (list plus board):** the email becomes a compact list with a "Review this week's picks" button that opens the board. On the board, Approve & Publish Now, Approve & Schedule (with the same date field), Swap and Skip each finish in one click, and the board replaces this confirm page. About +0.25 days.
+- **C (hero):** the pick is the hero with all three buttons, and the backups are small rows with "Use this instead", which opens Swap. The confirm page stays as mocked, and the estimate is about the same.
 
 ## Estimate (days)
 
 | Piece | Days |
 |---|---|
-| Preference and toggle in SES and Mailchimp settings, with the no-recipients line | 0.5 |
-| Email template (#688 A layout, pick plus 2 backups, dates, Why, plain text, dark mode) | 1–1.5 |
+| Preference and toggle in SES and Mailchimp settings, renamed label, no-recipients line | 0.5 |
+| The same toggle in MAP advisor settings | 0.25 |
+| Email template (pick plus 2 backups, dates, Why, plain text, dark mode, view-only variant) | 1.25–1.75 |
 | Send step after the Monday slate (Elastic-else-SES, per recipient, dedupe, log) | 1–1.5 |
-| Signed per-recipient links (7-day expiry, single use, read-only check) | 0.75–1 |
-| Confirm page: approve, swap, skip, unsubscribe; done, already and expired; sign-in and wrong account | 1.5–2 |
-| `slateItems` status writes and the scheduling handoff | 0.5–0.75 |
+| Signed per-recipient links and the can-approve check (owner or admin, otherwise view-only) | 0.75–1.25 |
+| Confirm page: Publish Now, Schedule with the date default, swap, skip this week with undo, unsubscribe; done, already, expired and view-only states; sign-in and wrong account | 2–2.75 |
+| Publish-now and schedule handoff, and `slateItems` writes | 0.75–1 |
+| Compliance-first routing with the requested date | 0.25–0.5 |
 | Unsubscribe per address | 0.25–0.5 |
 | Phone layout and QA (test advisors only) | 0.75–1 |
-| **Total** | **≈6.25–8.75** |
+| **Total** | **≈7.75–11** |
 
-- If the #688 digest and its confirm pages are built first, reuse saves about 1–1.5 days.
+- The earlier version was ≈6.25–8.75. The extra comes from Publish Now and Schedule, compliance routing, view-only, and MAP.
+- If the #688 digest and confirm pages are built first, reuse saves about 1–1.5 days.
 - None of this is in the #599 6–9 day estimate.
 
 ## Open questions
 
-1. **Field name.** The code's label is "Emails to send Email Campaign approvals" (Email Approvals section). "Send approval emails to" isn't a label in the code today. Do we keep the code's wording?
-2. Should the toggle also be in MAP for admins, or only in Settings?
-3. **Who can act.** Recipients like assistant@yourfirm.ca may not have an FC sign-in. #602 requires a signed-in owner or admin. Should non-owners get view-only buttons, as in #688?
-4. Does approving from the email schedule the post through the normal flow straight away, or does it mark it approved for the admin to schedule in MAP (see 599-map-picks)?
-5. Should Skip mean this week, or this month (the review queue says "Skip this month")?
-6. Which sending address and domain should be used for each advisor on the Elastic or SES path?
-7. Should an approved pick go to compliance review first for advisors with compliance on?
+1. **Publish Now:** should it publish only to the website, or also to the social accounts the post would normally go to?
+2. **Schedule:** what time of day on the chosen date? The mock asks for a date only. Proposed: the advisor's usual posting time, or 9:00 AM PT.
+3. If the 1st of next month already has a scheduled pick (for example, from last week's email), do we allow two posts on one day or move to the next free day?
+4. **View-only:** is it decided by "the recipient's email isn't the owner's or an admin's sign-in"? Can an admin's approval from MAP recipients count "on behalf of" the advisor?
+5. When compliance is on, can compliance change the requested date, and who is told when the post clears?
+6. Which sending address and domain should each advisor use on the Elastic or SES path?
