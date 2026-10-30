@@ -12,7 +12,7 @@ For [#700](https://github.com/kartboy16/content-library/issues/700). Mocks: [hub
 
 - **List:** `GET /3.0/reports/{campaign_id}/email-activity` (`mailchimp.reports.getEmailActivityForCampaign`). Use `count=1000`, page with `offset` until `total_items`, and pass `fields=emails.email_address,emails.activity,total_items`. Keep the emails with an `activity[]` item where `action === 'bounce'`. Its `type` is `hard` or `soft`, plus a `timestamp`.
 - **Counts:** these stay as now, from `GET /3.0/reports/{campaign_id}` (`bounces.hard_bounces`, `soft_bounces`, `syntax_errors`).
-- **Reason (caveat):** the Marketing API does **not** return the SMTP bounce reason. Mailchimp shows reasons only in its own UI, one address at a time, kept for 30 days, and they can't be exported. The mock's **Reason** column shows Mailchimp's own meaning of the type: hard is "Permanent: this address can't receive email" and soft is "Temporary: couldn't be delivered this time". See open question 1.
+- **No reason (decided, Alex Oct 30, 12:25 PM PT):** the Marketing API does **not** return the SMTP bounce reason, so there's **no Reason column** and no reason or type-explainer text. Each row shows only the Hard/Soft type and the time. Mailchimp shows reasons only in its own UI, one address at a time, kept for 30 days, and they can't be exported.
 - **New method:** `mailchimp.getCampaignBounces(campaignId, advisorId, passphrase)` with `assertAdvisorOrAdmin`, the same as the other report methods. It returns `[{ email, type, bouncedAt }]`, sorted hard first, then by email. The admin-only `getEmailActivity` stays as it is.
 
 ## A: "Bounced (N)" tab in the report ([a-tab.html](a-tab.html), recommended)
@@ -20,14 +20,14 @@ For [#700](https://github.com/kartboy16/content-library/issues/700). Mocks: [hub
 - The Campaign report dialog gets tabs: **Overview** (today's content, unchanged) and **Bounced (N)**. This mirrors the SES report's **Bounces (n)** tab from #420.
 - On Overview, the Bounced metric gets a small **View list** link that switches to the tab.
 - **Tab content:** "Bounced (15) · 11 hard · 4 soft", then search (email contains), a filter (**All (15) / Hard (11) / Soft (4)**) and **Export CSV**.
-  - Below that is a table with **Email | Type** (Hard/Soft chip) **| Reason | Bounced** (date and time), then "Showing n of N".
+  - Below that is a table with **Email | Type** (Hard/Soft chip) **| Bounced** (date and time), then "Showing n of N".
   - The list loads when the tab is first opened, not with the dialog, so Overview stays as fast as now.
 
 ## B: drawer from the bounce count ([b-drawer.html](b-drawer.html))
 
 - The report dialog is unchanged except that the Bounced metric gets **View list**.
 - **View list** opens a right-side drawer (560 px) over the dialog: "Bounced (15)", "11 hard · 4 soft · {campaign}", ← back and ×.
-  - It has the same search, filter, Export CSV and list. The table drops the Bounced column to fit, and the date is in the CSV.
+  - It has the same search, filter, Export CSV and list. The table has the same three columns: Email, Type, Bounced.
   - Esc or ← closes the drawer and returns to the report.
 - At 390, the drawer is a full-screen sheet over the (already full-screen) dialog.
 
@@ -43,7 +43,7 @@ For [#700](https://github.com/kartboy16/content-library/issues/700). Mocks: [hub
 ## Export CSV
 
 - Exports the **current filtered view**, built client-side from the loaded list (no new endpoint).
-- Columns: `Email, Type, Reason, Bounced at`. The file name is `bounced-{campaign-slug}.csv`. A toast confirms "Exported n addresses".
+- Columns: `Email, Type, Bounced at` (no reason). The file name is `bounced-{campaign-slug}.csv`. A toast confirms "Exported n addresses".
 
 ## In scope
 
@@ -53,7 +53,7 @@ For [#700](https://github.com/kartboy16/content-library/issues/700). Mocks: [hub
 
 ## Out of scope
 
-- Fetching SMTP reasons (not in the API), and changing member status in Mailchimp from FC.
+- Bounce reasons of any kind (not in the API; decided, no Reason column), and changing member status in Mailchimp from FC.
 - The SES Bounces tab (#420, done), bounce alerts, and the password-protected emailed report page (see open question 3).
 - Syntax-error addresses: they're counted in Bounced but not returned as addresses by email-activity (see open question 4).
 
@@ -61,7 +61,7 @@ For [#700](https://github.com/kartboy16/content-library/issues/700). Mocks: [hub
 
 - The dialog is full screen, as now. Search is full width.
 - The filter is a full-width 3-way control with 44 px targets, and Export CSV sits on its own full-width row.
-- The table becomes a list. Each item shows the email (wrapping at `@` or `-` if long), the Hard/Soft chip on the right, the reason, and the date.
+- The table becomes a list. Each item shows the email (wrapping at `@` or `-` if long), the Hard/Soft chip on the right, and the date.
 - In B, the drawer becomes a full-screen sheet with ← back. Nothing depends on hover.
 
 ## Agent-time estimate (per Alex's Oct 30 rule)
@@ -70,10 +70,12 @@ This is how long a Cursor cloud agent takes to build it, plus FC Tester time. Fo
 
 | | A: tab | B: drawer |
 |---|---|---|
-| Cloud agent build: method with paging and test, list component, search, filter, CSV, states, phone | 30–40 min | 35–50 min (adds the drawer or sheet, back and Esc) |
+| Cloud agent build: method with paging and test, list component (Email, Type, Bounced), search, filter, CSV, states, phone | 25–35 min | 30–45 min (adds the drawer or sheet, back and Esc) |
 | FC Tester: desktop and 390, the four states, filter, search, CSV contents | 15–25 min | 20–25 min |
 | Review and fix loops (1–2) | 10–20 min | 15–25 min |
-| **Total** | **≈55–85 min** | **≈70–100 min** |
+| **Total** | **≈50–80 min** | **≈65–95 min** |
+
+Dropping the Reason column (Oct 30, 12:25 PM PT) trims about 5 min of build from each: no reason mapping, a narrower table and a 3-column CSV.
 
 **Dependency (not included):** FC Tester needs a Mailchimp test audience and a sent campaign with at least one hard and one soft bounce. Without one, QA runs against a stubbed response, and the real check waits until a test campaign exists.
 
@@ -85,7 +87,8 @@ This is how long a Cursor cloud agent takes to build it, plus FC Tester time. Fo
 
 ## Open questions
 
-1. **Reason:** the API has no per-address reason. Is the type-based reason (Mailchimp's meaning of hard and soft) OK? Or should we add a "View bounce reasons in Mailchimp" link (they're kept 30 days there), or drop the Reason column?
+**Decided:** no Reason column (Alex, Oct 30, 12:25 PM PT).
+
 2. #420's plain-language rule keeps the phrases "hard bounce" and "soft bounce" out of advisor copy. The mock uses Mailchimp's **Hard** and **Soft** type labels, the same as today's "{n} hard · {n} soft" caption. Is that OK?
 3. Should the **password-protected emailed report** (the "Email report" link) also list the addresses? The default is no, because it's a privacy concern.
 4. **Syntax errors** count toward Bounced but aren't returned as addresses. Should we show "+ n syntax errors (not listed)" under the count when it's above 0?

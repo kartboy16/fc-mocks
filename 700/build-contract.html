@@ -10,7 +10,7 @@
 <ul>
 <li><b>List:</b> <code>GET /3.0/reports/{campaign_id}/email-activity</code> (<code>mailchimp.reports.getEmailActivityForCampaign</code>). Use <code>count=1000</code>, page with <code>offset</code> until <code>total_items</code>, and pass <code>fields=emails.email_address,emails.activity,total_items</code>. Keep the emails with an <code>activity[]</code> item where <code>action === 'bounce'</code>. Its <code>type</code> is <code>hard</code> or <code>soft</code>, plus a <code>timestamp</code>.</li>
 <li><b>Counts:</b> these stay as now, from <code>GET /3.0/reports/{campaign_id}</code> (<code>bounces.hard_bounces</code>, <code>soft_bounces</code>, <code>syntax_errors</code>).</li>
-<li><b>Reason (caveat):</b> the Marketing API does <b>not</b> return the SMTP bounce reason. Mailchimp shows reasons only in its own UI, one address at a time, kept for 30 days, and they can't be exported. The mock's <b>Reason</b> column shows Mailchimp's own meaning of the type: hard is "Permanent: this address can't receive email" and soft is "Temporary: couldn't be delivered this time". See open question 1.</li>
+<li><b>No reason (decided, Alex Oct 30, 12:25 PM PT):</b> the Marketing API does <b>not</b> return the SMTP bounce reason, so there's <b>no Reason column</b> and no reason or type-explainer text. Each row shows only the Hard/Soft type and the time. Mailchimp shows reasons only in its own UI, one address at a time, kept for 30 days, and they can't be exported.</li>
 <li><b>New method:</b> <code>mailchimp.getCampaignBounces(campaignId, advisorId, passphrase)</code> with <code>assertAdvisorOrAdmin</code>, the same as the other report methods. It returns <code>[{ email, type, bouncedAt }]</code>, sorted hard first, then by email. The admin-only <code>getEmailActivity</code> stays as it is.</li>
 </ul>
 <h2>A: "Bounced (N)" tab in the report (<a href="a-tab.html">a-tab.html</a>, recommended)</h2>
@@ -18,14 +18,14 @@
 <li>The Campaign report dialog gets tabs: <b>Overview</b> (today's content, unchanged) and <b>Bounced (N)</b>. This mirrors the SES report's <b>Bounces (n)</b> tab from #420.</li>
 <li>On Overview, the Bounced metric gets a small <b>View list</b> link that switches to the tab.</li>
 <li><b>Tab content:</b> "Bounced (15) · 11 hard · 4 soft", then search (email contains), a filter (<b>All (15) / Hard (11) / Soft (4)</b>) and <b>Export CSV</b>.</li>
-<li style="margin-left:18px">Below that is a table with <b>Email | Type</b> (Hard/Soft chip) <b>| Reason | Bounced</b> (date and time), then "Showing n of N".</li>
+<li style="margin-left:18px">Below that is a table with <b>Email | Type</b> (Hard/Soft chip) <b>| Bounced</b> (date and time), then "Showing n of N".</li>
 <li style="margin-left:18px">The list loads when the tab is first opened, not with the dialog, so Overview stays as fast as now.</li>
 </ul>
 <h2>B: drawer from the bounce count (<a href="b-drawer.html">b-drawer.html</a>)</h2>
 <ul>
 <li>The report dialog is unchanged except that the Bounced metric gets <b>View list</b>.</li>
 <li><b>View list</b> opens a right-side drawer (560 px) over the dialog: "Bounced (15)", "11 hard · 4 soft · {campaign}", ← back and ×.</li>
-<li style="margin-left:18px">It has the same search, filter, Export CSV and list. The table drops the Bounced column to fit, and the date is in the CSV.</li>
+<li style="margin-left:18px">It has the same search, filter, Export CSV and list. The table has the same three columns: Email, Type, Bounced.</li>
 <li style="margin-left:18px">Esc or ← closes the drawer and returns to the report.</li>
 <li>At 390, the drawer is a full-screen sheet over the (already full-screen) dialog.</li>
 </ul>
@@ -40,7 +40,7 @@
 <h2>Export CSV</h2>
 <ul>
 <li>Exports the <b>current filtered view</b>, built client-side from the loaded list (no new endpoint).</li>
-<li>Columns: <code>Email, Type, Reason, Bounced at</code>. The file name is <code>bounced-{campaign-slug}.csv</code>. A toast confirms "Exported n addresses".</li>
+<li>Columns: <code>Email, Type, Bounced at</code> (no reason). The file name is <code>bounced-{campaign-slug}.csv</code>. A toast confirms "Exported n addresses".</li>
 </ul>
 <h2>In scope</h2>
 <ul>
@@ -50,7 +50,7 @@
 </ul>
 <h2>Out of scope</h2>
 <ul>
-<li>Fetching SMTP reasons (not in the API), and changing member status in Mailchimp from FC.</li>
+<li>Bounce reasons of any kind (not in the API; decided, no Reason column), and changing member status in Mailchimp from FC.</li>
 <li>The SES Bounces tab (#420, done), bounce alerts, and the password-protected emailed report page (see open question 3).</li>
 <li>Syntax-error addresses: they're counted in Bounced but not returned as addresses by email-activity (see open question 4).</li>
 </ul>
@@ -58,18 +58,19 @@
 <ul>
 <li>The dialog is full screen, as now. Search is full width.</li>
 <li>The filter is a full-width 3-way control with 44 px targets, and Export CSV sits on its own full-width row.</li>
-<li>The table becomes a list. Each item shows the email (wrapping at <code>@</code> or <code>-</code> if long), the Hard/Soft chip on the right, the reason, and the date.</li>
+<li>The table becomes a list. Each item shows the email (wrapping at <code>@</code> or <code>-</code> if long), the Hard/Soft chip on the right, and the date.</li>
 <li>In B, the drawer becomes a full-screen sheet with ← back. Nothing depends on hover.</li>
 </ul>
 <h2>Agent-time estimate (per Alex's Oct 30 rule)</h2>
 <p>This is how long a Cursor cloud agent takes to build it, plus FC Tester time. For calibration, #699 took about 30 min from handoff to tested. Each direction is one agent run: one new server method and one or two UI files.</p>
 <table>
 <tr><th></th><th>A: tab</th><th>B: drawer</th></tr>
-<tr><td>Cloud agent build: method with paging and test, list component, search, filter, CSV, states, phone</td><td>30–40 min</td><td>35–50 min (adds the drawer or sheet, back and Esc)</td></tr>
+<tr><td>Cloud agent build: method with paging and test, list component (Email, Type, Bounced), search, filter, CSV, states, phone</td><td>25–35 min</td><td>30–45 min (adds the drawer or sheet, back and Esc)</td></tr>
 <tr><td>FC Tester: desktop and 390, the four states, filter, search, CSV contents</td><td>15–25 min</td><td>20–25 min</td></tr>
 <tr><td>Review and fix loops (1–2)</td><td>10–20 min</td><td>15–25 min</td></tr>
-<tr><td><b>Total</b></td><td><b>≈55–85 min</b></td><td><b>≈70–100 min</b></td></tr>
+<tr><td><b>Total</b></td><td><b>≈50–80 min</b></td><td><b>≈65–95 min</b></td></tr>
 </table>
+<p>Dropping the Reason column (Oct 30, 12:25 PM PT) trims about 5 min of build from each: no reason mapping, a narrower table and a 3-column CSV.</p>
 <p><b>Dependency (not included):</b> FC Tester needs a Mailchimp test audience and a sent campaign with at least one hard and one soft bounce. Without one, QA runs against a stubbed response, and the real check waits until a test campaign exists.</p>
 <h2>Pick: A</h2>
 <ul>
@@ -78,7 +79,7 @@
 <li>It's about 15 min less agent time.</li>
 </ul>
 <h2>Open questions</h2>
-<p style="margin:4px 0">1. <b>Reason:</b> the API has no per-address reason. Is the type-based reason (Mailchimp's meaning of hard and soft) OK? Or should we add a "View bounce reasons in Mailchimp" link (they're kept 30 days there), or drop the Reason column?</p>
+<p><b>Decided:</b> no Reason column (Alex, Oct 30, 12:25 PM PT).</p>
 <p style="margin:4px 0">2. #420's plain-language rule keeps the phrases "hard bounce" and "soft bounce" out of advisor copy. The mock uses Mailchimp's <b>Hard</b> and <b>Soft</b> type labels, the same as today's "{n} hard · {n} soft" caption. Is that OK?</p>
 <p style="margin:4px 0">3. Should the <b>password-protected emailed report</b> (the "Email report" link) also list the addresses? The default is no, because it's a privacy concern.</p>
 <p style="margin:4px 0">4. <b>Syntax errors</b> count toward Bounced but aren't returned as addresses. Should we show "+ n syntax errors (not listed)" under the count when it's above 0?</p>

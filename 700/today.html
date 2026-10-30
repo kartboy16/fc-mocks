@@ -3,5 +3,5 @@
 <li><b>Mailchimp report</b> (Email Campaigns › Reports › View): a "Campaign report" dialog (<code>MailchimpReportDetail.jsx</code>). <b>Bounced</b> shows only a count and "{n} hard · {n} soft". There's no list of addresses.</li>
 <li><b>Server:</b> <code>server/mailchimp/reports-methods.js</code> fetches the campaign report, open details and click details. <code>mailchimp.getEmailActivity</code> exists but is <b>admin-only</b> and capped at 100 rows.</li>
 <li><b>SES reports (#420):</b> already have a <b>Bounces (n)</b> tab with plain-language guidance (<code>SESReports.jsx</code>, <code>CampaignBounceGuidance.jsx</code>).</li>
-<li><b>Mailchimp API:</b> <code>reports/{campaign_id}/email-activity</code> lists each address's activity, including <code>bounce</code> with <code>type</code> hard or soft and a timestamp. <b>There's no reason text.</b> Mailchimp shows SMTP reasons only in its own UI, kept 30 days, not exportable.</li>
+<li><b>Mailchimp API:</b> <code>reports/{campaign_id}/email-activity</code> lists each address's activity, including <code>bounce</code> with <code>type</code> hard or soft and a timestamp. There's no reason text, so the mock has <b>no Reason column</b> (decided by Alex, Oct 30).</li>
 </ul></body></html>
