@@ -96,6 +96,6 @@ function refresh(){if(S.st==='auto'){toast('Already up to date with example-firm
 function resetOne(){set('st','auto');toast('Accent colour reset to example-firm.ca')}
 function resetAll(){set('st','auto');toast('All fields reset to example-firm.ca')}
 function dis(){set('bn','off')}
-window.onApply=function(){var em=S.why==='free'?'jane.advisor@gmail.com':S.why==='dealer'?'jane.advisor@dealer.example':'jane@example-firm.ca';qs('.em').forEach(function(e){e.value=S.st==='fallback'?em:'jane@example-firm.ca'});qs('.ws').forEach(function(e){e.value=(S.st==='fallback'&&S.why!=='timeout')?'':'https://example-firm.ca'})};
+window.onApply=function(){qs('.side div').forEach(function(d){d.classList.toggle('on',d.textContent===(S.v==='landing'?'Content':'Settings'))});var em=S.why==='free'?'jane.advisor@gmail.com':S.why==='dealer'?'jane.advisor@dealer.example':'jane@example-firm.ca';qs('.em').forEach(function(e){e.value=S.st==='fallback'?em:'jane@example-firm.ca'});qs('.ws').forEach(function(e){e.value=(S.st==='fallback'&&S.why!=='timeout')?'':'https://example-firm.ca'})};
 
 initBase();</script></body></html>
