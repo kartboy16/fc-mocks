@@ -1,0 +1,50 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>#722 build contract</title><style>body{font-family:Inter,system-ui,sans-serif;max-width:880px;margin:24px auto;padding:0 16px;line-height:1.55;color:#2C3E50}a{color:#1976D2}h1{color:#1976d2;font-size:24px}h2{font-size:18px;margin-top:22px}table{border-collapse:collapse;width:100%;font-size:14px}td,th{border:1px solid #dde3ea;padding:6px 8px;text-align:left;overflow-wrap:anywhere}code{background:#f1f3f5;padding:0 4px;border-radius:3px;overflow-wrap:anywhere}</style></head><body><p><a href="../">All mocks</a> · <a href="index.html">Mock</a> · <a href="https://github.com/kartboy16/content-library/issues/722">#722</a></p><h1>#722 Instagram icon in Website › Schedule: build contract</h1>
+<p>For <a href="https://github.com/kartboy16/content-library/issues/722">#722</a>. Mock: <a href="index.html">index.html</a> (<code>?m=before|after</code>, <code>&amp;w=1280|390</code>). <b>Not agent-ready. Soft Dev hold until Alex picks.</b></p>
+<h2>Cause (found in code, read-only)</h2>
+<ul>
+<li><b>File:</b> <code>imports/ui/WebsiteHub.jsx</code>, Schedule tab, the upcoming-items list (<code>scheduledPosts.map</code>). That's main <code>14c9cce</code>, about lines 765–823, and staging <code>6359d29</code>, about line 736.</li>
+<li>Each social item's <code>platforms</code> is mapped with an inline ternary: <code>'linkedin'</code> draws a 16×16 <code>#0077B5</code> square with white "in", and <code>'facebook'</code> draws a <code>#1877F2</code> square with white "f". <b>Every other key falls through to a grey <code>#666</code> square with "?"</b>.</li>
+<li>There's no <code>'instagram'</code> branch, so Instagram items always get the "?" box. It isn't a missing asset, a wrong path or a font glyph. The key is the same <code>'instagram'</code> used everywhere else (<code>CreatePostFlow</code>, <code>SocialPostHistory</code>, <code>ConfirmWhereBlock</code>), so no key mapping is needed.</li>
+</ul>
+<h2>Fix</h2>
+<ul>
+<li>In <code>WebsiteHub.jsx</code>, add an <code>instagram</code> case to the same badge: a 16×16 square, radius 2px, background <b><code>#E4405F</code></b> (the Instagram colour already used in <code>SocialPostHistory</code>, <code>ConfirmWhereBlock</code>, <code>PostHistoryAnalytics</code>, <code>ScheduledPostEditDialog</code> and <code>SocialSettings</code>), with the MUI <code>InstagramIcon</code> in white at <code>fontSize: 12</code>. It's centred like "in" and "f", with the same <code>gap: 0.5</code> before the label.</li>
+<li>Better (same effort): replace the ternary with a small map, <code>{ linkedin, facebook, instagram }</code>, giving the colour and the glyph or icon. Keep the grey "?" only for truly unknown keys.</li>
+<li>The label stays as today: <code>{platform}</code> with <code>textTransform: capitalize</code>, so it reads "Instagram".</li>
+<li>No data, server or schema change.</li>
+</ul>
+<h2>States (mock)</h2>
+<table>
+<tr><th>State</th><th>Shows</th></tr>
+<tr><td><code>m=before</code></td><td>Today: LinkedIn and Facebook squares are fine, and Instagram is a grey "?" box.</td></tr>
+<tr><td><code>m=after</code></td><td>Instagram is a pink <code>#E4405F</code> square with a white Instagram glyph, the same size, radius, spacing and baseline as "in" and "f".</td></tr>
+<tr><td>Rows</td><td>LinkedIn + Facebook + Instagram; Instagram only; Facebook + Instagram waiting for approval (with Review); a Website post (🌐, unchanged).</td></tr>
+<tr><td><code>w=390</code></td><td>The networks wrap onto a second line when needed, and the date follows. Edit and Delete are 44px tap targets in the mock.</td></tr>
+</table>
+<h2>Other places that use the Instagram icon (consistency check)</h2>
+<table>
+<tr><th>Where</th><th>Today</th><th>Action</th></tr>
+<tr><td>Social Media › Your Posts (<code>SocialPostHistory.jsx</code>)</td><td><code>InstagramIcon</code>, <code>#E4405F</code>, 18px</td><td>OK. It matches the fix colour.</td></tr>
+<tr><td>Post confirm "where" block (<code>ConfirmWhereBlock.jsx</code>), post analytics, scheduled-post edit dialog, Social settings</td><td><code>InstagramIcon</code>, <code>#E4405F</code></td><td>OK</td></tr>
+<tr><td>Admin user list (<code>AdminUserList.jsx</code>)</td><td><code>InstagramIcon</code>, <b><code>#c13584</code></b></td><td>Slightly different pink. Leave it (admin-only), or align to <code>#E4405F</code> as a one-line follow-up.</td></tr>
+<tr><td>Calendar (<code>Calendar.jsx</code>, social item icon)</td><td>Handles LinkedIn and Facebook only. An Instagram-only item falls back to the generic Share icon (not a "?")</td><td>Out of scope here. It's an optional +10 min add-on to show <code>InstagramIcon</code> too.</td></tr>
+</table>
+<h2>Out of scope</h2>
+<ul>
+<li>Calendar's Instagram icon (see above, optional add-on), and the admin list's pink shade.</li>
+<li>"Linkedin" capitalisation from <code>textTransform: capitalize</code> (today it reads "Linkedin"). Not changed, so the fix stays minimal.</li>
+<li>Any change to the Schedule layout, the Trigger button, the dates or the actions.</li>
+</ul>
+<h2>Estimate (agent time, per Alex's Oct 30 rule)</h2>
+<p>This is the Cursor cloud agent build plus FC Tester time, plus a fix loop. For calibration, #699 took about 30 min from handoff to tested.</p>
+<table>
+<tr><th>Piece</th><th>Time</th></tr>
+<tr><td>Cloud agent build (one file: Instagram badge, or the small map, plus a render test that each known key shows no "?")</td><td>10–15 min</td></tr>
+<tr><td>FC Tester on staging: Website › Schedule with an Instagram item at desktop and 390, and Social Media › Your Posts unchanged</td><td>10 min</td></tr>
+<tr><td>Fix loop (0–1)</td><td>0–10 min</td></tr>
+<tr><td><b>Total</b></td><td><b>≈20–35 min</b></td></tr>
+<tr><td>Optional: Calendar Instagram icon</td><td>+10 min</td></tr>
+</table>
+<h2>Open questions</h2>
+<p style="margin:4px 0">1. Keep the flat square style (as mocked, matching "in" and "f"), or use the Instagram gradient? The flat <code>#E4405F</code> matches the rest of the app.</p>
+<p style="margin:4px 0">2. Add the Calendar Instagram icon in the same run (+10 min)?</p></body></html>
