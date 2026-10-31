@@ -1,0 +1,179 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>#726 build contract</title><style>body{font-family:Inter,system-ui,sans-serif;max-width:880px;margin:24px auto;padding:0 16px;line-height:1.55;color:#2C3E50}a{color:#1976D2}h1{color:#1976d2;font-size:24px}h2{font-size:18px;margin-top:22px}table{border-collapse:collapse;width:100%;font-size:14px}td,th{border:1px solid #dde3ea;padding:6px 8px;text-align:left;overflow-wrap:anywhere}code{background:#f1f3f5;padding:0 4px;border-radius:3px;overflow-wrap:anywhere}li{margin:3px 0}</style></head><body><p><a href="../">All mocks</a> · <a href="index.html">Hub</a> · <a href="https://github.com/kartboy16/content-library/issues/726">#726</a></p><h1>#726 Email list import and sending setup (onboarding step 3 of 5): build contract</h1>
+<p>For <a href="https://github.com/kartboy16/content-library/issues/726">#726</a>. Mocks: <a href="index.html">hub</a>, <a href="a-steps.html">A</a>, <a href="b-one-page.html">B</a>, <a href="c-fix-later.html">C</a>, <a href="extra.html">emails and pages</a>, <a href="today.html">today</a>. <strong>Recommend A.</strong> <strong>Not agent-ready. Soft Dev hold until a direction is picked.</strong></p>
+<h2>Where this lives today (read-only, staging <code>9a5a9bb</code>)</h2>
+<ul>
+<li><strong>No onboarding flow exists in the app yet.</strong> Step 3 is new. Steps 1 and 2 are #724 and #727, so the step header (5 bars, "Step 3 of 5") must match theirs.</li>
+<li><strong>CSV import:</strong> <code>SESContacts.jsx</code> / <code>CSVImportModal.jsx</code> with <code>ContactCsvColumnMapping.jsx</code> and <code>utils/contactCsvImport.js</code>. Mapping is alias-based (Email, First name, Last name, Tags) with presets for Mailchimp, Outlook and Google Contacts <strong>CSV exports</strong>. There's no XLSX or vCard parsing.</li>
+<li><strong>Mailchimp import:</strong> <code>MailchimpImportModal.jsx</code> + <code>api/helpers/mailchimp_import_helpers.js</code> (API key → audience → import with progress).</li>
+<li><strong>Unsubscribed guard (#388):</strong> <code>api/helpers/ses_unsubscribe_guard.js</code> already skips unsubscribed contacts on import (<code>UNSUBSCRIBED_IMPORT_SKIP_REASON</code>). Reuse it.</li>
+<li><strong>Contacts:</strong> <code>collections/ses_contacts.js</code> (<code>advisorId, email, firstName, lastName, lists, tags, status, unsubscribeToken…</code>). There are <strong>no consent fields</strong>.</li>
+<li><strong>Sender:</strong> <code>utils/sesFromEmail.js</code>. <code>pickSubscriberSendFromEmail</code> already falls back to the platform default domain when the custom domain isn't verified. Reply-To is currently the From address.</li>
+<li><strong>Own domain:</strong> <code>SESSettings.jsx</code> has a manual 4-step wizard (enter domain → add DNS records (TXT, 3 DKIM CNAMEs, SPF) → check → set sender). Methods: <code>ses.verifyDomain</code>, <code>ses.checkDomainVerification</code>. No Domain Connect.</li>
+<li><strong>Compliance email:</strong> <code>complianceEmail</code> / <code>complianceOfficerName</code> / <code>complianceMode</code> (<code>email</code> / <code>external</code> / <code>off</code>) in advisor preferences, set in SESSettings.</li>
+<li><strong>SES region:</strong> settings default <code>ca-central-1</code>.</li>
+</ul>
+<h2>Directions</h2>
+<h3>A. Step by step (<a href="a-steps.html">a-steps.html</a>, recommended)</h3>
+<p>One job per screen: <strong>Add</strong> → <strong>Check your list</strong> → <strong>One question</strong> → <strong>Your clients are in</strong>. At the first <strong>Create campaign</strong>, a single "Before your first campaign" dialog asks for (1) the compliance email and (2) sending-domain setup. <strong>Later</strong> and <strong>Continue to campaign</strong> both go straight to the campaign, so nothing is blocked.</p>
+<h3>B. One page (<a href="b-one-page.html">b-one-page.html</a>)</h3>
+<p>Add, review and the consent question are stacked on one page. <strong>Import</strong> stays disabled until the question is answered. The first campaign gets a <strong>Ready to send</strong> checklist card above the editor (Compliance email · Your own sending address) instead of a dialog. Domain setup opens in a side panel.</p>
+<h3>C. Import now, fix later (<a href="c-fix-later.html">c-fix-later.html</a>)</h3>
+<p>After the drop, one short summary plus the consent question, then import. Contacts that need a fix and unsubscribed contacts are <strong>held back</strong> (not on any list) and wait in <strong>Email › Lists › Needs a look</strong>. The first campaign uses the same dialog as A.</p>
+<h3>All directions share</h3>
+<ul>
+<li>Step 3 screen: drop zone (CSV, XLSX, vCard) + <strong>Connect</strong> for Mailchimp, Outlook and Google Contacts, <strong>Skip for now</strong> and <strong>Back</strong>. Connectors that aren't built yet show <strong>Coming soon</strong> (state "Connectors phased").</li>
+<li><a href="extra.html">Emails and pages</a>: the web-person email and steps page, and the reconfirm email and page.</li>
+</ul>
+<h2>Screens and states</h2>
+<table>
+<thead>
+<tr>
+<th>Screen</th>
+<th>States in the mock</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Step 3 add</td>
+<td>default, connectors phased, Mailchimp connect dialog, loading (reading/matching), error (can't read file), empty (no email column → "Pick the email column myself")</td>
+</tr>
+<tr>
+<td>Check list (A/B), summary (C)</td>
+<td>counts tiles, column map with AI chips + dropdown override, fix list (typo suggestion, edit, remove, keep shared inbox), duplicates, unsubscribed</td>
+</tr>
+<tr>
+<td>Consent question</td>
+<td>Current clients / People who asked to hear from me / A mix, or I'm not sure; note about contacts with no last business date</td>
+</tr>
+<tr>
+<td>Import</td>
+<td>progress, done (count, list name, reconfirm count, sender preview)</td>
+</tr>
+<tr>
+<td>First campaign</td>
+<td>prompt, no one-click provider, GoDaddy waiting, verified, GoDaddy error, steps sent, campaign editor with From</td>
+</tr>
+<tr>
+<td>Web-person email/page</td>
+<td>email, steps page, checking, not yet, done, expired link</td>
+</tr>
+<tr>
+<td>Reconfirm email/page</td>
+<td>email, page, yes, no thanks → unsubscribe, unsubscribed, already answered, expired</td>
+</tr>
+<tr>
+<td>C only</td>
+<td>Needs a look (8), nothing to fix</td>
+</tr>
+</tbody>
+</table>
+<h2>Data</h2>
+<ul>
+<li><strong>Per contact (new fields on <code>sesContacts</code>):</strong> <code>consentType</code> (<code>implied-client</code> | <code>express</code> | <code>unclear</code>), <code>consentDate</code>, <code>lastBusinessDate</code> (nullable), <code>consentExpiresAt</code> (implied: <code>lastBusinessDate</code> + 2 years), <code>consentSource</code> (<code>import:&lt;importId&gt;</code> / <code>reconfirm</code> / <code>public-subscribe-form</code>), <code>reconfirmStatus</code> (<code>none</code> | <code>sent</code> | <code>confirmed</code> | <code>declined</code> | <code>expired</code>), <code>reconfirmSentAt</code>.</li>
+<li><strong>Per import (new <code>contactImports</code> doc):</strong> <code>advisorId</code>, source (file type / connector), file name, row count, mapping used, counts (ready, duplicates, fixed, removed, unsubscribed skipped, held), consent answer, <code>createdAt</code>, <code>createdBy</code>. Keep this as the consent audit trail. Store <strong>no raw file</strong> after import.</li>
+<li><strong>Sendable rule:</strong> <code>status=subscribed</code> AND (<code>express</code> OR (<code>implied-client</code> AND <code>consentExpiresAt &gt; now</code>) OR <code>reconfirmStatus=confirmed</code>). Expired or unclear contacts are excluded from campaign audiences, and the campaign recipient count says so ("12 not included: consent expired or unconfirmed").</li>
+<li><strong>Consent answer mapping:</strong> Current clients → <code>implied-client</code> for rows with a last business date and <code>unclear</code> for rows without one. Asked to hear from me → <code>express</code>, <code>consentDate</code> = import date (or a mapped date column). A mix / not sure → <code>unclear</code> for everyone.</li>
+<li><strong>Nightly job:</strong> flips <code>implied-client</code> past <code>consentExpiresAt</code> to excluded. Open question: do we send a reconfirm email before expiry?</li>
+</ul>
+<h2>Mapping and dedupe rules</h2>
+<ul>
+<li><strong>Parsing:</strong> CSV (existing), XLSX (first sheet, or ask if there are several), vCard 3/4 (multiple EMAIL → first is primary).</li>
+<li><strong>Mapping:</strong> existing aliases first. Then the AI suggests a field for unmatched columns from the header + 5 sample rows, sent without other rows. Fields: Email (required), First name, Last name, Last business date, Tag(s), Don't import. Every AI pick shows an <strong>AI</strong> chip and a dropdown to override.</li>
+<li><strong>Dedupe:</strong> key = trimmed, lowercased email. Within the file, keep the row with the most non-empty fields and fill blanks from the others. Against existing contacts, update the empty fields only; never overwrite an advisor's edits.</li>
+<li><strong>Bad addresses:</strong> syntax invalid → must fix or remove. Common domain typo (gmial.com etc.) → one-click suggestion. Missing TLD → inline edit. Known bounced or no MX → remove (reuse #700/#420 bounce data). Role or shared inbox (info@, office@) → flag, default keep.</li>
+<li><strong>Unsubscribed (#388):</strong> never re-added; shown in a collapsed list with the existing message.</li>
+</ul>
+<h2>Sending</h2>
+<ul>
+<li><strong>Until the own domain is verified:</strong> From name <strong>"{Advisor name} via FinancialContent"</strong>, From address on FC's own domain, <strong>Reply-To = advisor's email</strong>. The UI shows the name and "Replies go to …" only, never the FC address. <code>pickSubscriberSendFromEmail</code> already handles the fallback. Add Reply-To.</li>
+<li><strong>After verification:</strong> From = advisor's own address and name, unchanged from today.</li>
+</ul>
+<h2>Domain-auth flow</h2>
+<ol>
+<li>At the first <strong>Create campaign</strong> (A/C dialog, B checklist), detect the DNS provider from the advisor's domain NS records.</li>
+<li><strong>One-click (Domain Connect, e.g. GoDaddy):</strong> <strong>Set up with GoDaddy</strong> opens the provider's consent page in a new tab with our template (TXT verify, 3 DKIM CNAMEs, SPF). The app polls <code>ses.checkDomainVerification</code> and shows waiting → verified, or an error with <strong>Try again</strong> plus the email fallback.</li>
+<li><strong>Otherwise:</strong> <strong>Email the steps to your web person</strong> (email field, <strong>Send steps</strong> button). The email comes from the interim sender with Reply-To the advisor and contains <strong>one link that only opens the steps page</strong>. The page lists the 5 records with Copy buttons and a <strong>Check my records</strong> button (POST). Results: not yet / done (the advisor is emailed). The link is a signed token that expires after 14 days.</li>
+<li>Campaigns never wait on DNS; they send with the interim sender until verified.</li>
+<li><strong>Reconfirm email:</strong> "Keep hearing from {Advisor}?" The email links only open a page. <strong>Yes, keep sending me updates</strong> and <strong>Unsubscribe</strong> are POST buttons (#657 scanner-safe). Already-answered and expired states are included.</li>
+</ol>
+<h2>Security and residency</h2>
+<p>Contacts stay in the existing Mongo collection, encrypted at rest and scoped to <code>advisorId</code> (firm admins via the existing role checks). The uploaded file is parsed in memory and not kept. Only the header + 5 sample rows go to the AI for mapping. Software developer to document the Mongo/S3/SES regions (SES default is <code>ca-central-1</code>) on the issue before building.</p>
+<h2>Out of scope</h2>
+<p>Two-way sync with Mailchimp/Outlook/Google (this is a one-time import); editing CASL copy in the app; Domain Connect providers beyond the first one; changing existing Email Lists / Campaigns / unsubscribe / approval flows (no regression); CRM sync (#130).</p>
+<h2>Mobile (390)</h2>
+<p>Single column. The 5 count tiles wrap 2 per row. In the column map the Example column hides. Fix rows put the address on its own line with buttons below. Dialogs go full-screen with stacked full-width buttons. B's side panel goes full-width. All targets are ≥44 px.</p>
+<h2>Estimate (agent time: cloud agent runs + FC Tester + fix loops)</h2>
+<p>Scale: #699 took about 30 min from handoff to tested.</p>
+<table>
+<thead>
+<tr>
+<th>Run</th>
+<th>A</th>
+<th>B</th>
+<th>C</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1. Consent fields, import record, XLSX/vCard parse, AI mapping, dedupe, address checks, unsub guard</td>
+<td>1.5–2.5 h</td>
+<td>1.5–2.5 h</td>
+<td>1.5–2.5 h</td>
+</tr>
+<tr>
+<td>2. Onboarding step 3 screens + states (reuse Mailchimp import)</td>
+<td>1.25–2 h</td>
+<td>1–1.75 h</td>
+<td>1.25–2 h</td>
+</tr>
+<tr>
+<td>3. Sendable rule, expiry job, reconfirm email + POST page</td>
+<td>1–1.5 h</td>
+<td>1–1.5 h</td>
+<td>1–1.5 h</td>
+</tr>
+<tr>
+<td>4. Interim sender + Reply-To, first-campaign prompt, web-person email + steps page</td>
+<td>1–1.5 h</td>
+<td>1–1.75 h</td>
+<td>1–1.5 h</td>
+</tr>
+<tr>
+<td>5. Domain Connect one-click (first provider)</td>
+<td>1–1.75 h</td>
+<td>1–1.75 h</td>
+<td>1–1.75 h</td>
+</tr>
+<tr>
+<td>C only: held contacts + Needs a look in Lists</td>
+<td></td>
+<td></td>
+<td>0.5–1 h</td>
+</tr>
+<tr>
+<td><strong>Total</strong></td>
+<td><strong>≈5.75–9.25 h</strong></td>
+<td><strong>≈5.5–9.25 h</strong></td>
+<td><strong>≈6.25–10.25 h</strong></td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>Outlook + Google Contacts connectors (OAuth, read contacts) add about 1.5–2.5 h in any direction. The mock shows them as <strong>Coming soon</strong> if they're phased.</li>
+<li>Wall-clock is about 5–8 h. Runs 3–5 can follow run 1 in parallel.</li>
+<li><strong>Not agent time:</strong> registering as a Domain Connect service provider with GoDaddy and Google/Microsoft app verification are outside approvals that can take days. Until then, the one-click button stays hidden and the email path is used.</li>
+</ul>
+<h2>Recommendation</h2>
+<p><strong>A.</strong> It has one decision per screen, which suits "drop the list, answer one question". It's the clearest at 390. The first-campaign dialog is one short, skippable interruption. B gets long once the fix list is open. C is fast but leaves cleanup that advisors tend to forget.</p>
+<h2>Open questions</h2>
+<ol>
+<li><strong>CASL copy:</strong> every <strong>PLACEHOLDER</strong> chip (option descriptions, "I don't need compliance review", reconfirm email body and footer) needs compliance-approved wording. Who supplies it?</li>
+<li><strong>Current clients with no last business date:</strong> treat them as unclear and send the reconfirm email (as mocked), or use the import date?</li>
+<li><strong>"A mix / not sure":</strong> should everyone get the reconfirm email (as mocked), or should the advisor be able to tag who's who?</li>
+<li><strong>Reconfirm:</strong> how many reminders if there's no answer, and when do we stop (for example one reminder after 7 days, then expired)? Should we also reconfirm before implied consent expires?</li>
+<li><strong>Connectors:</strong> ship CSV/XLSX/vCard + Mailchimp first and show Outlook and Google Contacts as <strong>Coming soon</strong>?</li>
+<li><strong>Shared inboxes</strong> (info@): keep by default (as mocked) or remove?</li>
+<li><strong>Default list name</strong> for imported contacts ("My clients")?</li>
+<li><strong>One-click providers:</strong> GoDaddy only at first, or Cloudflare/others too?</li>
+<li><strong>Compliance email:</strong> if the advisor already has <code>complianceMode</code> set (email/external), skip step 1 of the prompt?</li>
+</ol></body></html>

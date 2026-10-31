@@ -1,0 +1,10 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>#726 today</title><style>body{font-family:Inter,system-ui,sans-serif;max-width:880px;margin:24px auto;padding:0 16px;line-height:1.55;color:#2C3E50}a{color:#1976D2}h1{color:#1976d2;font-size:24px}h2{font-size:18px;margin-top:22px}table{border-collapse:collapse;width:100%;font-size:14px}td,th{border:1px solid #dde3ea;padding:6px 8px;text-align:left;overflow-wrap:anywhere}code{background:#f1f3f5;padding:0 4px;border-radius:3px;overflow-wrap:anywhere}li{margin:3px 0}</style></head><body><p><a href="../">All mocks</a> · <a href="index.html">Hub</a> · <a href="https://github.com/kartboy16/content-library/issues/726">#726</a></p><h1>#726 Today</h1>
+<ul>
+<li><b>No onboarding flow yet.</b> Contacts are added from Email › Lists.</li>
+<li><b>CSV import</b> (<code>CSVImportModal.jsx</code>, <code>ContactCsvColumnMapping.jsx</code>, <code>utils/contactCsvImport.js</code>): maps Email, First name, Last name and Tags by header aliases, with presets for Mailchimp, Outlook and Google Contacts CSV exports. No XLSX or vCard.</li>
+<li><b>Mailchimp import</b> (<code>MailchimpImportModal.jsx</code>): paste an API key, pick an audience, import with progress.</li>
+<li><b>Unsubscribed contacts</b> are already skipped on import (<code>ses_unsubscribe_guard.js</code>, #388).</li>
+<li><b>No consent fields</b> on contacts (<code>ses_contacts.js</code>).</li>
+<li><b>Own sending domain</b> (Email › Settings, <code>SESSettings.jsx</code>): a manual 4-step wizard. Enter the domain, copy TXT + 3 DKIM CNAMEs + SPF into DNS, check, set the sender. Unverified domains fall back to the platform default (<code>utils/sesFromEmail.js</code>). Reply-To is the From address.</li>
+<li><b>Compliance email</b> is set separately in Email › Settings (compliance mode, officer name, email).</li>
+</ul></body></html>
