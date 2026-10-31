@@ -1,0 +1,258 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>#724 No-click branding: build contract</title><style>body{font-family:Inter,system-ui,sans-serif;max-width:960px;margin:24px auto;padding:0 16px;line-height:1.55;color:#2C3E50}a{color:#1976D2}table{border-collapse:collapse;width:100%;margin:8px 0;font-size:14px}td,th{border:1px solid #e0e5eb;padding:6px 8px;text-align:left;vertical-align:top}th{background:#f3f6f9}blockquote{background:#e8f5e9;border:2px solid #2e7d32;border-radius:10px;margin:10px 0;padding:4px 14px}code{background:#f3f6f9;padding:1px 4px;border-radius:4px}@media(max-width:600px){table{display:block;overflow-x:auto}}code{overflow-wrap:anywhere}td{overflow-wrap:anywhere}</style></head><body><p><a href="../">All mocks</a> · <a href="index.html">Hub</a> · <a href="build-contract.md">Markdown</a></p><h1>#724 No-click branding at signup (onboarding step 1 of 5): build contract</h1>
+<p>For <a href="https://github.com/kartboy16/content-library/issues/724">#724</a>. Mocks: <a href="index.html">hub</a>, <a href="today.html">today</a>, <a href="a-inline.html">A</a>, <a href="b-preview.html">B</a>. <strong>Not agent-ready. Soft Dev hold until a direction is picked.</strong></p>
+<h2>Today (read-only, main <code>14c9cce</code>)</h2>
+<ul>
+<li><strong>Screen:</strong> Settings › <strong>Branding &amp; contact</strong> (<code>AccountSettingsHub.jsx</code>, which renders <code>AdvisorConfigManager</code> with <code>brandingHubOnly</code>). It has Profile &amp; Contact (name, email, phone, website, office, CTA, social links) and Company Branding: logo upload (<code>companyLogoUpload</code>), Company Name, Tagline and Disclaimer.</li>
+<li><strong>Brand colours card</strong> (<code>components/BrandColoursCard.jsx</code>, #689): "Use my brand colours on calculators" (<code>calculatorColoursEnabled</code>), <strong>Main colour</strong> (<code>primaryColour</code>), an optional accent (<code>accentColour</code>), a mini calculator preview, and an audit line from <code>brandColoursUpdatedAt/By/Via</code> (<code>via</code> is <code>company-branding | admin | migration</code>).</li>
+<li><code>utils/brandColours.js</code> already has <code>darkenToContrast</code> (4.5:1 for white text on the main colour, 3:1 for the accent) and the standard colours <code>STANDARD_MAIN #1f4e5f</code> and <code>STANDARD_ACCENT #4a90a4</code>. <code>server/api/advisor-brand-lookup.js</code> serves calculator branding, with a cache.</li>
+<li><strong>Signup:</strong> <code>advisor_configs</code> is created on first login (<code>LoginPage.ensureAdvisorConfig</code>, <code>server/oauth-config.js</code> <code>onCreateUser</code>). There's no brand lookup, no heading, text or background colour, and no fonts.</li>
+<li>"Changes save automatically" (no Save button).</li>
+</ul>
+<h2>Directions</h2>
+<ul>
+<li><strong>A. Slim banner + inline source badges (<a href="a-inline.html">a-inline.html</a>, recommended):</strong> the banner shows on first landing. Branding &amp; contact gets a <strong>Brand source</strong> line (source, version, Refresh from website, Reset all to auto). Every field has a small badge: <strong>Auto from example-firm.ca</strong>, <strong>From uploaded logo</strong>, <strong>Standard</strong> or <strong>Edited by you</strong>, and an edited field has <strong>Reset to auto</strong>.</li>
+<li><strong>B. Banner + brand preview and summary (<a href="b-preview.html">b-preview.html</a>):</strong> the same banner. The fields sit on the left, with only an <strong>Edited</strong> marker on fields the advisor changed. On the right are a <strong>Brand preview</strong> (a sample site header, heading, body text, button and calculator in their colours and fonts) and a <strong>"Where your brand came from"</strong> summary, grouped by source with Reset to auto, version, Refresh and Reset all.</li>
+<li>C (a compact Brand card on an onboarding dashboard, with a drawer) was dropped. Onboarding steps 2–5 and the dashboard don't exist yet, so it would mean designing a new surface first. It can be added when step 2 is designed.</li>
+</ul>
+<h2>Screens and states (<code>?v=landing|brand&amp;st=…&amp;why=free|dealer|timeout&amp;bn=on|off</code>, <code>&amp;phone</code>)</h2>
+<table>
+<thead>
+<tr>
+<th>State</th>
+<th>Banner (first landing; advisor-facing)</th>
+<th>Branding &amp; contact</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>loading</code> (lookup in progress)</td>
+<td>Spinner: "Setting up your brand from <strong>example-firm.ca</strong>…" with no Undo</td>
+<td>A spinner line and skeleton fields. Signup never waits on it.</td>
+</tr>
+<tr>
+<td><code>auto</code> (success)</td>
+<td>"✓ We set up your brand from <strong>example-firm.ca</strong>. Change anytime." with <strong>Undo</strong> and × (Change anytime links to Branding &amp; contact)</td>
+<td>Logo, logo URL, name, the 4 colours and 2 fonts, each <strong>Auto from example-firm.ca</strong>. A: "Darkened a little so white text stays readable." under the accent when the readability check changed it.</td>
+</tr>
+<tr>
+<td><code>logo</code> (from an uploaded logo, node-vibrant)</td>
+<td>"✓ We set up your brand colours from your logo. Change anytime." with <strong>Undo</strong></td>
+<td>The colours are <strong>From uploaded logo</strong>, the fonts are Standard, and the logo and name are the advisor's.</td>
+</tr>
+<tr>
+<td><code>undone</code> (after Undo)</td>
+<td>"Brand reverted. Your logo, colours and fonts are back to the standard look." with <strong>Redo</strong>. Toast: "Brand reverted".</td>
+<td>Every auto-set field goes back to its value before the auto run: Standard for a new signup, or the previous values for a backfill. The name typed at signup stays.</td>
+</tr>
+<tr>
+<td><code>fallback</code>, <code>why=free</code> or <code>dealer</code></td>
+<td>"We started you with a standard look. Add your logo to use your own colours. Change anytime." with <strong>Add your logo</strong>. It doesn't mention free mail or the dealer.</td>
+<td>All fields are <strong>Standard</strong>. Upload logo.</td>
+</tr>
+<tr>
+<td><code>fallback</code>, <code>why=timeout</code> (or a fetch error)</td>
+<td>"We couldn't read <strong>example-firm.ca</strong> in time, so we started you with a standard look. Change anytime." with <strong>Try again</strong></td>
+<td>Standard, same as above. Try again re-runs the lookup (back to <code>loading</code>).</td>
+</tr>
+<tr>
+<td><code>edited</code></td>
+<td>(none)</td>
+<td>Changing a colour auto-saves. Toast: "Saved. Accent colour is now yours, and refreshes won't change it." The field shows <strong>Edited by you</strong> with <strong>Reset to auto</strong> (A), or the <strong>Edited</strong> marker plus a summary row (B). The source becomes "Auto from example-firm.ca, 1 field edited by you", version 3.</td>
+</tr>
+<tr>
+<td><code>kept</code> (re-run or auto-refresh later)</td>
+<td>(none)</td>
+<td>"✓ Refreshed from example-firm.ca. Kept your Accent colour." Every auto field is updated. The edited accent is <strong>unchanged</strong>, version 4.</td>
+</tr>
+<tr>
+<td>Empty</td>
+<td>—</td>
+<td>An advisor with no website and a free email is the <code>fallback</code> / <code>free</code> state.</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li><strong>Undo</strong> is one step and reverts only the fields that the auto run set. <strong>Redo</strong> re-applies the same saved result; it doesn't fetch again.</li>
+<li>The banner shows once, on first landing after the lookup finishes. It stays until it's dismissed or Undo/Redo is used. In the mock, × hides it (<code>bn=off</code>).</li>
+<li><strong>"FTT defaults"</strong> is internal wording only (admin and this contract). Advisors see <strong>"Standard"</strong> or "the standard look".</li>
+<li>There's no FC domain on any advisor-facing surface. The logo and domain shown are the advisor's own.</li>
+</ul>
+<h2>Data fields (<code>advisor_configs</code>)</h2>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>brandAccentColour</code></td>
+<td><strong>Proposed: reuse <code>primaryColour</code></strong> (Main colour), so calculators and article buttons keep working (see open question 1).</td>
+</tr>
+<tr>
+<td><code>brandHeadingColour</code>, <code>brandTextColour</code>, <code>brandBackgroundColour</code></td>
+<td>New, hex.</td>
+</tr>
+<tr>
+<td><code>brandLogoUrl</code></td>
+<td>New. It's the absolute URL of the logo found on the site. An uploaded logo stays in <code>companyLogoUpload</code>, which wins when present.</td>
+</tr>
+<tr>
+<td><code>brandTitleFont</code>, <code>brandBodyFont</code></td>
+<td>New. A name from a supported list. An unsupported site font maps to the nearest supported one.</td>
+</tr>
+<tr>
+<td><code>companyName</code></td>
+<td>Existing. It's only filled by auto when empty, so the name typed at signup wins.</td>
+</tr>
+<tr>
+<td><code>brandSource</code></td>
+<td><code>auto-site</code> / <code>auto-logo</code> / <code>defaults</code> / <code>manual</code>, for the record as a whole.</td>
+</tr>
+<tr>
+<td><code>brandFieldSources</code></td>
+<td><code>{ field: 'auto-site' / 'auto-logo' / 'defaults' / 'manual' }</code>, which drives the badges and the precedence.</td>
+</tr>
+<tr>
+<td><code>brandVersion</code>, <code>brandUpdatedAt</code>, <code>brandUpdatedVia</code></td>
+<td>Version goes up by 1 on every saved change. <code>via</code> adds <code>auto-signup</code>, <code>auto-backfill</code>, <code>auto-refresh</code> and <code>undo</code> to today's <code>company-branding</code>, <code>admin</code> and <code>migration</code>.</td>
+</tr>
+<tr>
+<td><code>brandAutoResult</code>, <code>brandPrevValues</code></td>
+<td>The last auto result (for Redo) and the values before the last auto run (for Undo).</td>
+</tr>
+<tr>
+<td><code>brandLookup</code></td>
+<td><code>{ status: pending / done / fallback / timeout / error, domain, reason: free / dealer / timeout / error / no-site, at }</code></td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li><strong>Shared brand style sheet:</strong> one endpoint or helper serves CSS custom properties (<code>--brand-accent</code>, <code>--brand-heading</code>, <code>--brand-text</code>, <code>--brand-bg</code>, <code>--brand-title-font</code>, <code>--brand-body-font</code>, <code>--brand-logo</code>), building on <code>advisor-brand-lookup</code> and its cache. Calculators, html-post injection and the embed use it, so calculator brand links are no longer built by hand. The cache is cleared on every brand save.</li>
+</ul>
+<h2>Precedence (manual &gt; auto)</h2>
+<ol>
+<li>A field with <code>brandFieldSources[field] === 'manual'</code> is <strong>never</strong> written by signup auto, backfill, Refresh or any future auto-refresh. This also covers fields set by staff in admin Edit advisor.</li>
+<li>Any save from the Branding &amp; contact screen or admin marks that field <code>manual</code>.</li>
+<li><strong>Reset to auto</strong> (one field) re-applies the stored auto value and source. <strong>Reset all to auto</strong> does that for every field.</li>
+<li>Auto fills gaps with defaults. The readability check (the existing <code>darkenToContrast</code>) runs on auto values before saving. Manual values aren't changed, but the existing card message still warns about them.</li>
+<li>Backfill is the same function with <code>via: auto-backfill</code>. It only runs when the advisor has <code>websiteAddress</code>, skips <code>manual</code> fields, and is safe to re-run (same input, same output, so the version doesn't move).</li>
+</ol>
+<h2>Free and dealer domain lists</h2>
+<ul>
+<li>Kept as two constant lists in one module (<code>utils/brandDomains.js</code>), with the free and dealer lists from #724. The match is on the email domain, or any parent domain (for example <code>mail.example.ca</code> matches <code>example.ca</code>).</li>
+<li>A match gets defaults straight away, with no fetch. Admin can see the reason (<code>brandLookup.reason</code>).</li>
+<li>Staff extend the lists through a code change, for now (see open questions).</li>
+</ul>
+<h2>Lookup (server, background)</h2>
+<ul>
+<li>Triggered after signup or first login. It never blocks signup. Hard cap of about 20 s overall; any failure gives <code>fallback</code> / <code>timeout</code>.</li>
+<li>The site is the email domain, or <code>websiteAddress</code> when it's set. It reads the HTML: <code>og:image</code>, <code>apple-touch-icon</code> or the logo <code>&lt;img&gt;</code> for the logo, <code>theme-color</code> and the most-used CSS colours for colours, <code>font-family</code> for fonts, and <code>og:site_name</code> for the name.</li>
+<li>An uploaded logo uses <strong>node-vibrant</strong> to get the colours.</li>
+<li>Gaps are filled with defaults, then the readability check runs, then the result auto-saves with no Accept step.</li>
+</ul>
+<h2>In scope</h2>
+<ul>
+<li>The new fields, the source and version, the shared style sheet, the lookup job (site and logo), the domain lists, readability, fallback, auto-save, the banner with Undo/Redo, the badges or marker, Reset to auto (per field and all), Refresh from website, the backfill script, admin visibility of source and reason, and the phone layout.</li>
+</ul>
+<h2>Out of scope</h2>
+<ul>
+<li>Onboarding steps 2–5 and an onboarding dashboard (direction C).</li>
+<li>Dealer-specific brand kits (dealer emails get the standard look).</li>
+<li>Paid or self-hosted font files (the supported font list only).</li>
+<li>Brand kits for reveal.js decks (later).</li>
+<li>Any <strong>legal or consent copy</strong> about reading the advisor's site. If one is needed it's a <strong>PLACEHOLDER</strong>, not invented here.</li>
+<li>Changes to the Mailing &amp; compliance or Billing tabs.</li>
+</ul>
+<h2>Mobile (390px)</h2>
+<ul>
+<li>The banner text wraps, and Undo, Redo, Try again and Add your logo are 44px buttons.</li>
+<li>Colour and font fields go one per row, and the logo preview goes full width.</li>
+<li>A: badges wrap under the label, and the Brand source buttons go full width.</li>
+<li>B: the preview and summary stack under the fields.</li>
+</ul>
+<h2>Estimate (agent time, per Alex's Oct 30 rule)</h2>
+<p>This is the Cursor cloud agent build plus FC Tester time, plus fix loops, in minutes and hours. For calibration, #699 took about 30 min from handoff to tested. It's split into <strong>3 runs</strong>.</p>
+<table>
+<thead>
+<tr>
+<th>Run</th>
+<th>Covers</th>
+<th>Build</th>
+<th>FC Tester</th>
+<th>Fix loops</th>
+<th>Total</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1. Data, precedence and style sheet</td>
+<td>New fields, <code>brandFieldSources</code>, version, the manual-wins helper with tests, the shared CSS-variables style sheet wired into calculators, html-post and embed, cache bust</td>
+<td>45–60 min</td>
+<td>15–20 min</td>
+<td>15–30 min</td>
+<td><strong>≈1.25–1.75 h</strong></td>
+</tr>
+<tr>
+<td>2. Lookup, fallback and backfill</td>
+<td>Domain lists, site fetch and parse, node-vibrant from logo, 20 s cap, readability, fill gaps, auto-save, <code>brandLookup</code> status, Try again, the idempotent backfill script</td>
+<td>60–90 min</td>
+<td>25–35 min (test sites, free, dealer, timeout)</td>
+<td>30–60 min</td>
+<td><strong>≈2–3 h</strong></td>
+</tr>
+<tr>
+<td>3A. UI for A</td>
+<td>Banner (all states), Undo/Redo, Brand source line, per-field badges, Reset to auto and Reset all, Refresh, new colour and font fields, phone</td>
+<td>40–60 min</td>
+<td>20–30 min</td>
+<td>15–30 min</td>
+<td><strong>≈1.25–2 h</strong></td>
+</tr>
+<tr>
+<td>3B. UI for B (instead of 3A)</td>
+<td>As 3A, but the Edited marker instead of badges, plus the live Brand preview and source summary panel</td>
+<td>55–75 min</td>
+<td>25–35 min</td>
+<td>20–40 min</td>
+<td><strong>≈1.75–2.5 h</strong></td>
+</tr>
+<tr>
+<td><strong>Total A</strong></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td><strong>≈4.5–6.75 h</strong></td>
+</tr>
+<tr>
+<td><strong>Total B</strong></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td><strong>≈5–7.25 h</strong></td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li><strong>Order:</strong> run 1 first. Runs 2 and 3 can then go in parallel (3 uses stored or stubbed results). That's about <strong>3.25–4.75 h of wall-clock time</strong> for A, or 3.75–5.25 h for B.</li>
+<li><strong>Test dependency (not in the total):</strong> test domains with known logos, colours and fonts, one slow site for the timeout, a free-mail and a dealer-domain test signup, and a test advisor with a website on file for backfill. No real advisor data.</li>
+</ul>
+<h2>Recommendation: A</h2>
+<ul>
+<li>It adds to the screen advisors already use, and every field says where its value came from right where they'd change it. That makes "manual wins" easy to see.</li>
+<li>It's about 30 min less agent time than B and needs no new preview component. The existing mini calculator in the Brand colours card already gives a preview.</li>
+<li>B's live preview is nicer for a first impression. It can be added later on top of A without changing the data.</li>
+</ul>
+<h2>Open questions</h2>
+<ol>
+<li><strong>Accent vs Main colour:</strong> is the new "Accent colour" the existing <strong>Main colour</strong> (<code>primaryColour</code>, used by calculators and article buttons), with the old optional <code>accentColour</code> kept as a secondary? The mock assumes yes.</li>
+<li>Should auto-branding also switch on <strong>"Use my brand colours on calculators"</strong> (<code>calculatorColoursEnabled</code>) for no-click? The mock assumes yes when auto succeeds.</li>
+<li>How long does <strong>Undo</strong> stay available: until the banner is dismissed (as mocked), 7 days, or always as "Reset to standard"?</li>
+<li>Should <strong>Refresh from website</strong> be a button only (as mocked), or also a scheduled auto-refresh (for example monthly)? Either way, manual fields are kept.</li>
+<li><strong>Fonts:</strong> which supported list (web-safe plus a few Google fonts)? A site font outside the list maps to the nearest one.</li>
+<li>Should staff be able to edit the <strong>free and dealer lists</strong> in admin, or are they code-only for now?</li>
+<li>Is any <strong>consent or legal line</strong> needed about reading the advisor's public website and logo? If so, the wording is needed from compliance (placeholder).</li>
+</ol></body></html>
