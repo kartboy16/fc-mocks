@@ -166,5 +166,5 @@ function render(keep){var d=document.getElementById('drw');if(!d)return;var foc=
  if(keep){var g=d.querySelector('.gt,.warn');var tmp=document.createElement('div');tmp.innerHTML=head();var ng=tmp.querySelector('.gt,.warn');if(g&&ng)g.replaceWith(ng);else if(g)g.remove();else if(ng)d.querySelector('.swr').after(ng);return}
  d.innerHTML=head()+s}
 window.onApply=function(){if(window._ls!==S.st){preset();window._ls=S.st}render()};
-window.onApply=function(){preset();document.getElementById('drw').innerHTML=head()};
+shortWhen=function(){return 'every Monday'};window.onApply=function(){preset();document.getElementById('drw').innerHTML=head()};
 initBase();</script></body></html>
