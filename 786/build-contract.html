@@ -1,0 +1,130 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>#786 Save Changes disabled reason: build contract</title><style>body{font-family:Inter,system-ui,sans-serif;max-width:960px;margin:24px auto;padding:0 16px;line-height:1.55;color:#2C3E50}a{color:#1976D2}table{border-collapse:collapse;width:100%;margin:8px 0;font-size:14px}td,th{border:1px solid #e0e5eb;padding:6px 8px;text-align:left;vertical-align:top}th{background:#f3f6f9}blockquote{background:#e8f5e9;border:2px solid #2e7d32;border-radius:10px;margin:10px 0;padding:4px 14px}code{background:#f3f6f9;padding:1px 4px;border-radius:4px}@media(max-width:600px){table{display:block;overflow-x:auto}}code{overflow-wrap:anywhere}td{overflow-wrap:anywhere}</style></head><body><p><a href="../">All mocks</a> · <a href="index.html">Hub</a> · <a href="build-contract.md">Markdown</a></p><h1>#786 Edit HTML Post: say why Save Changes is off (build contract)</h1>
+<p><strong>Status: Not agent-ready. Soft Dev hold until a direction is picked.</strong> UI only. The core cells-only save fix (revive PR #419) is a separate build by Software developer and should land first. Likely <code>risk:low</code> (one admin screen, no data change).</p>
+<h2>Today</h2>
+<p>In <code>imports/ui/admin/CreateHtmlPostPage.jsx</code> (staging <code>ffba64a</code>), the toolbar button is <code>disabled={!canSubmit}</code> with no explanation:</p>
+<p><code>canSubmit = !saving &amp;&amp; !loading &amp;&amp; !loadingPost &amp;&amp; titleReady &amp;&amp; slugReady
+  &amp;&amp; (contentReady || emailTemplateDirty || legacyBodyCoversSave)</code></p>
+<ul>
+<li><code>contentReady</code>: Rich Editor → <code>htmlPostContentHasVisibleBody(content)</code> (text or media, not <code>&lt;br&gt;</code>/<code>&amp;nbsp;</code> residue); Raw HTML → <code>hasRawHtmlContent(content)</code>.</li>
+<li><code>legacyBodyCoversSave</code>: edit mode, cells-only post, <strong>and not Raw HTML</strong>.</li>
+<li><code>emailTemplateDirty</code>: the email template was changed in edit mode.</li>
+<li><code>handleSave</code> already has toasts ("Post name is required", "Slug is required", "Post content is required"), but they're unreachable because the button is disabled first.</li>
+<li>The sidebar "Ready to Publish" list shows Complete/Required/Legacy layout, but it's far from the button and not linked.</li>
+</ul>
+<p><strong>Not real conditions today:</strong> there's no "no changes made" check (Save is on for an unchanged valid post), no HTML validity check (any non-blank Raw HTML passes), and no permission check on the button (the route is admin-only). The mock doesn't invent them. A "Nothing to save yet" state would be a new dirty check; that's an open question.</p>
+<h2>Reasons (one per blocking condition, same order as <code>canSubmit</code>)</h2>
+<table>
+<thead>
+<tr>
+<th>Key</th>
+<th>Condition</th>
+<th>Copy</th>
+<th>Action</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>loading</code></td>
+<td><code>loading \|\| loadingPost</code></td>
+<td>Loading the post… Save turns on when it has loaded.</td>
+<td>none</td>
+</tr>
+<tr>
+<td><code>saving</code></td>
+<td><code>saving</code></td>
+<td>Button label "Saving..." with spinner; no reason line</td>
+<td>none</td>
+</tr>
+<tr>
+<td><code>name</code></td>
+<td><code>!titleReady</code></td>
+<td>Add a post name.</td>
+<td>Go to Post Name (scroll + focus + 1.5 s highlight)</td>
+</tr>
+<tr>
+<td><code>slug</code></td>
+<td><code>!slugReady</code></td>
+<td>Add a slug with at least one letter or number.</td>
+<td>Go to Slug</td>
+</tr>
+<tr>
+<td><code>content</code></td>
+<td>no visible body, not legacy, template unchanged</td>
+<td>Add post content. The body is empty.</td>
+<td>Go to Post Content</td>
+</tr>
+<tr>
+<td><code>legacyraw</code></td>
+<td>cells-only post + Raw HTML mode + Raw HTML blank</td>
+<td>This post's body is in the legacy layout, and Raw HTML is empty. Switch to Rich Editor to save your other changes without touching the body.</td>
+<td>Switch to Rich Editor (sets <code>contentMode='rich'</code>)</td>
+</tr>
+</tbody>
+</table>
+<p>Several can show at once (mock state "name + body"). Build a single <code>getSaveBlockers()</code> helper that returns <code>[{key, message, fieldId}]</code> and derive <code>canSubmit = blockers.length === 0 &amp;&amp; !saving</code> from it, so the button and the message can never disagree. If the #419 revive changes what counts as a body, the helper changes once and the copy follows.</p>
+<h2>Directions</h2>
+<ul>
+<li><strong>A. Reason under Save (recommended).</strong> When blocked, an amber strip right under the toolbar, right-aligned under the button on desktop and full width on phone, reads "Can't save yet: …" with a jump link per reason. Field errors show red helper text, and Ready to Publish rows become "Required: go to field" links. The strip uses <code>role="status"</code>, so screen readers hear changes. It disappears when ready.</li>
+<li><strong>B. Popover on the disabled Save.</strong> The button uses <code>aria-disabled</code> (not <code>disabled</code>), so hover, focus and tap still work, and it opens an MUI Tooltip/Popper listing the reasons with links. Escape or × closes it. Nothing is visible until the admin hovers or taps, and touch needs a tap-to-open workaround.</li>
+<li><strong>C. Save stays on.</strong> Only <code>saving</code>/<code>loading</code> disable it. Clicking Save with blockers shows a red summary Alert at the top of the form ("Fix 2 things to save:" + links), red field errors, and scrolls to the first one. It reuses the existing <code>handleSave</code> checks, extended to cover every reason at once.</li>
+</ul>
+<h2>Out of scope</h2>
+<p>The cells-only save fix itself (#786 core / PR #419), new validation (dirty check, HTML validity), Create New HTML Post layout changes beyond sharing the same helper (it gets the same messages for free), other admin editors.</p>
+<h2>Desktop / mobile</h2>
+<ul>
+<li><strong>Desktop (1280):</strong> in A, the strip sits under the sticky toolbar, so it stays visible while scrolling. In B, the popover anchors under the button.</li>
+<li><strong>Phone (390):</strong> the toolbar subtitle hides. In A, the strip goes full width with reasons stacked. In B, the popover is capped to the screen width and opens on tap. In C, the summary sits above Basics. All links and buttons are at least 44 px.</li>
+</ul>
+<h2>Estimate (agent time: cloud agent build + FC Tester + fix loop)</h2>
+<p>Scale: #699 took about 30 min from handoff to tested.</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>A</th>
+<th>B</th>
+<th>C</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>getSaveBlockers()</code> helper + <code>canSubmit</code> from it + unit test</td>
+<td>10–15 min</td>
+<td>10–15 min</td>
+<td>10–15 min</td>
+</tr>
+<tr>
+<td>UI (strip / popover / summary + field errors + jump-to-field)</td>
+<td>15–25 min</td>
+<td>20–30 min (aria-disabled, touch, Escape)</td>
+<td>20–30 min (summary, scroll-to-first, clear on edit)</td>
+</tr>
+<tr>
+<td>FC Tester on staging, desktop + 390, each reason</td>
+<td>15–20 min</td>
+<td>20–25 min (hover + tap)</td>
+<td>15–20 min</td>
+</tr>
+<tr>
+<td>Fix loop</td>
+<td>0–15 min</td>
+<td>5–20 min</td>
+<td>5–15 min</td>
+</tr>
+<tr>
+<td><strong>Total</strong></td>
+<td><strong>≈40–75 min</strong></td>
+<td><strong>≈55–90 min</strong></td>
+<td><strong>≈50–80 min</strong></td>
+</tr>
+</tbody>
+</table>
+<p>Runs after the core #786 save fix merges to staging, so the reasons match the fixed <code>canSubmit</code>.</p>
+<h2>Recommendation</h2>
+<p><strong>A.</strong> It's always visible exactly where the admin is looking (the greyed button) and works the same on touch, where tooltips on disabled buttons are unreliable. The jump links make every reason one click to fix. B hides the reason until someone thinks to hover. C changes button behaviour, and admins get an error only after trying.</p>
+<h2>Open questions</h2>
+<ol>
+<li>Add a "Nothing to save yet" state (a new dirty check), or keep Save on for unchanged posts as today?</li>
+<li>After the #419 revive, can a cells-only post in Raw HTML mode still be blocked? If not, drop the <code>legacyraw</code> reason.</li>
+<li>Should the same strip appear on Create New HTML Post (free with the shared helper)?</li>
+</ol></body></html>
