@@ -1,0 +1,217 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>#773 One onboarding flow: build contract</title><style>body{font-family:Inter,system-ui,sans-serif;max-width:960px;margin:24px auto;padding:0 16px;line-height:1.55;color:#2C3E50}a{color:#1976D2}table{border-collapse:collapse;width:100%;margin:8px 0;font-size:14px}td,th{border:1px solid #e0e5eb;padding:6px 8px;text-align:left;vertical-align:top}th{background:#f3f6f9}blockquote{background:#e8f5e9;border:2px solid #2e7d32;border-radius:10px;margin:10px 0;padding:4px 14px}code{background:#f3f6f9;padding:1px 4px;border-radius:4px}@media(max-width:600px){table{display:block;overflow-x:auto}}code{overflow-wrap:anywhere}td{overflow-wrap:anywhere}</style></head><body><p><a href="../">All mocks</a> · <a href="index.html">Hub</a> · <a href="build-contract.md">Markdown</a></p><h1>#773 One assistant-first onboarding flow: build contract</h1>
+<p><strong>Status: Not agent-ready. Soft Dev hold until a direction is picked.</strong> Likely <code>risk:high</code> (new onboarding entry point, contact import with consent, website connection queue). Alex merges.</p>
+<p>This replaces the five separate setup places (#724 branding, #727 website, #726 email list, #725 voice/profile, #728 social) with <strong>one</strong> screen. The reporter rejected #727 A and B as too technical and too many steps. The rules for every direction:</p>
+<ol>
+<li><strong>Assistant first.</strong> Everything FC already knows (signup email domain, website, brand pull, social search) is filled in before the advisor does anything. The advisor types plain words or drops files. The assistant files each one and says what it did.</li>
+<li><strong>Manual editing is optional, never required.</strong> Every value has an Edit link and a source badge, but the flow reaches Done without one.</li>
+<li><strong>Everything in one place.</strong> All five areas show on the same screen (A: side panel; B: the page itself; C: the final summary).</li>
+<li><strong>Done-for-you website.</strong> The advisor sees "We'll connect your website for you" plus a status. The only optional advisor action is "Someone else looks after my website" (we email them). FC handles the rest.</li>
+<li><strong>No platform names in the advisor UI.</strong> Platform detection and per-platform steps exist only on the staff side and in the email to the web person.</li>
+</ol>
+<h2>Directions</h2>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>A. Chat + Your setup (recommended)</th>
+<th>B. One-page checklist + drop zone</th>
+<th>C. Chat only, then summary</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Layout</td>
+<td>Chat left, live "Your setup" panel right (5 sections). Phone: chat plus a "Your setup · n of 5 ready" strip that swaps to the panel.</td>
+<td>One page of 5 numbered cards, auto-filled. The assistant sits at the top as a dashed drop zone showing its latest message plus the composer. Questions appear inside the card they belong to.</td>
+<td>Full-width conversation. A small brand preview card shows mid-chat. At the end there's a summary card with all 5 sections (expandable) and Edit links.</td>
+</tr>
+<tr>
+<td>Where values are visible</td>
+<td>Always (panel)</td>
+<td>Always (cards)</td>
+<td>Only at the end (plus the mini preview)</td>
+</tr>
+<tr>
+<td>Advisor answers</td>
+<td>3 taps (Is this you? / consent / who you help) + optional drop</td>
+<td>Same 3, inside cards</td>
+<td>Same 3, in chat</td>
+</tr>
+</tbody>
+</table>
+<h2>Screens and states (same script in all directions)</h2>
+<p><code>t</code> in the mock:</p>
+<table>
+<thead>
+<tr>
+<th>t</th>
+<th>State</th>
+<th>Assistant says / does</th>
+<th>Panel / cards</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0</td>
+<td>First load (right after signup)</td>
+<td>"Welcome to FinancialContent, Jane. I'm setting things up from jane@yourfirm.ca and yourfirm.ca." 4-line progress (reading site, brand, social, website)</td>
+<td>All sections "Filling in…", skeletons</td>
+</tr>
+<tr>
+<td>1</td>
+<td>Auto-filled</td>
+<td>Pulled the logo, colours, fonts, phone and address. "Your website: we'll connect it for you. Nothing to do on your side." Found LinkedIn. <strong>Is this Facebook page you?</strong></td>
+<td>Brand: live preview + "Where your brand came from" (#724 B). Website: "We're on it". Social: LinkedIn saved, Facebook suggestion "Needs you"</td>
+</tr>
+<tr>
+<td>2</td>
+<td>After "Yes, that's me" / "Not me"</td>
+<td>"Saved. Drop your headshot, bio, disclaimer, client list or any document, or just tell me."</td>
+<td>Social done</td>
+</tr>
+<tr>
+<td>3</td>
+<td>Files dropped</td>
+<td>One line per file saying where it went: headshot → photo; bio → About you; disclaimer → disclaimer; brochure → Documents; clients.csv → 142 contacts (3 duplicates removed). Then the <strong>consent question</strong> (PLACEHOLDER copy)</td>
+<td>About filled with source badges "From headshot.jpg" etc. Email list: "Needs you"</td>
+</tr>
+<tr>
+<td>4</td>
+<td>Consent answered</td>
+<td>"Who do you like to help?" Talk (mic) or Type instead (#725)</td>
+<td>Email list done</td>
+</tr>
+<tr>
+<td>5</td>
+<td>Voice/typed answer</td>
+<td>"Got it. Who you help: young families and small business owners in Vancouver, BC."</td>
+<td>About: "Who you help" tags, "You told me"</td>
+</tr>
+<tr>
+<td>6</td>
+<td>Done</td>
+<td>"You're all set." See my first posts</td>
+<td>5 of 5 ready</td>
+</tr>
+</tbody>
+</table>
+<p>Cross-cutting states: <code>ws</code> website status = <code>connecting</code> (default), <code>webperson</code> (advisor gave a web person's email), <code>live</code>, <code>help</code> (team will call). <code>ed=1</code> = advisor edited the accent colour. The badge changes to "Changed by you" with Undo, and the preview recolours live.</p>
+<p><strong>Drag and drop:</strong> dropping anywhere on the page shows a full-screen "Drop files to add them" overlay. Files can also be added with the 📎 button or a phone file picker. The assistant must handle unknown files ("saved to your Documents") and never refuse a file. Multiple files are handled in one reply.</p>
+<p><strong>Free text</strong> ("change my phone to 604-555-0199", "use this disclaimer: …") is parsed into the same field updates, with a "what I did" reply. Unclear text gets one clarifying question, never a form.</p>
+<p><strong>Skip/leave:</strong> every question can be skipped by typing something else or leaving. Progress is saved per answer. Coming back resumes at the first unanswered question. Onboarding counts as complete once brand and website are set (both automatic). The others show as "Add anytime".</p>
+<h2>Data (reuse what exists)</h2>
+<ul>
+<li><strong>Brand + contact:</strong> <code>advisor_configs</code> branding fields and <code>server/api/advisor-brand-lookup.js</code>, plus #724's per-field <code>source</code> (<code>site|upload|advisor</code>) and manual-wins precedence.</li>
+<li><strong>Files → fields:</strong> new <code>server/api/onboarding-intake.js</code>. It accepts files, classifies each one (image with a face → headshot; logo-like image → logo, asking if one already exists; docx/pdf/txt with bio-like text → bio summary; text that looks like a disclaimer → disclaimer; csv/xlsx/vcf → contacts via #726 <code>contactCsvImport.js</code>; anything else → Documents). It returns <code>{file, target, summary}[]</code> for the "what I did" reply. Values are written with <code>source:'upload'</code> and the file name.</li>
+<li><strong>Contacts:</strong> the #726 import pipeline (dedupe, address checks, unsubscribe guard, <code>contactImports</code> audit doc). Consent per import is <code>consentType</code> (<code>implied-client|express|unclear</code>) + <code>consentExpiresAt</code>, with the #726 sendable rule. <strong>The wording of the consent question and options is a PLACEHOLDER</strong>, to be supplied by compliance. Don't ship invented CASL copy.</li>
+<li><strong>Voice/profile:</strong> #725 business profile fields + <code>ai-service.js</code> summary. STT is new (#725 run 4) and <strong>optional</strong>: if the mic is blocked or unavailable, show only "Type".</li>
+<li><strong>Social:</strong> #728 website link extraction + search candidates + "Is this you?" accept/reject list. Saved to <code>advisor_configs.linkedinPersonal/linkedinCompany/meta/x</code>.</li>
+<li><strong>Onboarding state:</strong> <code>advisor_configs.onboarding = {startedAt, answered:{social,consent,whoYouHelp}, completedAt}</code> and the chat transcript (<code>onboardingMessages</code>, last 50).</li>
+</ul>
+<h2>How done-for-you website connection works (dev/staff side only)</h2>
+<p>The advisor never chooses a method or sees a platform. Behind the scenes:</p>
+<ol>
+<li><strong>Detect (silent).</strong> At signup, run the #727 detection on the website from the signup email domain or the site field: platform, hosting, whether FC already hosts it, and whether a DNS change is possible. Store <code>websiteConnection = {status, detectedPlatform, method, owner, webPersonEmail, lastCheckAt, notes}</code> and <strong>never render <code>detectedPlatform</code> or <code>method</code> in the advisor app</strong>.</li>
+<li><strong>Auto-connect where FC can.</strong> If FC hosts the site already, connect it immediately and verify (status → <code>live</code> within the onboarding session).</li>
+<li><strong>Otherwise, queue it for the FC team.</strong> Create a staff task in a new admin <strong>Website setup queue</strong> (extending today's <code>wordpress.requestSetup</code> → <code>wordpressSetup.status='requested'</code> + Slack notify into a generic job for all platforms). The staff view shows the detected platform and the matching #727 instructions. Status → <code>in_progress</code> once someone picks it up.</li>
+<li><strong>Web person (optional).</strong> If the advisor taps "Someone else looks after my website" and gives an email, FC sends one email <strong>from the FC team</strong>, with the platform-specific steps (snippet, plugin or DNS record) and a "reply if stuck" address. Status → <code>waiting_web_person</code>. The team follows up after 2 business days.</li>
+<li><strong>Needs a hand.</strong> If the team can't proceed (no access, no web person), status → <code>needs_help</code>. The advisor sees "Our team will call you", and the team gets a call task.</li>
+<li><strong>Verify.</strong> The #727 checker fetches the site daily and on demand. When FC content is found, status → <code>live</code>, the advisor gets an in-app note and email "Your content is live on your website", and the staff task closes.</li>
+</ol>
+<p>Advisor-visible status copy maps 1:1: <code>queued|in_progress</code> → "We'll connect your website for you", <code>waiting_web_person</code> → "We've emailed your web person", <code>live</code> → "Your content is live", <code>needs_help</code> → "Our team will call you".</p>
+<h2>Out of scope</h2>
+<p>Rebuilding Settings pages (they stay as the "edit later" home, linked from each section); billing/plan selection; sending the first campaign; posting to social; multilingual; staff-side automation of the actual site edit (the team does it by hand at first).</p>
+<h2>Mobile (390)</h2>
+<ul>
+<li><strong>A:</strong> chat full height, plus a sticky "Your setup · n of 5 ready · View" strip that swaps to the panel ("Back to chat").</li>
+<li><strong>B:</strong> cards stack, brand preview above "Where your brand came from".</li>
+<li><strong>C:</strong> unchanged, with the summary full width.</li>
+</ul>
+<p>All quick replies are full-width buttons of at least 44 px. The drop overlay becomes the file picker (no drag on phones).</p>
+<h2>Estimate (agent time: cloud agent runs + FC Tester + fix loops)</h2>
+<p>Scale: #699 took about 30 min from handoff to tested. <strong>Reused</strong> means the run is already specified in that issue's build contract. It's built once and shared, not built again for #773.</p>
+<table>
+<thead>
+<tr>
+<th>Run</th>
+<th>A</th>
+<th>B</th>
+<th>C</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Reuse #724 runs 1–2: branding source/precedence + brand lookup (preview UI reused from #724 B)</td>
+<td>3–4.5 h</td>
+<td>3–4.5 h</td>
+<td>3–4.5 h</td>
+</tr>
+<tr>
+<td>Reuse #727 detection + checker; new: generic Website setup staff queue, web-person email from FC, status model</td>
+<td>2.5–3.75 h</td>
+<td>2.5–3.75 h</td>
+<td>2.5–3.75 h</td>
+</tr>
+<tr>
+<td>Reuse #726 run 1 + run 3: import, consent fields, sendable rule (no domain wizard in onboarding)</td>
+<td>2.5–4 h</td>
+<td>2.5–4 h</td>
+<td>2.5–4 h</td>
+</tr>
+<tr>
+<td>Reuse #725 runs 1–2: profile data + conversation engine</td>
+<td>2.75–4.5 h</td>
+<td>2.75–4.5 h</td>
+<td>2.75–4.5 h</td>
+</tr>
+<tr>
+<td>Reuse #728 runs 1–2: link extraction + search + Is this you?</td>
+<td>2.5–4 h</td>
+<td>2.5–4 h</td>
+<td>2.5–4 h</td>
+</tr>
+<tr>
+<td><strong>New:</strong> file intake classifier + "what I did" replies + free-text field updates</td>
+<td>1.75–2.75 h</td>
+<td>1.75–2.75 h</td>
+<td>1.75–2.75 h</td>
+</tr>
+<tr>
+<td><strong>New:</strong> onboarding UI for this direction + states + phone</td>
+<td>2–3 h</td>
+<td>1.5–2.5 h</td>
+<td>1.5–2.25 h</td>
+</tr>
+<tr>
+<td><strong>New:</strong> end-to-end FC Tester pass (signup → done, drop files, all ws states)</td>
+<td>0.75–1.25 h</td>
+<td>0.75–1.25 h</td>
+<td>0.75–1.25 h</td>
+</tr>
+<tr>
+<td><strong>Total</strong></td>
+<td><strong>≈17.75–27.75 h</strong></td>
+<td><strong>≈17.25–27.25 h</strong></td>
+<td><strong>≈17.25–27 h</strong></td>
+</tr>
+<tr>
+<td>Optional: #725 voice (STT)</td>
+<td>+1.5–2.5 h</td>
+<td>+1.5–2.5 h</td>
+<td>+1.5–2.5 h</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Only #773-new work</strong> (if the #724–#728 runs ship first or in parallel): A ≈4.5–7 h, B ≈4–6.5 h, C ≈4–6.25 h. Runs 1–5 are independent and can go to parallel cloud agents, so wall-clock time is much shorter than the sum.</p>
+<p>Outside agent time: compliance CASL copy (#726), STT vendor/data residency (#725), search API key (#728), and staffing the Website setup queue.</p>
+<h2>Recommendation</h2>
+<p><strong>A.</strong> It's the closest match to "just use an AI assistant" while keeping everything visible in one place. The advisor talks, and the panel visibly fills itself in, so they can trust what was done without opening anything. B looks like a form again (five cards to scan), which is what the reporter pushed back on. C is the simplest-looking, but it hides the values until the end, so an advisor who leaves halfway never sees what was set. On a phone, A becomes C with a one-tap "Your setup" view, so the non-technical path stays a single conversation.</p>
+<h2>Open questions</h2>
+<ol>
+<li><strong>Website without the advisor:</strong> who staffs the Website setup queue, and what's the promised turnaround ("usually within 1 business day" is a placeholder)? Can the team act without any access from the advisor? For most sites, someone with a login must add the snippet or DNS record. Our options are: (a) the web person email (mocked), (b) the team asks the advisor for a one-time "invite us as a user" by email, outside the app, (c) a hosted page on FC's own domain linked from social/email until the site is connected. Which should be the default when there's no web person?</li>
+<li><strong>Advisors with no website</strong> (or a firm/dealer site they don't control): skip the website section and use the hosted page only?</li>
+<li><strong>CASL copy:</strong> compliance must supply the consent question and option text (PLACEHOLDER in all directions).</li>
+<li><strong>Logo vs headshot:</strong> if a dropped image is ambiguous, ask ("Is this your logo or your photo?") or guess and offer Undo?</li>
+<li><strong>Voice:</strong> ship v1 with Type only and add Talk later (saves 1.5–2.5 h and the vendor/residency review)?</li>
+<li>Should existing advisors see this flow for any area still empty, or is it new signups only?</li>
+</ol></body></html>
