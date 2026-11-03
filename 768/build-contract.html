@@ -1,0 +1,171 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>#768 Notification links: build contract</title><style>body{font-family:Inter,system-ui,sans-serif;max-width:960px;margin:24px auto;padding:0 16px;line-height:1.55;color:#2C3E50}a{color:#1976D2}table{border-collapse:collapse;width:100%;margin:8px 0;font-size:14px}td,th{border:1px solid #e0e5eb;padding:6px 8px;text-align:left;vertical-align:top}th{background:#f3f6f9}blockquote{background:#e8f5e9;border:2px solid #2e7d32;border-radius:10px;margin:10px 0;padding:4px 14px}code{background:#f3f6f9;padding:1px 4px;border-radius:4px}@media(max-width:600px){table{display:block;overflow-x:auto}}code{overflow-wrap:anywhere}td{overflow-wrap:anywhere}</style></head><body><p><a href="../">All mocks</a> · <a href="index.html">Hub</a> · <a href="build-contract.md">Markdown</a></p><h1>#768 Notification links open blank for signed-out advisors: build contract</h1>
+<p>Mocks: <a href="index.html">hub</a> · <a href="today.html">Today</a> · <a href="a-preview.html">A. Read-only preview</a> · <a href="b-signin.html">B. Sign in, then the post</a> (<strong>recommended</strong>) · <a href="c-pdf.html">C. PDF attached</a></p>
+<blockquote>
+<p><strong>Not agent-ready. Soft Dev hold until a direction is picked.</strong> <strong>Likely <code>risk:high</code></strong> (notification email content, plus A's new token path): Alex merges to main. Track: staging → FC Tester → Alex.</p>
+</blockquote>
+<h2>Today (main <code>5d6074e</code>, read only)</h2>
+<table>
+<thead>
+<tr>
+<th>Email</th>
+<th>Where</th>
+<th>Link it builds</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>"New post"</strong> (staff-written notify-advisor email; templates via <code>EmailTemplates.*</code>, body shortcodes <code>[firstname] [fullname] [postUrl]</code>)</td>
+<td><code>server/advisor-notify-email.js</code> → <code>sendAdvisorNotifyEmailIfNeeded(queueItem, postUrl)</code>, called from <code>website-scheduler.js</code> (≈l.269), <code>website-deferred-outbound-scheduler.js</code> and <code>api/wordpress-rest-api.js</code></td>
+<td><code>[postUrl]</code> = the passed <code>websiteUrl</code> → <code>queueItem.wpPostUrl</code> → <code>${absoluteUrl}post/:postId?advisor=:advisorId</code></td>
+</tr>
+<tr>
+<td><strong>"Your Scheduled Post Has Been Published"</strong></td>
+<td><code>server/website-scheduler.js</code> (≈l.337–350), hard-coded HTML, "View Website Post"</td>
+<td><code>websiteUrl</code> = <code>${absoluteUrl}post/:postId?advisor=:advisorId</code>, or the WordPress <code>publicUrl</code>, which can be a <strong>WordPress draft</strong> (<code>wpStatus: 'draft'</code>)</td>
+</tr>
+</tbody>
+</table>
+<p>(<code>server/social-publish-notifications.js</code> sends a social-only version with the same subject. It links to the social posts, not the post page, so it's out of scope.)</p>
+<p><strong>Why it's blank:</strong></p>
+<ul>
+<li><code>/post/:postId</code> → <code>PostView.jsx</code> → <code>Meteor.callAsync('getPostForView')</code> (<code>server/user-methods.js</code> ≈l.1321). For posts that aren't public (<code>!post.isPublic</code>, limited to <code>availableToAdvisorSourceIds</code>), the method throws <code>not-authorized</code> when <code>this.userId</code> is null. The page then shows only a small red "You must be logged in to view this post [not-authorized]" on an otherwise empty page.</li>
+<li><strong>Race:</strong> <code>PostView</code> fetches on mount without waiting for <code>Meteor.loggingIn()</code>. So a signed-in advisor opening the link in a new tab can hit the same error before the login token resumes.</li>
+<li>WordPress draft links (<code>?p=…&amp;preview=true</code>) only work when signed in to WordPress, so a signed-out advisor sees "Page not found" or a blank page.</li>
+<li><code>getPostLoginPath</code> / <code>isSafePostLoginPath</code> (<code>imports/utils/postLoginRedirect.js</code>) only allow a <code>returnUrl</code> under <code>/content-library</code> or the approval confirm page, so <code>/post/…</code> can't be a sign-in return today.</li>
+</ul>
+<p><strong>Don't change <code>[postUrl]</code> globally.</strong> The same shortcode fills <strong>client-facing</strong> SES campaigns (<code>ses-post-url-shortcode.js</code>, <code>website-article-live-email.js</code>). Only these two advisor emails change.</p>
+<h2>Directions</h2>
+<p>All directions keep public posts as they are: if the post is public and live (<code>isPublic</code>, or a live WordPress URL), the link stays the public URL. The change only applies when that link wouldn't open for a signed-out advisor.</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>A. Read-only preview link</th>
+<th>B. Sign in, then the post (<strong>recommended</strong>)</th>
+<th>C. PDF attached</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Email</td>
+<td><strong>Preview this post</strong> button + "Opens a read-only preview. No sign-in needed. The link works until {date}."</td>
+<td><strong>Sign in to preview this post</strong> button + "You'll sign in to FinancialContent first, then the post opens."</td>
+<td>B's link and note + <strong>PDF attachment</strong> (<code>{post-slug}.pdf</code>) + "A PDF of the post is attached." If the PDF fails: "We couldn't attach a PDF this time…" and the email still sends</td>
+</tr>
+<tr>
+<td>Link</td>
+<td><code>/preview/:token</code> (opaque random token; only its hash stored)</td>
+<td><code>/login?returnUrl=/post/:id?advisor=:id</code> (already signed in → straight to the post)</td>
+<td>Same as B</td>
+</tr>
+<tr>
+<td>Landing</td>
+<td>Branded post + yellow bar "Preview · read-only · only people with this link can see it. Link works until …" + <strong>Sign in to edit</strong></td>
+<td>Sign-in page with "Sign in to preview {title}. We'll take you straight to it." → the post with "Signed in. Here's your post."</td>
+<td>The PDF opens in the mail app</td>
+</tr>
+<tr>
+<td>States</td>
+<td>valid · expired (Sign in / <strong>Email me a new link</strong> button) · turned off (post changed or removed) · post now live (link to the live site) · signed in (normal post + Edit)</td>
+<td>after sign-in · already signed in (no banner) · other account ("This post isn't on this account… Switch account")</td>
+<td>attached · PDF couldn't be made</td>
+</tr>
+</tbody>
+</table>
+<h2>Scanner and link safety (all directions)</h2>
+<ul>
+<li>Every email link <strong>only opens a page</strong>. Nothing is approved, sent, published or scheduled on GET (standing rule, mail scanners click links).</li>
+<li><strong>A:</strong> the token is <strong>view-only</strong>, for <strong>one post and one advisor</strong>, and <strong>multi-use until expiry</strong>, so a scanner opening it doesn't use it up. It's stored hashed with <code>{ kind: 'post_preview', postId, advisorId, expiresAt, revokedAt }</code>. The preview route returns only what <code>getPostForView</code> returns, with <code>noindex</code>, <code>Referrer-Policy: no-referrer</code>, and no editor or app data. "Email me a new link" is a <strong>POST button</strong> that only re-sends to the advisor's address on file. "Sign in to edit" goes through normal sign-in.</li>
+<li><strong>B/C:</strong> add <code>/post/</code> (same-app relative paths only) to the <code>isSafePostLoginPath</code> allowlist so the return works and can't be used as an open redirect.</li>
+<li><strong>All directions:</strong> <code>PostView</code> waits for <code>Meteor.loggingIn()</code> before calling <code>getPostForView</code>. When it gets <code>not-authorized</code> and the user is signed out, it redirects to <code>/login?returnUrl=…</code> instead of showing the bare error. This also fixes the blank page for anyone who opens an old link.</li>
+</ul>
+<h2>Data and storage</h2>
+<ul>
+<li><strong>A:</strong> a <code>post_preview_tokens</code> collection (or <code>action_tokens</code> with <code>kind: 'post_preview'</code> if #753's <code>action_tokens</code> is on main by then): <code>tokenHash</code> (unique), <code>postId</code>, <code>advisorId</code>, <code>queueId</code>, <code>createdAt</code>, <code>expiresAt</code> (14 days), <code>revokedAt</code>, <code>lastOpenedAt</code>, <code>openCount</code>. The token is revoked when the post is deleted, unscheduled or replaced. When the post goes live, the preview shows the "This post is live now" bar with the public link.</li>
+<li><strong>B:</strong> no new data. A <code>buildAdvisorPostLink({ postId, advisorId, isPubliclyViewable })</code> helper is used by both senders.</li>
+<li><strong>C:</strong> reuse <code>campaignHtmlToPdfBuffer</code> (<code>ses-campaign-pdf.js</code>, puppeteer) and the post HTML builder from <code>website-compliance-pdf.js</code> (<code>buildWebsitePostBodyHtml</code>, branded). Attach only if the PDF is under 5 MB. The notify email already supports attachments (infographic PNGs and PDFs), and <code>applyInfographicPdfPrintNote</code> copy must not clash.</li>
+</ul>
+<h2>Copy</h2>
+<ul>
+<li><strong>Button:</strong> A "Preview this post" · B/C "Sign in to preview this post".</li>
+<li><strong>Note:</strong></li>
+<li>A: "Opens a read-only preview. No sign-in needed. The link works until {Mmm D}."</li>
+<li>B: "You'll sign in to FinancialContent first, then the post opens."</li>
+<li>C: "A PDF of the post is attached. You'll sign in to FinancialContent to open it online."</li>
+<li><strong>"New post" email:</strong> the button and note are added by the server <strong>under</strong> the staff-written body, and <code>[postUrl]</code> in that body resolves to the same link. No template edits are needed.</li>
+<li><strong>Published email:</strong> "View Website Post" is replaced by the button and note when the post isn't publicly viewable.</li>
+</ul>
+<h2>In scope</h2>
+<ul>
+<li>Link building in the two senders.</li>
+<li>The PostView login wait and sign-in redirect.</li>
+<li>The <code>/post/</code> return allowlist.</li>
+<li>Email copy.</li>
+<li>Direction-specific work: A's token, preview route and states; C's PDF attachment.</li>
+<li>Tests (scanner GET does nothing, token scope and expiry, return-path safety, public posts unchanged).</li>
+<li>FC Tester on staging with test inboxes only.</li>
+</ul>
+<h2>Out of scope</h2>
+<ul>
+<li>Client-facing <code>[postUrl]</code> in SES campaigns.</li>
+<li>The social-only published email.</li>
+<li>WordPress-side preview auth (we link to our own page instead of the WP draft).</li>
+<li>Editing staff email templates.</li>
+<li>Making drafts public.</li>
+</ul>
+<h2>Mobile (390)</h2>
+<ul>
+<li>Emails are single column and the button is full width (at least 44 px).</li>
+<li>A's preview bar stacks, with "Sign in to edit" full width.</li>
+<li>The sign-in page is 380 px max.</li>
+<li>The PDF is A4 or Letter, readable in mobile mail apps.</li>
+</ul>
+<h2>Estimates (agent time: cloud agent build + FC Tester + fix loops)</h2>
+<p>Calibration: #699 took ~30 min from handoff to tested.</p>
+<table>
+<thead>
+<tr>
+<th>Run</th>
+<th>A</th>
+<th>B</th>
+<th>C</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Shared: PostView waits for login + redirect when signed out, <code>/post/</code> return allowlist, link helper in both senders, email copy, tests</td>
+<td>≈0.75–1.25 h</td>
+<td>≈0.75–1.25 h</td>
+<td>≈0.75–1.25 h</td>
+</tr>
+<tr>
+<td>Direction-specific</td>
+<td>Token create/hash/revoke, <code>/preview/:token</code> route + 4 states, "Email me a new link" POST, scanner tests: ≈1–1.5 h</td>
+<td>n/a</td>
+<td>Post PDF via the existing puppeteer builder, attach + size and fail fallback, tests: ≈0.5–1 h</td>
+</tr>
+<tr>
+<td><strong>Total</strong></td>
+<td><strong>≈1.75–2.75 h</strong></td>
+<td><strong>≈0.75–1.25 h</strong></td>
+<td><strong>≈1.25–2.25 h</strong></td>
+</tr>
+</tbody>
+</table>
+<p>C alone wouldn't meet "the link never shows a blank page", so C's total includes B's link fix.</p>
+<h2>Recommendation</h2>
+<p><strong>B.</strong> The reporter said quickest is fine, and B is the quickest: about half A's time. It also:</p>
+<ul>
+<li>adds no new way to see unpublished posts, so there's nothing for a forwarded email or a scanner to leak;</li>
+<li>fixes the signed-in race for everyone;</li>
+<li>meets every acceptance criterion.</li>
+</ul>
+<p>The cost is one sign-in for signed-out advisors. <strong>A</strong> is the better experience (one tap, works on any phone) and can follow on top of B's shared fixes for about +1–1.5 h if advisors push back. <strong>C</strong> adds a heavy attachment to every notice, still needs B, and isn't needed.</p>
+<h2>Open questions</h2>
+<ol>
+<li>Is B's sign-in step OK for advisors, or do you want A's no-sign-in preview now?</li>
+<li>For A: is a 14-day expiry right? And should anyone with a forwarded link (an assistant, compliance) be able to view it read-only?</li>
+<li>Should the "new post" email always get the added button and note, even if a staff template already includes <code>[postUrl]</code>? (Proposed: yes, and <code>[postUrl]</code> resolves to the same link.)</li>
+<li>For a WordPress <strong>draft</strong>, should the link go to our post page (proposed) rather than the WP preview?</li>
+<li>Is the sender shown as "FinancialContent &lt;notifications@financialcontent.ca&gt;" right? The mock uses this as a placeholder; the real sender is <code>notificationService.fromEmail</code>.</li>
+</ol></body></html>
