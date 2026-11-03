@@ -1,0 +1,124 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>#788 Website disclaimer: build contract</title><style>body{font-family:Inter,system-ui,sans-serif;max-width:960px;margin:24px auto;padding:0 16px;line-height:1.55;color:#2C3E50}a{color:#1976D2}table{border-collapse:collapse;width:100%;margin:8px 0;font-size:14px}td,th{border:1px solid #e0e5eb;padding:6px 8px;text-align:left;vertical-align:top}th{background:#f3f6f9}blockquote{background:#e8f5e9;border:2px solid #2e7d32;border-radius:10px;margin:10px 0;padding:4px 14px}code{background:#f3f6f9;padding:1px 4px;border-radius:4px}@media(max-width:600px){table{display:block;overflow-x:auto}}code{overflow-wrap:anywhere}td{overflow-wrap:anywhere}</style></head><body><p><a href="../">All mocks</a> · <a href="index.html">Hub</a> · <a href="build-contract.md">Markdown</a></p><h1>#788 Per-advisor Website disclaimer + post page block (build contract)</h1>
+<p><strong>Status: Not agent-ready. Soft Dev hold until a direction is picked.</strong> Track: staging. Likely <code>risk:medium</code>: it changes text on every client-facing <code>/post/&lt;id&gt;</code> page, but there's no data migration.</p>
+<h2>Today (staging <code>027cec6</code>)</h2>
+<ul>
+<li><strong>Field:</strong> <code>advisor_configs.disclaimer</code> (<code>Match.Optional(String)</code>, <code>imports/collections/advisor_configs.js</code>). It's edited in Settings › <strong>Branding &amp; contact</strong> › Company Branding (<code>AdvisorConfigManager.jsx</code>, below Tagline): label "Disclaimer", 4-row textarea, placeholder "Enter your company disclaimer or legal notice", autosaves. Legacy <code>Brand.jsx</code> has the same field but isn't routed.</li>
+<li><strong>Post page:</strong> in <code>PostView.jsx</code>, after the topic chips, <code>&lt;Typography body2 italic&gt;&lt;strong&gt;Disclaimer:&lt;/strong&gt; {postDisclaimer(advisorConfig)}</code>. <code>postDisclaimer()</code> (<code>imports/utils/postViewAdvisor.js</code>) returns the advisor's text, or else <code>DEFAULT_POST_DISCLAIMER</code> ("This content is for informational purposes only…"). The line already sits below the body for every type (content, legacy cells, <code>rawHtml</code> calculator/infographic frame).</li>
+<li><strong>Elsewhere:</strong> <code>getPostForView</code> (<code>server/user-methods.js</code>) and <code>server/api/embed.js</code> pass <code>disclaimer</code> through. <code>FullPostView.jsx</code>, <code>WebsitePage.jsx</code> (<code>/blog/:slug</code>) and the admin library preview in <code>ContentLibrary.jsx</code> hard-code the old generic sentence. Email campaign HTML and social posts <strong>don't</strong> use the field today.</li>
+</ul>
+<h2>Change (same in all directions)</h2>
+<ol>
+<li><strong>Data: no migration.</strong> Keep the field name <code>advisor_configs.disclaimer</code>. Advisors who set one see their text as "Your wording". Everyone else stores <code>''</code>.</li>
+<li><strong>Default:</strong> replace <code>DEFAULT_POST_DISCLAIMER</code> with the issue's text, used exactly as written (also used for <code>/post/&lt;id&gt;</code> with no advisor):</li>
+</ol>
+<blockquote>
+<p>The information on this website, including its articles, infographics, calculators and any linked materials, is provided for general information and educational purposes only for readers in Canada. It is not investment, tax, insurance, legal or financial advice, and it is not an offer or solicitation to buy or sell any security, insurance product or other financial product. Any products or services mentioned are available only through a properly licensed advisor and their dealer or insurance agency, where applicable. The content is based on sources believed to be reliable at the time of writing, but rules, rates and figures can change, and accuracy or completeness is not guaranteed. Calculator results are estimates for illustration only and are not a recommendation. Past performance does not guarantee future results. Any reliance you place on this information is at your own risk. Please speak with a qualified professional, such as your advisor, accountant or lawyer, about your own situation before making any decisions.</p>
+</blockquote>
+<ol>
+<li><strong>Display rule:</strong> <code>websiteDisclaimer(cfg) = (cfg?.disclaimer || '').trim() || DEFAULT</code>.</li>
+<li><strong>Settings box:</strong> when the stored value is <code>''</code>, the box is <strong>prefilled with the default</strong> (chip "Default"). Saving text identical to the default stores <code>''</code>, so a future default update reaches them. Clearing the box stores <code>''</code> (chip "Blank: uses the default"), and it shows the default again on reload. Custom text shows the chip "Your wording" and a <strong>Reset to default</strong> link.</li>
+<li><strong>Post page block</strong> (<code>PostView.jsx</code>, replaces the italic line): under the body and topic tags, a 1 px top border, an <code>h2</code> "Disclaimer" (14 px, 600, grey <code>#6b7280</code>), and the text in a 13 px <code>#6b7280</code> paragraph, 1.6 line height. The block is identical for article, infographic and calculator posts. No FC links or branding (white-label). Only one disclaimer appears (acceptance criterion 5).</li>
+<li><strong>Not in</strong> email campaign HTML or social posts. Don't touch <code>mailchimpDistributionHtml.js</code>, SES campaign builders or social composers.</li>
+</ol>
+<h2>Directions (where the box lives)</h2>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>A. Mailing &amp; compliance (recommended)</th>
+<th>B. Stays in Branding &amp; contact</th>
+<th>C. Own Settings tab</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Box</td>
+<td>New "Website disclaimer" card at the top of the Mailing &amp; compliance tab, above Mailing address (CASL)</td>
+<td>Same spot as today (Company Branding, under Tagline), renamed "Website disclaimer", with the chip, hint and Reset</td>
+<td>New tab "Website disclaimer" (<code>?tab=disclaimer</code>) between Branding and Mailing, with the box on the left and a live preview of the post-page bottom on the right</td>
+</tr>
+<tr>
+<td>Old field</td>
+<td>Removed. A one-line info note in Company Branding says "Your website disclaimer is now in Mailing &amp; compliance. [Go to Website disclaimer]"</td>
+<td>Upgraded in place (no pointer needed)</td>
+<td>Removed, with a pointer note to the new tab</td>
+</tr>
+<tr>
+<td>Why / why not</td>
+<td>Sits with the other compliance items (CASL address); keeps Branding about the brand</td>
+<td>Least change, and advisors find it where they left it; but it reads as branding, and Company Branding gets long</td>
+<td>Most visible, with a preview; but it's a whole tab for one field</td>
+</tr>
+</tbody>
+</table>
+<p>Hint copy (all directions): "Shown at the bottom of every post page: articles, infographics and calculators. Not added to emails or social posts." Footer copy: default "This is the standard disclaimer. Change it to your dealer's wording if you need to."; custom "Your own wording." + Reset to default; blank "Left blank, so your posts show the default disclaimer." + Fill in the default to edit it. "✓ Saved" autosave status (matches today's "Changes save automatically").</p>
+<p><strong>Admin:</strong> the non-hub <code>AdvisorConfigManager</code> step flow (admin config editor) keeps the same <code>WebsiteDisclaimerBox</code> component in Company Branding, so admins can still set it per advisor.</p>
+<h2>Legal wording</h2>
+<p>Only the issue's default text is real. The custom text in the mock ("Jane Advisor is a mutual fund representative with Example Dealer Inc. …") is <strong>PLACEHOLDER sample text</strong>, not approved wording; it isn't used in code or fixtures as legal copy. The hint and footer lines are UI copy, not legal text.</p>
+<h2>Out of scope</h2>
+<p>Email campaigns, social posts, compliance PDFs, embedded calculators on advisor sites and WordPress copies (phase 2 per the issue), <code>FullPostView</code>/<code>/blog/:slug</code>/admin library preview hard-coded lines (see open questions), per-post disclaimers, rich text/links inside the disclaimer (plain text, newlines kept).</p>
+<h2>Desktop / mobile</h2>
+<ul>
+<li><strong>Post page (1280):</strong> the block spans the main column (md 8) above nothing else, and the advisor sidebar stays on the right. <strong>390:</strong> the block is full width under the tags, and the sidebar card stacks below the block, as PostView's grid does today.</li>
+<li><strong>Settings 390:</strong> cards go full width, the textarea grows to fit the default (about 9 rows), and the links are at least 44 px. In C, the preview stacks under the box.</li>
+</ul>
+<h2>Estimate (agent time: cloud agent build + FC Tester + fix loop)</h2>
+<p>Scale: #699 took about 30 min from handoff to tested.</p>
+<table>
+<thead>
+<tr>
+<th>Run</th>
+<th>A</th>
+<th>B</th>
+<th>C</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>websiteDisclaimer()</code> + new default + PostView block (all types) + update <code>tests/post-view-no-advisor.test.js</code></td>
+<td>20–30 min</td>
+<td>20–30 min</td>
+<td>20–30 min</td>
+</tr>
+<tr>
+<td>Settings box component (prefill, chip, Reset, store <code>''</code> for default/blank)</td>
+<td>15–20 min</td>
+<td>15–20 min</td>
+<td>15–20 min</td>
+</tr>
+<tr>
+<td>Placement: A card in Mailing tab with its own advisor-config autosave + Branding pointer / B in place / C new tab + <code>?tab=</code> + preview</td>
+<td>15–25 min</td>
+<td>5–10 min</td>
+<td>25–40 min</td>
+</tr>
+<tr>
+<td>FC Tester: 3 Settings states, 3 post types at 1280/390, email + social unchanged, no FC links</td>
+<td>20–30 min</td>
+<td>20–25 min</td>
+<td>25–35 min</td>
+</tr>
+<tr>
+<td>Fix loop</td>
+<td>5–15 min</td>
+<td>5–10 min</td>
+<td>5–15 min</td>
+</tr>
+<tr>
+<td><strong>Total</strong></td>
+<td><strong>≈75–120 min</strong></td>
+<td><strong>≈65–95 min</strong></td>
+<td><strong>≈90–140 min</strong></td>
+</tr>
+</tbody>
+</table>
+<h2>Recommendation</h2>
+<p><strong>A.</strong> A disclaimer is a compliance setting, and the Mailing &amp; compliance tab already exists for exactly that (it holds the CASL address). Branding &amp; contact stays about brand, and the pointer note means nobody loses the field. B is the cheapest fallback if we'd rather not move anything. C gives a preview but spends a whole tab on one box.</p>
+<h2>Open questions</h2>
+<ol>
+<li>Advisors whose saved disclaimer is exactly the old generic sentence: treat it as default (show the new text), or keep it as their wording?</li>
+<li>Should <code>FullPostView</code>, <code>/blog/:slug</code> and the admin library preview also switch to the new default now, or wait for phase 2?</li>
+<li>Should the Branding pointer note stay for good, or be removed after a while?</li>
+<li>Is plain text enough, or do dealers need line breaks or links (for example to a dealer site)?</li>
+<li>Does compliance need to sign off on the default text before it replaces the current line on every post?</li>
+</ol></body></html>
