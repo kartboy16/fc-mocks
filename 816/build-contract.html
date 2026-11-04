@@ -1,0 +1,154 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>#816 build contract</title><style>body{font-family:Inter,system-ui,sans-serif;max-width:960px;margin:24px auto;padding:0 16px;line-height:1.55;color:#2C3E50}a{color:#1976D2}table{border-collapse:collapse;width:100%;margin:8px 0;font-size:14px}td,th{border:1px solid #e0e5eb;padding:6px 8px;text-align:left;vertical-align:top}th{background:#f3f6f9}blockquote{background:#e8f5e9;border:2px solid #2e7d32;border-radius:10px;margin:10px 0;padding:4px 14px}code{background:#f3f6f9;padding:1px 4px;border-radius:4px}@media(max-width:600px){table{display:block;overflow-x:auto}}code{overflow-wrap:anywhere}td{overflow-wrap:anywhere}</style></head><body><p><a href="../">All mocks</a> · <a href="index.html">Hub</a> · <a href="build-contract.md">Markdown</a></p><h1>#816 Email approval style: One-click or Scanner-safe, with a default (build contract)</h1>
+<p><strong>Status: Not agent-ready. Soft Dev hold until a direction is picked.</strong> This is <strong><code>risk:high</code></strong> because it covers email actions on GET and the #811 sign-in. Track: staging, then FC Tester. Alex merges to main.</p>
+<blockquote>
+<p>Alex: "I have a few users who do NOT like this new flow and want the one click approve back via email. Can we mock some options? Maybe a dropdown for one click approval and one for email scanner safe? And save one as default?"</p>
+</blockquote>
+<h2>Grounding (staging <code>2f7bdcb</code>)</h2>
+<ul>
+<li><strong>Approval email:</strong> <code>buildApprovalMessageHtml</code> (<code>server/mailchimp/html-messages.js</code>) has one <strong>Review &amp; Approve</strong> button and the line "Opens a page where you click Approve to finish." It's sent from <code>server/mailchimp/approval-email.js</code>. The one-time link email is <code>imports/utils/approvalLinkEmail.js</code>.</li>
+<li><strong>Landing page:</strong> <code>EmailCampaignApprovalLanding.jsx</code> + <code>mailchimpApprovalLandingView.js</code>.</li>
+<li><strong>Actions:</strong> <code>approvalLink.confirm</code> (<code>server/approval-link.js</code>). The #811 sign-in uses <code>Accounts._insertLoginToken(ownerId, …)</code> at about line 248, and the client uses <code>imports/utils/approvalLinkSession.js</code> <code>loginWithToken</code>.</li>
+<li><strong>Action labels and intents:</strong> <code>imports/utils/mailchimpApprovalSendOptions.js</code> (<code>APPROVAL_SEND_NOW_LABEL</code> = "Approve and Send in 1 hour", <code>APPROVAL_SEND_DELAY_MS</code> = 1 h, schedule, don't send).</li>
+<li><strong>Compliance:</strong> <code>resolveComplianceMode</code> (<code>imports/utils/complianceMode.js</code>) limits the choice to Approve or Decline.</li>
+<li><strong>Settings:</strong></li>
+<li>Per advisor: <code>advisor_preferences</code> (a strict allow-list in <code>imports/collections/advisor_preferences.js</code>, so a new field must be added there).</li>
+<li>Per campaign: approval recipients in <code>SESCampaignsList.jsx</code> (<code>approvalEmailRecipients</code>, <code>sendApprovalEmail</code>).</li>
+<li>Global: <code>imports/collections/app_settings.js</code>.</li>
+</ul>
+<h2>The risk, plainly</h2>
+<p>Our standing rule is that <strong>email links never act on GET</strong>, because security scanners (Microsoft Defender Safe Links, Mimecast, Proofpoint), link previews and prefetchers open links. <strong>One-click breaks that rule by design.</strong> A scanner can approve or decline a campaign the advisor never saw. Mitigations (all directions):</p>
+<ol>
+<li><strong>Scanner-safe stays the default</strong> (admin default ships as Scanner-safe). One-click is opt-in per advisor.</li>
+<li><strong>No immediate send from any one-click link.</strong> "Approve and Send in 1 hour" already waits an hour, and there's no Send now link. Schedule and Don't send stay on the page ("More options").</li>
+<li><strong>Undo window:</strong> for 1 hour after a one-click action, the advisor can undo it from the result page or from the app. A campaign never sends inside that window, so a scanner click is always reversible before anything goes out.</li>
+<li><strong>Decline is harmless:</strong> it just returns the campaign to draft or rejected, and can be undone.</li>
+<li><strong>No sign-in from GET.</strong> One-click does <strong>not</strong> create a session; that stays on the #811 POST click only. The result page offers "Go to your campaigns", which uses normal sign-in or the session if one already exists.</li>
+<li><strong>Single use + TTL:</strong> one-click links are single-use tokens with the same rules as #790. The first hit wins and later hits show "already done".</li>
+<li><strong>Logging:</strong> every action from a one-click link is logged in <code>approvalLinkHistory</code> with <code>via:'one-click'</code>, the user agent and IP, and the time since the email was sent. Optionally flag "acted within 10 s of delivery" as a likely scanner hit.</li>
+<li><strong>Compliance campaigns:</strong> Approve or Decline only, in the email and on the page.</li>
+</ol>
+<h2>Screens (switcher: view × style × compliance × page state)</h2>
+<table>
+<thead>
+<tr>
+<th>View</th>
+<th>One-click</th>
+<th>Scanner-safe</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Admin › Settings › Email approval</td>
+<td>"Default approval style": a dropdown showing the scanner warning</td>
+<td>Same dropdown, showing the "Scanners can't approve anything" note</td>
+</tr>
+<tr>
+<td>Advisor Settings › Approval</td>
+<td>"How approval emails work": Firm default / Scanner-safe / One-click, with the warning when One-click is picked</td>
+<td>Same</td>
+</tr>
+<tr>
+<td>(A only) Campaign › Approval</td>
+<td>"Approval style for this campaign": My setting / Scanner-safe / One-click</td>
+<td>Same</td>
+</tr>
+<tr>
+<td>Email</td>
+<td>Approve · Approve and Send in 1 hour · Decline (direct), plus "More options". Compliance: Approve · Decline.</td>
+<td>One <strong>Review and approve</strong> button</td>
+</tr>
+<tr>
+<td>Landing</td>
+<td>"Campaign approved" + "undo until 4:52 PM" + Undo approval / Go to your campaigns / Not you? Sign out. Undone state: "Approval undone… Nothing was sent."</td>
+<td>The #811 A page (hint "You'll stay signed in on this device."), then done</td>
+</tr>
+</tbody>
+</table>
+<p>All views are white-labeled (Your Firm Name, yourfirm.ca; no FC links or branding). Phone: buttons are full width and at least 44 px.</p>
+<h2>Directions</h2>
+<ul>
+<li><strong>A. Admin default + advisor setting + per-campaign override.</strong> Most flexible, but a third place to look and more to test.</li>
+<li><strong>B. Admin default + advisor setting (recommended).</strong> Covers "save one as default" and the users who want one-click, with the fewest moving parts.</li>
+<li><strong>C. B + "Quick approve (safer one-click)".</strong> The email button opens a page that auto-POSTs the action after about 1.5 s with JS. Non-JS scanners stop at the page; if JS doesn't run, a fallback button appears. JS-running sandboxes (some Defender/Proofpoint modes) can still trigger it, so it's safer but not safe, and needs the same undo and logging.</li>
+</ul>
+<h2>Recommendation</h2>
+<p><strong>B.</strong> The users asking want one-click for every campaign, not one campaign at a time, so a per-advisor setting with a firm default answers the ask. A per-campaign override (A) adds UI and test surface for little gain and can come later. C is clever, but its safety depends on scanner behaviour we can't control, and it still needs undo. Undo plus the 1 h send delay is what really makes one-click acceptable, and B has both. If Alex wants one-click to feel safer without explaining scanners, C can be added on top of B later.</p>
+<h2>Server sketch (B)</h2>
+<ul>
+<li><strong>Field:</strong> <code>advisor_preferences.approvalStyle: 'one-click' | 'scanner-safe' | null</code> (null = firm default), plus <code>app_settings.defaultApprovalStyle</code> (default <code>'scanner-safe'</code>). The advisor's own setting is self-serve; the admin default is admin-only.</li>
+<li><strong>Email build:</strong> a style is resolved per send. One-click puts per-action single-use token URLs (<code>/approve/a/&lt;token&gt;?do=approve|send1h|decline</code>) in the email. Compliance campaigns get approve and decline only.</li>
+<li><strong>GET handler (one-click only):</strong> validate the token, run the action through the existing <code>approvalLink.confirm</code> code path as the owner, set <code>undoUntil = now + 1h</code>, and render the result page. No session.</li>
+<li><strong>Undo:</strong> <code>approvalLink.undo</code> (POST, from the result page or the app) reverts within the window, cancels the scheduled send and logs the undo.</li>
+</ul>
+<h2>Tests</h2>
+<p>Mocha:
+- style resolution (campaign &gt; advisor &gt; admin for A; advisor &gt; admin for B)
+- one-click GET acts once (second GET shows "already done")
+- compliance blocks send1h
+- undo inside and outside the window
+- no session on GET
+- token expiry</p>
+<p>FC Tester (staging, QA inboxes only):
+- both styles end to end
+- compliance email and page
+- undo
+- 1280 and 390</p>
+<h2>Estimate (agent time: cloud agent build + FC Tester + fix loop)</h2>
+<table>
+<thead>
+<tr>
+<th>Run</th>
+<th>A</th>
+<th>B</th>
+<th>C</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Settings fields + admin/advisor UI (+ campaign for A)</td>
+<td>50–70 min</td>
+<td>35–50 min</td>
+<td>40–55 min</td>
+</tr>
+<tr>
+<td>Email variants + per-action tokens + GET handler + result page</td>
+<td>1.25–1.75 h</td>
+<td>1.25–1.75 h</td>
+<td>1.5–2 h (auto-POST page + fallback)</td>
+</tr>
+<tr>
+<td>Undo + logging + Mocha</td>
+<td>45–60 min</td>
+<td>45–60 min</td>
+<td>45–60 min</td>
+</tr>
+<tr>
+<td>FC Tester</td>
+<td>55–70 min</td>
+<td>45–60 min</td>
+<td>55–70 min</td>
+</tr>
+<tr>
+<td>Fix loop + security review</td>
+<td>30–45 min</td>
+<td>25–40 min</td>
+<td>30–45 min</td>
+</tr>
+<tr>
+<td><strong>Total</strong></td>
+<td><strong>≈4.25–5.75 h</strong></td>
+<td><strong>≈3.75–5 h</strong></td>
+<td><strong>≈4.25–5.75 h</strong></td>
+</tr>
+</tbody>
+</table>
+<h2>Open questions</h2>
+<ol>
+<li>Ship the admin default as Scanner-safe (proposed), with one-click opt-in per advisor? Or should the admin be able to flip the whole firm?</li>
+<li>Should "Approve and Send in 1 hour" be in one-click emails at all, or only Approve and Decline (with Send in 1 hour on the page)?</li>
+<li>Undo window: 1 hour (matches the send delay), or until the scheduled send time?</li>
+<li>Who may change the style: the advisor themselves (proposed), or admins only like <code>socialApproval</code>?</li>
+<li>Should a one-click action ever sign in (proposed no), or is that OK since #811 accepted magic-link risk?</li>
+<li>Flag and auto-undo actions taken within seconds of delivery (likely scanners), or just log them?</li>
+<li>Compliance campaigns: allow one-click Approve at all, or force Scanner-safe for compliance?</li>
+</ol></body></html>
