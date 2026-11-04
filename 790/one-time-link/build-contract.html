@@ -1,0 +1,141 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>#790 One-time approve link: build contract</title><style>body{font-family:Inter,system-ui,sans-serif;max-width:960px;margin:24px auto;padding:0 16px;line-height:1.55;color:#2C3E50}a{color:#1976D2}table{border-collapse:collapse;width:100%;margin:8px 0;font-size:14px}td,th{border:1px solid #e0e5eb;padding:6px 8px;text-align:left;vertical-align:top}th{background:#f3f6f9}blockquote{background:#e8f5e9;border:2px solid #2e7d32;border-radius:10px;margin:10px 0;padding:4px 14px}code{background:#f3f6f9;padding:1px 4px;border-radius:4px}@media(max-width:600px){table{display:block;overflow-x:auto}}code{overflow-wrap:anywhere}td{overflow-wrap:anywhere}</style></head><body><p><a href="../../">All mocks</a> · <a href="index.html">Hub</a> · <a href="build-contract.md">Markdown</a></p><h1>#790 One-time approve link: build contract</h1>
+<p><strong>Status: Not agent-ready. Soft Dev hold until a direction is picked.</strong> <strong><code>risk:high</code></strong> (auth + email sending + approvals). Staging first, FC Tester gate, Alex merges to main.</p>
+<p>This follows #791 (staging), which sends signed-out advisors to <code>/login?returnUrl=…</code>. Many approvers have never signed in, see the <strong>Sign in / Sign up for beta</strong> tabs, and sign up with a different email instead of using Forgot password.</p>
+<h2>Grounding (staging <code>54eb8c3</code>)</h2>
+<ul>
+<li><strong>Landing:</strong> <code>/advisor/:advisorId/email_campaign/approval_landing?campaignId=…&amp;provider=mailchimp|ses</code> → <code>EmailCampaignApprovalLanding.jsx</code>. The signed-out copy (<code>APPROVAL_LANDING_SIGN_IN_MESSAGE</code>) is "Sign in as the campaign owner, then you can approve. First time here? Use Forgot password on the sign-in screen." <code>shouldRedirectApprovalLandingToLogin</code> now redirects to <code>buildApprovalLandingLoginHref</code> (<code>safeReturnPath</code>).</li>
+<li><strong>Owner check:</strong> <code>contentApprovals.ownerOf(provider, campaignId)</code> plus <code>approvalLandingOwnerMismatch</code> (only the owner may approve; admin and acting-as are mismatches).</li>
+<li><strong>Approve:</strong> <code>emailCampaigns.decideAdvisorApproval</code> / <code>mailchimp.updateApprovedByAdvisor</code> via <code>ContentApprovalDeclineFlow</code> (Approve / Decline). Intent variants: Confirm send, <code>Approve and Send in 1 hour</code>, Schedule, Don't send.</li>
+<li><strong>Approval email:</strong> <code>buildApprovalMessageHtml</code> (<code>server/mailchimp/html-messages.js</code>): blue <code>#256aa6</code> header "An email campaign is ready for your approval", green <code>#1f7a4d</code> "Review &amp; Approve" button, and the line "Opens a page where you click Approve to finish. Nothing is approved until then." No FC logo. Sent by <code>sendMailchimpApprovalEmailInternal</code> (<code>approval-email.js</code>) through <code>notificationService</code> (Elastic Email) from <code>notificationService.fromEmail</code>, subject <code>[Newsletter Approval] …</code>.</li>
+<li><strong>Important:</strong> approval emails go to <code>resolveApprovalRecipients()</code> (campaign override → <code>sendTestEmailsTo</code> → admin email). That is <strong>not</strong> necessarily the account email. The one-time link must go to <code>Meteor.users.findOne(doc.ownedBy).emails[0].address</code> (the owner's verified login email) and never to a recipient list or a typed address.</li>
+</ul>
+<h2>Directions</h2>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>A. Link first (recommended)</th>
+<th>B. Sign-in form first</th>
+<th>C. 6-digit code</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Signed-out landing</td>
+<td>Campaign summary + primary <strong>Email me a one-time approve link</strong>; "Have a password? Sign in instead"</td>
+<td>Inline sign-in form (Forgot password), then "or" + outlined <strong>Email me a one-time approve link</strong></td>
+<td>Summary + <strong>Email me a code</strong>; enter the code on the same page</td>
+</tr>
+<tr>
+<td>Sent state</td>
+<td>"Check your inbox. We sent a link to j***@example.com…" + Resend after cooldown</td>
+<td>same as A</td>
+<td>Code field (<code>one-time-code</code>, numeric), "4 tries left" on a wrong code</td>
+</tr>
+<tr>
+<td>Fits the problem?</td>
+<td>Best: the path that works is the first thing seen</td>
+<td>Keeps the password path the reporter's users already fail at</td>
+<td>Works across devices (email on phone, page on desktop) but adds typing; phone autofill helps</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Shared states:</strong>
+1. <strong>start</strong> (signed out)
+2. <strong>sent</strong>, with Resend cooling down or ready
+3. <strong>review</strong>: opened from the link, no login. Shows the chip "Signed in for this campaign only", the same campaign summary, then <strong>Approve</strong> and Decline buttons (POST).
+4. <strong>done</strong>: "Campaign approved. Thank you!"
+5. <strong>expired</strong> or <strong>already used</strong>: <strong>Send a new link/code</strong>, which resends to the account email.</p>
+<p>Signed-in owners skip all of this (the #791 behaviour). A signed-in non-owner gets the existing mismatch message.</p>
+<h2>Copy</h2>
+<ul>
+<li><strong>Start (A):</strong> "You're not signed in. We can email a one-time link to the email on this account, so you can approve without a password."</li>
+<li><strong>Sent:</strong> "We sent a link to <strong>j</strong><em>@example.com</em>*. Open it on any device to review and approve. It works once and expires in about 1 hour." Under it: "Resend (0:42)", then "Not there? Check spam or promotions."</li>
+<li><strong>Email:</strong> subject "Your one-time approve link". Same blue/green style as the approval email. Header "Your one-time approve link", then "Hi Jane, you asked to approve this campaign without signing in." Campaign + List table. Button "Open the review page", then "Opens the page where you click Approve. Nothing is approved until then. This link works once and expires in about 1 hour." Footer: "Didn't ask for this? You can ignore this email. Nobody can approve without this link."</li>
+<li><strong>Review:</strong> chip "Signed in for this campaign only", then "Nothing is approved until you click Approve."</li>
+<li><strong>Expired:</strong> "This link has expired. For your security, links expire after about 1 hour." <strong>Used:</strong> "This link was already used. Each link works once…"</li>
+</ul>
+<h2>Token rules</h2>
+<ul>
+<li><strong>Request:</strong> <code>approvalLink.request({advisorId, campaignId, provider})</code> (Meteor method, POST over DDP). It takes <strong>no email argument</strong>. The server loads the campaign, checks that it's awaiting advisor approval and that <code>ownedBy === advisorId</code>, and resolves the owner's account email itself.</li>
+<li><strong>No enumeration:</strong> the response is always <code>{ok:true, masked}</code> for a valid pending campaign. A missing, approved or wrong campaign gets the same generic "If this campaign is waiting for approval, we sent a link to the email on the account" (no masked address), with identical timing. The mask shows the first letter + <code>***@domain</code> only.</li>
+<li><strong>Token:</strong> 32 random bytes (base64url). Store <strong>only the SHA-256 hash</strong> in a new <code>approvalLinkTokens</code> collection: <code>{hash, campaignId, provider, ownerId, sentToMasked, createdAt, expiresAt: +60 min, usedAt, requestIp}</code> with a TTL index on <code>expiresAt</code>. A new request revokes earlier unused tokens for the same campaign.</li>
+<li><strong>Bound</strong> to campaign + provider + owner. It's valid only for that campaign's approve/decline and nothing else (no account session, no other pages).</li>
+<li><strong>Single use:</strong> consumed when an Approve or Decline POST succeeds, <strong>not on GET</strong>. Email scanners open links, so consuming on open would make "already used" the normal case. Opening the link only validates it and renders the page, any number of times within the hour.</li>
+<li><strong>GET never acts:</strong> <code>/advisor/:id/email_campaign/approval_landing?campaignId=…&amp;provider=…&amp;olt=&lt;token&gt;</code> only opens the page. The client keeps the token in memory/sessionStorage and strips it from the URL (<code>history.replace</code>). <code>approve</code> / <code>decideAdvisorApproval</code> gain an optional <code>approvalToken</code> param, which the server verifies (hash match, not expired, not used, campaign + owner match) before acting <strong>as the owner</strong>, then sets <code>usedAt</code>.</li>
+<li><strong>Rate limits:</strong> <code>DDPRateLimiter</code> on <code>approvalLink.request</code>: 1 per 60 s and 5 per hour per campaign, plus 20 per hour per IP. The UI cooldown is 60 s. For C: 5 wrong codes → the code is revoked ("Send a new code").</li>
+<li><strong>Audit:</strong> append <code>{at, type:'one-time-link-sent'|'one-time-link-used', masked}</code> to the campaign's approval history.</li>
+</ul>
+<h2>Security notes</h2>
+<ul>
+<li>No typed address, ever: the link can only reach the account owner's inbox.</li>
+<li>The token is not a login. It can't change settings, see other campaigns, or extend its lifetime.</li>
+<li><code>Referrer-Policy: no-referrer</code> on the landing page. Never log the full token (the hash only).</li>
+<li>The emailed link and the token in the URL are removed before any third-party script loads. The landing page has none today; keep it that way.</li>
+<li>The review page shows the same data as the signed-in review, and nothing more.</li>
+<li>Mailchimp and SES providers both use the same rules.</li>
+</ul>
+<h2>Out of scope</h2>
+<p>Changing the existing approval email or its recipients, passwordless login for the whole app, compliance-officer approvals, intent links (Send in 1 hour / Schedule / Don't send) via token (follow-up: same token check), merging accounts created by a wrong sign-up.</p>
+<h2>Desktop / mobile</h2>
+<p>The landing keeps today's 560 px container. At 390, buttons go full width and the Resend row stacks. Links are at least 44 px. The email is 600 px max and fluid on phones, and the button is 44 px or taller. For C, the code field uses <code>inputmode=numeric</code> + <code>autocomplete=one-time-code</code> so phones can autofill it.</p>
+<h2>Estimate (agent time: cloud agent build + FC Tester + fix loop)</h2>
+<p>Scale: #699 took about 30 min from handoff to tested.</p>
+<table>
+<thead>
+<tr>
+<th>Run</th>
+<th>A</th>
+<th>B</th>
+<th>C</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Token collection + TTL, <code>approvalLink.request</code> (owner email, mask, no enumeration, rate limits), token check in approve/decline + tests</td>
+<td>45–70 min</td>
+<td>45–70 min</td>
+<td>55–80 min (code + attempts)</td>
+</tr>
+<tr>
+<td>One-time email (reuse approval email styles + <code>notificationService</code>)</td>
+<td>15–20 min</td>
+<td>15–20 min</td>
+<td>15–20 min</td>
+</tr>
+<tr>
+<td>Landing states (start, sent + cooldown, review chip, done, expired/used), strip token from URL</td>
+<td>30–45 min</td>
+<td>40–55 min (inline sign-in form)</td>
+<td>40–55 min (code entry)</td>
+</tr>
+<tr>
+<td>FC Tester on staging, test accounts only: request → email → open (GET doesn't approve) → Approve; expiry (clock-mocked), reuse, rate limit, wrong owner, no-enumeration responses, 1280/390</td>
+<td>35–50 min</td>
+<td>40–55 min</td>
+<td>40–55 min</td>
+</tr>
+<tr>
+<td>Fix loop + security review pass</td>
+<td>15–30 min</td>
+<td>15–30 min</td>
+<td>20–35 min</td>
+</tr>
+<tr>
+<td><strong>Total</strong></td>
+<td><strong>≈2.25–3.5 h</strong></td>
+<td><strong>≈2.5–3.75 h</strong></td>
+<td><strong>≈2.75–4 h</strong></td>
+</tr>
+</tbody>
+</table>
+<h2>Recommendation</h2>
+<p><strong>A.</strong> The failure is that approvers don't have or remember a password and end up signing up instead. A puts the path that needs no password first, and it's one button with nothing to type. B leads with the same password form that's failing today. C adds a typing step and attempt limits, and it's more to build; it's only worth it if approvers often read email on a different device from where they'd approve, and A's link already works on any device.</p>
+<h2>Open questions</h2>
+<ol>
+<li><strong>Consume on Approve/Decline (proposed), not on open:</strong> OK with "works once" meaning <em>one decision</em>, valid for many opens within the hour?</li>
+<li>Should the token also allow the intent actions (Approve and Send in 1 hour / Schedule / Don't send), or plain Approve only in v1?</li>
+<li>Sender: same <code>notificationService.fromEmail</code> as approval emails (proposed)?</li>
+<li>If the owner account has no verified email, or the email bounces: hide the link button and show "Sign in" only?</li>
+<li>60 min expiry and 5 sends per hour per campaign: are these the right numbers?</li>
+</ol></body></html>
