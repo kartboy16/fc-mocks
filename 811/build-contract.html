@@ -1,0 +1,136 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>#811 build contract</title><style>body{font-family:Inter,system-ui,sans-serif;max-width:960px;margin:24px auto;padding:0 16px;line-height:1.55;color:#2C3E50}a{color:#1976D2}table{border-collapse:collapse;width:100%;margin:8px 0;font-size:14px}td,th{border:1px solid #e0e5eb;padding:6px 8px;text-align:left;vertical-align:top}th{background:#f3f6f9}blockquote{background:#e8f5e9;border:2px solid #2e7d32;border-radius:10px;margin:10px 0;padding:4px 14px}code{background:#f3f6f9;padding:1px 4px;border-radius:4px}@media(max-width:600px){table{display:block;overflow-x:auto}}code{overflow-wrap:anywhere}td{overflow-wrap:anywhere}</style></head><body><p><a href="../">All mocks</a> · <a href="index.html">Hub</a> · <a href="build-contract.md">Markdown</a></p><h1>#811 One-time approval link: the action click also signs you in (build contract)</h1>
+<p><strong>Status: Not agent-ready. Soft Dev hold until a direction is picked.</strong> This is <strong><code>risk:high</code></strong> because it touches auth (it issues login sessions). Track: staging, then FC Tester. Alex merges to main.</p>
+<p><strong>Decision (Alex):</strong> in one-time-link mode, the same Approve (or other action) click also signs the advisor in. There's no extra button, checkbox or password step.</p>
+<h2>Grounding (staging <code>f4e6e6a</code>, after #790 / PR #794)</h2>
+<ul>
+<li><strong>Token:</strong> stored in <code>ApprovalLinkTokens</code> (<code>server/approval-link.js</code>). It's single-use with a 1 h TTL (<code>imports/utils/approvalLink.js</code>), revoked by a newer link, and tied to one campaign and owner.</li>
+<li><strong>Landing page:</strong> <code>approvalLink.inspect</code> loads it and never consumes the token. The page keeps the token in sessionStorage (<code>EmailCampaignApprovalLanding.jsx</code>).</li>
+<li><strong>Action:</strong> <code>approvalLink.confirm</code> runs the action as the owner (<code>actor.via: 'one-time-link'</code>), then calls <code>consumeApprovalLinkToken</code>.</li>
+<li><strong>Expired and used copy:</strong> <code>APPROVAL_LINK_EXPIRED_*</code> and <code>APPROVAL_LINK_USED_*</code> in <code>approvalLink.js</code>, with the variants in <code>mailchimpApprovalLandingView.js</code>.</li>
+<li><strong>Login token pattern:</strong> <code>Accounts._generateStampedLoginToken()</code> + <code>Accounts._insertLoginToken(userId, stamped)</code> (<code>server/admin-methods.js:1063-1064</code>; the issue cites :943-944, which is out of date).</li>
+</ul>
+<h2>UI (copy and state only, on the approval-spacing A layout)</h2>
+<table>
+<thead>
+<tr>
+<th>State</th>
+<th>A (recommended)</th>
+<th>B</th>
+<th>C</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Normal / one-time link</td>
+<td>Grey hint under the primary pair: "You'll stay signed in on this device."</td>
+<td>Hint at the bottom of the summary block: "Choosing an option also signs you in on this device."</td>
+<td>No hint</td>
+</tr>
+<tr>
+<td>Compliance (Approve / Decline only)</td>
+<td>Same hint</td>
+<td>Same hint</td>
+<td>No hint</td>
+</tr>
+<tr>
+<td>Done</td>
+<td>✓ "Campaign approved", "You're signed in as Jane Advisor.", <strong>Go to your campaigns</strong> button, "Open this campaign" link</td>
+<td>"You're signed in. Taking you to your campaigns…", progress bar, then auto-redirect after about 3 s, with "Go now" and "Stay on this page"</td>
+<td>Green banner "You're signed in as Jane Advisor · Not you? Sign out" above "Campaign approved" + <strong>Open your campaigns</strong></td>
+</tr>
+<tr>
+<td>Expired / used</td>
+<td>Existing #790 copy, plus "You are not signed in" on expired; <strong>Email me a new link</strong> and "Sign in instead". No session.</td>
+<td>Same</td>
+<td>Same</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>The <code>Signed in for this campaign only</code> chip from #790 goes away in one-time-link mode, because it becomes untrue.</li>
+<li>The done copy follows the action taken: "Campaign approved", "Approved, sending in 1 hour", "Scheduled", "Declined" or "Won't be sent".</li>
+<li>At 390 the buttons go full width at 44 px or more.</li>
+<li>No FC branding or links on the page (it's client-ish).</li>
+</ul>
+<h2>Security points (must-haves)</h2>
+<ol>
+<li><strong>POST only.</strong> Sign-in happens only inside the action method that the user's click calls (DDP method <code>approvalLink.confirm</code>, or a new <code>Accounts.registerLoginHandler('approvalLink')</code> called right after it). Nothing happens on GET, page load, <code>inspect</code>, preview, scanners or prerender.</li>
+<li><strong>Owner only.</strong> Re-check on the server that <code>doc.ownerId</code> owns the campaign. Issue the session for <code>doc.ownerId</code> only, never for an id the client passes. Refuse a session for admin or compliance-officer owners; the action still runs.</li>
+<li><strong>Single use.</strong> Consume the token atomically (<code>consumeApprovalLinkToken</code> with a conditional update) in the same call as the action and before returning the login token. A used, expired or revoked token gets no action and no session. Two parallel clicks give at most one action and one session.</li>
+<li><strong>Session length:</strong> the Meteor default <code>loginExpirationInDays</code> (90) unless Alex picks shorter (see the open questions). Tag the stamped token <code>{via:'approval-link'}</code> so it can be revoked or audited.</li>
+<li><strong>Different user already signed in on the device:</strong> proposed behaviour is to <strong>keep the existing session</strong> if it's the owner. If it's another user, run the action as the token owner (as today) and <strong>don't</strong> switch sessions. The done page then says "Approved for Jane Advisor. You're signed in as someone else." with a sign-out link. Needs Alex's call.</li>
+<li><strong>Audit:</strong> add an <code>approvalLinkHistory</code> entry "signed in via approval link" (owner, campaign, IP and user agent if available).</li>
+<li><strong>Client:</strong> after the response, call <code>Meteor.loginWithToken(token)</code> and clear the sessionStorage token. Never put the login token in a URL.</li>
+</ol>
+<h2>Tests</h2>
+<p>Mocha:
+- valid exchange
+- reused token
+- expired token
+- revoked token
+- wrong owner
+- admin owner refused (the action still runs)
+- inspect and preview never sign in
+- double click</p>
+<p>FC Tester on staging:
+- open the link (not signed in)
+- Approve → done → reload shows signed in
+- compliance Approve/Decline
+- expired and used links (no session)
+- desktop 1280 and phone 390</p>
+<h2>Out of scope</h2>
+<p>Password or 2FA changes, a "remember me" checkbox, changing the token TTL, social approval links.</p>
+<h2>Estimate (agent time: cloud agent build + FC Tester + fix loop)</h2>
+<table>
+<thead>
+<tr>
+<th>Run</th>
+<th>A</th>
+<th>B</th>
+<th>C</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Server: login on action, owner and role checks, atomic consume, audit, Mocha tests</td>
+<td>1.5–2 h</td>
+<td>1.5–2 h</td>
+<td>1.5–2 h</td>
+</tr>
+<tr>
+<td>Client: loginWithToken, copy and done states</td>
+<td>20–30 min</td>
+<td>30–45 min (auto-redirect + stay)</td>
+<td>25–35 min (banner + sign out)</td>
+</tr>
+<tr>
+<td>FC Tester on staging (cases above)</td>
+<td>40–55 min</td>
+<td>45–60 min</td>
+<td>40–55 min</td>
+</tr>
+<tr>
+<td>Fix loop + auth security review</td>
+<td>25–40 min</td>
+<td>25–40 min</td>
+<td>25–40 min</td>
+</tr>
+<tr>
+<td><strong>Total</strong></td>
+<td><strong>≈3–4 h</strong></td>
+<td><strong>≈3.25–4.5 h</strong></td>
+<td><strong>≈3–4.25 h</strong></td>
+</tr>
+</tbody>
+</table>
+<h2>Recommendation</h2>
+<p><strong>A.</strong> It's one quiet line that tells the truth before the click, adds no extra step, and finishes with an obvious way into the app. B's auto-redirect can yank people away before they read the result. C surprises people with a sign-in they weren't told about.</p>
+<h2>Open questions</h2>
+<ol>
+<li>Session length: the Meteor default of 90 days, or shorter (e.g. 30 days) for link-made sessions?</li>
+<li>Add a "Not you? Sign out" link on the done page (A could add it as a text link)?</li>
+<li>A different user is already signed in on the device: keep their session (proposed), or switch to the owner?</li>
+<li>Do Schedule, Approve and Send in 1 hour, Decline and Don't send also sign in (the issue says yes; proposed yes), or only Approve?</li>
+<li>Admin or compliance-officer owners: confirm the action works with no session.</li>
+<li>On the expired or used page, should "Email me a new link" stay as is (no sign-in until the new link's action click)?</li>
+</ol></body></html>
