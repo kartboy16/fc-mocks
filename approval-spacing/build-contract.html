@@ -1,0 +1,119 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Approval landing spacing: build contract</title><style>body{font-family:Inter,system-ui,sans-serif;max-width:960px;margin:24px auto;padding:0 16px;line-height:1.55;color:#2C3E50}a{color:#1976D2}table{border-collapse:collapse;width:100%;margin:8px 0;font-size:14px}td,th{border:1px solid #e0e5eb;padding:6px 8px;text-align:left;vertical-align:top}th{background:#f3f6f9}blockquote{background:#e8f5e9;border:2px solid #2e7d32;border-radius:10px;margin:10px 0;padding:4px 14px}code{background:#f3f6f9;padding:1px 4px;border-radius:4px}@media(max-width:600px){table{display:block;overflow-x:auto}}code{overflow-wrap:anywhere}td{overflow-wrap:anywhere}</style></head><body><p><a href="../">All mocks</a> · <a href="index.html">Hub</a> · <a href="build-contract.md">Markdown</a></p><h1>Approval landing spacing: build contract</h1>
+<p>Page: Mailchimp email campaign approval landing (<code>/advisor/:advisorId/email_campaign/approval_landing</code>), prod <code>main</code> <code>24f397f</code>. Layout/CSS only. <strong>Low risk</strong>: no logic, labels or handlers change. Also covers the one-time-link review state from #794 (the "Signed in for this campaign only" chip).</p>
+<h2>Today</h2>
+<ul>
+<li><strong>Container:</strong> <code>&lt;Container sx={{ py: 4, maxWidth: 560 }}&gt;</code> with no card.</li>
+<li><strong>Heading:</strong> h5 "Choose what happens next", then the token <code>Chip</code> (<code>mb: 1.5</code>).</li>
+<li><strong>Summary:</strong> h6 subject; "Goes to … · N people on the list" and "From …" as separate <code>text.secondary</code> lines.</li>
+<li><strong>Message:</strong> <code>view.message</code> "Nothing is approved until you click Approve." (<code>mb: 2</code>).</li>
+<li><strong>Buttons:</strong> <code>choiceButtons</code> is one flex row with <code>gap: 1</code> (8 px) and <code>flexWrap: 'wrap'</code>, holding Approve (contained success), Decline (outlined), Approve and Send in 1 hour (contained primary), Schedule for later (outlined), Don't send (outlined error). It wraps unevenly at 1280 and only goes to a column at ≤390 px.</li>
+<li><strong>Compliance mode</strong> (<code>view.controls</code> without <code>send-now</code> / <code>confirm-schedule</code> / <code>confirm-dont-send</code>) shows Approve + Decline only.</li>
+</ul>
+<h2>Recommended: A</h2>
+<p><strong>Spacing tokens (px, 8-pt grid):</strong></p>
+<table>
+<thead>
+<tr>
+<th>Token</th>
+<th>Desktop</th>
+<th>≤600 px</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Page padding (top / sides)</td>
+<td>48 / 24</td>
+<td>16 / 12</td>
+</tr>
+<tr>
+<td>Card</td>
+<td><code>maxWidth: 640</code>, padding 32, radius 12, 1 px <code>#e3e6ea</code> border, shadow <code>0 1px 3px rgba(16,24,40,.06)</code>, white</td>
+<td>padding 20 / 16, radius 10</td>
+</tr>
+<tr>
+<td>Heading (h1 style, 24 px / 600) → chip</td>
+<td>8</td>
+<td>8</td>
+</tr>
+<tr>
+<td>Chip (or heading with no chip) → summary</td>
+<td>24 (16 with no chip)</td>
+<td>same</td>
+</tr>
+<tr>
+<td>Summary block</td>
+<td><code>#f8f9fb</code>, radius 8, padding 16 / 20; subject 18 px / 600, <code>mb: 8</code>; meta row 14.5 px, <code>gap: 4px 16px</code>, wraps</td>
+<td>padding 14 / 16</td>
+</tr>
+<tr>
+<td>Summary → note → primary row</td>
+<td>24 / 16</td>
+<td>same</td>
+</tr>
+<tr>
+<td>Primary row</td>
+<td>CSS grid, 2 equal columns, <code>gap: 12</code>, buttons min-height 44</td>
+<td>1 column</td>
+</tr>
+<tr>
+<td>Secondary row</td>
+<td><code>mt: 24</code>, <code>pt: 16</code>, top border <code>#eceef1</code>, label "Other options" 13 px, <code>gap: 8px 12px</code>; Don't send pushed right</td>
+<td>column, full-width buttons, 44 px</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Breakpoint:</strong> a single <code>sm</code> (600 px) switch. Replace the <code>@media (max-width: 390px)</code> rule with <code>theme.breakpoints.down('sm')</code>.</p>
+<p><strong>Grouping/order:</strong>
+- <strong>Primary row:</strong> <strong>Approve</strong> (success), <strong>Approve and Send in 1 hour</strong> (primary).
+- <strong>Other options:</strong> Schedule for later (outlined), Decline (outlined), Don't send (outlined error).
+- <strong>Compliance:</strong> primary row = Approve + Decline. There's no secondary row.
+- <strong>Token state:</strong> the chip sits under the heading; everything else is the same.</p>
+<p><strong>Label/colour changes:</strong> none. The only change is <strong>order</strong>: Decline moves from 2nd to the "Other options" row in the normal mode. "Other options" is a new 13 px label. The summary meta lines are combined into one wrapping row.</p>
+<p><strong>Files:</strong> <code>imports/ui/EmailCampaigns/mailchimp/EmailCampaignApprovalLanding.jsx</code>: wrap the return in a <code>Paper</code> card, restyle the summary <code>Box</code>, and split <code>choiceButtons</code> into <code>primaryButtons</code> + <code>secondaryButtons</code> keyed on the same <code>view.controls</code>. Also apply the card to the done/error/sign-in variants so every state matches. No change to <code>mailchimpApprovalLandingView.js</code> beyond keeping <code>controls</code>; update any test that snapshots the button order (<code>tests/mailchimp-approval-landing-view.test.js</code> checks controls, not DOM).</p>
+<h2>Options B and C</h2>
+<ul>
+<li><strong>B:</strong> the same card, with buttons grouped under small uppercase headings: <strong>Approve</strong> (Approve, Approve and Send in 1 hour, plus a one-line hint), <strong>Send later</strong> (Schedule for later), <strong>Not this one</strong> (Decline, Don't send). Groups have 20 px padding and are separated by 1 px rules. It's clearest about consequences but the page gets taller, and the hint is new copy.</li>
+<li><strong>C:</strong> a 480 px column with every button full width, stacked (48 px), and an "or" divider. On phone the two approve buttons move to a sticky bottom bar. It's thumb-friendly, but at 1280 it looks like a phone layout, and the sticky bar duplicates the primary actions.</li>
+</ul>
+<h2>Estimate (agent time: cloud agent build + FC Tester + fix loop)</h2>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>A</th>
+<th>B</th>
+<th>C</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Build</td>
+<td>15–25 min</td>
+<td>20–30 min</td>
+<td>25–35 min</td>
+</tr>
+<tr>
+<td>FC Tester (normal, compliance, token, schedule/don't-send sub-forms at 1280/390)</td>
+<td>15–20 min</td>
+<td>15–20 min</td>
+<td>20–25 min</td>
+</tr>
+<tr>
+<td>Fix loop</td>
+<td>0–10 min</td>
+<td>5–10 min</td>
+<td>5–15 min</td>
+</tr>
+<tr>
+<td><strong>Total</strong></td>
+<td><strong>≈30–55 min</strong></td>
+<td><strong>≈40–60 min</strong></td>
+<td><strong>≈50–75 min</strong></td>
+</tr>
+</tbody>
+</table>
+<h2>Open questions</h2>
+<ol>
+<li>Is it OK to move Decline into "Other options" (A), or should it stay next to Approve?</li>
+<li>Should the Schedule for later / Don't send sub-forms open inside the card under the secondary row (proposed), as today?</li>
+</ol></body></html>
