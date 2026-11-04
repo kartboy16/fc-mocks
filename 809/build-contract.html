@@ -1,0 +1,135 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>#809 Send email for multiple advisors: build contract</title><style>body{font-family:Inter,system-ui,sans-serif;max-width:960px;margin:24px auto;padding:0 16px;line-height:1.55;color:#2C3E50}a{color:#1976D2}table{border-collapse:collapse;width:100%;margin:8px 0;font-size:14px}td,th{border:1px solid #e0e5eb;padding:6px 8px;text-align:left;vertical-align:top}th{background:#f3f6f9}blockquote{background:#e8f5e9;border:2px solid #2e7d32;border-radius:10px;margin:10px 0;padding:4px 14px}code{background:#f3f6f9;padding:1px 4px;border-radius:4px}@media(max-width:600px){table{display:block;overflow-x:auto}}code{overflow-wrap:anywhere}td{overflow-wrap:anywhere}</style></head><body><p><a href="../">All mocks</a> · <a href="index.html">Hub</a> · <a href="build-contract.md">Markdown</a></p><h1>#809 Admin: send email for multiple advisors (build contract)</h1>
+<p><strong>Status: Not agent-ready. Soft Dev hold until a direction is picked.</strong> <strong><code>risk:high</code></strong>: it sends email on behalf of advisors and touches admin/advisor scoping. Track: playground first, then staging; Alex merges any main PR. Tests send only to QA inboxes, never to real advisor lists.</p>
+<h2>Grounding (staging <code>0fb9d7a</code>)</h2>
+<ul>
+<li><strong>Admin role:</strong> <code>isAdminUserId</code> (<code>server/support-impersonation.js</code>, role <code>admin</code>).</li>
+<li><strong>Acting as an advisor:</strong> <code>getTargetAdvisorId(this, advisorId)</code> (<code>server/advisor-context.js</code>). An admin may pass any advisorId; anyone else is forced to their own id. The new methods reuse it, so there's no "Log in as" step.</li>
+<li><strong>Existing multi-advisor pattern:</strong> <code>PostForMultipleAdvisors.jsx</code> (admin, "Select all", "Filter by name, email, or tag") + <code>SendToAllAdvisorsControls.jsx</code> (<code>BulkAdvisorConfirmDialog</code> / <code>BulkAdvisorResultDialog</code>) + <code>server/social-bulk-schedule.js</code>, which has an admin check, per-advisor <code>SKIP_REASONS</code> with labels, a 15 s stagger and yields every 5. Email bulk should copy this shape.</li>
+<li><strong>Today:</strong> Admin › Users › "Log in as this user" (<code>AdminUserList.jsx</code>, <code>loginAsUser</code>), then send from that advisor's Email Campaigns, then repeat.</li>
+<li><strong>Send path:</strong> <code>ses.sendCampaign(advisorId, campaignId, scheduledAt, impersonationToken)</code> → <code>doSendSESCampaign</code>.</li>
+<li><strong>Compliance:</strong> <code>resolveComplianceMode(prefs)</code> is <code>email | external | off</code> (legacy compliance category → <code>email</code>), with the advisor approval email + Approve/Decline landing.</li>
+<li><strong>CASL gap:</strong> the mailing address is built from <code>advisorPreferences</code> with a fallback of <code>config.officeAddress || 'Address not provided'</code>. Bulk send must <strong>block</strong> instead of sending "Address not provided".</li>
+</ul>
+<h2>Directions</h2>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>A. Step by step (recommended)</th>
+<th>B. Table first</th>
+<th>C. Campaign first</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Flow</td>
+<td>1 Advisors (search, filter, checkboxes, status) → 2 Campaign + When (now/schedule) + list per advisor → 3 Review (preview tabs per advisor + "Who gets what" table + summary chips) → <strong>Send for N advisors</strong> → 4 Done (per-advisor results)</td>
+<td>One table: checkbox, advisor, campaign, list, status per row; sticky bulk bar "N selected · Preview · Review and send" opens a review drawer (summary, who gets what, preview) with <strong>Send</strong></td>
+<td>Pick a library campaign card, then fan out: advisor rows with list + status + Preview, a live preview panel, a summary bar, and a confirm dialog with <strong>Send</strong></td>
+</tr>
+<tr>
+<td>Strength</td>
+<td>One decision per screen; hardest to send the wrong thing</td>
+<td>Fastest for repeat use; mixed campaigns per advisor</td>
+<td>Natural when one campaign goes to many</td>
+</tr>
+<tr>
+<td>Weakness</td>
+<td>More clicks</td>
+<td>Dense; weak at 390</td>
+<td>One campaign per send; preview panel off-screen on phone</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Statuses before send</strong> (from server pre-flight):
+- <strong>Ready</strong>
+- <strong>Approval required</strong> (compliance <code>email</code> or <code>external</code>): goes to the advisor's Approve/Decline and isn't sent directly.
+- <strong>Can't send:</strong> no mailing address (CASL), no email list, or no verified sender (open question).</p>
+<p><strong>After send:</strong>
+- <strong>Sent to N people</strong>
+- <strong>Waiting for approval</strong>
+- <strong>Blocked: reason</strong>, with a Fix link to that advisor's settings
+- <strong>Failed: sending service error</strong>, with Retry</p>
+<p>Each result links to the campaign created in that advisor's Email Campaigns.</p>
+<p><strong>Page states</strong> (switcher): ready, loading, empty ("No advisors yet"), error (Try again), sending ("you can leave this page"), done, done with 1 failed.</p>
+<h2>Data and methods</h2>
+<p>All methods are server-side admin-only (<code>isAdminUserId</code>); a non-admin gets <code>not-authorized</code>. There's no GET action anywhere.</p>
+<ul>
+<li><strong><code>emailBulk.listAdvisors({search, filter})</code>:</strong> advisors with lists, compliance mode, a mailing-address check and a sender check, returning <code>status</code> + <code>reason</code>. Paginated (50).</li>
+<li><strong><code>emailBulk.preview({advisorId, campaignTemplateId})</code>:</strong> renders with <strong>that advisor's</strong> header/footer template, sender name, mailing address and unsubscribe. No FC links or branding (white-label).</li>
+<li><strong><code>emailBulk.send({items:[{advisorId, listId}], campaignTemplateId, scheduledAt|null, confirmToken})</code></strong> (POST via DDP):</li>
+<li>Re-runs the pre-flight per advisor.</li>
+<li>Creates an <code>SESCampaigns</code> doc <strong>owned by the advisor</strong>, using their sender identity and lists.</li>
+<li>Then for each advisor: compliance <code>off</code> → <code>ses.sendCampaign</code> path (or schedule); compliance <code>email</code> or <code>external</code> → that advisor's existing approval flow (approval email), never a direct send.</li>
+<li><code>confirmToken</code> comes from the Review step, so a stale or duplicate submit can't double-send. The job is idempotent on <code>(bulkSendId, advisorId)</code>.</li>
+<li><strong>Bulk job:</strong> a <code>emailBulkSends</code> doc <code>{_id, adminId, campaignTemplateId, scheduledAt, createdAt, items:[{advisorId, listId, status, reason, campaignId, at}]}</code>. It runs on the server with a stagger (like social bulk) and the page subscribes for live status.</li>
+<li><strong>Audit:</strong> every item records <code>adminId</code> and <code>actingAs</code>, plus the campaign doc <code>createdBy: adminId, createdVia: 'bulk-admin'</code>.</li>
+</ul>
+<h2>Out of scope</h2>
+<p>Editing campaign content per advisor (it uses the library campaign as-is), Mailchimp-provider advisors (v1 is SES only; they show "Can't send: uses Mailchimp" unless we decide otherwise), social posts, non-admin team roles.</p>
+<h2>Desktop / mobile</h2>
+<ul>
+<li><strong>1280:</strong> admin side nav plus a content area up to 1180 px. A's Review step is two columns (preview | who gets what). B's drawer is 560 px. C's dialog is 640 px.</li>
+<li><strong>390:</strong> the nav hides, table rows become stacked cards, the bar and buttons go full width, selects are full width at 44 px, and A's Review stacks the preview above the table. B's drawer is full screen; C's dialog is near full screen.</li>
+</ul>
+<h2>Estimate (agent time: cloud agent build + FC Tester + fix loop)</h2>
+<p>Scale: #699 took about 30 min from handoff to tested.</p>
+<table>
+<thead>
+<tr>
+<th>Run</th>
+<th>A</th>
+<th>B</th>
+<th>C</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Server: admin-only methods, pre-flight (CASL/list/sender/compliance), bulk job + stagger + idempotency, approval routing, audit + tests</td>
+<td>1.5–2.25 h</td>
+<td>1.5–2.25 h</td>
+<td>1.5–2.25 h</td>
+</tr>
+<tr>
+<td>Per-advisor preview render (reuse <code>buildWrappedCampaignEmailHtml</code>)</td>
+<td>20–30 min</td>
+<td>20–30 min</td>
+<td>20–30 min</td>
+</tr>
+<tr>
+<td>UI (page, states, live status)</td>
+<td>1–1.5 h (4 steps)</td>
+<td>1.25–1.75 h (table + drawer + per-row campaign)</td>
+<td>1–1.5 h</td>
+</tr>
+<tr>
+<td>FC Tester on playground, QA inboxes only: non-admin blocked, preview has no FC links, compliance advisor goes to approval, CASL/no-list blocked, retry, 1280/390</td>
+<td>45–60 min</td>
+<td>50–65 min</td>
+<td>45–60 min</td>
+</tr>
+<tr>
+<td>Fix loop + security review</td>
+<td>20–40 min</td>
+<td>25–45 min</td>
+<td>20–40 min</td>
+</tr>
+<tr>
+<td><strong>Total</strong></td>
+<td><strong>≈3.75–5.5 h</strong></td>
+<td><strong>≈4.25–6 h</strong></td>
+<td><strong>≈3.75–5.5 h</strong></td>
+</tr>
+</tbody>
+</table>
+<h2>Recommendation</h2>
+<p><strong>A.</strong> Sending for other people needs the strongest "check before you send" moment. A gives each choice its own screen and ends on one review that shows every advisor, list and outcome, with a preview per advisor, before the single Send button. B is quicker for power users but dense and easy to mis-click, especially at 390. C is clean but limited to one campaign per send, and its preview sits off-screen on phones.</p>
+<h2>Open questions</h2>
+<ol>
+<li><strong>Permissions:</strong> all <code>admin</code> users, or a new role (e.g. <code>bulk-email</code>)? Is <code>support</code> excluded (proposed)?</li>
+<li><strong>Audit log:</strong> is the <code>emailBulkSends</code> record plus <code>createdBy</code> on each campaign enough, or do we need an admin-visible history page?</li>
+<li><strong>Sender identity:</strong> always each advisor's own verified sender (proposed)? What about advisors with no verified sender: block or use the interim sender?</li>
+<li><strong>Rate limits:</strong> a stagger of about 15 s between advisors (like social), a cap per run (for example 50 advisors), and one active bulk job per admin?</li>
+<li><strong>Approval settings:</strong> for advisors with compliance <code>email</code> or <code>external</code>, should the admin's send <strong>create the campaign and send the approval email</strong> (proposed), or skip them? Also, should an advisor's own "needs my approval" preference (advisor approval) apply even when compliance is <code>off</code>?</li>
+<li><strong>Mailchimp advisors:</strong> include them in v1 or skip?</li>
+</ol></body></html>
