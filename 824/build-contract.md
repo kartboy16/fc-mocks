@@ -26,14 +26,14 @@ After creating an HTML post, admins should be able to send it to multiple adviso
 
 | | A. After Save on the HTML post (recommended) | B. Extend "Post for multiple advisors" | C. Dedicated admin send page |
 |---|---|---|---|
-| Where | Content Library / create-or-edit HTML post → Save → "Send to advisors" wizard | Existing admin tab grows a "Send post" mode alongside the social-only flow | New admin page; hub can later sit next to #809 |
+| Where | Content Library / create-or-edit HTML post → Save → "Send to multiple advisors" wizard | Existing admin tab grows a "Send post" mode alongside the social-only flow | New admin page; hub can later sit next to #809 |
 | Flow | 1 Advisors → 2 Extras (publish, social toggle + compose, email toggle) → 3 Review (preview + who gets what) → Send → 4 Done | Pick HTML post, pick advisors, extras, review drawer, Send | Pick post from library, extras + advisors side by side, confirm dialog |
 | Strength | Matches Alex's starting point; leaves #47/#186 and #809 alone | Reuses the known multi-advisor picker | Scales if more "send X to many" tools appear |
 | Weakness | Only starts from a just-saved (or opened) post | Mixes social-only and HTML+extras; easy to confuse; denser | Another admin destination; risk of quietly merging with #809 |
 
 | | **D. Share menu on Content card (recommended)** |
 |---|---|
-| Where | Content tab card → Share picker → admin-only “Send to advisors” |
+| Where | Content tab card → Share picker → admin-only “Send to multiple advisors” |
 | Flow | Same multi-advisor internals as A after the menu item |
 | Strength | Matches how advisors already share; Alex’s asked placement; admin-gated |
 | Weakness | Easy to miss if admins expect a top-level admin page |
@@ -62,18 +62,19 @@ After creating an HTML post, admins should be able to send it to multiple adviso
 **UI:**
 1. Content grid of library cards (generic titles).
 2. Open Share → picker with Website / Social / Email unchanged.
-3. **Admin only:** divider + **Send to advisors** (opens the multi-advisor flow from A). Advisors never see this item (role switcher in the mock).
-4. Multi-advisor flow: advisors → extras (shared Now/Schedule, optional social for social/social-basic/social-main, optional email campaign for email-content) → review who gets what + skips → Send.
+3. **Admin only:** divider + **Send to multiple advisors**, mutually exclusive with Website/Social/Email and Continue (picker stays open). Advisors never see this item (role switcher).
+4. Multi-advisor flow opens as a **modal over the Content tab** (card grid stays visible behind). Steps stay in that modal: advisors → extras (shared Now/Schedule, optional social for social/social-basic/social-main, optional email campaign for email-content) → review who gets what + skips → Send. Close or finish returns to Content.
 5. White-label previews (`yourfirm.ca` / `example.com`).
 
 **Estimate (agent time: cloud agent + FC Tester + fix loop) for D alone:** ≈4.5–6.25 h  
 (share-menu gating + reuse of bulk HTML/social/email server path from A ≈4.25–6 h, plus ~20–40 min for the picker item, admin-only visibility, and FC Tester of advisor-hidden).
 
-**Open questions for D:**
-1. Exact menu label: “Send to advisors” (proposed) vs “Send to multiple advisors”?
-2. Sit below a divider under Email (proposed), or as a fourth destination card in the multi-select list?
-3. Does choosing Send to advisors close the picker and leave Website/Social/Email unselected (proposed), or is it mutually exclusive with Continue?
-4. Should non-admins see a disabled row, or nothing at all (proposed: nothing)?
+**Alex locked (Nov 5 2026):**
+1. **Label:** “Send to multiple advisors” (not “Send to advisors”).
+2. **Placement:** below a divider under Email (as shown).
+3. **Interaction:** mutually exclusive with Continue. The picker stays open. Selecting the admin item deselects Website/Social/Email (they look inactive); Continue is disabled and the primary button becomes “Send to multiple advisors” (opens the multi-advisor modal over Content). Selecting Website/Social/Email deselects the admin item and Continue works as today.
+4. **Advisors:** hide the item entirely (role switcher).
+5. **Chrome:** after selecting the admin item, the multi-advisor flow opens as a modal overlaying the Content tab (not a new page).
 
 ## Recommendation (superseded for placement)
 

@@ -108,6 +108,14 @@ table.list{width:100%;border-collapse:collapse;background:#fff;border:1px solid 
 .x-btn.pk{width:100%;margin-top:4px}.x-from{margin-bottom:8px}
 #dev.phone .x-grid{grid-template-columns:minmax(0,1fr)}#dev.phone .x-picker{left:0;right:0;bottom:0;top:auto;width:100%;max-width:100%;border-radius:16px 16px 0 0;padding:12px 16px 20px}
 #dev.phone .x-share,#dev.phone .x-web{min-height:44px}
+
+.x-smodal{position:fixed;z-index:23;left:50%;top:48px;transform:translateX(-50%);width:min(920px,calc(100% - 32px));max-height:calc(100vh - 72px);overflow:auto;background:#fff;border:1px solid #d4e4f2;border-radius:14px;padding:16px 18px 18px;box-shadow:0 16px 48px rgba(30,42,74,.22);box-sizing:border-box}
+.x-smh{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:10px}.x-smh b{display:block;font-size:18px;color:#1e2a4a}.x-smh small{display:block;font-size:13px;color:#5b6572;margin-top:2px}
+#dev.phone .x-smodal{left:0;right:0;top:auto;bottom:0;transform:none;width:100%;max-width:100%;max-height:92dvh;border-radius:16px 16px 0 0;padding:12px 14px 20px}
+
+.x-pkrow.on,.x-pkadmin.on{border-color:#2b7de9;background:#e6f1fb;box-shadow:0 0 0 1px #2b7de9}.x-pkrow.inactive{opacity:.45;pointer-events:none}.x-pkbox.chk{border-color:#2b7de9;background:#2b7de9;color:#fff;font-size:12px;display:inline-flex;align-items:center;justify-content:center}
+.x-pkadmin{position:relative}.x-pkadmin .x-pkbox{margin-left:auto}.x-pkex{font-size:12.5px;color:#b45309;background:#fff8e6;border:1px solid #ffe0a3;border-radius:8px;padding:8px 10px;margin:0 0 10px}
+.x-btn.pk:disabled{background:#9e9e9e;color:#fff;opacity:.55;cursor:not-allowed}
 </style></head><body><div class="mockbar"><a href="../">All mocks</a> · #824 Send HTML post to advisors · <a href="index.html">Hub</a> · <a href="today.html">Today</a> · <a href="a-after-save.html">A: After Save</a> · <a href="b-extend-tab.html">B: Extend tab</a> · <b>C: Admin page</b> · <a href="d-share-menu.html">D: Share menu</a> · <a href="build-contract.html">Contract</a><span class="sp"></span><span class="grp"><button data-dev="desk" onclick="setDev('desk')">Desktop</button><button data-dev="phone" onclick="setDev('phone')">Phone</button></span><span class="row2">State: <button data-sb="s:ready" onclick="set('s','ready')">ready</button><button data-sb="s:loading" onclick="set('s','loading')">loading</button><button data-sb="s:empty" onclick="set('s','empty')">empty</button><button data-sb="s:error" onclick="set('s','error')">error</button><button data-sb="s:sending" onclick="set('s','sending')">sending</button><button data-sb="s:done" onclick="set('s','done')">done</button><button data-sb="s:partial" onclick="set('s','partial')">done, 1 failed</button> &nbsp;Social: <button data-sb="so:0" onclick="set('so','0')">off</button><button data-sb="so:1" onclick="set('so','1')">on</button> Email: <button data-sb="em:0" onclick="set('em','0')">off</button><button data-sb="em:1" onclick="set('em','1')">on</button> &nbsp;Confirm: <button data-sb="cf:0" onclick="set('cf','0')">closed</button><button data-sb="cf:1" onclick="set('cf','1')">open</button></span></div><div id="dev" class="desk"><div class="x-app"><nav class="x-nav"><b>Admin</b><span>Users</span><span>Content Library</span><span>Manage advisor posts</span><span>Post for multiple advisors</span><span class="on">Send HTML post to advisors</span><span>Send email for multiple advisors</span><span>Weekly Picks</span></nav><div class="x-main"><div id="flow"></div></div></div></div><div class="toast" id="toast"></div><script>
 var S=S||{};function qs(s){return document.querySelectorAll(s)}
 function setDev(d){document.getElementById('dev').className=d;qs('[data-dev]').forEach(function(b){b.classList.toggle('on',b.getAttribute('data-dev')===d)})}
@@ -212,37 +220,64 @@ function cards(){
 }
 function sharePicker(){
   var admin=S.role!=='advisor';
-  var rows=[['Website','Publish to the advisor site','🌐'],['Social','Post to connected social accounts','↗'],['Email','Create an email campaign for this advisor','✉']];
+  var mode=S.pk||'admin'; // admin | dest
+  if(!admin) mode='dest';
+  var destOn=mode==='dest';
+  var adminOn=mode==='admin'&&admin;
+  var rows=[['website','Website','Publish to the advisor site','🌐'],['social','Social','Post to connected social accounts','↗'],['email','Email','Create an email campaign for this advisor','✉']];
+  var nSel=destOn?1:0;
   var h='<div class="x-cl dim">'+cards().replace('onclick="set(\'v\',\'share\')"','')+'</div>';
   h+='<div class="x-scrim" onclick="set(\'v\',\'grid\')"></div><div class="x-picker" role="dialog" aria-label="Where should this go?">';
   h+='<div class="x-pkh"><b>Where should this go?</b><button class="x-x" aria-label="Close" onclick="set(\'v\',\'grid\')">×</button></div>';
-  h+='<p class="x-pksub">Pick any mix of Website, Social, and Email. Only selected destinations run.</p>';
-  h+='<div class="x-pktool"><button class="x-lk" onclick="return false">Select all</button><span class="x-mut">0 of 3 selected</span></div>';
-  rows.forEach(function(r){h+='<div class="x-pkrow" role="checkbox" aria-checked="false" tabindex="0"><span class="x-pkico">'+r[2]+'</span><span><b>'+r[0]+'</b><small>'+r[1]+'</small></span><span class="x-pkbox"></span></div>'});
+  h+='<p class="x-pksub">Pick any mix of Website, Social, and Email. Only selected destinations run.'+(admin?' <b>Send to multiple advisors</b> can&rsquo;t be combined with them.':'')+'</p>';
+  h+='<div class="x-pktool"><button class="x-lk" onclick="set(\'pk\',\'dest\');return false">Select all</button><span class="x-mut">'+nSel+' of 3 selected</span></div>';
+  rows.forEach(function(r,i){
+    var on=destOn&&i===0;
+    var inactive=adminOn;
+    h+='<div class="x-pkrow'+(on?' on':'')+(inactive?' inactive':'')+'" role="checkbox" aria-checked="'+(on?'true':'false')+'" tabindex="0" onclick="set(\'pk\',\'dest\')"><span class="x-pkico">'+r[3]+'</span><span><b>'+r[1]+'</b><small>'+r[2]+'</small></span><span class="x-pkbox'+(on?' chk':'')+'">'+(on?'✓':'')+'</span></div>';
+  });
   if(admin){
-    h+='<div class="x-pkdiv"></div><button class="x-pkadmin" onclick="set(\'v\',\'send\');set(\'step\',\'1\');set(\'s\',\'ready\')"><span class="x-pkico">👥</span><span><b>Send to advisors</b><small>Admin · HTML to many, optional social and email campaign</small></span></button>';
+    h+='<div class="x-pkdiv"></div>';
+    h+='<button type="button" class="x-pkadmin'+(adminOn?' on':'')+'" aria-pressed="'+(adminOn?'true':'false')+'" onclick="set(\'pk\',\'admin\')"><span class="x-pkico">👥</span><span><b>Send to multiple advisors</b><small>Admin · HTML to many, optional social and email campaign</small></span><span class="x-pkbox'+(adminOn?' chk':'')+'">'+(adminOn?'✓':'')+'</span></button>';
+    if(adminOn) h+='<p class="x-pkex">Can&rsquo;t combine with Website, Social, or Email. Continue is for those destinations only.</p>';
   } else {
     h+='<div class="x-pknote">Advisor view: no admin item here.</div>';
   }
-  h+='<button class="x-btn pk" disabled>Continue</button><button class="x-btn o pk" onclick="set(\'v\',\'grid\')">Cancel</button></div>';
+  if(adminOn){
+    h+='<button class="x-btn pk" onclick="set(\'v\',\'send\');set(\'step\',\'1\');set(\'s\',\'ready\')">Send to multiple advisors</button>';
+    h+='<button class="x-btn o pk" disabled title="Continue is for Website, Social, or Email">Continue</button>';
+  } else {
+    h+='<button class="x-btn pk"'+(destOn?'':' disabled')+' onclick="toast(\'Continues the usual Website / Social / Email share\')">Continue</button>';
+  }
+  h+='<button class="x-btn o pk" onclick="set(\'v\',\'grid\')">Cancel</button></div>';
   return h;
 }
-function dWizard(){
+
+function dWizardBody(){
   var st=+S.step,steps=['Advisors','Extras','Review','Done'];var done=S.s==='done'||S.s==='partial';if(done)st=4;
-  var h='<div class="x-from"><button class="x-lk" onclick="set(\'v\',\'share\');set(\'s\',\'ready\')">← Share menu</button></div>';
-  h+=postCard();
-  h+='<div class="x-steps">'+steps.map(function(s,i){var k=i+1;return '<span class="'+(k<st?'d':k===st?'n':'')+'">'+(k<st?'✓':k)+' '+s+'</span>'}).join('')+'</div>';
-  var b=stateBlock();if(b)return h+b; if(done)return h+results();
+  var h='<div class="x-steps">'+steps.map(function(s,i){var k=i+1;return '<span class="'+(k<st?'d':k===st?'n':'')+'">'+(k<st?'✓':k)+' '+s+'</span>'}).join('')+'</div>';
+  var b=stateBlock();if(b)return h+b; if(done)return h+results().replace("set('s','ready');set('step','1')","set('v','grid');set('s','ready');set('step','1');set('pk','admin')");
   if(st===1)h+='<div class="x-card">'+search()+pickRows()+'</div><div class="x-bar"><span>'+selList().length+' selected</span><button class="x-btn" onclick="set(\'step\',\'2\')"'+(selList().length?'':' disabled')+'>Next</button></div>';
   if(st===2)h+='<div class="x-card">'+whenBlock()+extras()+'</div><div class="x-bar"><button class="x-btn o" onclick="set(\'step\',\'1\')">Back</button><span class="sp"></span><button class="x-btn" onclick="set(\'step\',\'3\')">Review</button></div>';
   if(st===3)h+='<div class="x-two"><div class="x-card">'+pvTabs()+preview()+'</div><div class="x-card"><div class="x-h">Who gets what</div>'+sumLine()+confirmTbl()+'</div></div><div class="x-bar"><button class="x-btn o" onclick="set(\'step\',\'2\')">Back</button><span class="sp"></span>'+sendBtn()+'</div>';
   return h;
 }
+function sendModal(){
+  var h='<div class="x-cl dim">'+cards().replace('onclick="set(\'v\',\'share\')"','')+'</div>';
+  h+='<div class="x-scrim" onclick="set(\'v\',\'grid\')"></div>';
+  h+='<div class="x-smodal" role="dialog" aria-label="Send to multiple advisors">';
+  h+='<div class="x-smh"><div><b>Send to multiple advisors</b><small>'+POST.t+'</small></div><button class="x-x" aria-label="Close" onclick="set(\'v\',\'grid\')">×</button></div>';
+  h+=postCard();
+  h+=dWizardBody();
+  h+='</div>';
+  return h;
+}
 function directionD(){
   if(S.v==='share')return sharePicker();
-  if(S.v==='send')return dWizard();
+  if(S.v==='send')return sendModal();
   return cards();
 }
+
 
 function render(){var t={a:['Send post to advisors',wizard],b:['Post for multiple advisors',extended],c:['Send to advisors',hub],d:['Content',directionD]}[DIR];
  document.getElementById('flow').innerHTML='<h1 class="x-h1">'+t[0]+'</h1>'+t[1]()}
