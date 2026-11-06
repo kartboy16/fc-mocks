@@ -1,6 +1,6 @@
 # #824 Admin: send an HTML post to multiple advisors, with optional social and email (build contract)
 
-**Status: Not agent-ready. Soft Dev hold until a direction is picked.** This is **`risk:high`**: it publishes HTML posts, can schedule social posts, and can create email campaigns (so it can lead to email going out). Track: playground / staging with QA advisors and QA inboxes only. Alex merges any main PR.
+**Status: Not agent-ready. Soft Dev hold until a direction is picked.** **Current recommendation: D** (Alex asked for the Content card share-menu placement and did not pick A/B/C). This is **`risk:high`**: it publishes HTML posts, can schedule social posts, and can create email campaigns (so it can lead to email going out). Track: playground / staging with QA advisors and QA inboxes only. Alex merges any main PR.
 
 ## Ask (Alex, Nov 5 2026)
 
@@ -31,6 +31,13 @@ After creating an HTML post, admins should be able to send it to multiple adviso
 | Strength | Matches Alex's starting point; leaves #47/#186 and #809 alone | Reuses the known multi-advisor picker | Scales if more "send X to many" tools appear |
 | Weakness | Only starts from a just-saved (or opened) post | Mixes social-only and HTML+extras; easy to confuse; denser | Another admin destination; risk of quietly merging with #809 |
 
+| | **D. Share menu on Content card (recommended)** |
+|---|---|
+| Where | Content tab card → Share picker → admin-only “Send to advisors” |
+| Flow | Same multi-advisor internals as A after the menu item |
+| Strength | Matches how advisors already share; Alex’s asked placement; admin-gated |
+| Weakness | Easy to miss if admins expect a top-level admin page |
+
 ## Shared behaviour (every direction)
 
 1. **Every selected advisor gets the HTML post.**
@@ -42,7 +49,35 @@ After creating an HTML post, admins should be able to send it to multiple adviso
 7. **White-label:** previews use `yourfirm.ca` / `example.com`. No FC links or branding on client-facing surfaces.
 8. **Generic names only** (Jane Advisor, Sam Planner, Your Firm Name, …).
 
-## Recommendation
+
+## Direction D (recommended — Alex placement)
+
+**Where:** Content Library Content tab → library card → **Share** → live `ShareDestinationPicker` (“Where should this go?”).
+
+**Live match (staging `83fc850`):**
+- Card Share button: `ContentLibraryPostCard.jsx` → `onShareMenuOpen`.
+- Picker: `ShareDestinationPicker.jsx` + `shareDestinationPicker.js` — destinations **Website · Social · Email**, multi-select, Continue / Cancel. Desktop Popover (~340px); phone bottom Drawer.
+- `AdminPostDistributionDialog.jsx` is a different admin distribute path; D matches the **card share picker**, not that dialog.
+
+**UI:**
+1. Content grid of library cards (generic titles).
+2. Open Share → picker with Website / Social / Email unchanged.
+3. **Admin only:** divider + **Send to advisors** (opens the multi-advisor flow from A). Advisors never see this item (role switcher in the mock).
+4. Multi-advisor flow: advisors → extras (shared Now/Schedule, optional social for social/social-basic/social-main, optional email campaign for email-content) → review who gets what + skips → Send.
+5. White-label previews (`yourfirm.ca` / `example.com`).
+
+**Estimate (agent time: cloud agent + FC Tester + fix loop) for D alone:** ≈4.5–6.25 h  
+(share-menu gating + reuse of bulk HTML/social/email server path from A ≈4.25–6 h, plus ~20–40 min for the picker item, admin-only visibility, and FC Tester of advisor-hidden).
+
+**Open questions for D:**
+1. Exact menu label: “Send to advisors” (proposed) vs “Send to multiple advisors”?
+2. Sit below a divider under Email (proposed), or as a fourth destination card in the multi-select list?
+3. Does choosing Send to advisors close the picker and leave Website/Social/Email unselected (proposed), or is it mutually exclusive with Continue?
+4. Should non-admins see a disabled row, or nothing at all (proposed: nothing)?
+
+## Recommendation (superseded for placement)
+
+**D** is recommended for placement (Alex). Earlier write-up for **A** as product flow internals (still reused inside D):
 
 **A.** Alex asked for this right after creating a post, so the action belongs on that save moment. It keeps the existing social-only tab (#47/#186) for pure social work, and keeps #809 as the separate email-only tool. B forces two different jobs into one tab and makes the social-only path harder to find. C is fine later as a hub if we grow more "send to many" tools, but it shouldn't be the first home, and it should **not** merge with #809 unless we later decide both share an "Admin send" shell with clearly separate cards (the C mock shows that shell without merging the features).
 

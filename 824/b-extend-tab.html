@@ -91,7 +91,24 @@ table.list{width:100%;border-collapse:collapse;background:#fff;border:1px solid 
 #dev.phone .x-tr{grid-template-columns:32px minmax(0,1fr);row-gap:6px}#dev.phone .x-tr>span:nth-child(n+3){grid-column:2}#dev.phone .x-th{display:none}#dev.phone .x-tbl.cf .x-tr{grid-template-columns:minmax(0,1fr)}#dev.phone .x-tbl.cf .x-tr>span{grid-column:1}
 #dev.phone .x-fr{grid-template-columns:28px minmax(0,1fr)}#dev.phone .x-fr>*:nth-child(n+3){grid-column:2;justify-self:start}
 #dev.phone .x-bar{flex-direction:column;align-items:stretch}#dev.phone .x-bar .sp{display:none}#dev.phone .x-bar .x-btn,#dev.phone .x-foot .x-btn{width:100%}#dev.phone .x-sel,#dev.phone .x-ta{min-height:44px;width:100%}#dev.phone .x-pvt button,#dev.phone .x-btn.sm,#dev.phone .x-lk{min-height:44px}#dev.phone .x-dlg{top:12px}#dev.phone .x-soc{margin-left:0}#dev.phone .x-pc{flex-direction:column}
-</style></head><body><div class="mockbar"><a href="../">All mocks</a> · #824 Send HTML post to advisors · <a href="index.html">Hub</a> · <a href="today.html">Today</a> · <a href="a-after-save.html">A: After Save</a> · <b>B: Extend tab</b> · <a href="c-admin-page.html">C: Admin page</a> · <a href="build-contract.html">Contract</a><span class="sp"></span><span class="grp"><button data-dev="desk" onclick="setDev('desk')">Desktop</button><button data-dev="phone" onclick="setDev('phone')">Phone</button></span><span class="row2">State: <button data-sb="s:ready" onclick="set('s','ready')">ready</button><button data-sb="s:loading" onclick="set('s','loading')">loading</button><button data-sb="s:empty" onclick="set('s','empty')">empty</button><button data-sb="s:error" onclick="set('s','error')">error</button><button data-sb="s:sending" onclick="set('s','sending')">sending</button><button data-sb="s:done" onclick="set('s','done')">done</button><button data-sb="s:partial" onclick="set('s','partial')">done, 1 failed</button> &nbsp;Social: <button data-sb="so:0" onclick="set('so','0')">off</button><button data-sb="so:1" onclick="set('so','1')">on</button> Email: <button data-sb="em:0" onclick="set('em','0')">off</button><button data-sb="em:1" onclick="set('em','1')">on</button> &nbsp;Drawer: <button data-sb="dr:0" onclick="set('dr','0')">closed</button><button data-sb="dr:1" onclick="set('dr','1')">review</button></span></div><div id="dev" class="desk"><div class="x-app"><nav class="x-nav"><b>Admin</b><span>Users</span><span>Content Library</span><span>Manage advisor posts</span><span class="on">Post for multiple advisors</span><span>Send HTML post to advisors</span><span>Send email for multiple advisors</span><span>Weekly Picks</span></nav><div class="x-main"><div id="flow"></div></div></div></div><div class="toast" id="toast"></div><script>
+
+.x-cl{}.x-cl.dim{opacity:.45;pointer-events:none;filter:grayscale(.1)}.x-clh{display:flex;align-items:baseline;gap:10px;margin-bottom:14px}.x-clh b{font-size:22px;color:rgba(0,0,0,.87)}
+.x-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+.x-cardpost{background:#fff;border:1px solid #e3e6ea;border-radius:10px;overflow:hidden;display:flex;flex-direction:column}.x-cardpost.on{box-shadow:0 0 0 2px #1976d2}
+.x-ph.tall{width:100%;height:120px;border-radius:0;background:linear-gradient(135deg,#90caf9,#1565c0)}.x-cpb{padding:12px 14px 14px;flex:1;display:flex;flex-direction:column}.x-cpb b{font-size:15px;margin-bottom:6px}.x-cpb p{margin:0 0 12px;font-size:13.5px;color:rgba(0,0,0,.7);flex:1}
+.x-act{display:flex;gap:8px;flex-wrap:wrap}.x-web,.x-share{font:500 12px Roboto,Inter,sans-serif;border-radius:4px;padding:6px 10px;min-height:36px;cursor:pointer}.x-web{background:#fff;border:1px solid #cfd8dc;color:rgba(0,0,0,.7)}.x-share{background:#fff;border:1px solid #1976d2;color:#1976d2}
+.x-picker{position:fixed;z-index:22;width:340px;max-width:calc(100% - 24px);background:#fff;border:1px solid #d4e4f2;border-radius:12px;padding:16px;box-shadow:0 8px 28px rgba(30,42,74,.16);box-sizing:border-box;right:max(24px, calc(50% - 480px));top:120px}
+.x-pkh{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:4px}.x-pkh b{font-size:17px;color:#1e2a4a}.x-pksub{font-size:13px;color:#5b6572;margin:0 0 12px}.x-pktool{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.x-pkrow{display:flex;align-items:center;gap:12px;padding:12px;border:1.5px solid #d4e4f2;border-radius:12px;margin-bottom:8px;background:#fff;cursor:default}.x-pkrow b{display:block;font-size:15px;color:#1e2a4a}.x-pkrow small{display:block;font-size:12px;color:#5b6572;margin-top:2px}
+.x-pkico{width:40px;height:40px;border-radius:10px;background:#e6f1fb;color:#2b7de9;display:inline-flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.x-pkbox{width:22px;height:22px;border-radius:6px;border:2px solid #d4e4f2;background:#fff;margin-left:auto;flex-shrink:0}
+.x-pkdiv{height:1px;background:#e3e6ea;margin:12px 0}
+.x-pkadmin{display:flex;align-items:center;gap:12px;width:100%;text-align:left;padding:12px;border:1.5px dashed #1976d2;border-radius:12px;background:#f3f8ff;cursor:pointer;font:inherit;margin-bottom:12px;box-sizing:border-box}.x-pkadmin b{display:block;font-size:15px;color:#1565c0}.x-pkadmin small{display:block;font-size:12px;color:#5b6572;margin-top:2px}
+.x-pknote{font-size:12.5px;color:#5b6572;background:#f8f9fb;border-radius:8px;padding:10px 12px;margin:8px 0 12px}
+.x-btn.pk{width:100%;margin-top:4px}.x-from{margin-bottom:8px}
+#dev.phone .x-grid{grid-template-columns:minmax(0,1fr)}#dev.phone .x-picker{left:0;right:0;bottom:0;top:auto;width:100%;max-width:100%;border-radius:16px 16px 0 0;padding:12px 16px 20px}
+#dev.phone .x-share,#dev.phone .x-web{min-height:44px}
+</style></head><body><div class="mockbar"><a href="../">All mocks</a> · #824 Send HTML post to advisors · <a href="index.html">Hub</a> · <a href="today.html">Today</a> · <a href="a-after-save.html">A: After Save</a> · <b>B: Extend tab</b> · <a href="c-admin-page.html">C: Admin page</a> · <a href="d-share-menu.html">D: Share menu</a> · <a href="build-contract.html">Contract</a><span class="sp"></span><span class="grp"><button data-dev="desk" onclick="setDev('desk')">Desktop</button><button data-dev="phone" onclick="setDev('phone')">Phone</button></span><span class="row2">State: <button data-sb="s:ready" onclick="set('s','ready')">ready</button><button data-sb="s:loading" onclick="set('s','loading')">loading</button><button data-sb="s:empty" onclick="set('s','empty')">empty</button><button data-sb="s:error" onclick="set('s','error')">error</button><button data-sb="s:sending" onclick="set('s','sending')">sending</button><button data-sb="s:done" onclick="set('s','done')">done</button><button data-sb="s:partial" onclick="set('s','partial')">done, 1 failed</button> &nbsp;Social: <button data-sb="so:0" onclick="set('so','0')">off</button><button data-sb="so:1" onclick="set('so','1')">on</button> Email: <button data-sb="em:0" onclick="set('em','0')">off</button><button data-sb="em:1" onclick="set('em','1')">on</button> &nbsp;Drawer: <button data-sb="dr:0" onclick="set('dr','0')">closed</button><button data-sb="dr:1" onclick="set('dr','1')">review</button></span></div><div id="dev" class="desk"><div class="x-app"><nav class="x-nav"><b>Admin</b><span>Users</span><span>Content Library</span><span>Manage advisor posts</span><span class="on">Post for multiple advisors</span><span>Send HTML post to advisors</span><span>Send email for multiple advisors</span><span>Weekly Picks</span></nav><div class="x-main"><div id="flow"></div></div></div></div><div class="toast" id="toast"></div><script>
 var S=S||{};function qs(s){return document.querySelectorAll(s)}
 function setDev(d){document.getElementById('dev').className=d;qs('[data-dev]').forEach(function(b){b.classList.toggle('on',b.getAttribute('data-dev')===d)})}
 function toast(m){var t=document.getElementById('toast');t.textContent=m;t.style.display='block';clearTimeout(t._t);t._t=setTimeout(function(){t.style.display='none'},2800)}
@@ -180,7 +197,54 @@ function hub(){var b=stateBlock();
  h+='<div class="x-bar"><span>'+sumLine()+'</span><span class="sp"></span><button class="x-btn" onclick="set(\'cf\',\'1\')">Review send</button></div>';
  if(S.cf==='1')h+='<div class="x-scrim" onclick="set(\'cf\',\'0\')"></div><div class="x-dlg" role="dialog" aria-label="Confirm send"><div class="x-dh"><b>Send “'+POST.t+'”?</b><button class="x-x" aria-label="Close" onclick="set(\'cf\',\'0\')">×</button></div>'+confirmTbl()+pvTabs()+preview()+'<div class="x-foot"><button class="x-btn o" onclick="set(\'cf\',\'0\')">Cancel</button>'+sendBtn()+'</div></div>';
  return h}
-function render(){var t={a:['Send post to advisors',wizard],b:['Post for multiple advisors',extended],c:['Send to advisors',hub]}[DIR];
+
+/* D: share menu on Content card → multi-advisor */
+function cards(){
+  var posts=[{t:POST.t,ex:POST.ex,tag:'Library'},{t:'Year-end tax tips',ex:'Three moves before December 31.',tag:'Library'},{t:'RRSP season checklist',ex:'A short list clients can act on this week.',tag:'Library'}];
+  var h='<div class="x-cl"><div class="x-clh"><b>Content</b><span class="x-mut">Library</span></div><div class="x-grid">';
+  posts.forEach(function(p,i){
+    h+='<div class="x-cardpost'+(i===0?' on':'')+'"><div class="x-ph tall"></div><div class="x-cpb"><b>'+p.t+'</b><p>'+p.ex+'</p><div class="x-act">'
+     +'<button class="x-web">Add to website</button>'
+     +(i===0?'<button class="x-share" onclick="set(\'v\',\'share\')">Share ▾</button>':'<button class="x-share" onclick="toast(\'Share\')">Share ▾</button>')
+     +'</div></div></div>';
+  });
+  return h+'</div></div>';
+}
+function sharePicker(){
+  var admin=S.role!=='advisor';
+  var rows=[['Website','Publish to the advisor site','🌐'],['Social','Post to connected social accounts','↗'],['Email','Create an email campaign for this advisor','✉']];
+  var h='<div class="x-cl dim">'+cards().replace('onclick="set(\'v\',\'share\')"','')+'</div>';
+  h+='<div class="x-scrim" onclick="set(\'v\',\'grid\')"></div><div class="x-picker" role="dialog" aria-label="Where should this go?">';
+  h+='<div class="x-pkh"><b>Where should this go?</b><button class="x-x" aria-label="Close" onclick="set(\'v\',\'grid\')">×</button></div>';
+  h+='<p class="x-pksub">Pick any mix of Website, Social, and Email. Only selected destinations run.</p>';
+  h+='<div class="x-pktool"><button class="x-lk" onclick="return false">Select all</button><span class="x-mut">0 of 3 selected</span></div>';
+  rows.forEach(function(r){h+='<div class="x-pkrow" role="checkbox" aria-checked="false" tabindex="0"><span class="x-pkico">'+r[2]+'</span><span><b>'+r[0]+'</b><small>'+r[1]+'</small></span><span class="x-pkbox"></span></div>'});
+  if(admin){
+    h+='<div class="x-pkdiv"></div><button class="x-pkadmin" onclick="set(\'v\',\'send\');set(\'step\',\'1\');set(\'s\',\'ready\')"><span class="x-pkico">👥</span><span><b>Send to advisors</b><small>Admin · HTML to many, optional social and email campaign</small></span></button>';
+  } else {
+    h+='<div class="x-pknote">Advisor view: no admin item here.</div>';
+  }
+  h+='<button class="x-btn pk" disabled>Continue</button><button class="x-btn o pk" onclick="set(\'v\',\'grid\')">Cancel</button></div>';
+  return h;
+}
+function dWizard(){
+  var st=+S.step,steps=['Advisors','Extras','Review','Done'];var done=S.s==='done'||S.s==='partial';if(done)st=4;
+  var h='<div class="x-from"><button class="x-lk" onclick="set(\'v\',\'share\');set(\'s\',\'ready\')">← Share menu</button></div>';
+  h+=postCard();
+  h+='<div class="x-steps">'+steps.map(function(s,i){var k=i+1;return '<span class="'+(k<st?'d':k===st?'n':'')+'">'+(k<st?'✓':k)+' '+s+'</span>'}).join('')+'</div>';
+  var b=stateBlock();if(b)return h+b; if(done)return h+results();
+  if(st===1)h+='<div class="x-card">'+search()+pickRows()+'</div><div class="x-bar"><span>'+selList().length+' selected</span><button class="x-btn" onclick="set(\'step\',\'2\')"'+(selList().length?'':' disabled')+'>Next</button></div>';
+  if(st===2)h+='<div class="x-card">'+whenBlock()+extras()+'</div><div class="x-bar"><button class="x-btn o" onclick="set(\'step\',\'1\')">Back</button><span class="sp"></span><button class="x-btn" onclick="set(\'step\',\'3\')">Review</button></div>';
+  if(st===3)h+='<div class="x-two"><div class="x-card">'+pvTabs()+preview()+'</div><div class="x-card"><div class="x-h">Who gets what</div>'+sumLine()+confirmTbl()+'</div></div><div class="x-bar"><button class="x-btn o" onclick="set(\'step\',\'2\')">Back</button><span class="sp"></span>'+sendBtn()+'</div>';
+  return h;
+}
+function directionD(){
+  if(S.v==='share')return sharePicker();
+  if(S.v==='send')return dWizard();
+  return cards();
+}
+
+function render(){var t={a:['Send post to advisors',wizard],b:['Post for multiple advisors',extended],c:['Send to advisors',hub],d:['Content',directionD]}[DIR];
  document.getElementById('flow').innerHTML='<h1 class="x-h1">'+t[0]+'</h1>'+t[1]()}
 window.onApply=render;var _sd=setDev;setDev=function(d){_sd(d);render()};
 

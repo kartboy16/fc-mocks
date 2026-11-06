@@ -1,5 +1,5 @@
 <!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>#824 build contract</title><style>body{font-family:Inter,system-ui,sans-serif;max-width:960px;margin:24px auto;padding:0 16px;line-height:1.55;color:#2C3E50}a{color:#1976D2}table{border-collapse:collapse;width:100%;margin:8px 0;font-size:14px}td,th{border:1px solid #e0e5eb;padding:6px 8px;text-align:left;vertical-align:top}th{background:#f3f6f9}blockquote{background:#e8f5e9;border:2px solid #2e7d32;border-radius:10px;margin:10px 0;padding:4px 14px}code{background:#f3f6f9;padding:1px 4px;border-radius:4px}@media(max-width:600px){table{display:block;overflow-x:auto}}code{overflow-wrap:anywhere}td{overflow-wrap:anywhere}</style></head><body><p><a href="../">All mocks</a> · <a href="index.html">Hub</a> · <a href="build-contract.md">Markdown</a></p><h1>#824 Admin: send an HTML post to multiple advisors, with optional social and email (build contract)</h1>
-<p><strong>Status: Not agent-ready. Soft Dev hold until a direction is picked.</strong> This is <strong><code>risk:high</code></strong>: it publishes HTML posts, can schedule social posts, and can create email campaigns (so it can lead to email going out). Track: playground / staging with QA advisors and QA inboxes only. Alex merges any main PR.</p>
+<p><strong>Status: Not agent-ready. Soft Dev hold until a direction is picked.</strong> <strong>Current recommendation: D</strong> (Alex asked for the Content card share-menu placement and did not pick A/B/C). This is <strong><code>risk:high</code></strong>: it publishes HTML posts, can schedule social posts, and can create email campaigns (so it can lead to email going out). Track: playground / staging with QA advisors and QA inboxes only. Alex merges any main PR.</p>
 <h2>Ask (Alex, Nov 5 2026)</h2>
 <p>After creating an HTML post, admins should be able to send it to multiple advisors, and optionally attach a social post (for advisors with social / social-basic / <strong>social-main</strong>) and/or an email campaign (for advisors with email-content).</p>
 <h2>Grounding</h2>
@@ -56,6 +56,32 @@
 </tr>
 </tbody>
 </table>
+<table>
+<thead>
+<tr>
+<th></th>
+<th><strong>D. Share menu on Content card (recommended)</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Where</td>
+<td>Content tab card → Share picker → admin-only “Send to advisors”</td>
+</tr>
+<tr>
+<td>Flow</td>
+<td>Same multi-advisor internals as A after the menu item</td>
+</tr>
+<tr>
+<td>Strength</td>
+<td>Matches how advisors already share; Alex’s asked placement; admin-gated</td>
+</tr>
+<tr>
+<td>Weakness</td>
+<td>Easy to miss if admins expect a top-level admin page</td>
+</tr>
+</tbody>
+</table>
 <h2>Shared behaviour (every direction)</h2>
 <ol>
 <li><strong>Every selected advisor gets the HTML post.</strong></li>
@@ -67,7 +93,27 @@
 <li><strong>White-label:</strong> previews use <code>yourfirm.ca</code> / <code>example.com</code>. No FC links or branding on client-facing surfaces.</li>
 <li><strong>Generic names only</strong> (Jane Advisor, Sam Planner, Your Firm Name, …).</li>
 </ol>
-<h2>Recommendation</h2>
+<h2>Direction D (recommended — Alex placement)</h2>
+<p><strong>Where:</strong> Content Library Content tab → library card → <strong>Share</strong> → live <code>ShareDestinationPicker</code> (“Where should this go?”).</p>
+<p><strong>Live match (staging <code>83fc850</code>):</strong>
+- Card Share button: <code>ContentLibraryPostCard.jsx</code> → <code>onShareMenuOpen</code>.
+- Picker: <code>ShareDestinationPicker.jsx</code> + <code>shareDestinationPicker.js</code> — destinations <strong>Website · Social · Email</strong>, multi-select, Continue / Cancel. Desktop Popover (~340px); phone bottom Drawer.
+- <code>AdminPostDistributionDialog.jsx</code> is a different admin distribute path; D matches the <strong>card share picker</strong>, not that dialog.</p>
+<p><strong>UI:</strong>
+1. Content grid of library cards (generic titles).
+2. Open Share → picker with Website / Social / Email unchanged.
+3. <strong>Admin only:</strong> divider + <strong>Send to advisors</strong> (opens the multi-advisor flow from A). Advisors never see this item (role switcher in the mock).
+4. Multi-advisor flow: advisors → extras (shared Now/Schedule, optional social for social/social-basic/social-main, optional email campaign for email-content) → review who gets what + skips → Send.
+5. White-label previews (<code>yourfirm.ca</code> / <code>example.com</code>).</p>
+<p><strong>Estimate (agent time: cloud agent + FC Tester + fix loop) for D alone:</strong> ≈4.5–6.25 h<br />
+(share-menu gating + reuse of bulk HTML/social/email server path from A ≈4.25–6 h, plus ~20–40 min for the picker item, admin-only visibility, and FC Tester of advisor-hidden).</p>
+<p><strong>Open questions for D:</strong>
+1. Exact menu label: “Send to advisors” (proposed) vs “Send to multiple advisors”?
+2. Sit below a divider under Email (proposed), or as a fourth destination card in the multi-select list?
+3. Does choosing Send to advisors close the picker and leave Website/Social/Email unselected (proposed), or is it mutually exclusive with Continue?
+4. Should non-admins see a disabled row, or nothing at all (proposed: nothing)?</p>
+<h2>Recommendation (superseded for placement)</h2>
+<p><strong>D</strong> is recommended for placement (Alex). Earlier write-up for <strong>A</strong> as product flow internals (still reused inside D):</p>
 <p><strong>A.</strong> Alex asked for this right after creating a post, so the action belongs on that save moment. It keeps the existing social-only tab (#47/#186) for pure social work, and keeps #809 as the separate email-only tool. B forces two different jobs into one tab and makes the social-only path harder to find. C is fine later as a hub if we grow more "send to many" tools, but it shouldn't be the first home, and it should <strong>not</strong> merge with #809 unless we later decide both share an "Admin send" shell with clearly separate cards (the C mock shows that shell without merging the features).</p>
 <h2>Server sketch (A)</h2>
 <ul>
