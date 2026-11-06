@@ -62,7 +62,7 @@ After creating an HTML post, admins should be able to send it to multiple adviso
 **UI:**
 1. Content grid of library cards (generic titles).
 2. Open Share → picker with Website / Social / Email unchanged.
-3. **Admin only:** divider + **Send to multiple advisors**, mutually exclusive with Website/Social/Email and Continue (picker stays open). Advisors never see this item (role switcher).
+3. **Admin only:** divider + **Send to multiple advisors**. Not combined with Website/Social/Email (those stay off/unselectable while it is on). One primary: Continue. Advisors never see this item (role switcher).
 4. Multi-advisor flow opens as a **modal over the Content tab** (card grid stays visible behind). Steps stay in that modal: advisors → extras (shared Now/Schedule, optional social for social/social-basic/social-main, optional email campaign for email-content) → review who gets what + skips → Send. Close or finish returns to Content.
 5. White-label previews (`yourfirm.ca` / `example.com`).
 
@@ -72,9 +72,10 @@ After creating an HTML post, admins should be able to send it to multiple adviso
 **Alex locked (Nov 5 2026):**
 1. **Label:** “Send to multiple advisors” (not “Send to advisors”).
 2. **Placement:** below a divider under Email (as shown).
-3. **Interaction:** mutually exclusive with Continue. The picker stays open. Selecting the admin item deselects Website/Social/Email (they look inactive); Continue is disabled and the primary button becomes “Send to multiple advisors” (opens the multi-advisor modal over Content). Selecting Website/Social/Email deselects the admin item and Continue works as today.
+3. **Interaction (Alex revised):** one primary footer action — **Continue** (no second “Send to multiple advisors” button). Selecting the admin item turns Website/Social/Email off and keeps them unselectable. Continue stays enabled and opens the multi-advisor modal over Content. Turning the admin item off and picking a destination restores the usual share path.
+
 4. **Advisors:** hide the item entirely (role switcher).
-5. **Chrome:** after selecting the admin item, the multi-advisor flow opens as a modal overlaying the Content tab (not a new page).
+5. **Chrome:** Continue (with the admin item selected) opens the multi-advisor flow as a modal overlaying the Content tab (not a new page).
 
 ## Recommendation (superseded for placement)
 

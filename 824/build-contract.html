@@ -102,7 +102,7 @@
 <p><strong>UI:</strong>
 1. Content grid of library cards (generic titles).
 2. Open Share → picker with Website / Social / Email unchanged.
-3. <strong>Admin only:</strong> divider + <strong>Send to multiple advisors</strong>, mutually exclusive with Website/Social/Email and Continue (picker stays open). Advisors never see this item (role switcher).
+3. <strong>Admin only:</strong> divider + <strong>Send to multiple advisors</strong>. Not combined with Website/Social/Email (those stay off/unselectable while it is on). One primary: Continue. Advisors never see this item (role switcher).
 4. Multi-advisor flow opens as a <strong>modal over the Content tab</strong> (card grid stays visible behind). Steps stay in that modal: advisors → extras (shared Now/Schedule, optional social for social/social-basic/social-main, optional email campaign for email-content) → review who gets what + skips → Send. Close or finish returns to Content.
 5. White-label previews (<code>yourfirm.ca</code> / <code>example.com</code>).</p>
 <p><strong>Estimate (agent time: cloud agent + FC Tester + fix loop) for D alone:</strong> ≈4.5–6.25 h<br />
@@ -110,9 +110,11 @@
 <p><strong>Alex locked (Nov 5 2026):</strong>
 1. <strong>Label:</strong> “Send to multiple advisors” (not “Send to advisors”).
 2. <strong>Placement:</strong> below a divider under Email (as shown).
-3. <strong>Interaction:</strong> mutually exclusive with Continue. The picker stays open. Selecting the admin item deselects Website/Social/Email (they look inactive); Continue is disabled and the primary button becomes “Send to multiple advisors” (opens the multi-advisor modal over Content). Selecting Website/Social/Email deselects the admin item and Continue works as today.
-4. <strong>Advisors:</strong> hide the item entirely (role switcher).
-5. <strong>Chrome:</strong> after selecting the admin item, the multi-advisor flow opens as a modal overlaying the Content tab (not a new page).</p>
+3. <strong>Interaction (Alex revised):</strong> one primary footer action — <strong>Continue</strong> (no second “Send to multiple advisors” button). Selecting the admin item turns Website/Social/Email off and keeps them unselectable. Continue stays enabled and opens the multi-advisor modal over Content. Turning the admin item off and picking a destination restores the usual share path.</p>
+<ol>
+<li><strong>Advisors:</strong> hide the item entirely (role switcher).</li>
+<li><strong>Chrome:</strong> Continue (with the admin item selected) opens the multi-advisor flow as a modal overlaying the Content tab (not a new page).</li>
+</ol>
 <h2>Recommendation (superseded for placement)</h2>
 <p><strong>D</strong> is recommended for placement (Alex). Earlier write-up for <strong>A</strong> as product flow internals (still reused inside D):</p>
 <p><strong>A.</strong> Alex asked for this right after creating a post, so the action belongs on that save moment. It keeps the existing social-only tab (#47/#186) for pure social work, and keeps #809 as the separate email-only tool. B forces two different jobs into one tab and makes the social-only path harder to find. C is fine later as a hub if we grow more "send to many" tools, but it shouldn't be the first home, and it should <strong>not</strong> merge with #809 unless we later decide both share an "Admin send" shell with clearly separate cards (the C mock shows that shell without merging the features).</p>

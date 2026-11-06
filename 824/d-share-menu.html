@@ -113,7 +113,7 @@ table.list{width:100%;border-collapse:collapse;background:#fff;border:1px solid 
 .x-smh{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:10px}.x-smh b{display:block;font-size:18px;color:#1e2a4a}.x-smh small{display:block;font-size:13px;color:#5b6572;margin-top:2px}
 #dev.phone .x-smodal{left:0;right:0;top:auto;bottom:0;transform:none;width:100%;max-width:100%;max-height:92dvh;border-radius:16px 16px 0 0;padding:12px 14px 20px}
 
-.x-pkrow.on,.x-pkadmin.on{border-color:#2b7de9;background:#e6f1fb;box-shadow:0 0 0 1px #2b7de9}.x-pkrow.inactive{opacity:.45;pointer-events:none}.x-pkbox.chk{border-color:#2b7de9;background:#2b7de9;color:#fff;font-size:12px;display:inline-flex;align-items:center;justify-content:center}
+.x-pkrow.on,.x-pkadmin.on{border-color:#2b7de9;background:#e6f1fb;box-shadow:0 0 0 1px #2b7de9}.x-pkrow.inactive,.x-pkrow.locked{opacity:.45;pointer-events:none;cursor:not-allowed}.x-pkbox.chk{border-color:#2b7de9;background:#2b7de9;color:#fff;font-size:12px;display:inline-flex;align-items:center;justify-content:center}
 .x-pkadmin{position:relative}.x-pkadmin .x-pkbox{margin-left:auto}.x-pkex{font-size:12.5px;color:#b45309;background:#fff8e6;border:1px solid #ffe0a3;border-radius:8px;padding:8px 10px;margin:0 0 10px}
 .x-btn.pk:disabled{background:#9e9e9e;color:#fff;opacity:.55;cursor:not-allowed}
 </style></head><body><div class="mockbar"><a href="../">All mocks</a> · #824 Send HTML post to advisors · <a href="index.html">Hub</a> · <a href="today.html">Today</a> · <a href="a-after-save.html">A: After Save</a> · <a href="b-extend-tab.html">B: Extend tab</a> · <a href="c-admin-page.html">C: Admin page</a> · <b>D: Share menu</b> · <a href="build-contract.html">Contract</a><span class="sp"></span><span class="grp"><button data-dev="desk" onclick="setDev('desk')">Desktop</button><button data-dev="phone" onclick="setDev('phone')">Phone</button></span><span class="row2">State: <button data-sb="s:ready" onclick="set('s','ready')">ready</button><button data-sb="s:loading" onclick="set('s','loading')">loading</button><button data-sb="s:empty" onclick="set('s','empty')">empty</button><button data-sb="s:error" onclick="set('s','error')">error</button><button data-sb="s:sending" onclick="set('s','sending')">sending</button><button data-sb="s:done" onclick="set('s','done')">done</button><button data-sb="s:partial" onclick="set('s','partial')">done, 1 failed</button> &nbsp;Social: <button data-sb="so:0" onclick="set('so','0')">off</button><button data-sb="so:1" onclick="set('so','1')">on</button> Email: <button data-sb="em:0" onclick="set('em','0')">off</button><button data-sb="em:1" onclick="set('em','1')">on</button> &nbsp;Role: <button data-sb="role:admin" onclick="set('role','admin')">admin</button><button data-sb="role:advisor" onclick="set('role','advisor')">advisor</button> View: <button data-sb="v:grid" onclick="set('v','grid')">cards</button><button data-sb="v:share" onclick="set('v','share')">share open</button><button data-sb="v:send" onclick="set('v','send')">send flow</button> Picker: <button data-sb="pk:admin" onclick="set('pk','admin')">admin item</button><button data-sb="pk:dest" onclick="set('pk','dest')">destination</button> Step: <button data-sb="step:1" onclick="set('step','1')">advisors</button><button data-sb="step:2" onclick="set('step','2')">extras</button><button data-sb="step:3" onclick="set('step','3')">review</button></span></div><div id="dev" class="desk"><div class="x-app"><nav class="x-nav"><b>Admin</b><span>Users</span><span class="on">Content Library</span><span>Manage advisor posts</span><span>Post for multiple advisors</span><span>Send HTML post to advisors</span><span>Send email for multiple advisors</span><span>Weekly Picks</span></nav><div class="x-main"><div id="flow"></div></div></div></div><div class="toast" id="toast"></div><script>
@@ -220,7 +220,7 @@ function cards(){
 }
 function sharePicker(){
   var admin=S.role!=='advisor';
-  var mode=S.pk||'admin'; // admin | dest
+  var mode=S.pk||'admin';
   if(!admin) mode='dest';
   var destOn=mode==='dest';
   var adminOn=mode==='admin'&&admin;
@@ -229,29 +229,26 @@ function sharePicker(){
   var h='<div class="x-cl dim">'+cards().replace('onclick="set(\'v\',\'share\')"','')+'</div>';
   h+='<div class="x-scrim" onclick="set(\'v\',\'grid\')"></div><div class="x-picker" role="dialog" aria-label="Where should this go?">';
   h+='<div class="x-pkh"><b>Where should this go?</b><button class="x-x" aria-label="Close" onclick="set(\'v\',\'grid\')">×</button></div>';
-  h+='<p class="x-pksub">Pick any mix of Website, Social, and Email. Only selected destinations run.'+(admin?' <b>Send to multiple advisors</b> can&rsquo;t be combined with them.':'')+'</p>';
-  h+='<div class="x-pktool"><button class="x-lk" onclick="set(\'pk\',\'dest\');return false">Select all</button><span class="x-mut">'+nSel+' of 3 selected</span></div>';
+  h+='<p class="x-pksub">Pick any mix of Website, Social, and Email. Only selected destinations run.'+(admin?' Or choose <b>Send to multiple advisors</b> — not at the same time.':'')+'</p>';
+  h+='<div class="x-pktool"><button class="x-lk"'+(adminOn?' disabled aria-disabled="true"':' onclick="set(\'pk\',\'dest\');return false"')+'>Select all</button><span class="x-mut">'+nSel+' of 3 selected</span></div>';
   rows.forEach(function(r,i){
     var on=destOn&&i===0;
-    var inactive=adminOn;
-    h+='<div class="x-pkrow'+(on?' on':'')+(inactive?' inactive':'')+'" role="checkbox" aria-checked="'+(on?'true':'false')+'" tabindex="0" onclick="set(\'pk\',\'dest\')"><span class="x-pkico">'+r[3]+'</span><span><b>'+r[1]+'</b><small>'+r[2]+'</small></span><span class="x-pkbox'+(on?' chk':'')+'">'+(on?'✓':'')+'</span></div>';
+    var locked=adminOn;
+    h+='<div class="x-pkrow'+(on?' on':'')+(locked?' locked':'')+'" role="checkbox" aria-checked="'+(on?'true':'false')+'" aria-disabled="'+(locked?'true':'false')+'"'+(locked?'':' tabindex="0" onclick="set(\'pk\',\'dest\')"')+'><span class="x-pkico">'+r[3]+'</span><span><b>'+r[1]+'</b><small>'+(locked?'Unavailable while Send to multiple advisors is selected':r[2])+'</small></span><span class="x-pkbox'+(on?' chk':'')+'">'+(on?'✓':'')+'</span></div>';
   });
   if(admin){
     h+='<div class="x-pkdiv"></div>';
     h+='<button type="button" class="x-pkadmin'+(adminOn?' on':'')+'" aria-pressed="'+(adminOn?'true':'false')+'" onclick="set(\'pk\',\'admin\')"><span class="x-pkico">👥</span><span><b>Send to multiple advisors</b><small>Admin · HTML to many, optional social and email campaign</small></span><span class="x-pkbox'+(adminOn?' chk':'')+'">'+(adminOn?'✓':'')+'</span></button>';
-    if(adminOn) h+='<p class="x-pkex">Can&rsquo;t combine with Website, Social, or Email. Continue is for those destinations only.</p>';
   } else {
     h+='<div class="x-pknote">Advisor view: no admin item here.</div>';
   }
-  if(adminOn){
-    h+='<button class="x-btn pk" onclick="set(\'v\',\'send\');set(\'step\',\'1\');set(\'s\',\'ready\')">Send to multiple advisors</button>';
-    h+='<button class="x-btn o pk" disabled title="Continue is for Website, Social, or Email">Continue</button>';
-  } else {
-    h+='<button class="x-btn pk"'+(destOn?'':' disabled')+' onclick="toast(\'Continues the usual Website / Social / Email share\')">Continue</button>';
-  }
+  var canGo=adminOn||destOn;
+  var contClick=adminOn?"set('v','send');set('step','1');set('s','ready')":"toast('Continues the usual Website / Social / Email share')";
+  h+='<button class="x-btn pk"'+(canGo?'':' disabled')+' onclick="'+contClick+'">Continue</button>';
   h+='<button class="x-btn o pk" onclick="set(\'v\',\'grid\')">Cancel</button></div>';
   return h;
 }
+
 
 function dWizardBody(){
   var st=+S.step,steps=['Advisors','Extras','Review','Done'];var done=S.s==='done'||S.s==='partial';if(done)st=4;
