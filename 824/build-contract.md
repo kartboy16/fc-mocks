@@ -52,6 +52,23 @@ After creating an HTML post, admins should be able to send it to multiple adviso
 8. **Generic names only** (Jane Advisor, Sam Planner, Your Firm Name, …).
 
 
+
+## AFA parity extras (Alex, Nov 5 evening)
+
+The multi-advisor modal matches AFA `send_htmlPost_modal_v2.jsx` options (FC wording). **Send as Page is out — Alex said he does not need it.**
+
+1. HTML post for every selected advisor
+2. Publish Now / Schedule (shared date+time when Schedule)
+3. Post status (Publish / Pending / Draft / Private)
+4. Allow comments
+5. Send emails with this post → each advisor’s **Send to Email** field; skip “No send-to email” without blocking HTML
+6. Email campaign for email-content (never “Mailchimp campaign”); **every** email-content advisor gets the approval email; skip campaign only if no list/sender
+7. Send as a social post (Edit); social / social-basic / **social-main**
+8. Send compliance email; Compliance tag only; skip “No compliance” without blocking HTML
+
+Modal footer primary: **Schedule for advisors** (no second Send as Page action). Content-tab picker still only **Continue**.
+
+
 ## Direction D (recommended — Alex placement)
 
 **Where:** Content Library Content tab → library card → **Share** → live `ShareDestinationPicker` (“Where should this go?”).
