@@ -109,6 +109,10 @@ table.list{width:100%;border-collapse:collapse;background:#fff;border:1px solid 
 #dev.phone .x-grid{grid-template-columns:minmax(0,1fr)}#dev.phone .x-picker{left:0;right:0;bottom:0;top:auto;width:100%;max-width:100%;border-radius:16px 16px 0 0;padding:12px 16px 20px}
 #dev.phone .x-share,#dev.phone .x-web{min-height:44px}
 
+.x-when{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:10px;margin-top:10px;padding:12px;background:#f8f9fb;border-radius:8px}.x-when .x-f{margin:0}.x-when .x-mut{grid-column:1/-1}
+.x-publine{background:#eef6ff;border:1px solid #c5dbf5;border-radius:8px;padding:10px 12px;margin-bottom:12px;font-size:14px}
+#dev.phone .x-when{grid-template-columns:minmax(0,1fr)}
+
 .x-smodal{position:fixed;z-index:23;left:50%;top:48px;transform:translateX(-50%);width:min(920px,calc(100% - 32px));max-height:calc(100vh - 72px);overflow:auto;background:#fff;border:1px solid #d4e4f2;border-radius:14px;padding:16px 18px 18px;box-shadow:0 16px 48px rgba(30,42,74,.22);box-sizing:border-box}
 .x-smh{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:10px}.x-smh b{display:block;font-size:18px;color:#1e2a4a}.x-smh small{display:block;font-size:13px;color:#5b6572;margin-top:2px}
 #dev.phone .x-smodal{left:0;right:0;top:auto;bottom:0;transform:none;width:100%;max-width:100%;max-height:92dvh;border-radius:16px 16px 0 0;padding:12px 14px 20px}
@@ -116,7 +120,7 @@ table.list{width:100%;border-collapse:collapse;background:#fff;border:1px solid 
 .x-pkrow.on,.x-pkadmin.on{border-color:#2b7de9;background:#e6f1fb;box-shadow:0 0 0 1px #2b7de9}.x-pkrow.inactive,.x-pkrow.locked{opacity:.45;pointer-events:none;cursor:not-allowed}.x-pkbox.chk{border-color:#2b7de9;background:#2b7de9;color:#fff;font-size:12px;display:inline-flex;align-items:center;justify-content:center}
 .x-pkadmin{position:relative}.x-pkadmin .x-pkbox{margin-left:auto}.x-pkex{font-size:12.5px;color:#b45309;background:#fff8e6;border:1px solid #ffe0a3;border-radius:8px;padding:8px 10px;margin:0 0 10px}
 .x-btn.pk:disabled{background:#9e9e9e;color:#fff;opacity:.55;cursor:not-allowed}
-</style></head><body><div class="mockbar"><a href="../">All mocks</a> · #824 Send HTML post to advisors · <a href="index.html">Hub</a> · <a href="today.html">Today</a> · <a href="a-after-save.html">A: After Save</a> · <b>B: Extend tab</b> · <a href="c-admin-page.html">C: Admin page</a> · <a href="d-share-menu.html">D: Share menu</a> · <a href="build-contract.html">Contract</a><span class="sp"></span><span class="grp"><button data-dev="desk" onclick="setDev('desk')">Desktop</button><button data-dev="phone" onclick="setDev('phone')">Phone</button></span><span class="row2">State: <button data-sb="s:ready" onclick="set('s','ready')">ready</button><button data-sb="s:loading" onclick="set('s','loading')">loading</button><button data-sb="s:empty" onclick="set('s','empty')">empty</button><button data-sb="s:error" onclick="set('s','error')">error</button><button data-sb="s:sending" onclick="set('s','sending')">sending</button><button data-sb="s:done" onclick="set('s','done')">done</button><button data-sb="s:partial" onclick="set('s','partial')">done, 1 failed</button> &nbsp;Social: <button data-sb="so:0" onclick="set('so','0')">off</button><button data-sb="so:1" onclick="set('so','1')">on</button> Email: <button data-sb="em:0" onclick="set('em','0')">off</button><button data-sb="em:1" onclick="set('em','1')">on</button> &nbsp;Drawer: <button data-sb="dr:0" onclick="set('dr','0')">closed</button><button data-sb="dr:1" onclick="set('dr','1')">review</button></span></div><div id="dev" class="desk"><div class="x-app"><nav class="x-nav"><b>Admin</b><span>Users</span><span>Content Library</span><span>Manage advisor posts</span><span class="on">Post for multiple advisors</span><span>Send HTML post to advisors</span><span>Send email for multiple advisors</span><span>Weekly Picks</span></nav><div class="x-main"><div id="flow"></div></div></div></div><div class="toast" id="toast"></div><script>
+</style></head><body><div class="mockbar"><a href="../">All mocks</a> · #824 Send HTML post to advisors · <a href="index.html">Hub</a> · <a href="today.html">Today</a> · <a href="a-after-save.html">A: After Save</a> · <b>B: Extend tab</b> · <a href="c-admin-page.html">C: Admin page</a> · <a href="d-share-menu.html">D: Share menu</a> · <a href="build-contract.html">Contract</a><span class="sp"></span><span class="grp"><button data-dev="desk" onclick="setDev('desk')">Desktop</button><button data-dev="phone" onclick="setDev('phone')">Phone</button></span><span class="row2">State: <button data-sb="s:ready" onclick="set('s','ready')">ready</button><button data-sb="s:loading" onclick="set('s','loading')">loading</button><button data-sb="s:empty" onclick="set('s','empty')">empty</button><button data-sb="s:error" onclick="set('s','error')">error</button><button data-sb="s:sending" onclick="set('s','sending')">sending</button><button data-sb="s:done" onclick="set('s','done')">done</button><button data-sb="s:partial" onclick="set('s','partial')">done, 1 failed</button> &nbsp;Social: <button data-sb="so:0" onclick="set('so','0')">off</button><button data-sb="so:1" onclick="set('so','1')">on</button> Email: <button data-sb="em:0" onclick="set('em','0')">off</button><button data-sb="em:1" onclick="set('em','1')">on</button> Compliance: <button data-sb="co:0" onclick="set('co','0')">off</button><button data-sb="co:1" onclick="set('co','1')">on</button> Publish: <button data-sb="when:now" onclick="set('when','now')">now</button><button data-sb="when:sched" onclick="set('when','sched')">schedule</button> &nbsp;Drawer: <button data-sb="dr:0" onclick="set('dr','0')">closed</button><button data-sb="dr:1" onclick="set('dr','1')">review</button></span></div><div id="dev" class="desk"><div class="x-app"><nav class="x-nav"><b>Admin</b><span>Users</span><span>Content Library</span><span>Manage advisor posts</span><span class="on">Post for multiple advisors</span><span>Send HTML post to advisors</span><span>Send email for multiple advisors</span><span>Weekly Picks</span></nav><div class="x-main"><div id="flow"></div></div></div></div><div class="toast" id="toast"></div><script>
 var S=S||{};function qs(s){return document.querySelectorAll(s)}
 function setDev(d){document.getElementById('dev').className=d;qs('[data-dev]').forEach(function(b){b.classList.toggle('on',b.getAttribute('data-dev')===d)})}
 function toast(m){var t=document.getElementById('toast');t.textContent=m;t.style.display='block';clearTimeout(t._t);t._t=setTimeout(function(){t.style.display='none'},2800)}
@@ -126,13 +130,13 @@ function apply(){Object.keys(S).forEach(function(k){qs('[data-'+k+']').forEach(f
 function set(k,v){S[k]=v;apply();var d=document.getElementById('dev');if(k==='v'){d.scrollTop=0;window.scrollTo(0,0)}}
 function openOv(id){document.getElementById(id).classList.add('show')}function closeOv(id){document.getElementById(id).classList.remove('show')}
 function initBase(){var q=location.search;setDev(/[?&]phone/.test(q)?'phone':'desk');Object.keys(S).forEach(function(k){var m=q.match(new RegExp('[?&]'+k+'=([a-z0-9]+)'));if(m)S[k]=m[1]});apply()}
-S={s:'ready',so:'1',em:'1',pv:'',dr:'0',cf:'0'};var DIR='b';var ADV=[
- {id:'jane',n:'Jane Advisor',f:'Your Firm Name',e:'jane@yourfirm.ca',soc:1,em:1,lists:[['Clients',142]],cm:'off',addr:1,c:'#1f7a66',ini:'YF',tags:['Social - Main','Email content']},
- {id:'john',n:'John Advisor',f:'Example Wealth',e:'john@example.com',soc:1,em:0,lists:[],cm:'off',addr:0,c:'#2b4c7e',ini:'EW',tags:['Social - Basic']},
- {id:'casey',n:'Casey Example',f:'Example Planning',e:'casey@example.com',soc:0,em:0,lists:[],cm:'off',addr:0,c:'#7a4f1f',ini:'EP',tags:['Website']},
- {id:'sam',n:'Sam Planner',f:'Sample Advisory',e:'sam@example.com',soc:0,em:1,lists:[],cm:'off',addr:0,c:'#5e35b1',ini:'SA',tags:['Email content'],why:'No email list'},
- {id:'pat',n:'Pat Example',f:'Your Firm Name',e:'pat@yourfirm.ca',soc:1,em:0,lists:[],cm:'off',addr:0,c:'#1f7a66',ini:'YF',tags:['Social']},
- {id:'lee',n:'Lee Example',f:'Example Partners',e:'lee@example.com',soc:0,em:1,lists:[['Newsletter',95]],cm:'email',addr:1,c:'#8e2c48',ini:'EP',tags:['Email content']}
+S={s:'ready',so:'1',em:'1',co:'1',when:'now',date:'2026-11-12',time:'09:00',dt:'Nov 12, 2026, 9:00 AM',pv:'',dr:'0',cf:'0'};var DIR='b';var ADV=[
+ {id:'jane',n:'Jane Advisor',f:'Your Firm Name',e:'jane@yourfirm.ca',soc:1,em:1,comp:1,lists:[['Clients',142]],cm:'off',addr:1,c:'#1f7a66',ini:'YF',tags:['Social - Main','Email content','Compliance']},
+ {id:'john',n:'John Advisor',f:'Example Wealth',e:'john@example.com',soc:1,em:0,comp:0,lists:[],cm:'off',addr:0,c:'#2b4c7e',ini:'EW',tags:['Social - Basic']},
+ {id:'casey',n:'Casey Example',f:'Example Planning',e:'casey@example.com',soc:0,em:0,comp:0,lists:[],cm:'off',addr:0,c:'#7a4f1f',ini:'EP',tags:['Website']},
+ {id:'sam',n:'Sam Planner',f:'Sample Advisory',e:'sam@example.com',soc:0,em:1,comp:0,lists:[],cm:'off',addr:0,c:'#5e35b1',ini:'SA',tags:['Email content'],why:'No email list'},
+ {id:'pat',n:'Pat Example',f:'Your Firm Name',e:'pat@yourfirm.ca',soc:1,em:0,comp:1,lists:[],cm:'off',addr:0,c:'#1f7a66',ini:'YF',tags:['Social','Compliance']},
+ {id:'lee',n:'Lee Example',f:'Example Partners',e:'lee@example.com',soc:0,em:1,comp:0,lists:[['Newsletter',95]],cm:'email',addr:1,c:'#8e2c48',ini:'EP',tags:['Email content']}
 ];
 var SEL={jane:1,john:1,casey:1,sam:1,pat:1,lee:1};
 var POST={t:'November market update',ex:'Markets moved a lot this month. Three things worth knowing before year-end.',url:'https://yourfirm.ca/insights/november-market-update'};
@@ -142,10 +146,14 @@ function toggle(id){SEL[id]=SEL[id]?0:1;render()}
 function all(v){ADV.forEach(function(a){SEL[a.id]=v});render()}
 function so(){return S.so==='1'}
 function em(){return S.em==='1'}
+function co(){return S.co==='1'}
+function when(){return S.when||'now'}
+function whenLabel(){return when()==='sched'?(S.dt||'Nov 12, 2026, 9:00 AM'):'Now'}
 function pack(a){
   var bits=['HTML'],sk=[];
   if(so()){if(a.soc)bits.push('Social');else sk.push('No social product')}
-  if(em()){if(!a.em)sk.push('No email-content');else if(!a.lists.length)sk.push(a.why||'No email list');else if(a.cm!=='off')bits.push('Email (approval)');else bits.push('Email')}
+  if(em()){if(!a.em)sk.push('No email-content');else if(!a.lists.length)sk.push(a.why||'No email list');else bits.push('Email (approval)')}
+  if(co()){if(a.comp)bits.push('Compliance');else sk.push('No compliance')}
   return {bits:bits,sk:sk,lab:bits.join(' + ')+(sk.length?' · skipped: '+sk.join(', '):'')}
 }
 function pill(k,t){return '<span class="x-pill '+k+'">'+t+'</span>'}
@@ -157,23 +165,49 @@ function extras(){
   return '<div class="x-xtras"><label class="x-tog"><input type="checkbox" '+(so()?'checked':'')+' onchange="set(\'so\',this.checked?\'1\':\'0\')">Also create a social post</label>'
    +(so()?'<div class="x-soc"><label>Shared social copy</label><textarea class="x-ta" rows="3" aria-label="Social copy">Markets moved a lot this month. Three things worth knowing before year-end.\n\n'+POST.url+'</textarea><small>Composed once. Attached only to advisors with Social, Social - Basic or Social - Main.</small></div>':'')
    +'<label class="x-tog"><input type="checkbox" '+(em()?'checked':'')+' onchange="set(\'em\',this.checked?\'1\':\'0\')">Also create an email campaign</label>'
-   +(em()?'<div class="x-soc"><small>Uses each advisor&rsquo;s own list, sender, header/footer and compliance rules. Advisors who need approval get a draft that waits for Approve/Decline.</small></div>':'')
+   +(em()?'<div class="x-soc"><small>Uses each advisor&rsquo;s own list, sender, and header/footer. Every advisor with email-content gets an approval email (Approve/Decline) for the campaign.</small></div>':'')
+   +'<label class="x-tog"><input type="checkbox" '+(co()?'checked':'')+' onchange="set(\'co\',this.checked?\'1\':\'0\')">Also send compliance email</label>'
+   +(co()?'<div class="x-soc"><small>AFA parity: only advisors with the Compliance product get it. Others skip with &ldquo;No compliance&rdquo; — HTML still goes out.</small></div>':'')
    +'</div>'}
-function whenBlock(){return '<div class="x-f"><label>Publish</label><div class="x-rad"><label><input type="radio" name="w" checked> Now</label><label><input type="radio" name="w"> Schedule</label></div></div>'}
+function whenBlock(){
+  var sched=when()==='sched';
+  var h='<div class="x-f"><label>Publish</label><div class="x-rad">'
+   +'<label><input type="radio" name="w" '+(sched?'':'checked')+' onchange="set(\'when\',\'now\')"> Now</label>'
+   +'<label><input type="radio" name="w" '+(sched?'checked':'')+' onchange="set(\'when\',\'sched\')"> Schedule</label>'
+   +'</div>';
+  if(sched){
+    h+='<div class="x-when"><div class="x-f"><label for="pubd">Date</label><input id="pubd" class="x-in" type="date" value="'+(S.date||'2026-11-12')+'" onchange="S.date=this.value;S.dt=fmtWhen();render()"></div>'
+     +'<div class="x-f"><label for="pubt">Time</label><input id="pubt" class="x-in" type="time" value="'+(S.time||'09:00')+'" onchange="S.time=this.value;S.dt=fmtWhen();render()"></div>'
+     +'<p class="x-mut" style="margin:0;font-size:13px">One shared publish time for every selected advisor: <b>'+whenLabel()+'</b></p></div>';
+  }
+  return h+'</div>';
+}
+function fmtWhen(){
+  var d=S.date||'2026-11-12', t=S.time||'09:00';
+  var months=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  var p=d.split('-'), hh=t.split(':'), h=+hh[0], m=hh[1], ap=h>=12?'PM':'AM'; h=h%12; if(!h)h=12;
+  return months[+p[1]-1]+' '+(+p[2])+', '+p[0]+', '+h+':'+m+' '+ap;
+}
 function postCard(){return '<div class="x-pc"><div class="x-ph"></div><div><b>'+POST.t+'</b><p>'+POST.ex+'</p><small>'+POST.url+'</small></div></div>'}
-function sumLine(){var s=selList(),h=s.length,soN=s.filter(function(a){return so()&&a.soc}).length,emN=s.filter(function(a){return em()&&a.em&&a.lists.length}).length,wa=s.filter(function(a){return em()&&a.em&&a.lists.length&&a.cm!=='off'}).length,sk=s.filter(function(a){return (so()&&!a.soc)||(em()&&(!a.em||!a.lists.length))}).length;
- return '<div class="x-sum">'+pill('ok',h+' get HTML')+(so()?' '+pill('ok',soN+' get social'):'')+(em()?' '+pill(wa?'wa':'ok',emN+' get email'+(wa?' ('+wa+' approval)':'')):'')+(sk?' '+pill('wa',sk+' with a skipped extra'):'')+'</div>'}
+function sumLine(){var s=selList(),h=s.length,soN=s.filter(function(a){return so()&&a.soc}).length,emN=s.filter(function(a){return em()&&a.em&&a.lists.length}).length,coN=s.filter(function(a){return co()&&a.comp}).length,sk=s.filter(function(a){return (so()&&!a.soc)||(em()&&(!a.em||!a.lists.length))||(co()&&!a.comp)}).length;
+ return '<div class="x-sum">'+pill('ok',h+' get HTML')+(so()?' '+pill('ok',soN+' get social'):'')+(em()?' '+pill('wa',emN+' will get an approval email'):'')+(co()?' '+pill('ok',coN+' get compliance'):'')+(sk?' '+pill('wa',sk+' with a skipped extra'):'')+'</div>'}
 function confirmTbl(){var h='<div class="x-tbl cf"><div class="x-tr x-th"><span>Advisor</span><span>Gets</span><span>Notes</span></div>';
- selList().forEach(function(a){var p=pack(a);h+='<div class="x-tr"><span><b>'+a.n+'</b><small>'+a.f+'</small></span><span>'+pill(p.bits.length>1?'ok':'ok',p.bits.join(' + '))+'</span><span>'+(p.sk.length?pill('wa',p.sk.join(', ')):'—')+'</span></div>'});return h+'</div>'}
+ selList().forEach(function(a){var p=pack(a);var notes=[];if(p.sk.length)notes.push(pill('wa',p.sk.join(', ')));if(p.bits.indexOf('Email (approval)')>-1)notes.push(pill('wa','Will email for approval'));if(p.bits.indexOf('Compliance')>-1)notes.push(pill('ok','Will send compliance'));h+='<div class="x-tr"><span><b>'+a.n+'</b><small>'+a.f+'</small></span><span>'+pill(p.bits.length>1?'ok':'ok',p.bits.join(' + '))+'</span><span>'+(notes.length?notes.join(' '):'—')+'</span></div>'});return h+'</div>'}
 function preview(a){a=a||A(S.pv)||selList()[0]||ADV[0];
  var emPv=em()&&a.em&&a.lists.length?'<div class="x-em"><div class="x-emh" style="background:'+a.c+'"><span class="x-lg">'+a.ini+'</span>'+a.f+'</div><div class="x-emb"><div class="x-emt">'+POST.t+'</div><p>Hi {First name},</p><p>'+POST.ex+'</p><span class="x-emc" style="background:'+a.c+'">Read the update</span><p class="x-ems">'+a.n+' · '+a.f+' · <u>Unsubscribe</u></p></div></div>':'';
- return '<div class="x-pv"><div class="x-h">Preview · '+a.n+'</div>'+postCard()+(so()&&a.soc?'<div class="x-socpv"><b>Social</b><p>Markets moved a lot this month. Three things worth knowing before year-end.</p><a href="#" onclick="return false">'+POST.url.replace('yourfirm.ca',a.id==='jane'||a.id==='pat'?'yourfirm.ca':'example.com')+'</a></div>':'')+emPv+'</div>'}
+ return '<div class="x-pv"><div class="x-h">Preview · '+a.n+'</div>'+postCard()+(so()&&a.soc?'<div class="x-socpv"><b>Social</b><p>Markets moved a lot this month. Three things worth knowing before year-end.</p><a href="#" onclick="return false">'+POST.url.replace('yourfirm.ca',a.id==='jane'||a.id==='pat'?'yourfirm.ca':'example.com')+'</a></div>':'')+emPv+(co()&&a.comp?'<div class="x-socpv"><b>Compliance</b><p>PDF of this post will email the advisor&rsquo;s compliance contact.</p></div>':'')+'</div>'}
 function pvTabs(){return '<div class="x-pvt">'+selList().map(function(a){var on=(S.pv===a.id)||(!A(S.pv)&&a===selList()[0]);return '<button class="'+(on?'on':'')+'" onclick="S.pv=\''+a.id+'\';render()">'+a.n.split(' ')[0]+'</button>'}).join('')+'</div>'}
 function sendBtn(){return '<button class="x-btn" onclick="set(\'s\',\'sending\');setTimeout(function(){set(\'s\',\'done\')},900)">Send to '+selList().length+' advisors</button>'}
-function result(a){var p=pack(a);if(em()&&a.em&&!a.lists.length)return ['wa','HTML queued · email skipped: '+(a.why||'No list')];if(em()&&a.em&&a.lists.length&&a.cm!=='off')return ['wa','HTML queued · email waiting for approval'];if(a.id==='casey'&&S.s==='partial')return ['bl','HTML failed: publish error. Retry'];return ['ok',p.bits.join(' + ')+' queued']}
-function results(){var h='<div class="x-al ok">'+(S.s==='partial'?'Done, with 1 failure.':'Done.')+' Each advisor gets their own HTML post'+(so()?', social where entitled':'')+(em()?', and email campaign where entitled':'')+'.</div><div class="x-tbl cf"><div class="x-tr x-th"><span>Advisor</span><span>Result</span><span></span></div>';
+function result(a){var p=pack(a);var parts=[];parts.push('HTML');if(so()&&a.soc)parts.push('Social');if(co()&&a.comp)parts.push('Compliance');
+ if(em()&&a.em&&!a.lists.length)return ['wa',parts.join(' + ')+' queued · email skipped: '+(a.why||'No list')];
+ if(em()&&a.em&&a.lists.length)return ['wa',parts.join(' + ')+' queued · approval email sent'];
+ if(co()&&!a.comp){/* skip noted in pack; HTML still ok */}
+ if(a.id==='casey'&&S.s==='partial')return ['bl','HTML failed: publish error. Retry'];
+ var extra=[];if(co()&&!a.comp&&co())extra.push('compliance skipped');if(so()&&!a.soc)extra.push('social skipped');
+ return ['ok',p.bits.join(' + ')+' queued'+(extra.length?' · '+extra.join(', '):'')]}
+function results(){var h='<div class="x-al ok">'+(S.s==='partial'?'Done, with 1 failure.':'Done.')+' Each advisor gets their own HTML post'+(so()?', social where entitled':'')+(em()?', an approval email where they have email-content':'')+(co()?', and compliance where tagged':'')+'. Skipped extras never block the HTML send.</div><div class="x-tbl cf"><div class="x-tr x-th"><span>Advisor</span><span>Result</span><span></span></div>';
  selList().forEach(function(a){var r=result(a);h+='<div class="x-tr"><span><b>'+a.n+'</b><small>'+a.f+'</small></span><span>'+pill(r[0],r[1])+'</span><span>'+(r[0]==='bl'?'<button class="x-btn o sm" onclick="toast(\'Retrying Casey\')">Retry</button>':'<button class="x-lk" onclick="toast(\'Opens the advisor\')">View</button>')+'</span></div>'});
- return h+'</div><div class="x-foot"><button class="x-btn o" onclick="set(\'s\',\'ready\');set(\'step\',\'1\')">Send another</button></div>'}
+ return h+'</div><div class="x-foot"><button class="x-btn o" onclick="set(\'v\',\'grid\');set(\'s\',\'ready\');set(\'step\',\'1\')">Back to Content</button></div>'}
 function stateBlock(){if(S.s==='loading')return '<div class="x-load"><span class="x-spin"></span>Loading advisors…</div>';
  if(S.s==='empty')return '<div class="x-empty"><b>No advisors yet</b><p>Advisors with a website show up here.</p></div>';
  if(S.s==='error')return '<div class="x-al er">Couldn&rsquo;t load advisors. <button class="x-btn o sm" onclick="set(\'s\',\'ready\')">Try again</button></div>';
@@ -186,7 +220,7 @@ function wizard(){var st=+S.step,steps=['Advisors','Extras','Review','Done'];var
  var b=stateBlock();if(b)return h+b; if(done)return h+results();
  if(st===1)h+='<div class="x-card">'+search()+pickRows()+'</div><div class="x-bar"><span>'+selList().length+' selected</span><button class="x-btn" onclick="set(\'step\',\'2\')"'+(selList().length?'':' disabled')+'>Next</button></div>';
  if(st===2)h+='<div class="x-card">'+whenBlock()+extras()+'</div><div class="x-bar"><button class="x-btn o" onclick="set(\'step\',\'1\')">Back</button><span class="sp"></span><button class="x-btn" onclick="set(\'step\',\'3\')">Review</button></div>';
- if(st===3)h+='<div class="x-two"><div class="x-card">'+pvTabs()+preview()+'</div><div class="x-card"><div class="x-h">Who gets what</div>'+sumLine()+confirmTbl()+'</div></div><div class="x-bar"><button class="x-btn o" onclick="set(\'step\',\'2\')">Back</button><span class="sp"></span>'+sendBtn()+'</div>';
+ if(st===3)h+='<div class="x-publine">Publish: <b>'+whenLabel()+'</b>'+(when()==='sched'?' <span class="x-mut">(shared for everyone)</span>':'')+'</div><div class="x-two"><div class="x-card">'+pvTabs()+preview()+'</div><div class="x-card"><div class="x-h">Who gets what</div>'+sumLine()+confirmTbl()+'</div></div><div class="x-bar"><button class="x-btn o" onclick="set(\'step\',\'2\')">Back</button><span class="sp"></span>'+sendBtn()+'</div>';
  return h}
 /* B: extend Post for multiple advisors */
 function extended(){var b=stateBlock();
@@ -256,7 +290,7 @@ function dWizardBody(){
   var b=stateBlock();if(b)return h+b; if(done)return h+results().replace("set('s','ready');set('step','1')","set('v','grid');set('s','ready');set('step','1');set('pk','admin')");
   if(st===1)h+='<div class="x-card">'+search()+pickRows()+'</div><div class="x-bar"><span>'+selList().length+' selected</span><button class="x-btn" onclick="set(\'step\',\'2\')"'+(selList().length?'':' disabled')+'>Next</button></div>';
   if(st===2)h+='<div class="x-card">'+whenBlock()+extras()+'</div><div class="x-bar"><button class="x-btn o" onclick="set(\'step\',\'1\')">Back</button><span class="sp"></span><button class="x-btn" onclick="set(\'step\',\'3\')">Review</button></div>';
-  if(st===3)h+='<div class="x-two"><div class="x-card">'+pvTabs()+preview()+'</div><div class="x-card"><div class="x-h">Who gets what</div>'+sumLine()+confirmTbl()+'</div></div><div class="x-bar"><button class="x-btn o" onclick="set(\'step\',\'2\')">Back</button><span class="sp"></span>'+sendBtn()+'</div>';
+  if(st===3)h+='<div class="x-publine">Publish: <b>'+whenLabel()+'</b>'+(when()==='sched'?' <span class="x-mut">(shared for everyone)</span>':'')+'</div><div class="x-two"><div class="x-card">'+pvTabs()+preview()+'</div><div class="x-card"><div class="x-h">Who gets what</div>'+sumLine()+confirmTbl()+'</div></div><div class="x-bar"><button class="x-btn o" onclick="set(\'step\',\'2\')">Back</button><span class="sp"></span>'+sendBtn()+'</div>';
   return h;
 }
 function sendModal(){

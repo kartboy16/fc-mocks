@@ -42,8 +42,10 @@ After creating an HTML post, admins should be able to send it to multiple adviso
 
 1. **Every selected advisor gets the HTML post.**
 2. **Also create a social post** (toggle): composed once; attached only if the advisor has social, social-basic or social-main. Others still get HTML; confirm shows "skipped: No social product".
-3. **Also create an email campaign** (toggle): uses that advisor's lists, sender, header/footer and compliance. Attached only if the advisor has email-content **and** a usable list/sender. Confirm shows "skipped: No email-content" or "No email list". Say **"email campaign"** everywhere, never "Mailchimp campaign".
-4. **Confirmation** lists per advisor: HTML only / HTML+social / HTML+email / all three, plus skip reasons.
+3. **Also create an email campaign** (toggle): uses that advisor's lists, sender, and header/footer. Attached only if the advisor has email-content **and** a usable list/sender. **Alex locked:** every email-content advisor gets the **approval email** (Approve/Decline) — not only those with compliance on. Confirm shows "Will email for approval" for those advisors, or skip reasons "No email-content" / "No email list". Say **"email campaign"** everywhere, never "Mailchimp campaign".
+4. **Also send compliance email** (toggle, AFA parity): only advisors with the Compliance product/tag. Others skip with “No compliance”; HTML still sends.
+5. **Publish:** Now, or Schedule with a shared date + time picker (shown when Schedule is selected). Review shows the chosen publish time.
+6. **Confirmation** lists per advisor: HTML only / HTML+social / HTML+email / all three, plus skip reasons.
 5. **Explicit Send** (POST). Progress and results: queued, waiting for approval, failed (with Retry).
 6. **States:** ready, loading, empty, error, sending, done, done with 1 failed.
 7. **White-label:** previews use `yourfirm.ca` / `example.com`. No FC links or branding on client-facing surfaces.
@@ -63,7 +65,7 @@ After creating an HTML post, admins should be able to send it to multiple adviso
 1. Content grid of library cards (generic titles).
 2. Open Share → picker with Website / Social / Email unchanged.
 3. **Admin only:** divider + **Send to multiple advisors**. Not combined with Website/Social/Email (those stay off/unselectable while it is on). One primary: Continue. Advisors never see this item (role switcher).
-4. Multi-advisor flow opens as a **modal over the Content tab** (card grid stays visible behind). Steps stay in that modal: advisors → extras (shared Now/Schedule, optional social for social/social-basic/social-main, optional email campaign for email-content) → review who gets what + skips → Send. Close or finish returns to Content.
+4. Multi-advisor flow opens as a **modal over the Content tab** (card grid stays visible behind). Steps stay in that modal: advisors → extras (shared Now/Schedule, optional social for social/social-basic/social-main, optional email campaign for email-content — **all** such advisors get the approval email) → review who gets what + skips → Send. Close or finish returns to Content.
 5. White-label previews (`yourfirm.ca` / `example.com`).
 
 **Estimate (agent time: cloud agent + FC Tester + fix loop) for D alone:** ≈4.5–6.25 h  
@@ -76,6 +78,9 @@ After creating an HTML post, admins should be able to send it to multiple adviso
 
 4. **Advisors:** hide the item entirely (role switcher).
 5. **Chrome:** Continue (with the admin item selected) opens the multi-advisor flow as a modal overlaying the Content tab (not a new page).
+6. **Email approval:** every email-content advisor gets the approval email when that extra is on.
+7. **Compliance:** advisors with the Compliance tag get a compliance send when that extra is on; others skip without blocking HTML.
+8. **Schedule:** Schedule reveals a shared date and time picker; Now is immediate. Review shows the publish time.
 
 ## Recommendation (superseded for placement)
 
@@ -89,7 +94,7 @@ After creating an HTML post, admins should be able to send it to multiple adviso
 - `htmlBulk.send({postId, advisorIds, publishAt, social?: {message}, email?: true, confirmToken})` (POST via DDP):
   - For each advisor: create/schedule the branded HTML post.
   - If `social` and advisor has social*: schedule social via the existing bulk social path (include **social-main**).
-  - If `email` and advisor has email-content with list+sender: create an email campaign owned by that advisor (draft → their Approve/Decline when compliance requires it; same idea as #809).
+  - If `email` and advisor has email-content with list+sender: create an email campaign owned by that advisor and **always** send the approval email (Approve/Decline). Alex: all email-content advisors get the approval email, not only compliance-on.
   - Idempotent on `(bulkSendId, advisorId)`. Stagger like social bulk.
 - Audit: `adminId`, `createdVia: 'bulk-html-admin'`.
 
@@ -110,7 +115,7 @@ AFA's "Send emails with this post", compliance-PDF email, "Send as Page"; redesi
 ## Open questions
 
 1. **Publish time:** one shared time for all selected advisors (proposed, like AFA), or per-advisor?
-2. **Email campaign:** create as a draft that still needs the advisor's usual Approve/Decline when compliance / advisor-approval says so (proposed yes, matching #809)?
+2. **Email campaign / approval email:** **Locked by Alex** — all email-content advisors get the approval email (not only compliance-on). Still skip if no list/sender.
 3. **Post status and allow-comments defaults:** match AFA (`publish`, comments off), or follow each advisor's site defaults?
 4. **HTML posts:** publish immediately vs schedule only? (Proposed: Now or Schedule, same control for all.)
 5. **Placement vs existing tools:** keep social-only tab and #809 separate (proposed with A), or later share an Admin send hub (C's shell)?

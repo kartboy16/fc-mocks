@@ -86,7 +86,9 @@
 <ol>
 <li><strong>Every selected advisor gets the HTML post.</strong></li>
 <li><strong>Also create a social post</strong> (toggle): composed once; attached only if the advisor has social, social-basic or social-main. Others still get HTML; confirm shows "skipped: No social product".</li>
-<li><strong>Also create an email campaign</strong> (toggle): uses that advisor's lists, sender, header/footer and compliance. Attached only if the advisor has email-content <strong>and</strong> a usable list/sender. Confirm shows "skipped: No email-content" or "No email list". Say <strong>"email campaign"</strong> everywhere, never "Mailchimp campaign".</li>
+<li><strong>Also create an email campaign</strong> (toggle): uses that advisor's lists, sender, and header/footer. Attached only if the advisor has email-content <strong>and</strong> a usable list/sender. <strong>Alex locked:</strong> every email-content advisor gets the <strong>approval email</strong> (Approve/Decline) — not only those with compliance on. Confirm shows "Will email for approval" for those advisors, or skip reasons "No email-content" / "No email list". Say <strong>"email campaign"</strong> everywhere, never "Mailchimp campaign".</li>
+<li><strong>Also send compliance email</strong> (toggle, AFA parity): only advisors with the Compliance product/tag. Others skip with “No compliance”; HTML still sends.</li>
+<li><strong>Publish:</strong> Now, or Schedule with a shared date + time picker (shown when Schedule is selected). Review shows the chosen publish time.</li>
 <li><strong>Confirmation</strong> lists per advisor: HTML only / HTML+social / HTML+email / all three, plus skip reasons.</li>
 <li><strong>Explicit Send</strong> (POST). Progress and results: queued, waiting for approval, failed (with Retry).</li>
 <li><strong>States:</strong> ready, loading, empty, error, sending, done, done with 1 failed.</li>
@@ -103,7 +105,7 @@
 1. Content grid of library cards (generic titles).
 2. Open Share → picker with Website / Social / Email unchanged.
 3. <strong>Admin only:</strong> divider + <strong>Send to multiple advisors</strong>. Not combined with Website/Social/Email (those stay off/unselectable while it is on). One primary: Continue. Advisors never see this item (role switcher).
-4. Multi-advisor flow opens as a <strong>modal over the Content tab</strong> (card grid stays visible behind). Steps stay in that modal: advisors → extras (shared Now/Schedule, optional social for social/social-basic/social-main, optional email campaign for email-content) → review who gets what + skips → Send. Close or finish returns to Content.
+4. Multi-advisor flow opens as a <strong>modal over the Content tab</strong> (card grid stays visible behind). Steps stay in that modal: advisors → extras (shared Now/Schedule, optional social for social/social-basic/social-main, optional email campaign for email-content — <strong>all</strong> such advisors get the approval email) → review who gets what + skips → Send. Close or finish returns to Content.
 5. White-label previews (<code>yourfirm.ca</code> / <code>example.com</code>).</p>
 <p><strong>Estimate (agent time: cloud agent + FC Tester + fix loop) for D alone:</strong> ≈4.5–6.25 h<br />
 (share-menu gating + reuse of bulk HTML/social/email server path from A ≈4.25–6 h, plus ~20–40 min for the picker item, admin-only visibility, and FC Tester of advisor-hidden).</p>
@@ -114,6 +116,9 @@
 <ol>
 <li><strong>Advisors:</strong> hide the item entirely (role switcher).</li>
 <li><strong>Chrome:</strong> Continue (with the admin item selected) opens the multi-advisor flow as a modal overlaying the Content tab (not a new page).</li>
+<li><strong>Email approval:</strong> every email-content advisor gets the approval email when that extra is on.</li>
+<li><strong>Compliance:</strong> advisors with the Compliance tag get a compliance send when that extra is on; others skip without blocking HTML.</li>
+<li><strong>Schedule:</strong> Schedule reveals a shared date and time picker; Now is immediate. Review shows the publish time.</li>
 </ol>
 <h2>Recommendation (superseded for placement)</h2>
 <p><strong>D</strong> is recommended for placement (Alex). Earlier write-up for <strong>A</strong> as product flow internals (still reused inside D):</p>
@@ -124,7 +129,7 @@
 <li><code>htmlBulk.send({postId, advisorIds, publishAt, social?: {message}, email?: true, confirmToken})</code> (POST via DDP):</li>
 <li>For each advisor: create/schedule the branded HTML post.</li>
 <li>If <code>social</code> and advisor has social<em>: schedule social via the existing bulk social path (include </em><em>social-main</em>*).</li>
-<li>If <code>email</code> and advisor has email-content with list+sender: create an email campaign owned by that advisor (draft → their Approve/Decline when compliance requires it; same idea as #809).</li>
+<li>If <code>email</code> and advisor has email-content with list+sender: create an email campaign owned by that advisor and <strong>always</strong> send the approval email (Approve/Decline). Alex: all email-content advisors get the approval email, not only compliance-on.</li>
 <li>Idempotent on <code>(bulkSendId, advisorId)</code>. Stagger like social bulk.</li>
 <li>Audit: <code>adminId</code>, <code>createdVia: 'bulk-html-admin'</code>.</li>
 </ul>
@@ -176,7 +181,7 @@
 <h2>Open questions</h2>
 <ol>
 <li><strong>Publish time:</strong> one shared time for all selected advisors (proposed, like AFA), or per-advisor?</li>
-<li><strong>Email campaign:</strong> create as a draft that still needs the advisor's usual Approve/Decline when compliance / advisor-approval says so (proposed yes, matching #809)?</li>
+<li><strong>Email campaign / approval email:</strong> <strong>Locked by Alex</strong> — all email-content advisors get the approval email (not only compliance-on). Still skip if no list/sender.</li>
 <li><strong>Post status and allow-comments defaults:</strong> match AFA (<code>publish</code>, comments off), or follow each advisor's site defaults?</li>
 <li><strong>HTML posts:</strong> publish immediately vs schedule only? (Proposed: Now or Schedule, same control for all.)</li>
 <li><strong>Placement vs existing tools:</strong> keep social-only tab and #809 separate (proposed with A), or later share an Admin send hub (C's shell)?</li>
