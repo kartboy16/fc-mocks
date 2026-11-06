@@ -1,0 +1,136 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>#824 build contract</title><style>body{font-family:Inter,system-ui,sans-serif;max-width:960px;margin:24px auto;padding:0 16px;line-height:1.55;color:#2C3E50}a{color:#1976D2}table{border-collapse:collapse;width:100%;margin:8px 0;font-size:14px}td,th{border:1px solid #e0e5eb;padding:6px 8px;text-align:left;vertical-align:top}th{background:#f3f6f9}blockquote{background:#e8f5e9;border:2px solid #2e7d32;border-radius:10px;margin:10px 0;padding:4px 14px}code{background:#f3f6f9;padding:1px 4px;border-radius:4px}@media(max-width:600px){table{display:block;overflow-x:auto}}code{overflow-wrap:anywhere}td{overflow-wrap:anywhere}</style></head><body><p><a href="../">All mocks</a> · <a href="index.html">Hub</a> · <a href="build-contract.md">Markdown</a></p><h1>#824 Admin: send an HTML post to multiple advisors, with optional social and email (build contract)</h1>
+<p><strong>Status: Not agent-ready. Soft Dev hold until a direction is picked.</strong> This is <strong><code>risk:high</code></strong>: it publishes HTML posts, can schedule social posts, and can create email campaigns (so it can lead to email going out). Track: playground / staging with QA advisors and QA inboxes only. Alex merges any main PR.</p>
+<h2>Ask (Alex, Nov 5 2026)</h2>
+<p>After creating an HTML post, admins should be able to send it to multiple advisors, and optionally attach a social post (for advisors with social / social-basic / <strong>social-main</strong>) and/or an email campaign (for advisors with email-content).</p>
+<h2>Grounding</h2>
+<h3>Apps for Advisors (parity source, <code>b8ea141</code>)</h3>
+<ul>
+<li>Modal: <code>imports/ui/pages/admin/manage_html_posts/send_htmlPost_modal_v2.jsx</code> (older twin: <code>send_html_post_modal.jsx</code>).</li>
+<li>Title: <code>Send post "{name}" to multiple advisors</code>.</li>
+<li>Left: post preview. Right: multi-select advisors, publish date/time, post status, allow comments.</li>
+<li>Toggle <strong>Create Mailchimp campaign for Email-Content Advisors</strong> (send path also supports SES / MailerLite). Applied only when <code>advisorCategories</code> has slug <code>email-content</code> and provider setup exists.</li>
+<li>Toggle <strong>Send as a social post</strong>. Composed once; AFA attaches only for <code>social</code> or <code>social-basic</code>. <strong>FC must also include <code>social-main</code></strong> (Alex).</li>
+<li>AFA extras <strong>out of scope</strong> unless Alex asks after seeing mocks: "Send emails with this post", "Send compliance email", "Send as Page".</li>
+</ul>
+<h3>FinancialContent today (staging <code>83fc850</code>)</h3>
+<ul>
+<li><strong>#47 / #186</strong> <code>PostForMultipleAdvisors.jsx</code>: social only. Picker already includes Social / Social - Basic / Social - Main (<code>imports/utils/socialAdvisorTag.js</code>).</li>
+<li><strong>#809</strong>: admin send emails for several advisors — email-only. Mocks at <code>/809/</code>. Related as another multi-advisor surface; <strong>not this feature</strong>.</li>
+<li>HTML posts: Content Library / <code>CreateHtmlPostPage</code>.</li>
+<li>White-label: client-facing post, share and email URLs use the advisor domain (<code>yourfirm.ca</code>), never <code>financialcontent.ca</code> (<code>fc-white-label-links</code>).</li>
+</ul>
+<h2>Directions (placement)</h2>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>A. After Save on the HTML post (recommended)</th>
+<th>B. Extend "Post for multiple advisors"</th>
+<th>C. Dedicated admin send page</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Where</td>
+<td>Content Library / create-or-edit HTML post → Save → "Send to advisors" wizard</td>
+<td>Existing admin tab grows a "Send post" mode alongside the social-only flow</td>
+<td>New admin page; hub can later sit next to #809</td>
+</tr>
+<tr>
+<td>Flow</td>
+<td>1 Advisors → 2 Extras (publish, social toggle + compose, email toggle) → 3 Review (preview + who gets what) → Send → 4 Done</td>
+<td>Pick HTML post, pick advisors, extras, review drawer, Send</td>
+<td>Pick post from library, extras + advisors side by side, confirm dialog</td>
+</tr>
+<tr>
+<td>Strength</td>
+<td>Matches Alex's starting point; leaves #47/#186 and #809 alone</td>
+<td>Reuses the known multi-advisor picker</td>
+<td>Scales if more "send X to many" tools appear</td>
+</tr>
+<tr>
+<td>Weakness</td>
+<td>Only starts from a just-saved (or opened) post</td>
+<td>Mixes social-only and HTML+extras; easy to confuse; denser</td>
+<td>Another admin destination; risk of quietly merging with #809</td>
+</tr>
+</tbody>
+</table>
+<h2>Shared behaviour (every direction)</h2>
+<ol>
+<li><strong>Every selected advisor gets the HTML post.</strong></li>
+<li><strong>Also create a social post</strong> (toggle): composed once; attached only if the advisor has social, social-basic or social-main. Others still get HTML; confirm shows "skipped: No social product".</li>
+<li><strong>Also create an email campaign</strong> (toggle): uses that advisor's lists, sender, header/footer and compliance. Attached only if the advisor has email-content <strong>and</strong> a usable list/sender. Confirm shows "skipped: No email-content" or "No email list". Say <strong>"email campaign"</strong> everywhere, never "Mailchimp campaign".</li>
+<li><strong>Confirmation</strong> lists per advisor: HTML only / HTML+social / HTML+email / all three, plus skip reasons.</li>
+<li><strong>Explicit Send</strong> (POST). Progress and results: queued, waiting for approval, failed (with Retry).</li>
+<li><strong>States:</strong> ready, loading, empty, error, sending, done, done with 1 failed.</li>
+<li><strong>White-label:</strong> previews use <code>yourfirm.ca</code> / <code>example.com</code>. No FC links or branding on client-facing surfaces.</li>
+<li><strong>Generic names only</strong> (Jane Advisor, Sam Planner, Your Firm Name, …).</li>
+</ol>
+<h2>Recommendation</h2>
+<p><strong>A.</strong> Alex asked for this right after creating a post, so the action belongs on that save moment. It keeps the existing social-only tab (#47/#186) for pure social work, and keeps #809 as the separate email-only tool. B forces two different jobs into one tab and makes the social-only path harder to find. C is fine later as a hub if we grow more "send to many" tools, but it shouldn't be the first home, and it should <strong>not</strong> merge with #809 unless we later decide both share an "Admin send" shell with clearly separate cards (the C mock shows that shell without merging the features).</p>
+<h2>Server sketch (A)</h2>
+<ul>
+<li>Admin-only methods (reuse <code>isAdminUserId</code>). No "Log in as".</li>
+<li><code>htmlBulk.send({postId, advisorIds, publishAt, social?: {message}, email?: true, confirmToken})</code> (POST via DDP):</li>
+<li>For each advisor: create/schedule the branded HTML post.</li>
+<li>If <code>social</code> and advisor has social<em>: schedule social via the existing bulk social path (include </em><em>social-main</em>*).</li>
+<li>If <code>email</code> and advisor has email-content with list+sender: create an email campaign owned by that advisor (draft → their Approve/Decline when compliance requires it; same idea as #809).</li>
+<li>Idempotent on <code>(bulkSendId, advisorId)</code>. Stagger like social bulk.</li>
+<li>Audit: <code>adminId</code>, <code>createdVia: 'bulk-html-admin'</code>.</li>
+</ul>
+<h2>Out of scope</h2>
+<p>AFA's "Send emails with this post", compliance-PDF email, "Send as Page"; redesigning the social-only tab unless B is picked; merging into #809 unless a later hub is chosen; non-admin roles.</p>
+<h2>Estimate (agent time: cloud agent build + FC Tester + fix loop)</h2>
+<table>
+<thead>
+<tr>
+<th>Run</th>
+<th>A</th>
+<th>B</th>
+<th>C</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Server: admin bulk HTML publish + optional social (incl. social-main) + optional email campaign create, skip reasons, stagger, audit, tests</td>
+<td>2–2.75 h</td>
+<td>2–2.75 h</td>
+<td>2–2.75 h</td>
+</tr>
+<tr>
+<td>UI (picker, extras, confirm, states, white-label previews)</td>
+<td>1.25–1.75 h (wizard on post)</td>
+<td>1.5–2 h (extend tab, keep social-only)</td>
+<td>1.5–2 h (new page + optional hub shell)</td>
+</tr>
+<tr>
+<td>FC Tester: mix of product combos, skips, compliance email → approval, 1280/390, no FC links</td>
+<td>50–70 min</td>
+<td>55–75 min</td>
+<td>50–70 min</td>
+</tr>
+<tr>
+<td>Fix loop + security review</td>
+<td>25–40 min</td>
+<td>30–45 min</td>
+<td>25–40 min</td>
+</tr>
+<tr>
+<td><strong>Total</strong></td>
+<td><strong>≈4.25–6 h</strong></td>
+<td><strong>≈4.75–6.5 h</strong></td>
+<td><strong>≈4.5–6.25 h</strong></td>
+</tr>
+</tbody>
+</table>
+<h2>Open questions</h2>
+<ol>
+<li><strong>Publish time:</strong> one shared time for all selected advisors (proposed, like AFA), or per-advisor?</li>
+<li><strong>Email campaign:</strong> create as a draft that still needs the advisor's usual Approve/Decline when compliance / advisor-approval says so (proposed yes, matching #809)?</li>
+<li><strong>Post status and allow-comments defaults:</strong> match AFA (<code>publish</code>, comments off), or follow each advisor's site defaults?</li>
+<li><strong>HTML posts:</strong> publish immediately vs schedule only? (Proposed: Now or Schedule, same control for all.)</li>
+<li><strong>Placement vs existing tools:</strong> keep social-only tab and #809 separate (proposed with A), or later share an Admin send hub (C's shell)?</li>
+<li><strong>email-content but no sender or list:</strong> skip email with a clear reason (proposed), or block the whole send for that advisor?</li>
+<li><strong>social-main:</strong> confirm FC attaches social for social-main (yes per Alex; AFA today does not).</li>
+</ol></body></html>
