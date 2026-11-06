@@ -43,7 +43,7 @@ After creating an HTML post, admins should be able to send it to multiple adviso
 1. **Every selected advisor gets the HTML post.**
 2. **Also create a social post** (toggle): composed once; attached only if the advisor has social, social-basic or social-main. Others still get HTML; confirm shows "skipped: No social product".
 3. **Also create an email campaign** (toggle): uses that advisor's lists, sender, and header/footer. Attached only if the advisor has email-content **and** a usable list/sender. **Alex locked:** every email-content advisor gets the **approval email** (Approve/Decline) — not only those with compliance on. Confirm shows "Will email for approval" for those advisors, or skip reasons "No email-content" / "No email list". Say **"email campaign"** everywhere, never "Mailchimp campaign".
-4. **Also send compliance email** (toggle, AFA parity): only advisors with the Compliance product/tag. Others skip with “No compliance”; HTML still sends.
+4. **Also send compliance email** (toggle, AFA parity): only advisors with the Compliance product/tag. Emails compliance with a **PDF of the HTML post**, and a **PDF of the email campaign** when that extra is also on for the advisor (not skipped for no list/sender). Others skip with “No compliance”; HTML still sends.
 5. **Publish:** Now, or Schedule with a shared date + time picker (shown when Schedule is selected). Review shows the chosen publish time.
 6. **Confirmation** lists per advisor: HTML only / HTML+social / HTML+email / all three, plus skip reasons.
 5. **Explicit Send** (POST). Progress and results: queued, waiting for approval, failed (with Retry).
@@ -64,7 +64,7 @@ The multi-advisor modal matches AFA `send_htmlPost_modal_v2.jsx` options (FC wor
 5. Send emails with this post → each advisor’s **Send to Email** field; skip “No send-to email” without blocking HTML
 6. Email campaign for email-content (never “Mailchimp campaign”); **every** email-content advisor gets the approval email; skip campaign only if no list/sender
 7. Send as a social post (Edit); social / social-basic / **social-main**
-8. Send compliance email; Compliance tag only; skip “No compliance” without blocking HTML
+8. Send compliance email; Compliance tag only; attaches PDF of HTML post (+ PDF of email campaign when that extra applies); skip “No compliance” without blocking HTML
 
 Modal footer primary: **Schedule for advisors** (no second Send as Page action). Content-tab picker still only **Continue**.
 
@@ -96,7 +96,7 @@ Modal footer primary: **Schedule for advisors** (no second Send as Page action).
 4. **Advisors:** hide the item entirely (role switcher).
 5. **Chrome:** Continue (with the admin item selected) opens the multi-advisor flow as a modal overlaying the Content tab (not a new page).
 6. **Email approval:** every email-content advisor gets the approval email when that extra is on.
-7. **Compliance:** advisors with the Compliance tag get a compliance send when that extra is on; others skip without blocking HTML.
+7. **Compliance:** advisors with the Compliance tag get a compliance email when that extra is on — PDF of the HTML post, and PDF of the email campaign when that extra is also on for them; others skip without blocking HTML.
 8. **Schedule:** Schedule reveals a shared date and time picker; Now is immediate. Review shows the publish time.
 
 ## Recommendation (superseded for placement)

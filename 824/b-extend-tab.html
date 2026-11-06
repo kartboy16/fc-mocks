@@ -201,7 +201,7 @@ function extras(){
    +(so()?'<div class="x-soc"><label>Shared social copy</label><textarea class="x-ta" rows="3" aria-label="Social copy">Markets moved a lot this month. Three things worth knowing before year-end.\n\n'+POST.url+'</textarea><small>Composed once. Attached for Social, Social - Basic, or Social - Main.</small></div>':'')
    +'</div>'
    +'<div class="x-xblk"><div class="x-xhd"><label class="x-tog"><input type="checkbox" '+(co()?'checked':'')+' onchange="set(\'co\',this.checked?\'1\':\'0\')">Send compliance email</label></div>'
-   +(co()?'<div class="x-soc"><small>Only advisors with the Compliance product. Others skip with &ldquo;No compliance&rdquo; — HTML still goes out.</small></div>':'')
+   +(co()?'<div class="x-soc"><small>Only advisors with the Compliance tag. Emails their compliance contact with a <b>PDF of the HTML post</b>. If the email-campaign extra is also on for that advisor (not skipped for no list/sender), also attaches a <b>PDF of the email campaign</b>. Others skip with &ldquo;No compliance&rdquo; — HTML still goes out.</small></div>':'')
    +'</div></div>';
 }
 function whenBlock(){
@@ -233,14 +233,14 @@ function sumLine(){var s=selList(),h=s.length,soN=s.filter(function(a){return so
   
   +(sk?' '+pill('wa',sk+' with a skipped extra'):'')+'</div>'}
 function confirmTbl(){var h='<div class="x-tbl cf"><div class="x-tr x-th"><span>Advisor</span><span>Gets</span><span>Notes</span></div>';
- selList().forEach(function(a){var p=pack(a);var notes=[];if(p.sk.length)notes.push(pill('wa',p.sk.join(', ')));if(p.bits.indexOf('Email (approval)')>-1)notes.push(pill('wa','Will email for approval'));if(p.bits.indexOf('Advisor email')>-1)notes.push(pill('ok','To '+a.ste));if(p.bits.indexOf('Compliance')>-1)notes.push(pill('ok','Will send compliance'));h+='<div class="x-tr"><span><b>'+a.n+'</b><small>'+a.f+'</small></span><span>'+pill('ok',p.bits.join(' + '))+'</span><span>'+(notes.length?notes.join(' '):'—')+'</span></div>'});return h+'</div>'}
+ selList().forEach(function(a){var p=pack(a);var notes=[];if(p.sk.length)notes.push(pill('wa',p.sk.join(', ')));if(p.bits.indexOf('Email (approval)')>-1)notes.push(pill('wa','Will email for approval'));if(p.bits.indexOf('Advisor email')>-1)notes.push(pill('ok','To '+a.ste));if(p.bits.indexOf('Compliance')>-1){var camp=em()&&a.em&&a.lists.length;notes.push(pill('ok','Will send compliance — PDF of HTML post'+(camp?' + PDF of email campaign':'')));}h+='<div class="x-tr"><span><b>'+a.n+'</b><small>'+a.f+'</small></span><span>'+pill('ok',p.bits.join(' + '))+'</span><span>'+(notes.length?notes.join(' '):'—')+'</span></div>'});return h+'</div>'}
 function preview(a){a=a||A(S.pv)||selList()[0]||ADV[0];
  var emPv=em()&&a.em&&a.lists.length?'<div class="x-em"><div class="x-emh" style="background:'+a.c+'"><span class="x-lg">'+a.ini+'</span>'+a.f+'</div><div class="x-emb"><div class="x-emt">'+POST.t+'</div><p>Hi {First name},</p><p>'+POST.ex+'</p><span class="x-emc" style="background:'+a.c+'">Read the update</span><p class="x-ems">'+a.n+' · '+a.f+' · <u>Unsubscribe</u></p></div></div>':'';
  return '<div class="x-pv"><div class="x-h">Preview · '+a.n+'</div>'+postCard()
   +(so()&&a.soc?'<div class="x-socpv"><b>Social</b><p>Markets moved a lot this month. Three things worth knowing before year-end.</p><a href="#" onclick="return false">'+POST.url.replace('yourfirm.ca',a.id==='jane'||a.id==='pat'?'yourfirm.ca':'example.com')+'</a></div>':'')
   +emPv
   +(ae()&&a.ste?'<div class="x-socpv"><b>Advisor email</b><p>To '+a.ste+' · '+AEMAILS[0].sub+'</p></div>':'')
-  +(co()&&a.comp?'<div class="x-socpv"><b>Compliance</b><p>PDF of this post will email the advisor&rsquo;s compliance contact.</p></div>':'')
+    +(co()&&a.comp?'<div class="x-socpv"><b>Compliance</b><p>Email to compliance with a PDF of the HTML post'+(em()&&a.em&&a.lists.length?' and a PDF of the email campaign':'')+'.</p></div>':'')
   +'</div>'}
 function pvTabs(){return '<div class="x-pvt">'+selList().map(function(a){var on=(S.pv===a.id)||(!A(S.pv)&&a===selList()[0]);return '<button class="'+(on?'on':'')+'" onclick="S.pv=\''+a.id+'\';render()">'+a.n.split(' ')[0]+'</button>'}).join('')+'</div>'}
 function sendBtn(){return '<button class="x-btn" onclick="set(\'s\',\'sending\');setTimeout(function(){set(\'s\',\'done\')},900)">Schedule for advisors</button>'}
