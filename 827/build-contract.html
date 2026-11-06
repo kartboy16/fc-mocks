@@ -1,0 +1,165 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>#827 build contract</title><style>body{font-family:Inter,system-ui,sans-serif;max-width:960px;margin:24px auto;padding:0 16px;line-height:1.55;color:#2C3E50}a{color:#1976D2}table{border-collapse:collapse;width:100%;margin:8px 0;font-size:14px}td,th{border:1px solid #e0e5eb;padding:6px 8px;text-align:left;vertical-align:top}th{background:#f3f6f9}blockquote{background:#e8f5e9;border:2px solid #2e7d32;border-radius:10px;margin:10px 0;padding:4px 14px}code{background:#f3f6f9;padding:1px 4px;border-radius:4px}@media(max-width:600px){table{display:block;overflow-x:auto}}code{overflow-wrap:anywhere}td{overflow-wrap:anywhere}</style></head><body><p><a href="../">All mocks</a> · <a href="index.html">Hub</a> · <a href="build-contract.md">Markdown</a></p><h1>#827 Multi-advisor send: include + exclude advisor-category filters (build contract)</h1>
+<p><strong>Status: Not agent-ready. Soft Dev hold until a direction is picked.</strong> <strong>Current recommendation: A</strong> (MAP-identical “Include sources / Exclude sources”). This extends the shipped <a href="https://github.com/kartboy16/content-library/issues/824">#824</a> / <a href="https://github.com/kartboy16/content-library/pull/826">PR #826</a> admin multi-advisor send — <strong>advisor picker filters only</strong>. Risk: <strong>high</strong> (same send surface as #824). Track: staging → FC Tester; Alex merges any main PR.</p>
+<h2>Ask (Alex, Nov 6 2026)</h2>
+<p>For #826, in the advisor selection menu: filter by <strong>including and excluding advisor categories</strong> like MAP. Mock options.</p>
+<h2>Screens</h2>
+<table>
+<thead>
+<tr>
+<th>Screen</th>
+<th>Who</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Content card → Share → Continue → multi-advisor modal, <strong>step 1 Advisors</strong></td>
+<td>Admin only</td>
+<td>Existing #824 D shell; filters sit above the checklist. Advisors never see this.</td>
+</tr>
+<tr>
+<td>(Unchanged) steps 2 Extras / 3 Review</td>
+<td>Admin</td>
+<td>Out of scope for #827 — keep #824 behavior.</td>
+</tr>
+</tbody>
+</table>
+<h2>Directions</h2>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>A (recommended)</th>
+<th>B</th>
+<th>C</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Control</td>
+<td>Dual multi-selects</td>
+<td>Same dual multi-selects</td>
+<td>Single row of tri-state chips</td>
+</tr>
+<tr>
+<td>Labels</td>
+<td><strong>Include sources</strong> / <strong>Exclude sources</strong> (MAP)</td>
+<td><strong>Include categories</strong> / <strong>Exclude categories</strong> (Alex’s words)</td>
+<td>Category name + Off / Include / Exclude</td>
+</tr>
+<tr>
+<td>Placement</td>
+<td>Above advisor checklist in the D modal picker</td>
+<td>Same</td>
+<td>Same</td>
+</tr>
+<tr>
+<td>Defaults</td>
+<td>Include <code>Content</code>, exclude <code>No longer a client</code>; archive always out</td>
+<td>Same</td>
+<td>Same</td>
+</tr>
+<tr>
+<td>Mutual exclusion</td>
+<td>Category cannot be in both; other list shows it blocked</td>
+<td>Same</td>
+<td>Cycle never places both</td>
+</tr>
+<tr>
+<td>Live list</td>
+<td>Filters update who appears immediately</td>
+<td>Same</td>
+<td>Same</td>
+</tr>
+<tr>
+<td>Selection fall-out</td>
+<td>Checked advisors that no longer match are <strong>unchecked and removed</strong> from the visible list (no invisible selection)</td>
+<td>Same</td>
+<td>Same</td>
+</tr>
+</tbody>
+</table>
+<h2>Filter rules (all options)</h2>
+<ol>
+<li><strong>Include:</strong> if any include categories are set, an advisor appears only if they have <strong>at least one</strong> of those categories.</li>
+<li><strong>Exclude:</strong> if any exclude categories are set, an advisor with <strong>any</strong> of those categories is hidden.</li>
+<li><strong>Both:</strong> apply include first, then exclude.</li>
+<li><strong>Mutual exclusion:</strong> selecting a category on one side removes it from the other; the other control shows it as blocked (“In include” / “In exclude”).</li>
+<li><strong>Archive:</strong> advisors with Archive stay out of the list always (same as MAP), independent of include/exclude.</li>
+<li><strong>Empty filters:</strong> cleared include = no include constraint (all non-archive / non-excluded can show). Cleared exclude = nothing excluded by category.</li>
+<li><strong>No matches:</strong> empty state with Reset filters → defaults.</li>
+</ol>
+<h2>States to mock / test</h2>
+<ul>
+<li>Defaults (include Content, exclude No longer a client)</li>
+<li>Include-only</li>
+<li>Exclude-only</li>
+<li>Both include + exclude</li>
+<li>No matches</li>
+<li>Category blocked from the other list (open the other dropdown / chip state)</li>
+<li>Cleared filters</li>
+<li>Desktop 1280 and phone 390</li>
+</ul>
+<h2>Copy</h2>
+<ul>
+<li>Section title: <strong>Who appears in the list</strong> (MAP parallel: “Who appears in the table”).</li>
+<li>A: Include sources / Exclude sources. B: Include categories / Exclude categories.</li>
+<li>Empty: “No advisors match these filters” + Reset filters.</li>
+<li>Summary line: Include / Exclude chips + “N shown (archive always hidden)”.</li>
+<li>Do not invent compliance/legal letter copy. Product category names from the app are fine: Content, Email Content, Compliance, Social, No longer a client.</li>
+<li>Fixtures: Jane Advisor, John Advisor, Casey Example, Sam Planner, Pat Example, Lee Example, Riley Example (No longer a client), Archived Example (always hidden). Domains: yourfirm.ca / example.com. Emails: jane.advisor@example.com and other <code>@example.com</code> only.</li>
+</ul>
+<h2>In scope</h2>
+<ul>
+<li>Admin filter UX + list logic on the existing #824 D advisor-picker step.</li>
+<li>Mutual exclusion, defaults, empty/no-match, selection pruning.</li>
+<li>Persist filter choices for the life of the modal open (exact persistence across opens: follow MAP / existing send modal prefs if any — <strong>open question</strong>, do not invent).</li>
+</ul>
+<h2>Out of scope</h2>
+<ul>
+<li>Rewriting #824 send extras (email, social, campaigns, compliance PDFs, Schedule, Send as Page).</li>
+<li>Changing MAP’s own filters or suggested-posts topic filters.</li>
+<li>New top-level screen or advisor-facing UI.</li>
+<li>Send as Page.</li>
+<li>Wiring to live Meteor/Mongo in this mock pack.</li>
+</ul>
+<h2>Desktop vs mobile</h2>
+<ul>
+<li>Desktop-first dual multi-selects side by side; on 390px stack vertically; modal is bottom sheet.</li>
+<li>Tri-state chips wrap; 44px min targets.</li>
+<li>Checklist collapses extra columns on phone (same pattern as #824 D).</li>
+</ul>
+<h2>Agent-time estimate (cloud agent + FC Tester only)</h2>
+<table>
+<thead>
+<tr>
+<th>Work</th>
+<th>A</th>
+<th>B</th>
+<th>C</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Cloud agent build (filter UI + list logic on existing picker, mutual exclusion, defaults, prune selection, empty state)</td>
+<td>50–80 min</td>
+<td>45–70 min (label swap on A, or same if A not chosen)</td>
+<td>60–95 min (tri-state + a11y)</td>
+</tr>
+<tr>
+<td>FC Tester (defaults, include, exclude, both, blocked, no-match, 1280/390, selection fall-out, no FC links on previews)</td>
+<td>35–55 min</td>
+<td>35–55 min</td>
+<td>40–60 min</td>
+</tr>
+<tr>
+<td><strong>Total</strong></td>
+<td><strong>~1.5–2.25 h</strong></td>
+<td><strong>~1.5–2 h</strong></td>
+<td><strong>~1.75–2.5 h</strong></td>
+</tr>
+</tbody>
+</table>
+<p>If A ships first, B is mainly a string change (~15–25 min agent) unless Alex wants B alone.</p>
+<h2>Recommendation</h2>
+<p><strong>Pick A</strong> unless Alex prefers his “categories” wording day-one — then <strong>B</strong> (same control). Prefer C only if modal vertical space is tight after extras land. A matches MAP muscle memory for the same admin audience.</p></body></html>
