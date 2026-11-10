@@ -1,0 +1,264 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>#847 B local</title><style>
+*{box-sizing:border-box}body{margin:0;font:14px/1.5 Inter,Roboto,system-ui,sans-serif;background:#f5f7fa;color:#2c3e50}
+a{color:#1976d2}
+.mockbar{background:#1f2a44;color:#fff;padding:8px 14px;display:flex;flex-wrap:wrap;gap:8px;align-items:center;font-size:12.5px;position:sticky;top:0;z-index:40}
+.mockbar a{color:#cfe3ff}.mockbar .sp{flex:1}
+.mockbar button{background:#33415f;color:#fff;border:0;border-radius:4px;padding:6px 10px;min-height:32px;cursor:pointer;font:inherit}
+.mockbar button.on{background:#1976d2}
+main{max-width:1100px;margin:0 auto;padding:20px 16px 56px}
+h1{font-size:22px;margin:0 0 6px}h2{font-size:16px;margin:0 0 8px}h3{font-size:14px;margin:0 0 6px}
+.muted{color:#607080;font-size:13px}
+.card{background:#fff;border:1px solid #e0e5eb;border-radius:8px;padding:16px;margin:12px 0}
+.side{display:grid;grid-template-columns:200px 1fr;gap:16px}
+.nav{background:#fff;border:1px solid #e0e5eb;border-radius:8px;padding:12px 0;align-self:start}
+.nav b{display:block;padding:0 14px 8px;color:#1976d2}
+.nav button{display:block;width:100%;text-align:left;background:none;border:0;padding:10px 14px;color:#607080;cursor:pointer;font:inherit}
+.nav button.on{background:#e3f2fd;color:#1565c0;font-weight:600;border-right:3px solid #1976d2}
+.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.spread{justify-content:space-between}
+.logo{width:56px;height:36px;border-radius:4px;display:inline-flex;align-items:center;justify-content:center;color:#fff;font:700 11px Inter,sans-serif;letter-spacing:.04em;flex-shrink:0}
+.logo.a{background:#1f7a66}.logo.b{background:#2b4c7e}.logo.m{background:#7a4f1f}.logo.x{background:#8e2c48}
+.tag{display:inline-block;border-radius:12px;padding:2px 8px;font-size:11.5px;font-weight:600}
+.tag.ok{background:#e8f5e9;color:#2e7d32}.tag.wa{background:#fff3e0;color:#b45309}.tag.bl{background:#fdecea;color:#b71c1c}
+.alert{background:#eef6ff;border:1px solid #c5dbf5;border-radius:6px;padding:10px 12px;margin:10px 0;font-size:13px}
+.warn{background:#fff8e1;border:1px solid #ffe0a3;border-radius:6px;padding:10px 12px;margin:10px 0;font-size:13px}
+.bad{background:#fdecea;border:1px solid #f5c2c0;border-radius:6px;padding:10px 12px;margin:10px 0;font-size:13px}
+.ok{background:#e8f5e9;border:1px solid #a5d6a7;border-radius:6px;padding:10px 12px;margin:10px 0;font-size:13px}
+button.primary,button.ghost,button.danger{font:inherit;min-height:40px;padding:8px 14px;border-radius:4px;cursor:pointer}
+button.primary{background:#1976d2;border:1px solid #1976d2;color:#fff}
+button.ghost{background:#fff;border:1px solid #1976d2;color:#1976d2}
+button.danger{background:#fff;border:1px solid #c62828;color:#c62828}
+button:disabled{background:#eee;color:#999;border-color:#ddd;cursor:not-allowed}
+label.fld{display:block;margin:10px 0;font-size:13px;font-weight:600}
+label.fld input,label.fld select,label.fld textarea{display:block;width:100%;margin-top:4px;font:inherit;font-weight:400;padding:10px;border:1px solid #adb9c5;border-radius:4px}
+textarea{min-height:90px;resize:vertical}
+table{width:100%;border-collapse:collapse}th,td{text-align:left;padding:10px 8px;border-bottom:1px solid #eee;vertical-align:top}th{font-size:12px;color:#607080;background:#f8f9fb}
+.overlay{position:fixed;inset:0;background:#14203466;z-index:30;overflow:auto;padding:28px 16px}
+.panel{background:#fff;max-width:680px;margin:24px auto;padding:20px;border-radius:10px;box-shadow:0 16px 48px rgba(30,42,74,.22)}
+.drawer.overlay{padding:0}.drawer .panel{margin:0 0 0 auto;min-height:100vh;border-radius:0;max-width:520px}
+.preview{border:1px solid #e0e5eb;border-radius:6px;overflow:hidden;background:#fff;max-width:560px}
+.eh{background:#1f7a66;color:#fff;padding:12px 14px;font-weight:700}
+.eb{padding:14px;font-size:14px}.eb p{margin:0 0 10px}
+.ef{border-top:1px solid #eee;padding:12px 14px;font-size:12px;color:#555;background:#fafafa}
+.ef .ph{font-size:11px;color:#8a6d3b;margin-top:6px}
+.split{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.item{display:flex;gap:12px;align-items:flex-start;padding:10px 0;border-top:1px solid #eee}
+.item:first-child{border-top:0}
+.toast{position:fixed;bottom:16px;left:50%;transform:translateX(-50%);background:#1f2a44;color:#fff;padding:10px 14px;border-radius:6px;display:none;z-index:50}
+.steps{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 12px}
+.steps span{padding:6px 12px;border-radius:16px;background:#eceff1;color:#546e7a;font-size:13px;font-weight:600}
+.steps span.on{background:#1976d2;color:#fff}
+.steps span.d{background:#e8f5e9;color:#2e7d32}
+@media(max-width:700px){
+  main{padding:12px}.side{grid-template-columns:1fr}.nav{display:flex;overflow:auto;padding:0}
+  .nav b{display:none}.nav button{flex:1;white-space:nowrap;border-right:0}
+  .split{grid-template-columns:1fr}
+  .overlay{padding:0}.panel{min-height:100vh;border-radius:0;margin:0}
+  .row button{flex:1}
+}
+</style></head>
+<body>
+<div class="mockbar"><a href="index.html">#847</a>
+<a href="a-settings.html">A</a><a href="b-wizard.html">B</a><a href="c-kits.html">C</a>
+<a href="build-contract.html">Contract</a><span class="sp"></span><span id="sw"></span></div>
+<main><div id="app"></div></main>
+<div class="toast" id="toast"></div>
+<script>const DIR="b";
+const DEALERS={
+  a:{id:'a',n:'Example Dealer A',kind:'Investments',legal:'https://example.com/dealer-a/legal',priv:'https://example.com/dealer-a/privacy',disc:'[Placeholder — existing Example Dealer A disclaimer. Not invented legal text.]'},
+  b:{id:'b',n:'Example Dealer B',kind:'Investments',legal:'https://example.com/dealer-b/legal',priv:'https://example.com/dealer-b/privacy',disc:'[Placeholder — existing Example Dealer B disclaimer. Not invented legal text.]'},
+  m:{id:'m',n:'Example MGA',kind:'Insurance',legal:'https://example.com/mga/legal',priv:'https://example.com/mga/privacy',disc:'[Placeholder — existing Example MGA disclaimer. Not invented legal text.]'}
+};
+let view='settings', state='ready', dealer='a', mga='m', custom=false, changeStep=1, newDealer='b', approved=false;
+function toast(m){const t=document.getElementById('toast');t.textContent=m;t.style.display='block';clearTimeout(t._t);t._t=setTimeout(()=>t.style.display='none',1600)}
+function setView(v){view=v;if(v==='change')changeStep=1;render()}
+function setState(s){state=s;if(s==='mismatch')view='check';if(s==='empty'&&view==='dealers'){};render()}
+function D(){return DEALERS[dealer]}
+function M(){return DEALERS[mga]}
+function logo(id){const x=DEALERS[id];return `<span class="logo ${id}" aria-hidden="true">${x.n.split(' ').map(w=>w[0]).join('').slice(-3)}</span>`}
+function switcher(){
+  const views=[['dealers','Dealer list'],['settings','Settings'],['item','Campaign item'],['change','Change dealer'],['check','Pre-send check']];
+  const states=[['ready','ready'],['loading','loading'],['empty','empty'],['error','error'],['success','success'],['mismatch','mismatch']];
+  document.getElementById('sw').innerHTML=
+    views.map(([k,l])=>`<button class="${view===k?'on':''}" onclick="setView('${k}')">${l}</button>`).join('')+
+    ' <span class="sp"></span> '+
+    states.map(([k,l])=>`<button class="${state===k?'on':''}" onclick="setState('${k}')">${l}</button>`).join('');
+}
+function nav(on){
+  const items=[['dealers','Dealers'],['settings','Settings'],['item','Email campaign']];
+  return `<nav class="nav"><b>Admin</b>${items.map(([k,l])=>`<button class="${on===k?'on':''}" onclick="setView('${k}')">${l}</button>`).join('')}</nav>`;
+}
+function shell(on,inner){return `<div class="side">${nav(on)}<div>${inner}</div></div>`}
+function emailPreview(which){
+  const inv=custom?DEALERS.b:D();
+  const showWrong=which==='wrong';
+  const use=showWrong?DEALERS.b:inv;
+  return `<div class="preview">
+    <div class="eh">Your Firm Name</div>
+    <div class="eb"><b>November update</b><p>Markets moved a lot this month. Three things worth knowing.</p><p><a href="#">https://yourfirm.ca/insights/november-update</a></p></div>
+    <div class="ef">${logo(use.id)} <b>${use.n}</b>
+      <div>${use.disc}</div>
+      <div><a href="${use.legal}">Legal</a> · <a href="${use.priv}">Privacy</a></div>
+      <div>Jane Advisor · jane.advisor@example.com</div>
+      <div class="ph">Compliance / legal copy is a placeholder. Unsubscribe line preserved from existing footer.</div>
+    </div>
+  </div>`;
+}
+function statusBlock(){
+  if(state==='loading') return `<div class="alert">Loading…</div>`;
+  if(state==='error') return `<div class="bad">Could not load this screen. <button class="ghost" onclick="setState('ready')">Retry</button></div>`;
+  return '';
+}
+
+function dealersView(){
+  if(state==='loading') return shell('dealers',`<h1>Dealers</h1>`+statusBlock());
+  if(state==='error') return shell('dealers',`<h1>Dealers</h1>`+statusBlock());
+  if(state==='empty') return shell('dealers',`<h1>Dealers</h1><div class="card"><p>No dealers yet.</p><button class="primary" onclick="toast('Demo: would open new dealer')">Add dealer</button></div>`);
+  const list=Object.values(DEALERS).map(d=>`<div class="item">${logo(d.id)}<div><b>${d.n}</b><div class="muted">${d.kind} · ${d.legal.replace('https://','')}</div></div><span class="sp"></span><button class="ghost" onclick="toast('Demo: edit ${d.n}')">Edit</button></div>`).join('');
+  const ok=state==='success'?`<div class="ok">Dealer saved.</div>`:'';
+  return shell('dealers',`<div class="row spread"><h1>Dealers</h1><button class="primary" onclick="toast('Demo: new dealer form')">Add dealer</button></div>
+    ${ok}<div class="card">${list}</div>
+    <div class="card"><h2>Edit · Example Dealer A</h2>
+      <div class="row">${logo('a')}<button class="ghost" onclick="toast('Demo: replace placeholder logo')">Replace logo</button><span class="muted">Placeholder mark only — not a real dealer logo</span></div>
+      <label class="fld">Name <input value="Example Dealer A" readonly></label>
+      <label class="fld">Default disclaimer <textarea readonly>${DEALERS.a.disc}</textarea></label>
+      <label class="fld">Legal link <input value="${DEALERS.a.legal}" readonly></label>
+      <label class="fld">Privacy link <input value="${DEALERS.a.priv}" readonly></label>
+      <button class="primary" onclick="setState('success')">Save dealer</button>
+    </div>`);
+}
+
+function settingsView(){
+  if(state==='loading'||state==='error') return shell('settings',`<h1>Settings · Jane Advisor</h1>`+statusBlock());
+  const invSel=`<label class="fld">Investments dealer
+    <select onchange="dealer=this.value;custom=false;render()">
+      <option value="a" ${dealer==='a'?'selected':''}>Example Dealer A</option>
+      <option value="b" ${dealer==='b'?'selected':''}>Example Dealer B</option>
+    </select></label>`;
+  const insSel=`<label class="fld">Insurance · MGA
+    <select onchange="mga=this.value;render()">
+      <option value="m" ${mga==='m'?'selected':''}>Example MGA</option>
+    </select></label>`;
+  let body='';
+  if(DIR==='c'){
+    body=`<h1>Settings · Jane Advisor · Your Firm Name</h1>
+    <p class="muted">Dual-licensed · two kits on one profile</p>
+    <div class="split">
+      <div class="card"><h2>Investments kit</h2>${invSel}<div class="row">${logo(dealer)}<div><b>${D().n}</b><div class="muted">Email footer + investment disclaimer default</div></div></div></div>
+      <div class="card"><h2>Insurance kit</h2>${insSel}<div class="row">${logo(mga)}<div><b>${M().n}</b><div class="muted">Insurance materials default</div></div></div></div>
+    </div>
+    <div class="card"><h2>Preview (email footer default)</h2>${emailPreview('ok')}
+    <p class="muted">Client links use example.com / yourfirm.ca</p></div>
+    <button class="primary" onclick="setView('change')">Change investments dealer</button>`;
+  } else {
+    body=`<h1>Settings · Jane Advisor</h1>
+    <p class="muted">Your Firm Name · unified Settings · per profile</p>
+    <div class="card"><h2>Dealer defaults</h2>
+      <div class="split">${invSel}${insSel}</div>
+      <div class="item">${logo(dealer)}<div><b>${D().n}</b> used for email footer, website post disclaimer, and compliance defaults.<div class="muted">${D().disc}</div>
+      <div><a href="${D().legal}">Legal</a> · <a href="${D().priv}">Privacy</a></div></div></div>
+      <div class="item">${logo(mga)}<div><b>${M().n}</b> used when insurance materials are sent.<div class="muted">${M().disc}</div></div></div>
+      <div class="row"><button class="primary" onclick="setView('change')">Change investments dealer</button></div>
+    </div>
+    <div class="card"><h2>Email footer preview</h2>${emailPreview('ok')}</div>`;
+  }
+  if(state==='success') body=`<div class="ok">Defaults updated for Jane Advisor. Overridden items were not overwritten.</div>`+body;
+  return shell('settings',body);
+}
+
+function itemView(){
+  if(state==='loading'||state==='error') return shell('item',`<h1>November update</h1>`+statusBlock());
+  const label=custom?'<span class="tag wa">Custom (overrides dealer default)</span>':'<span class="tag ok">Using dealer default · Example Dealer A</span>';
+  const shown=custom?DEALERS.b:D();
+  return shell('item',`<h1>Campaign · November update</h1>
+    <p class="muted">Jane Advisor · Your Firm Name</p>
+    <div class="card"><h2>Footer branding</h2>
+      ${label}
+      <div class="item">${logo(shown.id)}<div><b>${shown.n}</b><div class="muted">${shown.disc}</div></div></div>
+      ${custom?`<button class="ghost" onclick="custom=false;toast('Reset to dealer default');render()">Reset to dealer default</button>`:
+        `<button class="ghost" onclick="custom=true;render()">Customize this item</button>`}
+    </div>
+    <div class="card"><h2>Recipient preview</h2>${emailPreview(custom?'ok':'ok')}</div>
+    <div class="row"><button class="primary" onclick="setView('check')">Continue to pre-send check</button></div>`);
+}
+
+function changeView(){
+  const overrides=[{n:'November update',t:'Campaign'},{n:'Quarterly letter template',t:'Template'}];
+  if(DIR==='b'){
+    const steps=['1 Pick dealer','2 What updates','3 Review overrides'];
+    let inner=`<div class="steps">${steps.map((s,i)=>`<span class="${i+1<changeStep?'d':i+1===changeStep?'on':''}">${s}</span>`).join('')}</div>`;
+    if(changeStep===1) inner+=`<div class="card"><h2>Change investments dealer</h2>
+      <p>Jane Advisor is on <b>${D().n}</b>.</p>
+      <label class="fld">New dealer <select onchange="newDealer=this.value"><option value="b" selected>Example Dealer B</option><option value="a">Example Dealer A</option></select></label>
+      <button class="primary" onclick="changeStep=2;render()">Next</button></div>`;
+    if(changeStep===2) inner+=`<div class="card"><h2>These defaults will update</h2>
+      <ul><li>Email footer logo, disclaimer, legal/privacy links</li><li>Website post disclaimer default</li><li>Compliance settings default</li></ul>
+      <p class="muted">Overridden items stay as they are until you review them.</p>
+      <div class="row"><button class="ghost" onclick="changeStep=1;render()">Back</button><button class="primary" onclick="changeStep=3;render()">Next</button></div></div>`;
+    if(changeStep===3) inner+=`<div class="card"><h2>Overridden items to review</h2>
+      <p>These will <b>not</b> be overwritten.</p>
+      <table><tr><th>Item</th><th>Type</th></tr>${overrides.map(o=>`<tr><td>${o.n}</td><td>${o.t}</td></tr>`).join('')}</table>
+      <div class="row"><button class="ghost" onclick="changeStep=2;render()">Back</button><button class="primary" onclick="dealer=newDealer;custom=true;state='success';setView('settings')">Update defaults</button></div></div>`;
+    return shell('settings',`<h1>Change dealer</h1>`+inner);
+  }
+  // A and C: modal-like panel
+  return `<div class="overlay"><div class="panel">
+    <div class="row spread"><h2>Change investments dealer</h2><button class="ghost" onclick="setView('settings')">Close</button></div>
+    <p>Jane Advisor · from <b>${D().n}</b> to <b>Example Dealer B</b></p>
+    <div class="alert">Defaults (email footer, website post disclaimer, compliance) update in one step. Overridden items are listed and are not silently overwritten.</div>
+    <h3>Will update</h3><ul><li>Default logo, disclaimer, legal and privacy links</li></ul>
+    <h3>Review — keep custom</h3>
+    <table><tr><th>Item</th><th>Type</th></tr>${overrides.map(o=>`<tr><td>${o.n}</td><td>${o.t} · Custom (overrides dealer default)</td></tr>`).join('')}</table>
+    <div class="row"><button class="ghost" onclick="setView('settings')">Cancel</button><button class="primary" onclick="dealer='b';custom=true;state='success';setView('settings')">Update defaults</button></div>
+  </div></div>`+settingsView();
+}
+
+function checkView(){
+  const isMis=state==='mismatch'||state==='ready'&&false;
+  const showMis=state==='mismatch';
+  if(state==='loading') return shell('item',`<h1>Pre-approval check</h1><div class="alert">Checking header, footer and body for dealer logos, names and links…</div>`);
+  if(state==='error') return shell('item',`<h1>Pre-approval check</h1>`+statusBlock());
+  if(!showMis){
+    return shell('item',`<h1>Pre-approval check</h1>
+      <div class="ok">No dealer mismatches found for Jane Advisor (${D().n} / ${M().n}).</div>
+      ${emailPreview('ok')}
+      <div class="row"><button class="ghost" onclick="setView('item')">Back</button><button class="primary" onclick="toast('Demo only: would request approval. Nothing was sent.')">Send to approval</button></div>
+      <p class="muted">This control never auto-sends or auto-removes content.</p>`);
+  }
+  const flag=`<div class="bad"><b>Mismatch flagged — not sent</b>
+    <p>A logo, name or link for <b>Example Dealer B</b> appears on a campaign whose profile dealer is <b>${D().n}</b>.</p>
+    <ul><li>Footer logo does not match the profile dealer</li><li>Includes custom override — still flagged for review</li></ul>
+    <p>Flagged to staff and to Jane Advisor. Nothing was removed or sent.</p></div>`;
+  if(DIR==='b'){
+    return shell('item',`<h1>November update</h1><div class="drawer overlay"><div class="panel">
+      <h2>Dealer mismatch</h2>${flag}${emailPreview('wrong')}
+      <div class="row"><button class="ghost" onclick="setView('item')">Back to edit</button><button class="danger" onclick="toast('Demo: cannot auto-send while flagged')">Hold — do not send</button></div>
+    </div></div>`);
+  }
+  if(DIR==='c'){
+    return shell('item',`<h1>Pre-approval check</h1>${flag}
+      <div class="split">
+        <div class="card"><h3>Staff notice</h3><p>Review Jane Advisor · November update before the approval email goes out.</p>${emailPreview('wrong')}</div>
+        <div class="card"><h3>Advisor notice</h3><p>Jane Advisor is notified of the mismatch. No automatic change is applied.</p></div>
+      </div>
+      <div class="row"><button class="ghost" onclick="custom=true;setView('item')">Review override</button><button class="danger" onclick="toast('Demo: send blocked until reviewed')">Keep on hold</button></div>`);
+  }
+  return shell('item',`<h1>Pre-approval check</h1>${flag}${emailPreview('wrong')}
+    <div class="row"><button class="ghost" onclick="setView('item')">Back to campaign</button>
+    <button class="ghost" onclick="toast('Demo: flag stays visible to staff and advisor')">Notify and hold</button>
+    <button class="primary" disabled>Send to approval</button></div>
+    <p class="muted">Send stays disabled until the mismatch is reviewed. The check never auto-removes content or auto-sends.</p>`);
+}
+
+function render(){
+  switcher();
+  let html='';
+  if(view==='dealers') html=dealersView();
+  else if(view==='settings') html=settingsView();
+  else if(view==='item') html=itemView();
+  else if(view==='change') html=changeView();
+  else html=checkView();
+  document.getElementById('app').innerHTML=html;
+}
+render();</script>
+</body></html>
