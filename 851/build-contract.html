@@ -1,0 +1,70 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>#851 contract</title><style>body{font:15px/1.55 "DM Sans",Inter,system-ui,sans-serif;max-width:920px;margin:24px auto;padding:0 16px;color:#2c3e50}a{color:#2b7de9}li{margin:10px 0}.r{background:#e8f5e9;border:1px solid #a5d6a7;border-radius:10px;padding:10px 14px}.note{background:#fff8e1;border:1px solid #ffe0a3;border-radius:8px;padding:10px 12px}table{border-collapse:collapse;width:100%}td,th{border:1px solid #e0e5eb;padding:6px 8px;text-align:left;vertical-align:top}th{background:#f3f6f9}</style></head><body><p><a href="index.html">Hub</a> · <a href="../">All mocks</a> · <a href="https://github.com/kartboy16/content-library/issues/851">#851</a></p><h1>#851 Advisor home — Write a campaign</h1>
+<p><strong>Status:</strong> Published on GitHub Pages. Not agent-ready. Soft Dev hold until a direction is picked. No build launched.</p>
+<h2>Sources</h2>
+<ul>
+<li>Issue #851</li>
+<li>Slack thread (read-only): home mockup and suggested-campaign mockup downloaded to <code>/workspace/851-ref/</code></li>
+<li>Issue comments point at those two Slack images; no GitHub image attachments on the issue itself</li>
+</ul>
+<h2>Recommendation</h2>
+<p>Ship <strong>one direction (A)</strong> that follows the Slack mockups in the request thread: centered home with greeting + Ask FC + one <strong>Write a campaign</strong> button; then a suggested 3-piece campaign card; <strong>Looks good — open draft</strong>, <strong>Swap a piece</strong>, <strong>Start over</strong>. Open draft is a draft-only state (no send, schedule, or approval). No second direction — the mockups are clear, and the product currently has no advisor home (per the issue), so there is no conflicting live home to branch from.</p>
+<h2>Screens</h2>
+<table>
+<thead>
+<tr>
+<th>Screen</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Home</td>
+<td>Time-of-day greeting (<code>Good morning/afternoon/evening, Jane</code>), Ask FC text + mic, one primary button, helper line</td>
+</tr>
+<tr>
+<td>Suggested campaign</td>
+<td>Auto-picked article, infographic, calculator from the library (no topic/filter UI)</td>
+</tr>
+<tr>
+<td>Draft</td>
+<td>Opened from “Looks good — open draft”; status Draft — not sent; no send control</td>
+</tr>
+<tr>
+<td>Empty / loading / error</td>
+<td>Tiny mock state switcher only</td>
+</tr>
+</tbody>
+</table>
+<p>Menu: Home, Library, Campaigns, Settings only. Library/Campaigns/Settings are stubs that return home. Sidebar collapses at 390px.</p>
+<h2>States</h2>
+<p>ready (home), loading (searching library), empty (no pieces), error (retry / start over), success (suggestion), draft.</p>
+<h2>Copy (from her boards, fixtures adjusted)</h2>
+<ul>
+<li>“Or tell us what this campaign is for…”</li>
+<li>“Write a campaign”</li>
+<li>“We’ll pick the best pieces from your library for you.”</li>
+<li>“SUGGESTED CAMPAIGN” / “Subject line”</li>
+<li>Subject: “Your November money update: TFSA room, the RRSP deadline, and a retirement check-in”</li>
+<li>“Looks good — open draft” / “Swap a piece” / “Start over”</li>
+<li>“Nothing is sent until you approve it.”</li>
+<li>Banner: “Proposal mockup — not on the live site. Example data only. Nothing is sent.”</li>
+<li>Draft note: “This draft is saved as a draft only. It has not been sent, scheduled, or sent for approval.”</li>
+<li>Footer/compliance on the draft is flagged: “[Placeholder — existing campaign footer / compliance copy, not invented legal text.]”</li>
+</ul>
+<h2>Fixture substitutions vs her PNG boards</h2>
+<p>The source mockups used a product domain as the sidebar wordmark, the greeting “Good afternoon, Example”, and “Example Advisor” plus a “712 posts” sample line. This clickable draft uses <strong>Jane Advisor</strong>, <strong>Your Firm Name</strong>, and <code>yourfirm.ca</code> / <code>example.com</code> only, and omits the product domain from chrome, per the job’s generic-name and branding rules. Layout, colour tokens, type, menu, controls and campaign titles otherwise follow the boards.</p>
+<p><strong>Swap:</strong> her board has one bottom <strong>Swap a piece</strong> button. This mock keeps that and adds a per-piece <strong>Swap</strong> that cycles alternatives from the library, as specified in the job.</p>
+<h2>In / out of scope</h2>
+<p><strong>In:</strong> advisor home tokens and layout, Ask FC (typed + simulated mic), auto-suggested 3-piece campaign, swap, start over, draft-only open, empty/loading/error. <strong>Out:</strong> actual send/schedule/approval, topic pickers, live library search, voice recognition, changing Library/Campaigns/Settings, client-site branding, production deploy.</p>
+<h2>Desktop vs mobile</h2>
+<p>1280: navy sidebar 232px, centered 640px stack. 390: sidebar hidden behind Menu, stacked pieces and full-width actions, 44px targets.</p>
+<h2>Agent-time estimate (hours)</h2>
+<p>Cloud agent build <strong>6–10 h</strong> + FC Tester <strong>2–4 h</strong> (home, suggest, swap, start over, draft has no send, 1280/390, generic fixtures) + fix loop <strong>1–2 h</strong> ≈ <strong>9–16 h</strong>. Playground first unless Alex confirms staging. <code>risk:high</code> if it later ties into campaign send; the mocked path itself does not send. No build launched.</p>
+<h2>Open questions</h2>
+<ol>
+<li>Playground vs staging as the first deploy target (issue vs her “staging only” note)?</li>
+<li>Should the sidebar wordmark stay a product mark once branding rules for advisor chrome are confirmed, or remain a firm/generic mark as in this fixture draft?</li>
+<li>Does “Swap a piece” stay a single button (her board) or per-piece only?</li>
+<li>What happens after Open draft in the real composer — stay in this home shell, or jump into today’s campaign editor (still with send off)?</li>
+<li>How is the 3-piece set chosen from a real library (ranking, freshness, already-used pieces)?</li>
+</ol></body></html>
