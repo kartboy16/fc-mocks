@@ -17,12 +17,16 @@ h1{font-size:26px}
 <body>
 <p><a href="../">All mocks</a> · <a href="https://github.com/kartboy16/content-library/issues/854">#854</a></p>
 <h1>#854 Suggest one library post to one advisor by email</h1>
-<p class="r"><b>Recommend A</b> — an action on a Content Library post card that opens a drawer to pick one advisor. The usual trigger is a timely post the admin just found, so the post stays in context. B is better when the admin is already in Manage Advisor Posts looking at one advisor. C adds a new compose entry point without the context of either surface. All three share the same email and result pages.</p>
+<p class="r"><b>Recommend A</b> — an admin-only <b>Send suggestion</b> item in the Content Library card's existing Share menu that opens a drawer to pick one advisor. The usual trigger is a timely post the admin just found, so the post stays in context. B is better when the admin is already in Manage Advisor Posts looking at one advisor. C adds a new compose entry point without the context of either surface. All three share the same email and result pages.</p>
 <div class="note">Sample post: <i>What the latest federal budget could mean for your RRSP and TFSA</i>. Fixtures are generic (Jane Advisor, Your Firm Name, yourfirm.example, example.com). Nothing publishes until the advisor approves.</div>
 
-<div class="note" style="margin-top:12px">Admin-only Advisor source include/exclude filter beside Search advisors (same product source names as MAP / #827). Social and Email are included by default, editable, and removable (website Insights stays required). The advisor email and result pages list the included channels. Nothing publishes, posts, or sends until the advisor approves.</div>
+<div class="note" style="margin-top:12px"><b>Entry-point revision (Direction A / PR #855):</b> The dedicated Send suggestion button is removed. Admins open <b>Share</b> on the library card and choose <b>Send suggestion</b> (Admin only badge). Non-admins see the same Share menu without that item. The drawer is unchanged: Search advisors, Advisor source include/exclude filter, Social and Email on by default and editable, website Insights required. Share menu items match the live ShareDestinationPicker and the #824 D mock, plus the new item.</div>
 <ul>
 <li><a href="a-library.html"><b>A. Library card → advisor drawer (recommended)</b></a>
+  · <a href="a-library.html?s=share&amp;role=admin">share menu, admin</a>
+  · <a href="a-library.html?s=share&amp;role=admin&amp;phone">share menu, admin phone</a>
+  · <a href="a-library.html?s=share&amp;role=advisor">share menu, non-admin</a>
+  · <a href="a-library.html?s=share&amp;role=advisor&amp;phone">share menu, non-admin phone</a>
   · <a href="a-library.html?s=drawer">drawer</a>
   · <a href="a-library.html?s=drawer&amp;phone">drawer phone</a>
   · <a href="a-library.html?s=loading">loading</a>
@@ -75,6 +79,7 @@ h1{font-size:26px}
   · <a href="results.html?st=approved&amp;phone">approved phone</a>
   · <a href="insights.html">Insights page (client-facing, yourfirm.example)</a></li>
 <li><a href="build-contract.html">Build contract</a> · <a href="build-contract.md">.md</a></li>
+<li><a href="gh-comment-draft.md">Draft issue comment (do not post)</a> · <a href="gh-comment-update-draft.md">Update comment draft (do not post)</a></li>
 </ul>
 <p class="muted">Agent-time estimate and open questions are in the contract, not on the mock screens.</p>
 </body>

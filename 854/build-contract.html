@@ -1,16 +1,37 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>#854 contract</title><style>body{font:15px/1.55 Inter,system-ui,sans-serif;max-width:920px;margin:24px auto;padding:0 16px;color:#2c3e50}a{color:#1976d2}li{margin:10px 0}.r{background:#e8f5e9;border:1px solid #a5d6a7;border-radius:10px;padding:10px 14px}.note{background:#fff8e1;border:1px solid #ffe0a3;border-radius:8px;padding:10px 12px}h1{font-size:26px}.muted{color:#607080;font-size:13px}table{border-collapse:collapse;width:100%}td,th{border:1px solid #e0e5eb;padding:6px 8px;text-align:left;vertical-align:top}th{background:#f3f6f9}</style></head><body><p><a href="index.html">Hub</a> · <a href="../">All mocks</a> · <a href="https://github.com/kartboy16/content-library/issues/854">#854</a></p><h1>#854 Suggest one library post to one advisor by email</h1>
-<p><strong>Status:</strong> Published on GitHub Pages. Not agent-ready. Soft Dev hold until a direction is picked. No build launched.</p>
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>#854 contract</title><style>body{font:15px/1.55 Inter,system-ui,sans-serif;max-width:920px;margin:24px auto;padding:0 16px;color:#2c3e50}a{color:#1976d2}li{margin:10px 0}.r{background:#e8f5e9;border:1px solid #a5d6a7;border-radius:10px;padding:10px 14px}.note{background:#fff8e1;border:1px solid #ffe0a3;border-radius:8px;padding:10px 12px}h1{font-size:26px}.muted{color:#607080;font-size:13px}table{border-collapse:collapse;width:100%}td,th{border:1px solid #e0e5eb;padding:6px 8px;text-align:left;vertical-align:top}th{background:#f3f6f9}code{font-size:0.92em}</style></head><body><p><a href="index.html">Hub</a> · <a href="../">All mocks</a> · <a href="https://github.com/kartboy16/content-library/issues/854">#854</a></p><h1>#854 Suggest one library post to one advisor by email</h1>
+<p><strong>Status:</strong> Published on GitHub Pages. Direction A is in PR #855 on staging. This mock updates only A's entry point (Share menu instead of a dedicated button) as a small follow-up to that PR. Not agent-ready until the entry-point change is on the PR. Soft Dev hold on B and C until a direction is picked. No build launched for this follow-up.</p>
 <h2>Sources (read-only)</h2>
 <ul>
 <li>Issue #854</li>
 <li>Related: weekly picks (#599 / #753, not on main), campaign approval emails (newsletter sends, not website publishing), #688 weekly digest (out of scope)</li>
 </ul>
 <h2>Recommendation</h2>
-<p><strong>A. Library card → advisor drawer.</strong> The usual trigger is a timely post the admin just found, so starting on the Content Library card keeps the post in context and opens a drawer to pick one advisor. Recipients, an email preview, and Send sit in the same drawer.</p>
+<p><strong>A. Library card Share menu → advisor drawer.</strong> The usual trigger is a timely post the admin just found, so starting on the Content Library card keeps the post in context. Admins open the existing Share menu and choose <strong>Send suggestion</strong>, which opens a drawer to pick one advisor. Recipients, an email preview, and Send sit in the same drawer.</p>
 <p>B is the inverse: start in Manage Advisor Posts, pick the advisor, then the post. Use it if the admin is already looking at one advisor. C is a standalone compose modal with a new admin entry point; it works when the admin is on neither surface, but it adds chrome without the context of A or B.</p>
 <p>All three directions share the same advisor email and Approve / Schedule / Skip result pages.</p>
-<h2>Local revision (unpublished)</h2>
-<p>Two additions after Alex's review, still local-only.</p>
+<h2>Entry-point revision (Direction A / PR #855)</h2>
+<p>A is already built on staging as PR #855. This revision changes only the entry point on the Content Library card:</p>
+<ul>
+<li>The dedicated <strong>Send suggestion</strong> button is removed from the card.</li>
+<li><strong>Send suggestion</strong> is an admin-only item in the card's existing <strong>Share</strong> menu, marked with an <strong>Admin only</strong> badge. Advisors and other non-admins do not see the item.</li>
+<li>The item opens the same advisor drawer, unchanged: Search advisors, the Advisor source include/exclude filter, and Social and Email on by default and editable. Website (Insights) stays required.</li>
+<li>This mock shows the Share menu open for an admin (item visible) and for a non-admin (item hidden).</li>
+</ul>
+<p><strong>Share menu items matched</strong> from <code>imports/ui/components/ShareDestinationPicker.jsx</code> and <code>imports/ui/shareDestinationPicker.js</code> on <code>kartboy16/content-library</code> (main), and from the #824 D share-menu mock:</p>
+<ul>
+<li>Title: “Where should this go?”</li>
+<li>“Pick any mix of Website, Social, and Email. Only selected destinations run.” For admins: “Or choose <strong>Send to multiple advisors</strong> — not at the same time.”</li>
+<li>Select all / Clear all, “N of 3 selected”</li>
+<li><strong>Website</strong> — “Publish on your website”</li>
+<li><strong>Social</strong> — “Post to linked networks”</li>
+<li><strong>Email</strong> — “Full article if Email only; teaser + link when Website is on”</li>
+<li>Admin: <strong>Send to multiple advisors</strong> — “Admin · HTML to many, optional social and email campaign” (locks Website / Social / Email when selected; Continue would open the #824 flow, not this drawer)</li>
+<li>Admin: <strong>Send suggestion</strong> — new item, <strong>Admin only</strong> badge. Click opens the #854 advisor drawer. It is a direct action, not a Continue destination.</li>
+<li>Continue / Cancel (Continue stays the usual Website / Social / Email share, or Send to multiple advisors when that item is selected)</li>
+</ul>
+<p>Desktop is a 340px popover under the Share button; phone is a bottom sheet (<code>anchor="bottom"</code>, 16px top radius), matching the picker.</p>
+<h2>Prior revision (source filter + default channels)</h2>
+<p>Two additions after Alex's earlier review, now part of the published mock and of PR #855.</p>
 <h3>Advisor source filter (admin only)</h3>
 <p>Sits immediately beside <strong>Search advisors</strong> in every direction that has an advisor picker (A drawer, B Manage Advisor Posts list, C compose modal). Dual multi-selects: <strong>Include sources</strong> / <strong>Exclude sources</strong>, plus <strong>Clear all</strong>. The control is marked <strong>Admin only</strong> (badge + tooltip). Advisors never see it.</p>
 <p>Rules match MAP / #827: include = must have at least one selected source; exclude = hide if any selected source is present; include first, then exclude; a source cannot sit in both lists; empty include = no include constraint; empty exclude = nothing excluded by source. The search box and the filter work together. The count of matching advisors is shown. No matches shows an empty state and Clear all.</p>
@@ -44,7 +65,7 @@
 </thead>
 <tbody>
 <tr>
-<td>Send suggestion (A card action, B MAP action, or C modal)</td>
+<td>Send suggestion (A Share menu item, B MAP action, or C modal)</td>
 <td>Staff / admin</td>
 <td>Pick one post and one advisor, admin-only Advisor source filter, Social + Email on by default (editable / removable), website required, optional assistant recipients, preview, Send. Hand-triggered only; no cron in this slice.</td>
 </tr>
@@ -81,9 +102,9 @@
 </thead>
 <tbody>
 <tr>
-<td>A. Content Library grid + Send suggestion on the card</td>
+<td>A. Content Library grid + Share menu (admin-only Send suggestion item)</td>
 <td>Staff</td>
-<td>Drawer: advisor picker + admin-only source filter, channels (website / social / email), recipients, email preview, Send</td>
+<td>Share menu matches the live picker (#824 D / ShareDestinationPicker). Send suggestion (admin only) opens the same drawer: advisor picker + admin-only source filter, channels (website / social / email), recipients, email preview, Send. Non-admins see the Share menu without that item.</td>
 </tr>
 <tr>
 <td>B. Manage Advisor Posts + Send suggestion on the row</td>
@@ -138,7 +159,8 @@
 </tbody>
 </table>
 <h2>States</h2>
-<p>Admin compose: ready, loading, empty (no advisors or no posts), error/retry, sending, success (sent; nothing published).
+<p>Admin compose: ready, Share menu open (admin vs non-admin / advisor role), loading, empty (no advisors or no posts), error/retry, sending, success (sent; nothing published).
+Share menu (A): open or closed; admin sees Send to multiple advisors and Send suggestion (Admin only); non-admin does not; Website / Social / Email start unselected; selecting Send to multiple advisors locks the three channels.
 Advisor source filter: defaults (include Content, exclude No longer a client), none selected, include active, exclude active, no matches; works with search.
 Channels: all included (default), social removed (Add back), email removed (Add back), editing social, editing email.
 Email: advisor recipient vs assistant (actions hidden for assistant in this mock — open question). Channel list follows what was included.
@@ -163,7 +185,7 @@ Insights: published post only (no draft state on the client site).</p>
 <p>No estimates or explainer prose in the mock UI. Sample article copy is generic and is not tax advice.</p>
 <p>Sample post: <strong>What the latest federal budget could mean for your RRSP and TFSA</strong>. Summary: A plain-language look at the latest federal budget, and what the proposed changes could mean for contribution room, withdrawals, and year-end planning. 4 min read.</p>
 <h2>In / out of scope</h2>
-<p><strong>In:</strong> hand-triggered admin Send suggestion (one post, one advisor), admin-only Advisor source include/exclude filter (MAP-identical rules and product source names), default-on Social and Email with edit/remove (website Insights required), optional extra approval recipients, advisor email with one card, included-channel list, and Approve / Schedule / Skip, secure expiring tokens, result pages that reflect included channels, website publish via the existing Insights / package-refresh path, CASL footer placeholder, generic fixtures only.
+<p><strong>In:</strong> hand-triggered admin Send suggestion (one post, one advisor) from the existing Share menu on the Content Library card (A; admin-only item), admin-only Advisor source include/exclude filter (MAP-identical rules and product source names), default-on Social and Email with edit/remove (website Insights required), optional extra approval recipients, advisor email with one card, included-channel list, and Approve / Schedule / Skip, secure expiring tokens, result pages that reflect included channels, website publish via the existing Insights / package-refresh path, CASL footer placeholder, generic fixtures only.
 <strong>Out of scope:</strong> Rewrite in my voice (#687), weekly digest frequency (#688), auto-picking, a 3-post weekly slate, cron, live email send, inventing legal CASL copy, social or email-campaign destinations (this slice is website Insights), client-facing product branding or product-domain links.</p>
 <p>Reuse weekly-picks confirm, token, and send code where possible. Do not send a weekly slate. Staging first, high risk (email sending, publishing, white-label). QA inboxes only (designated test accounts). Only Alex merges to main. No build launched.</p>
 <h2>Desktop vs mobile</h2>
@@ -199,14 +221,26 @@ Insights: published post only (no draft state on the client site).</p>
 <td>3–6</td>
 </tr>
 <tr>
-<td><strong>Total</strong></td>
+<td><strong>Total (PR #855 as built)</strong></td>
 <td><strong>21–35 h</strong></td>
+<td><strong>22–36 h</strong></td>
+<td><strong>23–38 h</strong></td>
+</tr>
+<tr>
+<td>Entry-point follow-up on PR #855 (move Send suggestion into the existing Share menu, admin-only visibility, role states)</td>
+<td><strong>+1–2 h</strong></td>
+<td>—</td>
+<td>—</td>
+</tr>
+<tr>
+<td><strong>Total for A with this follow-up</strong></td>
+<td><strong>22–37 h</strong></td>
 <td><strong>22–36 h</strong></td>
 <td><strong>23–38 h</strong></td>
 </tr>
 </tbody>
 </table>
-<p>Updated from 17–28 h (A) after the source-filter and default Social/Email work. The email, tokens, and publish path are still shared. A is a little lower because it extends an existing library card. C is a little higher because it adds a new entry point and a recent-suggestions list. High risk (email sending, publishing, social, white-label). Playground / staging first, then FC Tester. No build launched.</p>
+<p>The 21–35 h band is the estimate for A as already built in PR #855 (updated earlier from 17–28 h after the source-filter and default Social/Email work). Moving the entry point into the Share menu is a small change to that PR, not a new build: about <strong>+1–2 h</strong> of cloud agent + FC Tester time (admin vs non-admin Share menu, item opens the existing drawer). B and C are unchanged. High risk (email sending, publishing, social, white-label) is unchanged. Playground / staging first, then FC Tester. No new build launched for this follow-up.</p>
 <h2>Open questions</h2>
 <ol>
 <li>How long do the Approve / Schedule / Skip tokens stay valid? This mock uses 7 days (expire Nov 19, 2026).</li>
@@ -227,4 +261,5 @@ Insights: published post only (no draft state on the client site).</p>
 <li>Does the Email channel send to the advisor's existing list, a new campaign, or some other audience?</li>
 <li>Can the advisor also edit the social caption or email subject/intro from the email or result page, or is edit admin-only (as mocked)?</li>
 <li>If Social or Email is removed in admin, can the advisor add it back when they approve?</li>
-</ol></body></html>
+</ol>
+</body></html>
