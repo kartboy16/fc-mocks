@@ -19,6 +19,8 @@ h1{font-size:26px}
 <h1>#854 Suggest one library post to one advisor by email</h1>
 <p class="r"><b>Recommend A</b> — an action on a Content Library post card that opens a drawer to pick one advisor. The usual trigger is a timely post the admin just found, so the post stays in context. B is better when the admin is already in Manage Advisor Posts looking at one advisor. C adds a new compose entry point without the context of either surface. All three share the same email and result pages.</p>
 <div class="note">Sample post: <i>What the latest federal budget could mean for your RRSP and TFSA</i>. Fixtures are generic (Jane Advisor, Your Firm Name, yourfirm.example, example.com). Nothing publishes until the advisor approves.</div>
+
+<div class="note" style="margin-top:12px">Admin-only Advisor source include/exclude filter beside Search advisors (same product source names as MAP / #827). Social and Email are included by default, editable, and removable (website Insights stays required). The advisor email and result pages list the included channels. Nothing publishes, posts, or sends until the advisor approves.</div>
 <ul>
 <li><a href="a-library.html"><b>A. Library card → advisor drawer (recommended)</b></a>
   · <a href="a-library.html?s=drawer">drawer</a>
@@ -27,7 +29,18 @@ h1{font-size:26px}
   · <a href="a-library.html?s=empty">empty</a>
   · <a href="a-library.html?s=error">error</a>
   · <a href="a-library.html?s=done">sent</a>
-  · <a href="a-library.html?phone">phone</a></li>
+  · <a href="a-library.html?phone">phone</a>
+  · <a href="a-library.html?s=drawer&amp;filt=none">filter none</a>
+  · <a href="a-library.html?s=drawer&amp;filt=include">filter include</a>
+  · <a href="a-library.html?s=drawer&amp;filt=exclude">filter exclude</a>
+  · <a href="a-library.html?s=drawer&amp;filt=nomatch">filter no matches</a>
+  · <a href="a-library.html?s=drawer&amp;filt=include&amp;phone">filter phone</a>
+  · <a href="a-library.html?s=drawer&amp;ch=all">channels</a>
+  · <a href="a-library.html?s=drawer&amp;ch=editsocial">edit social</a>
+  · <a href="a-library.html?s=drawer&amp;ch=editemail">edit email</a>
+  · <a href="a-library.html?s=drawer&amp;ch=nosocial">social removed</a>
+  · <a href="a-library.html?s=drawer&amp;ch=noemail">email removed</a>
+  · <a href="a-library.html?s=drawer&amp;ch=all&amp;phone">channels phone</a></li>
 <li><a href="b-map.html"><b>B. Manage Advisor Posts → pick post</b></a>
   · <a href="b-map.html?s=pick">pick post</a>
   · <a href="b-map.html?s=drawer">compose</a>
@@ -44,10 +57,15 @@ h1{font-size:26px}
 <li><a href="email.html"><b>Advisor email</b></a> (shared)
   · <a href="email.html?phone">phone</a>
   · <a href="email.html?vo=on">assistant recipient</a>
+  · <a href="email.html?ch=all">channels</a>
+  · <a href="email.html?ch=nosocial">social removed</a>
+  · <a href="email.html?ch=noemail">email removed</a>
   · <a href="preview.html">Preview link target</a>
   · <a href="preview.html?phone">preview phone</a></li>
 <li><b>Result pages</b>
   · <a href="results.html?st=approved">Approved</a>
+  · <a href="results.html?st=approved&amp;ch=nosocial">approved, social removed</a>
+  · <a href="results.html?st=scheduled&amp;ch=all">scheduled, all channels</a>
   · <a href="results.html?st=schedule">Schedule picker</a>
   · <a href="results.html?st=scheduled">Scheduled</a>
   · <a href="results.html?st=skipped">Skipped</a>

@@ -209,13 +209,54 @@ table.list tr.pick{cursor:pointer}
   .site h1{font-size:24px}
   .site .hero{height:140px;font-size:22px}
 }
+
+/* Advisor source filter */
+.src-row{display:flex;gap:8px;align-items:flex-start;flex-wrap:wrap;margin:0 0 8px}
+.src-row .q{flex:1;min-width:140px;border:1px solid #c7cfd9;border-radius:6px;padding:8px 10px;font:inherit;background:#fff}
+.src-wrap{position:relative;flex:0 0 auto}
+.src-btn{border:1px solid #c7cfd9;background:#fff;border-radius:6px;padding:8px 10px;font:inherit;font-weight:600;font-size:13px;cursor:pointer;display:inline-flex;align-items:center;gap:6px;min-height:38px}
+.src-btn.on{border-color:#1976D2;background:#f4f9ff;color:#0d47a1}
+.admin-only{display:inline-flex;align-items:center;gap:3px;font-size:10px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;color:#6d4c41;background:#fff8e1;border:1px solid #ffe0a3;border-radius:10px;padding:1px 7px;cursor:help}
+.src-panel{border:1px solid #e0e5eb;border-radius:8px;padding:10px 12px;background:#fff;margin:0 0 10px;box-shadow:0 6px 18px rgba(0,0,0,.06)}
+.src-panel .ph{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:8px}
+.src-panel .ph b{font-size:13px}
+.src-sides{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.src-side label.hd{font-size:12px;font-weight:700;margin-bottom:6px;display:block}
+.src-opt{display:flex;gap:8px;align-items:flex-start;padding:5px 6px;border-radius:6px;font-size:13px;cursor:pointer}
+.src-opt.blocked{opacity:.45;cursor:not-allowed}
+.src-opt input{margin-top:2px}
+.src-opt small{display:block;font-size:11px;color:#5b6572;font-weight:400}
+.src-count{font-size:12.5px;color:#5b6572;margin-top:8px}
+.ch-box h3{margin:0 0 4px;font-size:13.5px}
+.ch-item{border:1px solid #e0e5eb;border-radius:8px;padding:10px 12px;margin:8px 0;background:#fff}
+.ch-item.req{background:#f7fafc}
+.ch-item.rm{background:#fafafa;border-style:dashed;color:#5b6572}
+.ch-item .hd{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:4px}
+.ch-item .hd b{flex:1}
+.net{display:inline-block;border:1px solid #cfd8dc;border-radius:12px;padding:1px 8px;font-size:11.5px;font-weight:600;margin:0 4px 4px 0}
+.net.on{background:#e3f2fd;border-color:#90caf9;color:#0d47a1}
+.ch-item .cap{font-size:13px;color:#455a64;white-space:pre-wrap;background:#f7f9fb;border-radius:6px;padding:8px 10px;margin:6px 0 0}
+.ch-ed .f{margin:8px 0}
+@media (max-width:700px){
+  .src-panel{max-height:46vh;overflow:auto}
+  .src-sides{grid-template-columns:1fr}
+  .src-row{flex-direction:column}
+  .src-row .q,.src-btn{width:100%}
+  .src-wrap{width:100%}
+}
+#dev.phone .src-sides{grid-template-columns:1fr}
+#dev.phone .src-row{flex-direction:column}
+#dev.phone .src-row .q,#dev.phone .src-btn{width:100%}
 </style>
 </head>
 <body>
 <div class="mockbar"><a href="index.html">Hub</a> · #854 · <a href="a-library.html">A</a> · <a href="b-map.html">B</a> · <a href="c-compose.html">C</a> · <a href="email.html">Email</a> · <b>Result pages</b> · <a href="preview.html">Preview</a> · <a href="insights.html">Insights</a> · <a href="build-contract.html">Contract</a>
 <span class="sp"></span>
 <span class="grp"><button data-dev="desk" onclick="setDev('desk')">Desktop</button><button data-dev="phone" onclick="setDev('phone')">Phone</button></span>
-<span class="row2">State:
+<span class="row2"> Channels:
+<button data-sb="ch:all" onclick="setCh('all')">all included</button>
+<button data-sb="ch:nosocial" onclick="setCh('nosocial')">social removed</button>
+<button data-sb="ch:noemail" onclick="setCh('noemail')">email removed</button> State:
 <button data-sb="st:approved" onclick="set('st','approved')">approved</button>
 <button data-sb="st:schedule" onclick="set('st','schedule')">schedule picker</button>
 <button data-sb="st:scheduled" onclick="set('st','scheduled')">scheduled</button>
@@ -244,7 +285,12 @@ table.list tr.pick{cursor:pointer}
   </div>
 </div>
 
-      <p>Jane Advisor approved this post. It is on your website's Insights page.</p>
+      <p>Jane Advisor approved this post.</p>
+      <ul>
+        <li>Published to your website's Insights page.</li>
+        <li data-ch="all noemail editsocial editemail">Posted to Facebook, LinkedIn, and Instagram.</li>
+        <li data-ch="all nosocial editsocial editemail">The email was sent to your list.</li>
+      </ul>
       <p class="help">It can take about 15 minutes to appear after the site package refreshes.</p>
       <div class="btnrow">
         <a class="btn c lg" href="insights.html">View on your Insights page</a>
@@ -268,7 +314,12 @@ table.list tr.pick{cursor:pointer}
   </div>
 </div>
 
-      <p>Pick when it should appear on your website's Insights page. Nothing publishes until this is confirmed.</p>
+      <p>Pick when this should go out. Nothing publishes, posts, or sends until this is confirmed.</p>
+      <ul>
+        <li>Publish to your website's Insights page</li>
+        <li data-ch="all noemail editsocial editemail">Post to Facebook, LinkedIn, and Instagram</li>
+        <li data-ch="all nosocial editsocial editemail">Send the email to your list</li>
+      </ul>
       <div class="f" style="max-width:280px"><label for="dt">Publish on</label><input type="date" id="dt" value="2026-11-20" min="2026-11-12"></div>
       <div class="f" style="max-width:280px"><label for="tm">Time</label><input type="time" id="tm" value="09:00"></div>
       <p class="help">Times are in Pacific Time (America/Vancouver). 9:00 AM PT is the usual posting time in this mock.</p>
@@ -294,8 +345,13 @@ table.list tr.pick{cursor:pointer}
   </div>
 </div>
 
-      <p>This post will publish to your website's Insights page on <b>Nov 20, 2026, 9:00 AM PT</b>.</p>
-      <p class="help">It can take about 15 minutes after that time to appear. Nothing is on the Insights page yet.</p>
+      <p>Scheduled for <b>Nov 20, 2026, 9:00 AM PT</b>.</p>
+      <ul>
+        <li>Will publish to your website's Insights page</li>
+        <li data-ch="all noemail editsocial editemail">Will post to Facebook, LinkedIn, and Instagram</li>
+        <li data-ch="all nosocial editsocial editemail">Will send the email to your list</li>
+      </ul>
+      <p class="help">It can take about 15 minutes after that time for the Insights page to update. Nothing is live yet.</p>
     </div>
   </div>
 
@@ -380,13 +436,13 @@ var S=S||{};
 function qs(s){return document.querySelectorAll(s)}
 function setDev(d){var el=document.getElementById('dev');if(el)el.className=d;qs('[data-dev]').forEach(function(b){b.classList.toggle('on',b.getAttribute('data-dev')===d)})}
 function toast(m){var t=document.getElementById('toast');if(!t)return;t.textContent=m;t.style.display='block';clearTimeout(t._t);t._t=setTimeout(function(){t.style.display='none'},2800)}
-function apply(){['s','st','vo'].forEach(function(k){if(!(k in S))return;qs('[data-'+k+']').forEach(function(e){var ok=e.getAttribute('data-'+k).split(' ').indexOf(String(S[k]))>-1;e.style.display=ok?'':'none'})});
+function apply(){['s','st','vo','ch'].forEach(function(k){if(!(k in S))return;qs('[data-'+k+']').forEach(function(e){var ok=e.getAttribute('data-'+k).split(' ').indexOf(String(S[k]))>-1;e.style.display=ok?'':'none'})});
  qs('[data-sb]').forEach(function(b){var p=b.getAttribute('data-sb').split(':');b.classList.toggle('on',String(S[p[0]])===p[1])});
  if(window.onApply)onApply();}
 function set(k,v){S[k]=v;apply();if(k==='v'||k==='s'||k==='st'){window.scrollTo(0,0);var d=document.getElementById('dev');if(d)d.scrollTop=0}}
 function openOv(id){document.getElementById(id).classList.add('show')}
 function closeOv(id){document.getElementById(id).classList.remove('show')}
-function initBase(){var q=location.search;setDev(/[?&]phone/.test(q)?'phone':'desk');Object.keys(S).forEach(function(k){var m=q.match(new RegExp('[?&]'+k+'=([a-z0-9-]+)'));if(m)S[k]=m[1]});apply();}
+function initBase(){var q=location.search;setDev(/[?&]phone/.test(q)?'phone':'desk');Object.keys(S).forEach(function(k){var m=q.match(new RegExp('[?&]'+k+'=([a-z0-9-]+)'));if(m)S[k]=m[1]});if(!S.filt)S.filt='defaults';if(!S.ch)S.ch='all';if(!S.adv)S.adv='jane';if(!S.src)S.src=/[?&]filt=/.test(q)?'open':'shut';if(typeof applyFiltPreset==='function')applyFiltPreset(S.filt);if(typeof syncCh==='function')syncCh();apply();}
 function pickAdv(id){S.adv=id;document.querySelectorAll('[data-adv]').forEach(function(e){e.classList.toggle('on',e.getAttribute('data-adv')===id)});
  var NAMES={jane:['Jane Advisor · jane.advisor@example.com','Jane'],sam:['Sam Planner · sam.planner@example.com','Sam'],pat:['Pat Example · pat.example@example.com','Pat']};
  var c=document.getElementById('adv-chip'); if(c&&NAMES[id])c.textContent=NAMES[id][0];
@@ -399,8 +455,243 @@ function pickRow(el){el.parentNode.querySelectorAll('.postrow').forEach(function
 
 function retryPosts(){set('s', location.pathname.indexOf('c-compose')>=0?'drawer':'pick')}
 
-S={st:'approved'};
+/* #854 filter + channels */
+var SOURCES=[
+  {id:'content',n:'Content'},
+  {id:'email',n:'Email Content'},
+  {id:'compliance',n:'Compliance'},
+  {id:'social',n:'Social'},
+  {id:'nlac',n:'No longer a client'}
+];
+var ADV=[
+  {id:'jane',n:'Jane Advisor',f:'Your Firm Name',e:'jane.advisor@example.com',site:'yourfirm.example',ini:'JA',c:'#0d3b66',src:['content','email','compliance','social'],nets:['Facebook','LinkedIn','Instagram'],last:'Oct 28, 2026'},
+  {id:'sam',n:'Sam Planner',f:'Example Wealth',e:'sam.planner@example.com',site:'example.com',ini:'SP',c:'#5e35b1',src:['content','email'],nets:[],last:'Nov 2, 2026'},
+  {id:'pat',n:'Pat Example',f:'Example Planning',e:'pat.example@example.com',site:'example.com',ini:'PE',c:'#7a4f1f',src:['content','social','compliance'],nets:['Facebook','LinkedIn'],last:'Sep 14, 2026'},
+  {id:'lee',n:'Lee Example',f:'Example Partners',e:'lee.example@example.com',site:'example.com',ini:'LE',c:'#8e2c48',src:['email'],nets:[],last:'Oct 9, 2026'},
+  {id:'riley',n:'Riley Example',f:'Example Wealth',e:'riley.example@example.com',site:'example.com',ini:'RE',c:'#546e7a',src:['content','nlac'],nets:[],last:'Aug 3, 2026'}
+];
+var POST_URL='https://yourfirm.example/insights/federal-budget-rrsp-tfsa';
+var POST_TITLE='What the latest federal budget could mean for your RRSP and TFSA';
+var CAP_DEFAULT=POST_TITLE+'. A plain-language look at contribution room, withdrawals, and year-end planning.\n\n'+POST_URL;
+var SUB_DEFAULT=POST_TITLE;
+var INTRO_DEFAULT='A note from Jane Advisor at Your Firm Name. Here is a short look at the latest federal budget and what it could mean for registered accounts.';
+var CAP=CAP_DEFAULT, SUB=SUB_DEFAULT, INTRO=INTRO_DEFAULT;
+var Q='';
 
+function A(id){for(var i=0;i<ADV.length;i++)if(ADV[i].id===id)return ADV[i];return ADV[0]}
+function srcName(id){for(var i=0;i<SOURCES.length;i++)if(SOURCES[i].id===id)return SOURCES[i].n;return id}
+function parseList(k){return String(S[k]||'').split(',').filter(Boolean)}
+function has(arr,id){return arr.indexOf(id)>-1}
+function applyFiltPreset(p){
+  if(p==='defaults'){S.inc='content';S.exc='nlac'}
+  else if(p==='none'){S.inc='';S.exc=''}
+  else if(p==='include'){S.inc='email';S.exc=''}
+  else if(p==='exclude'){S.inc='';S.exc='social'}
+  else if(p==='nomatch'){S.inc='compliance';S.exc='content'}
+}
+function syncCh(){
+  var ch=S.ch||'all';
+  if(ch==='all'||ch==='editsocial'||ch==='editemail'){S.soc='on';S.eml='on'}
+  else if(ch==='nosocial'){S.soc='off';S.eml='on'}
+  else if(ch==='noemail'){S.soc='on';S.eml='off'}
+  else if(ch==='webonly'){S.soc='off';S.eml='off'}
+  S.edit=(ch==='editsocial')?'soc':(ch==='editemail')?'eml':'';
+}
+function setFilt(p){S.filt=p;applyFiltPreset(p);S.src='open';apply()}
+function setCh(p){S.ch=p;syncCh();apply()}
+function toggleSrc(side,id){
+  var I=parseList('inc'),E=parseList('exc');
+  if(side==='inc'){
+    if(has(E,id))return;
+    if(has(I,id))I=I.filter(function(x){return x!==id});else I.push(id);
+  }else{
+    if(has(I,id))return;
+    if(has(E,id))E=E.filter(function(x){return x!==id});else E.push(id);
+  }
+  S.inc=I.join(',');S.exc=E.join(',');
+  if(!I.length&&!E.length)S.filt='none';
+  else if(I.length&&!E.length)S.filt='include';
+  else if(!I.length&&E.length)S.filt='exclude';
+  else S.filt='both';
+  apply();
+}
+function clearSrc(){S.inc='';S.exc='';S.filt='none';apply()}
+function advMatches(a){
+  var I=parseList('inc'),E=parseList('exc');
+  if(I.length&&!I.some(function(id){return has(a.src,id)}))return false;
+  if(E.length&&E.some(function(id){return has(a.src,id)}))return false;
+  var q=(Q||'').toLowerCase();
+  if(q){
+    var t=(a.n+' '+a.f+' '+a.e+' '+a.site).toLowerCase();
+    if(t.indexOf(q)<0)return false;
+  }
+  return true;
+}
+function visibleAdv(){return ADV.filter(advMatches)}
+function filterAdv(q){Q=q||'';renderAdvisors();renderMap();renderFilterMeta()}
+function pickAdv(id){
+  S.adv=id;apply();
+}
+
+function approveCopy(who){
+  var y=who==='you'?'your':'their';
+  var bits=['Approving puts this post on '+y+' website\'s Insights page'];
+  if(S.soc!=='off')bits.push('posts it to social');
+  if(S.eml!=='off'){
+    if(S.soc!=='off')bits[bits.length-1]=bits[bits.length-1];
+    bits.push((S.soc!=='off'?'and ':'')+'sends the email');
+  }
+  var out='Nothing publishes, posts, or sends until '+(who==='you'?'you':'the advisor')+' approve'+(who==='you'?'':'s')+'. '+bits[0];
+  if(bits.length===2)out+=', and '+bits[1].replace(/^and /,'')+'.';
+  else if(bits.length===3)out+=', '+bits[1]+', and '+bits[2].replace(/^and /,'')+'.';
+  else out+='.';
+  return out;
+}
+
+function renderFilterInto(el, compact){
+  if(!el)return;
+  var I=parseList('inc'),E=parseList('exc'),open=S.src==='open';
+  var n=visibleAdv().length;
+  var bits=[];
+  if(I.length)bits.push('Include '+I.map(srcName).join(', '));
+  if(E.length)bits.push('Exclude '+E.map(srcName).join(', '));
+  var sum=bits.length?bits.join(' · '):'No source filter';
+  var btn='<button type="button" class="src-btn'+(open?' on':'')+'" onclick="S.src=S.src===\'open\'?\'shut\':\'open\';apply()" aria-expanded="'+(open?'true':'false')+'" aria-haspopup="true">Advisor source'+(I.length||E.length?' · '+(I.length+E.length):'')+'</button>';
+  var badge='<span class="admin-only" title="Advisors never see this filter. It is only on the admin Send suggestion picker.">Admin only</span>';
+  var search='<input class="q" placeholder="Search advisors" aria-label="Search advisors" oninput="filterAdv(this.value)" value="'+(Q||'').replace(/"/g,'&quot;')+'">';
+  var panel='';
+  if(open){
+    function opts(side){
+      var sel=side==='inc'?I:E, other=side==='inc'?E:I, h='';
+      SOURCES.forEach(function(s){
+        var blocked=has(other,s.id), on=has(sel,s.id);
+        h+='<label class="src-opt'+(blocked?' blocked':'')+'"><input type="checkbox" '+(on?'checked':'')+' '+(blocked?'disabled':'')+' onchange="toggleSrc(\''+side+'\',\''+s.id+'\')"><span>'+s.n+(blocked?' <small>In '+(side==='inc'?'exclude':'include')+'</small>':'')+'</span></label>';
+      });
+      return h;
+    }
+    panel='<div class="src-panel" role="dialog" aria-label="Advisor source filter">'+
+      '<div class="ph"><b>Advisor source</b>'+badge+'<span class="sp"></span><button type="button" class="btn sm t" onclick="clearSrc()">Clear all</button></div>'+
+      '<div class="src-sides"><div class="src-side"><label class="hd">Include sources</label>'+opts('inc')+'</div>'+
+      '<div class="src-side"><label class="hd">Exclude sources</label>'+opts('exc')+'</div></div>'+
+      '<div class="src-count" id="src-count">'+n+' advisor'+(n===1?'':'s')+' shown'+(I.length||E.length?' · '+sum:'')+'</div></div>';
+  }
+  if(compact){
+    el.innerHTML='<div class="src-row">'+search+'<div class="src-wrap">'+btn+' '+badge+'</div></div>'+panel;
+  }else{
+    el.innerHTML=btn+' '+badge;
+    var host=document.getElementById('src-panel-host');
+    if(host)host.innerHTML=panel;
+    var meta=document.getElementById('src-count-standalone');
+    if(meta)meta.textContent=n+' advisor'+(n===1?'':'s')+' shown';
+  }
+}
+function renderFilterMeta(){
+  var n=visibleAdv().length, sum=[];
+  var I=parseList('inc'),E=parseList('exc');
+  if(I.length)sum.push('Include '+I.map(srcName).join(', '));
+  if(E.length)sum.push('Exclude '+E.map(srcName).join(', '));
+  qs('.src-count').forEach(function(e){e.textContent=n+' advisor'+(n===1?'':'s')+' shown'+(sum.length?' · '+sum.join(' · '):'')});
+}
+function renderFilter(){
+  var a=document.getElementById('src-filter');
+  if(a)renderFilterInto(a,true);
+  var b=document.getElementById('map-filter');
+  if(b)renderFilterInto(b,true);
+}
+function renderAdvisors(){
+  var box=document.getElementById('adv-list');
+  if(!box)return;
+  var vis=visibleAdv();
+  if(S.adv && !vis.some(function(a){return a.id===S.adv}) && vis.length){S.adv=vis[0].id}
+  if(!S.adv && vis.length)S.adv=vis[0].id;
+  if(!vis.length){
+    box.innerHTML='<div class="empty" style="padding:24px"><h2>No advisors match these filters</h2><p class="help">Clear the Advisor source filter or try a different search.</p><button class="btn sm" type="button" onclick="clearSrc()">Clear all</button></div>';
+    return;
+  }
+  box.innerHTML=vis.map(function(a){
+    return '<div class="radio'+(S.adv===a.id?' on':'')+'" data-adv="'+a.id+'" onclick="pickAdv(\''+a.id+'\')"><div class="rb"></div><div><b>'+a.n+'</b><div class="help">'+a.f+' · '+a.e+(a.site?' · '+a.site:'')+'</div><div class="help">'+a.src.map(srcName).join(' · ')+'</div></div></div>';
+  }).join('');
+  var c=document.getElementById('adv-chip');
+  var cur=A(S.adv);
+  if(c&&cur)c.textContent=cur.n+' · '+cur.e;
+  qs('.mini-em .greet').forEach(function(e){e.textContent='Hi '+cur.n.split(' ')[0]+','});
+}
+function renderMap(){
+  var box=document.getElementById('map-body');
+  if(!box)return;
+  var vis=visibleAdv();
+  if(!vis.length){
+    box.innerHTML='<tr><td colspan="5"><div class="empty" style="padding:24px;border:0"><h2>No advisors match these filters</h2><p class="help">Clear the Advisor source filter or try a different search.</p><button class="btn sm" type="button" onclick="clearSrc()">Clear all</button></div></td></tr>';
+    return;
+  }
+  box.innerHTML=vis.map(function(a){
+    return '<tr class="pick'+(S.adv===a.id?' on':'')+'" onclick="S.adv=\''+a.id+'\';set(\'s\',\'pick\')"><td><div class="av"><div class="ini" style="background:'+a.c+'">'+a.ini+'</div><div><b>'+a.n+'</b><div class="help">'+a.e+'</div></div></div></td><td class="hp">'+a.f+'</td><td class="hp">'+a.site+'</td><td>'+a.last+'</td><td><button class="btn sm'+(S.adv===a.id?' c':'')+'" type="button" onclick="event.stopPropagation();S.adv=\''+a.id+'\';set(\'s\',\'pick\')">Send suggestion</button></td></tr>';
+  }).join('');
+}
+
+function channelNoteEls(){
+  qs('.js-approve-note').forEach(function(e){
+    var who=e.getAttribute('data-who')||'them';
+    e.textContent=approveCopy(who);
+  });
+}
+function netsFor(){
+  var a=A(S.adv||'jane');
+  return (a.nets&&a.nets.length)?a.nets:['Facebook','LinkedIn','Instagram'];
+}
+function renderChannels(){
+  var box=document.getElementById('channels');
+  if(!box)return;
+  syncCh();
+  var nets=netsFor();
+  var h='<h3>What this suggestion includes</h3><p class="help">Website (Insights) is required. Social and Email are included by default and can be edited or removed before you send.</p>';
+  h+='<div class="ch-item req"><div class="hd"><b>Website (Insights)</b><span class="chip b">Required</span></div><div class="help">Publishes to '+POST_URL+'</div></div>';
+  if(S.soc==='off'){
+    h+='<div class="ch-item rm"><div class="hd"><b>Social</b><span class="help">Removed</span><button class="btn sm" type="button" onclick="setCh(S.eml===\'off\'?\'all\':\'all\');if(S.eml===\'off\'){S.ch=\'noemail\';syncCh();apply()}else setCh(\'all\')">Add back</button></div></div>';
+  }else if(S.edit==='soc'){
+    h+='<div class="ch-item ch-ed"><div class="hd"><b>Social</b></div><div class="f"><label>Networks</label><div>'+nets.map(function(n){return '<span class="net on">'+n+'</span>'}).join('')+'</div></div><div class="f"><label for="cap">Caption</label><textarea id="cap" rows="5">'+CAP.replace(/</g,'&lt;')+'</textarea></div><div class="btnrow"><button class="btn c sm" type="button" onclick="saveSoc()">Save</button><button class="btn t sm" type="button" onclick="setCh(\'all\')">Cancel</button></div></div>';
+  }else{
+    h+='<div class="ch-item"><div class="hd"><b>Social</b><button class="btn sm" type="button" onclick="setCh(\'editsocial\')">Edit</button><button class="btn sm skip" type="button" onclick="setCh(S.eml===\'off\'?\'webonly\':\'nosocial\')">Remove</button></div><div>'+nets.map(function(n){return '<span class="net on">'+n+'</span>'}).join('')+'</div><div class="cap">'+CAP.replace(/</g,'&lt;').replace(/\n/g,'<br>')+'</div></div>';
+  }
+  if(S.eml==='off'){
+    h+='<div class="ch-item rm"><div class="hd"><b>Email</b><span class="help">Removed</span><button class="btn sm" type="button" onclick="setCh(S.soc===\'off\'?\'all\':\'all\');if(S.soc===\'off\'){S.ch=\'nosocial\';syncCh();apply()}else setCh(\'all\')">Add back</button></div></div>';
+  }else if(S.edit==='eml'){
+    h+='<div class="ch-item ch-ed"><div class="hd"><b>Email</b></div><div class="f"><label for="sub">Subject</label><input id="sub" value="'+SUB.replace(/"/g,'&quot;')+'"></div><div class="f"><label for="intro">Intro text</label><textarea id="intro" rows="4">'+INTRO.replace(/</g,'&lt;')+'</textarea></div><div class="btnrow"><button class="btn c sm" type="button" onclick="saveEml()">Save</button><button class="btn t sm" type="button" onclick="setCh(\'all\')">Cancel</button></div></div>';
+  }else{
+    h+='<div class="ch-item"><div class="hd"><b>Email</b><button class="btn sm" type="button" onclick="setCh(\'editemail\')">Edit</button><button class="btn sm skip" type="button" onclick="setCh(S.soc===\'off\'?\'webonly\':\'noemail\')">Remove</button></div><div class="help"><b>Subject:</b> '+SUB.replace(/</g,'&lt;')+'</div><div class="cap">'+INTRO.replace(/</g,'&lt;')+'</div></div>';
+  }
+  box.innerHTML=h;
+}
+function saveSoc(){var t=document.getElementById('cap');if(t)CAP=t.value;setCh('all');toast('Social caption saved')}
+function saveEml(){var s=document.getElementById('sub'),i=document.getElementById('intro');if(s)SUB=s.value;if(i)INTRO=i.value;setCh('all');toast('Email copy saved')}
+
+function renderEmailPreview(){
+  var box=document.getElementById('email-preview-extra');
+  if(!box)return;
+  var items=['Publish to Insights'];
+  if(S.soc!=='off')items.push('Post to social');
+  if(S.eml!=='off')items.push('Send the email');
+  box.innerHTML='<div class="help" style="margin-top:8px">Approving will: '+items.join(' · ')+'</div>';
+}
+
+function addBackSoc(){setCh(S.eml==='off'?'noemail':'all')}
+function addBackEml(){setCh(S.soc==='off'?'nosocial':'all')}
+function boot854(){
+  renderFilter();
+  renderAdvisors();
+  renderMap();
+  renderChannels();
+  renderEmailPreview();
+  channelNoteEls();
+  var cur=A(S.adv);
+  var chip=document.getElementById('adv-chip');
+  if(chip&&cur)chip.textContent=cur.n+' · '+cur.e;
+}
+
+var _oa=window.onApply;
+window.onApply=function(){syncCh();if(_oa)_oa();boot854()};
+
+S={st:'approved',ch:'all'};
 initBase();
 </script>
 </body>
