@@ -1,130 +1,125 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>#847 contract</title><style>
-*{box-sizing:border-box}body{margin:0;font:14px/1.5 Inter,Roboto,system-ui,sans-serif;background:#f5f7fa;color:#2c3e50}
-a{color:#1976d2}
-.mockbar{background:#1f2a44;color:#fff;padding:8px 14px;display:flex;flex-wrap:wrap;gap:8px;align-items:center;font-size:12.5px;position:sticky;top:0;z-index:40}
-.mockbar a{color:#cfe3ff}.mockbar .sp{flex:1}
-.mockbar button{background:#33415f;color:#fff;border:0;border-radius:4px;padding:6px 10px;min-height:32px;cursor:pointer;font:inherit}
-.mockbar button.on{background:#1976d2}
-main{max-width:1100px;margin:0 auto;padding:20px 16px 56px}
-h1{font-size:22px;margin:0 0 6px}h2{font-size:16px;margin:0 0 8px}h3{font-size:14px;margin:0 0 6px}
-.muted{color:#607080;font-size:13px}
-.card{background:#fff;border:1px solid #e0e5eb;border-radius:8px;padding:16px;margin:12px 0}
-.side{display:grid;grid-template-columns:200px 1fr;gap:16px}
-.nav{background:#fff;border:1px solid #e0e5eb;border-radius:8px;padding:12px 0;align-self:start}
-.nav b{display:block;padding:0 14px 8px;color:#1976d2}
-.nav button{display:block;width:100%;text-align:left;background:none;border:0;padding:10px 14px;color:#607080;cursor:pointer;font:inherit}
-.nav button.on{background:#e3f2fd;color:#1565c0;font-weight:600;border-right:3px solid #1976d2}
-.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
-.spread{justify-content:space-between}
-.logo{width:56px;height:36px;border-radius:4px;display:inline-flex;align-items:center;justify-content:center;color:#fff;font:700 11px Inter,sans-serif;letter-spacing:.04em;flex-shrink:0}
-.logo.a{background:#1f7a66}.logo.b{background:#2b4c7e}.logo.m{background:#7a4f1f}.logo.x{background:#8e2c48}
-.tag{display:inline-block;border-radius:12px;padding:2px 8px;font-size:11.5px;font-weight:600}
-.tag.ok{background:#e8f5e9;color:#2e7d32}.tag.wa{background:#fff3e0;color:#b45309}.tag.bl{background:#fdecea;color:#b71c1c}
-.alert{background:#eef6ff;border:1px solid #c5dbf5;border-radius:6px;padding:10px 12px;margin:10px 0;font-size:13px}
-.warn{background:#fff8e1;border:1px solid #ffe0a3;border-radius:6px;padding:10px 12px;margin:10px 0;font-size:13px}
-.bad{background:#fdecea;border:1px solid #f5c2c0;border-radius:6px;padding:10px 12px;margin:10px 0;font-size:13px}
-.ok{background:#e8f5e9;border:1px solid #a5d6a7;border-radius:6px;padding:10px 12px;margin:10px 0;font-size:13px}
-button.primary,button.ghost,button.danger{font:inherit;min-height:40px;padding:8px 14px;border-radius:4px;cursor:pointer}
-button.primary{background:#1976d2;border:1px solid #1976d2;color:#fff}
-button.ghost{background:#fff;border:1px solid #1976d2;color:#1976d2}
-button.danger{background:#fff;border:1px solid #c62828;color:#c62828}
-button:disabled{background:#eee;color:#999;border-color:#ddd;cursor:not-allowed}
-label.fld{display:block;margin:10px 0;font-size:13px;font-weight:600}
-label.fld input,label.fld select,label.fld textarea{display:block;width:100%;margin-top:4px;font:inherit;font-weight:400;padding:10px;border:1px solid #adb9c5;border-radius:4px}
-textarea{min-height:90px;resize:vertical}
-table{width:100%;border-collapse:collapse}th,td{text-align:left;padding:10px 8px;border-bottom:1px solid #eee;vertical-align:top}th{font-size:12px;color:#607080;background:#f8f9fb}
-.overlay{position:fixed;inset:0;background:#14203466;z-index:30;overflow:auto;padding:28px 16px}
-.panel{background:#fff;max-width:680px;margin:24px auto;padding:20px;border-radius:10px;box-shadow:0 16px 48px rgba(30,42,74,.22)}
-.drawer.overlay{padding:0}.drawer .panel{margin:0 0 0 auto;min-height:100vh;border-radius:0;max-width:520px}
-.preview{border:1px solid #e0e5eb;border-radius:6px;overflow:hidden;background:#fff;max-width:560px}
-.eh{background:#1f7a66;color:#fff;padding:12px 14px;font-weight:700}
-.eb{padding:14px;font-size:14px}.eb p{margin:0 0 10px}
-.ef{border-top:1px solid #eee;padding:12px 14px;font-size:12px;color:#555;background:#fafafa}
-.ef .ph{font-size:11px;color:#8a6d3b;margin-top:6px}
-.split{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.item{display:flex;gap:12px;align-items:flex-start;padding:10px 0;border-top:1px solid #eee}
-.item:first-child{border-top:0}
-.toast{position:fixed;bottom:16px;left:50%;transform:translateX(-50%);background:#1f2a44;color:#fff;padding:10px 14px;border-radius:6px;display:none;z-index:50}
-.steps{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 12px}
-.steps span{padding:6px 12px;border-radius:16px;background:#eceff1;color:#546e7a;font-size:13px;font-weight:600}
-.steps span.on{background:#1976d2;color:#fff}
-.steps span.d{background:#e8f5e9;color:#2e7d32}
-@media(max-width:700px){
-  main{padding:12px}.side{grid-template-columns:1fr}.nav{display:flex;overflow:auto;padding:0}
-  .nav b{display:none}.nav button{flex:1;white-space:nowrap;border-right:0}
-  .split{grid-template-columns:1fr}
-  .overlay{padding:0}.panel{min-height:100vh;border-radius:0;margin:0}
-  .row button{flex:1}
-}
-</style></head><body><main><p><a href="../">All mocks</a> · <a href="index.html">Hub</a></p><h1>#847 One Dealer per advisor profile — local unpublished contract</h1>
-<p><strong>Status:</strong> Not agent-ready. Soft Dev hold until a direction is picked.</p>
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>#847 zero-click contract</title><style>body{font:15px/1.55 Inter,system-ui,sans-serif;max-width:920px;margin:24px auto;padding:0 16px;color:#2c3e50}a{color:#1976d2}li{margin:10px 0}.r{background:#e8f5e9;border:1px solid #a5d6a7;border-radius:10px;padding:10px 14px}.note{background:#fff8e1;border:1px solid #ffe0a3;border-radius:8px;padding:10px 12px}table{border-collapse:collapse;width:100%}td,th{border:1px solid #e0e5eb;padding:6px 8px;text-align:left;vertical-align:top}th{background:#f3f6f9}</style></head><body><p><a href="index.html">Hub</a> · <a href="../">All mocks</a> · <a href="https://github.com/kartboy16/content-library/issues/847">#847</a></p><h1>#847 One Dealer per advisor profile — zero-click revision</h1>
+<p><strong>Status:</strong> Published on GitHub Pages. Not agent-ready. Soft Dev hold until a direction is picked. No build launched.</p>
 <h2>Sources (read-only)</h2>
 <ul>
-<li>Issue #847 (dealer list, Settings default, 1:1 override, change review, pre-approval mismatch check)</li>
-<li>Related #280 (dual-licensed investments / insurance / both — still open design; this mock uses two selects on one profile, not a full multi-profile product)</li>
-<li>Related #788 (per-advisor website disclaimer in Settings; dealer default should feed that surface, not invent a second disclaimer product)</li>
-<li>Slack thread (read-only) for the original ask; mocks use generic fixtures only</li>
+<li>Issue #847</li>
+<li>Published A/B/C mocks (preserved here)</li>
+<li>Request-thread follow-up: “make it simple- zero click”</li>
+<li>Related #280 and #788 (still open; not expanded here)</li>
 </ul>
 <h2>Recommendation</h2>
-<p><strong>A</strong> — keep work on the unified Settings page: Investments dealer + Insurance MGA, a single change confirmation that updates defaults and lists overrides, and a blocking pre-send/pre-approval check. Closest to the issue wording. B is the same logic with a longer change wizard and a drawer for flags. C leans toward #280 by showing two “kits”; use it only if the pick is to preview dual-license branding more strongly here.</p>
-<h2>Screens</h2>
+<p><strong>Zero-click</strong> — the advisor does nothing to get the right dealer logo and disclaimer. The dealer default is assigned by staff/admin, or inferred from the existing footer/disclaimer. Email footer, website post disclaimer and compliance defaults inherit automatically. Staff/admin change is one switch; overridden items are listed and are never silently overwritten. A pre-send check flags mismatches automatically and never auto-removes or auto-sends. Optional 1:1 override and “Reset to dealer default” stay tucked away. No extra advisor screens or confirmation steps.</p>
+<p>A, B and C are unchanged and kept for comparison. A is the previous Settings-centered pick; B is the three-step wizard; C is the dual-kit layout.</p>
+<h2>Who sees what</h2>
+<table>
+<thead>
+<tr>
+<th>Surface</th>
+<th>Facing</th>
+<th>What happens</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Dealer list (add/edit logo, disclaimer, legal/privacy links)</td>
+<td>Staff / admin</td>
+<td>Catalog only</td>
+</tr>
+<tr>
+<td>Profile dealer assignment (assigned or inferred) and one-switch change</td>
+<td>Staff / admin</td>
+<td>Advisor is not asked to set, select or confirm</td>
+</tr>
+<tr>
+<td>Email footer, website post disclaimer, compliance defaults</td>
+<td>Inherited automatically on advisor and client output</td>
+<td>No advisor setup</td>
+</tr>
+<tr>
+<td>Campaign item override + “Reset to dealer default”</td>
+<td>Advisor or staff, tucked under “Override this item”</td>
+<td>Optional; default path uses the dealer default</td>
+</tr>
+<tr>
+<td>Pre-send / pre-approval mismatch flag</td>
+<td>Automatic on the send path; hold is staff-visible; advisor is also flagged</td>
+<td>Never auto-removes or auto-sends</td>
+</tr>
+<tr>
+<td>Email recipient preview and website post preview</td>
+<td>Client-facing</td>
+<td><code>yourfirm.ca</code> / <code>example.com</code> links only; disclaimer copy is placeholder</td>
+</tr>
+</tbody>
+</table>
+<h2>Screens (Zero-click)</h2>
 <table>
 <thead>
 <tr>
 <th>Screen</th>
-<th>Who</th>
+<th>Facing</th>
 <th>Notes</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>Admin Dealer list</td>
-<td>Admin</td>
-<td>Logo (placeholder marks), default disclaimer, legal/privacy links; add/edit; empty/loading/error/success</td>
+<td>Dealer list</td>
+<td>Staff</td>
+<td>Same catalog as A; empty/loading/error/success</td>
 </tr>
 <tr>
-<td>Settings · profile</td>
-<td>Admin / advisor</td>
-<td>Dealer + MGA selects; email footer / website disclaimer / compliance pull defaults</td>
-</tr>
-<tr>
-<td>Campaign / template / post item</td>
-<td>Admin / advisor</td>
-<td>“Custom (overrides dealer default)” + “Reset to dealer default”</td>
+<td>Staff profile · Jane Advisor</td>
+<td>Staff</td>
+<td>Shows assigned or inferred dealer and MGA; inherit list; Change dealer. No advisor picker.</td>
 </tr>
 <tr>
 <td>Change dealer</td>
-<td>Admin / advisor</td>
-<td>Updates non-overridden defaults in one step; lists overridden items; no silent overwrite</td>
+<td>Staff</td>
+<td>One switch: pick dealer, list “Will not be overwritten”, Update defaults</td>
 </tr>
 <tr>
-<td>Pre-approval / send check</td>
-<td>Staff + advisor</td>
-<td>Flags mismatched logos/names/links, including on overridden items; never auto-removes or auto-sends</td>
+<td>Advisor campaign</td>
+<td>Advisor</td>
+<td>Inherited footer by default. No dealer select. Override/Reset inside a collapsed control.</td>
+</tr>
+<tr>
+<td>Website post preview</td>
+<td>Client</td>
+<td>Disclaimer inherits; share/email links on yourfirm.ca</td>
+</tr>
+<tr>
+<td>Pre-send check</td>
+<td>Automatic</td>
+<td>Ready: no mismatches, Send to approval is a demo only. Mismatch: Send disabled, Keep on hold.</td>
 </tr>
 </tbody>
 </table>
-<p>Client-facing email preview: Your Firm Name, jane.advisor@example.com, yourfirm.ca / example.com links. Legal/disclaimer text is explicitly placeholder.</p>
+<p>A/B/C screens are unchanged from the earlier contract (Settings picker, wizard, kits).</p>
 <h2>States</h2>
-<p>ready, loading, empty (no dealers), error/retry, success (saved / defaults updated), mismatch (flag, send disabled).</p>
+<p>ready, loading, empty (no dealers / no dealer assigned), error/retry, success (defaults updated, overrides kept), mismatch (flag, send disabled). Staff profile also has assigned vs inferred source (mock switcher only).</p>
 <h2>Copy</h2>
 <ul>
-<li>“Custom (overrides dealer default)”</li>
-<li>“Reset to dealer default”</li>
-<li>“Change investments dealer” / review list “Will not be overwritten”</li>
-<li>“Mismatch flagged — not sent” / “Flagged to staff and to Jane Advisor”</li>
+<li>“Assigned by staff” / “Inferred from existing footer”</li>
+<li>“Email footer, website post disclaimer, and compliance defaults inherit automatically.”</li>
+<li>“Change dealer” / “Will update” / “Will not be overwritten”</li>
+<li>“Dealer default” / “Override this item” / “Custom (overrides dealer default)” / “Reset to dealer default” / “Use a custom footer”</li>
+<li>“Mismatch flagged — not sent”</li>
+<li>“No dealer assigned.”</li>
 <li>Disclaimer: “[Placeholder — existing Example Dealer … disclaimer. Not invented legal text.]”</li>
+<li>Footer note: “[Placeholder — existing campaign footer / compliance copy, not invented legal text.]”</li>
 </ul>
+<p>No estimates or explainer prose in the mock UI. Inference reliability is not stated.</p>
 <h2>In / out of scope</h2>
-<p><strong>In:</strong> dealer catalog, profile defaults, per-item override + reset, change review, mismatch hold. <strong>Out:</strong> building all of #280 (separate profiles, “both logos” as a third profile), rewriting #788 into a new field model beyond “defaults from dealer”, live DNS, actual email send, auto-migration of historical <code>dealerInfo</code> (plan only; data migration is risk:high), real dealer names/logos.</p>
-<p>Existing hand-placed footer content keeps rendering until migrated (issue AC).</p>
+<p><strong>In (Zero-click):</strong> staff assignment or inferred default, automatic inheritance, staff one-switch change with override review, tucked optional override/reset, automatic mismatch hold, client-facing email and website previews. <strong>Out:</strong> advisor dealer setup/confirmation, extra advisor wizard steps, building all of #280, rewriting #788, live DNS, actual email send, auto-migration of historical <code>dealerInfo</code>, real dealer names/logos, invented legal copy, invented inference accuracy.</p>
+<p>Existing hand-placed footer content keeps rendering until migrated (issue AC). How inference is performed is an open question, not a specified algorithm in this mock.</p>
 <h2>Desktop vs mobile</h2>
-<p>1280: side nav, optional split kits (C), centered change panel. 390: stacked nav, full-height sheets, 40–44px actions, drawer becomes a sheet (B).</p>
+<p>1280: side nav, staff profile with previews, centered one-switch panel. 390: stacked nav, full-height change sheet, 40–44px actions, override control stays collapsed by default.</p>
 <h2>Agent-time estimate (hours, cloud build + FC Tester + fix loop)</h2>
 <table>
 <thead>
 <tr>
 <th></th>
+<th>Zero-click</th>
 <th>A</th>
 <th>B</th>
 <th>C</th>
@@ -134,11 +129,13 @@ table{width:100%;border-collapse:collapse}th,td{text-align:left;padding:10px 8px
 <tr>
 <td>Cloud agent build</td>
 <td>12–18</td>
+<td>12–18</td>
 <td>13–19</td>
 <td>14–20</td>
 </tr>
 <tr>
-<td>FC Tester (email previews, dual-license, override/reset, change review, mismatch hold, 1280/390, no FC links on previews)</td>
+<td>FC Tester (inherit on email + website previews, no advisor setup, staff one-switch + override review, tucked reset, mismatch hold, 1280/390, no product-domain links on client previews)</td>
+<td>4–8</td>
 <td>4–7</td>
 <td>4–7</td>
 <td>5–8</td>
@@ -148,23 +145,29 @@ table{width:100%;border-collapse:collapse}th,td{text-align:left;padding:10px 8px
 <td>3–5</td>
 <td>3–5</td>
 <td>3–5</td>
+<td>3–5</td>
 </tr>
 <tr>
 <td><strong>Total</strong></td>
+<td><strong>19–31 h</strong></td>
 <td><strong>19–30 h</strong></td>
 <td><strong>20–31 h</strong></td>
 <td><strong>22–33 h</strong></td>
 </tr>
 </tbody>
 </table>
-<p>High risk: touches email output. Playground first (issue track), then staging / FC Tester. QA inboxes only. Alex merges main. No build launched.</p>
+<p>Zero-click’s upper bound is a little higher than A because inheritance and any inferred-assignment cases still need tests, while the inference method itself is unspecified. High risk: touches email and website output. Playground first (issue track), then staging / FC Tester. QA inboxes only. Alex merges main. No build launched.</p>
 <h2>Open questions</h2>
 <ol>
-<li>One profile with Investments + Insurance selects (as mocked) vs separate profiles from #280?</li>
+<li>One profile with Investments + Insurance (as mocked) vs separate profiles from #280?</li>
 <li>Path for sends that need <strong>both</strong> logos (#280) — default both, send-time kit, or later?</li>
 <li>Does dealer default fully replace, or only prefill, the #788 website disclaimer box?</li>
 <li>Who may edit the admin dealer list and approve logo/disclaimer changes?</li>
 <li>Mismatch detector: true AI scan vs rules (known logo assets, names, link hosts)?</li>
 <li>Migration plan for existing <code>dealerInfo</code> / hand-placed images (keep rendering until migrated).</li>
 <li>After a dealer change, who must review listed overrides, and is send blocked until then?</li>
-</ol></main></body></html>
+<li>How is a dealer inferred from an existing footer or disclaimer, and what happens when the footer is empty, mixed, or unclear?</li>
+<li>Must staff confirm an inferred dealer before inheritance starts, or does it apply immediately?</li>
+<li>Does the advisor ever see or confirm the assigned/inferred dealer, or is that staff-only (as mocked)?</li>
+<li>On a mismatch in the zero-click path, must the advisor act, or is the hold resolved by staff only?</li>
+</ol></body></html>

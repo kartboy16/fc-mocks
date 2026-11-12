@@ -1,0 +1,268 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>#847 Zero-click</title>
+<style>
+*{box-sizing:border-box}body{margin:0;font:14px/1.5 Inter,Roboto,system-ui,sans-serif;background:#f5f7fa;color:#2c3e50}
+a{color:#1976d2}
+.mockbar{background:#1f2a44;color:#fff;padding:8px 14px;display:flex;flex-wrap:wrap;gap:8px;align-items:center;font-size:12.5px;position:sticky;top:0;z-index:40}
+.mockbar a{color:#cfe3ff}.mockbar .sp{flex:1}
+.mockbar button{background:#33415f;color:#fff;border:0;border-radius:4px;padding:6px 10px;min-height:32px;cursor:pointer;font:inherit}
+.mockbar button.on{background:#1976d2}
+.banner{background:#fff8e1;color:#6b5a16;text-align:center;font-size:12.5px;padding:8px 12px;border-bottom:1px solid #ffe0a3}
+main{max-width:1100px;margin:0 auto;padding:20px 16px 56px}
+h1{font-size:22px;margin:0 0 6px}h2{font-size:16px;margin:0 0 8px}h3{font-size:14px;margin:0 0 6px}
+.muted{color:#607080;font-size:13px}
+.card{background:#fff;border:1px solid #e0e5eb;border-radius:8px;padding:16px;margin:12px 0}
+.side{display:grid;grid-template-columns:200px 1fr;gap:16px}
+.nav{background:#fff;border:1px solid #e0e5eb;border-radius:8px;padding:12px 0;align-self:start}
+.nav b{display:block;padding:0 14px 8px;color:#1976d2}
+.nav button{display:block;width:100%;text-align:left;background:none;border:0;padding:10px 14px;color:#607080;cursor:pointer;font:inherit;min-height:40px}
+.nav button.on{background:#e3f2fd;color:#1565c0;font-weight:600;border-right:3px solid #1976d2}
+.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.spread{justify-content:space-between}
+.logo{width:56px;height:36px;border-radius:4px;display:inline-flex;align-items:center;justify-content:center;color:#fff;font:700 11px Inter,sans-serif;letter-spacing:.04em;flex-shrink:0}
+.logo.a{background:#1f7a66}.logo.b{background:#2b4c7e}.logo.m{background:#7a4f1f}
+.tag{display:inline-block;border-radius:12px;padding:2px 8px;font-size:11.5px;font-weight:600}
+.tag.ok{background:#e8f5e9;color:#2e7d32}.tag.wa{background:#fff3e0;color:#b45309}.tag.bl{background:#fdecea;color:#b71c1c}
+.alert{background:#eef6ff;border:1px solid #c5dbf5;border-radius:6px;padding:10px 12px;margin:10px 0;font-size:13px}
+.warn{background:#fff8e1;border:1px solid #ffe0a3;border-radius:6px;padding:10px 12px;margin:10px 0;font-size:13px}
+.bad{background:#fdecea;border:1px solid #f5c2c0;border-radius:6px;padding:10px 12px;margin:10px 0;font-size:13px}
+.ok{background:#e8f5e9;border:1px solid #a5d6a7;border-radius:6px;padding:10px 12px;margin:10px 0;font-size:13px}
+button.primary,button.ghost,button.danger{font:inherit;min-height:40px;padding:8px 14px;border-radius:4px;cursor:pointer}
+button.primary{background:#1976d2;border:1px solid #1976d2;color:#fff}
+button.ghost{background:#fff;border:1px solid #1976d2;color:#1976d2}
+button.danger{background:#fff;border:1px solid #c62828;color:#c62828}
+button:disabled{background:#eee;color:#999;border-color:#ddd;cursor:not-allowed}
+label.fld{display:block;margin:10px 0;font-size:13px;font-weight:600}
+label.fld input,label.fld select,label.fld textarea{display:block;width:100%;margin-top:4px;font:inherit;font-weight:400;padding:10px;border:1px solid #adb9c5;border-radius:4px}
+textarea{min-height:90px;resize:vertical}
+table{width:100%;border-collapse:collapse}th,td{text-align:left;padding:10px 8px;border-bottom:1px solid #eee;vertical-align:top}th{font-size:12px;color:#607080;background:#f8f9fb}
+.overlay{position:fixed;inset:0;background:#14203466;z-index:30;overflow:auto;padding:28px 16px}
+.panel{background:#fff;max-width:680px;margin:24px auto;padding:20px;border-radius:10px;box-shadow:0 16px 48px rgba(30,42,74,.22)}
+.preview{border:1px solid #e0e5eb;border-radius:6px;overflow:hidden;background:#fff;max-width:560px}
+.eh{background:#1f7a66;color:#fff;padding:12px 14px;font-weight:700}
+.eh.b{background:#2b4c7e}
+.eb{padding:14px;font-size:14px}.eb p{margin:0 0 10px}
+.ef{border-top:1px solid #eee;padding:12px 14px;font-size:12px;color:#555;background:#fafafa}
+.ef .ph{font-size:11px;color:#8a6d3b;margin-top:6px}
+.item{display:flex;gap:12px;align-items:flex-start;padding:10px 0;border-top:1px solid #eee}
+.item:first-child{border-top:0}
+.toast{position:fixed;bottom:16px;left:50%;transform:translateX(-50%);background:#1f2a44;color:#fff;padding:10px 14px;border-radius:6px;display:none;z-index:50}
+details.adv{margin-top:12px;border-top:1px solid #eee;padding-top:10px}
+details.adv>summary{cursor:pointer;color:#1976d2;font-weight:600;min-height:40px;display:flex;align-items:center}
+.site{border:1px solid #e0e5eb;border-radius:6px;overflow:hidden;max-width:560px;background:#fff}
+.site .chrome{background:#eef2f6;padding:8px 12px;font-size:12px;color:#5b6572}
+.site .body{padding:16px 18px}
+.site .body h2{font-size:20px;margin:0 0 10px}
+.site .share{font-size:13px;margin:12px 0}
+.site .disc{border-top:1px solid #eee;margin-top:16px;padding-top:12px;font-size:12px;color:#555}
+.who{display:inline-block;background:#eceff1;color:#37474f;border-radius:12px;padding:2px 8px;font-size:11px;font-weight:700;letter-spacing:.03em;text-transform:uppercase}
+@media(max-width:700px){
+  main{padding:12px}.side{grid-template-columns:1fr}.nav{display:flex;overflow:auto;padding:0}
+  .nav b{display:none}.nav button{flex:1;white-space:nowrap;border-right:0}
+  .overlay{padding:0}.panel{min-height:100vh;border-radius:0;margin:0}
+  .row button{flex:1}
+}
+</style></head>
+<body>
+<div class="mockbar"><a href="index.html">#847 local draft</a>
+<a href="a-zero-click.html">Zero</a><a href="a-settings.html">A</a><a href="b-wizard.html">B</a><a href="c-kits.html">C</a>
+<a href="build-contract.html">Contract</a><span class="sp"></span><span id="sw"></span></div>
+<div class="banner">Proposal mockup — not on the live site. Example data only. Nothing is sent.</div>
+<main><div id="app"></div></main>
+<div class="toast" id="toast"></div>
+<script>
+const DEALERS={
+  a:{id:'a',n:'Example Dealer A',kind:'Investments',legal:'https://example.com/dealer-a/legal',priv:'https://example.com/dealer-a/privacy',disc:'[Placeholder — existing Example Dealer A disclaimer. Not invented legal text.]'},
+  b:{id:'b',n:'Example Dealer B',kind:'Investments',legal:'https://example.com/dealer-b/legal',priv:'https://example.com/dealer-b/privacy',disc:'[Placeholder — existing Example Dealer B disclaimer. Not invented legal text.]'},
+  m:{id:'m',n:'Example MGA',kind:'Insurance',legal:'https://example.com/mga/legal',priv:'https://example.com/mga/privacy',disc:'[Placeholder — existing Example MGA disclaimer. Not invented legal text.]'}
+};
+const OVERRIDES=[{n:'November update',t:'Campaign'},{n:'Quarterly letter template',t:'Template'}];
+let view='staff', state='ready', dealer='a', mga='m', custom=false, newDealer='b', source='assigned', advOpen=false;
+function hideToast(){const t=document.getElementById('toast');t.style.display='none';clearTimeout(t._t)}
+function toast(m){const t=document.getElementById('toast');t.textContent=m;t.style.display='block';clearTimeout(t._t);t._t=setTimeout(()=>t.style.display='none',1600)}
+function setView(v){hideToast();view=v;if(v!=='item')advOpen=false;render()}
+function setState(s){hideToast();state=s;if(s==='mismatch')view='check';render()}
+function setSource(s){source=s;render()}
+function D(){return DEALERS[dealer]}
+function M(){return DEALERS[mga]}
+function logo(id){const x=DEALERS[id];return `<span class="logo ${id}" aria-hidden="true">${x.n.split(' ').map(w=>w[0]).join('').slice(-3)}</span>`}
+function srcLabel(){return source==='inferred'?'Inferred from existing footer':'Assigned by staff'}
+function switcher(){
+  const views=[['dealers','Dealer list'],['staff','Staff profile'],['item','Advisor campaign'],['website','Website preview'],['change','Change dealer'],['check','Pre-send check']];
+  const states=[['ready','ready'],['loading','loading'],['empty','empty'],['error','error'],['success','success'],['mismatch','mismatch']];
+  const sources=[['assigned','assigned'],['inferred','inferred']];
+  document.getElementById('sw').innerHTML=
+    views.map(([k,l])=>`<button class="${view===k?'on':''}" onclick="setView('${k}')">${l}</button>`).join('')+
+    ' <span class="sp"></span> '+
+    states.map(([k,l])=>`<button class="${state===k?'on':''}" onclick="setState('${k}')">${l}</button>`).join('')+
+    ' '+
+    sources.map(([k,l])=>`<button class="${source===k?'on':''}" onclick="setSource('${k}')">${l}</button>`).join('');
+}
+function nav(on,role){
+  if(role==='advisor'){
+    const items=[['item','Campaign'],['website','Website']];
+    return `<nav class="nav"><b>Advisor</b>${items.map(([k,l])=>`<button class="${on===k?'on':''}" onclick="setView('${k}')">${l}</button>`).join('')}</nav>`;
+  }
+  const items=[['dealers','Dealers'],['staff','Jane Advisor'],['item','Campaign']];
+  return `<nav class="nav"><b>Staff</b>${items.map(([k,l])=>`<button class="${on===k?'on':''}" onclick="setView('${k}')">${l}</button>`).join('')}</nav>`;
+}
+function shell(on,inner,role){return `<div class="side">${nav(on,role)}<div>${inner}</div></div>`}
+function otherInv(){return DEALERS[dealer==='b'?'a':'b']}
+function emailPreview(which){
+  const use=which==='wrong'?otherInv():(custom?otherInv():D());
+  return `<div class="preview">
+    <div class="eh${use.id==='b'?' b':''}">Your Firm Name</div>
+    <div class="eb"><b>November update</b><p>Markets moved a lot this month. Three things worth knowing.</p><p><a href="https://yourfirm.ca/insights/november-update">https://yourfirm.ca/insights/november-update</a></p></div>
+    <div class="ef">${logo(use.id)} <b>${use.n}</b>
+      <div>${use.disc}</div>
+      <div><a href="${use.legal}">Legal</a> · <a href="${use.priv}">Privacy</a></div>
+      <div>Jane Advisor · jane.advisor@example.com</div>
+      <div class="ph">[Placeholder — existing campaign footer / compliance copy, not invented legal text.]</div>
+    </div>
+  </div>`;
+}
+function websitePreview(){
+  const use=custom?otherInv():D();
+  return `<div class="site">
+    <div class="chrome">yourfirm.ca/insights/november-update</div>
+    <div class="body">
+      <p class="muted">Your Firm Name</p>
+      <h2>November update</h2>
+      <p>Markets moved a lot this month. Three things worth knowing.</p>
+      <div class="share">Share · <a href="https://yourfirm.ca/insights/november-update">https://yourfirm.ca/insights/november-update</a> · <a href="https://yourfirm.ca/insights/november-update">Email</a></div>
+      <div class="disc">
+        ${logo(use.id)} <b>${use.n}</b>
+        <div>${use.disc}</div>
+        <div><a href="${use.legal}">Legal</a> · <a href="${use.priv}">Privacy</a></div>
+      </div>
+    </div>
+  </div>`;
+}
+function statusBlock(){
+  if(state==='loading') return `<div class="alert">Loading…</div>`;
+  if(state==='error') return `<div class="bad">Could not load this screen. <button class="ghost" onclick="setState('ready')">Retry</button></div>`;
+  return '';
+}
+
+function dealersView(){
+  if(state==='loading'||state==='error') return shell('dealers',`<h1>Dealers</h1><p class="muted"><span class="who">Staff</span></p>`+statusBlock());
+  if(state==='empty') return shell('dealers',`<h1>Dealers</h1><p class="muted"><span class="who">Staff</span></p><div class="card"><p>No dealers yet.</p><button class="primary" onclick="toast('Demo: would open new dealer')">Add dealer</button></div>`);
+  const list=Object.values(DEALERS).map(d=>`<div class="item">${logo(d.id)}<div><b>${d.n}</b><div class="muted">${d.kind} · ${d.legal.replace('https://','')}</div></div><span class="sp"></span><button class="ghost" onclick="toast('Demo: edit ${d.n}')">Edit</button></div>`).join('');
+  const ok=state==='success'?`<div class="ok">Dealer saved.</div>`:'';
+  return shell('dealers',`<div class="row spread"><h1>Dealers</h1><button class="primary" onclick="toast('Demo: new dealer form')">Add dealer</button></div>
+    <p class="muted"><span class="who">Staff</span></p>
+    ${ok}<div class="card">${list}</div>
+    <div class="card"><h2>Edit · Example Dealer A</h2>
+      <div class="row">${logo('a')}<button class="ghost" onclick="toast('Demo: replace placeholder logo')">Replace logo</button><span class="muted">Placeholder mark only</span></div>
+      <label class="fld">Name <input value="Example Dealer A" readonly></label>
+      <label class="fld">Default disclaimer <textarea readonly>${DEALERS.a.disc}</textarea></label>
+      <label class="fld">Legal link <input value="${DEALERS.a.legal}" readonly></label>
+      <label class="fld">Privacy link <input value="${DEALERS.a.priv}" readonly></label>
+      <button class="primary" onclick="setState('success')">Save dealer</button>
+    </div>`);
+}
+
+function staffView(){
+  if(state==='loading'||state==='error') return shell('staff',`<h1>Jane Advisor</h1>`+statusBlock());
+  if(state==='empty') return shell('staff',`<h1>Jane Advisor</h1>
+    <p class="muted"><span class="who">Staff</span> · Your Firm Name</p>
+    <div class="card"><p>No dealer assigned.</p>
+    <button class="primary" onclick="setView('change')">Assign dealer</button></div>`);
+  const ok=state==='success'?`<div class="ok">Defaults updated for Jane Advisor. Overridden items were not overwritten.</div>`:'';
+  return shell('staff',`${ok}
+    <h1>Jane Advisor</h1>
+    <p class="muted"><span class="who">Staff</span> · Your Firm Name</p>
+    <div class="card">
+      <h2>Investments dealer</h2>
+      <div class="item">${logo(dealer)}<div><b>${D().n}</b><div><span class="tag ok">${srcLabel()}</span></div></div></div>
+      <h2>Insurance · MGA</h2>
+      <div class="item">${logo(mga)}<div><b>${M().n}</b><div><span class="tag ok">Assigned by staff</span></div></div></div>
+      <p class="muted">Email footer, website post disclaimer, and compliance defaults inherit automatically.</p>
+      <button class="primary" onclick="setView('change')">Change dealer</button>
+    </div>
+    <div class="card"><h2>Email footer</h2>${emailPreview('ok')}</div>
+    <div class="card"><h2>Website post disclaimer</h2>${websitePreview()}</div>`);
+}
+
+function itemView(){
+  if(state==='loading'||state==='error') return shell('item',`<h1>November update</h1>`+statusBlock(),'advisor');
+  const label=custom?'<span class="tag wa">Custom (overrides dealer default)</span>':'<span class="tag ok">Dealer default</span>';
+  const shown=custom?otherInv():D();
+  const advanced=`<details class="adv" ${advOpen||custom?'open':''} ontoggle="advOpen=this.open">
+      <summary>Override this item</summary>
+      ${custom?`<button class="ghost" onclick="custom=false;advOpen=true;toast('Reset to dealer default');render()">Reset to dealer default</button>`:
+        `<button class="ghost" onclick="custom=true;advOpen=true;render()">Use a custom footer</button>`}
+    </details>`;
+  return shell('item',`<h1>Campaign · November update</h1>
+    <p class="muted"><span class="who">Advisor</span> · Jane Advisor · Your Firm Name</p>
+    <div class="card">
+      <h2>Email footer</h2>
+      ${label}
+      <div class="item">${logo(shown.id)}<div><b>${shown.n}</b><div class="muted">${shown.disc}</div></div></div>
+      ${advanced}
+    </div>
+    <div class="card"><h2>Recipient preview</h2>${emailPreview('ok')}</div>
+    <div class="row"><button class="primary" onclick="setView('check')">Continue to pre-send check</button></div>`,'advisor');
+}
+
+function websiteView(){
+  if(state==='loading'||state==='error') return shell('website',`<h1>Website post</h1>`+statusBlock(),'advisor');
+  return shell('website',`<h1>Website post</h1>
+    <p class="muted"><span class="who">Client preview</span> · Your Firm Name · yourfirm.ca</p>
+    <div class="card">${websitePreview()}</div>`,'advisor');
+}
+
+function changeView(){
+  return `<div class="overlay"><div class="panel">
+    <div class="row spread"><h2>Change dealer</h2><button class="ghost" onclick="setView('staff')">Close</button></div>
+    <p class="muted"><span class="who">Staff</span> · Jane Advisor</p>
+    <p>From <b>${D().n}</b></p>
+    <label class="fld">New dealer
+      <select onchange="newDealer=this.value">
+        <option value="b" ${newDealer==='b'?'selected':''}>Example Dealer B</option>
+        <option value="a" ${newDealer==='a'?'selected':''}>Example Dealer A</option>
+      </select>
+    </label>
+    <h3>Will update</h3>
+    <ul><li>Email footer default</li><li>Website post disclaimer default</li><li>Compliance defaults</li></ul>
+    <h3>Will not be overwritten</h3>
+    <table><tr><th>Item</th><th>Type</th></tr>${OVERRIDES.map(o=>`<tr><td>${o.n}</td><td>${o.t} · Custom (overrides dealer default)</td></tr>`).join('')}</table>
+    <div class="row"><button class="ghost" onclick="setView('staff')">Cancel</button><button class="primary" onclick="dealer=newDealer;source='assigned';state='success';setView('staff')">Update defaults</button></div>
+  </div></div>`+staffView();
+}
+
+function checkView(){
+  if(state==='loading') return shell('item',`<h1>Pre-send check</h1><div class="alert">Checking header, footer and body…</div>`,'advisor');
+  if(state==='error') return shell('item',`<h1>Pre-send check</h1>`+statusBlock(),'advisor');
+  if(state!=='mismatch'){
+    return shell('item',`<h1>Pre-send check</h1>
+      <div class="ok">No dealer mismatches found for Jane Advisor (${D().n}).</div>
+      ${emailPreview('ok')}
+      <div class="row"><button class="ghost" onclick="setView('item')">Back</button><button class="primary" onclick="toast('Demo only: would request approval. Nothing was sent.')">Send to approval</button></div>`,'advisor');
+  }
+  return shell('item',`<h1>Pre-send check</h1>
+    <div class="bad"><b>Mismatch flagged — not sent</b>
+      <p>A logo, name or link for <b>${otherInv().n}</b> appears on a campaign whose dealer is <b>${D().n}</b>.</p>
+      <ul><li>Footer logo does not match the profile dealer</li><li>Includes custom override — still flagged</li></ul>
+      <p>Flagged to staff. Jane Advisor is also flagged. Nothing was removed or sent.</p>
+    </div>
+    ${emailPreview('wrong')}
+    <div class="row"><button class="ghost" onclick="setView('item')">Back to campaign</button>
+    <button class="danger" onclick="toast('Demo: send stays on hold')">Keep on hold</button>
+    <button class="primary" disabled>Send to approval</button></div>`,'advisor');
+}
+
+function render(){
+  switcher();
+  let html='';
+  if(view==='dealers') html=dealersView();
+  else if(view==='staff') html=staffView();
+  else if(view==='item') html=itemView();
+  else if(view==='website') html=websiteView();
+  else if(view==='change') html=changeView();
+  else html=checkView();
+  document.getElementById('app').innerHTML=html;
+}
+render();
+</script>
+</body></html>
