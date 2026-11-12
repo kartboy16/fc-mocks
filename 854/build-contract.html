@@ -1,0 +1,196 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>#854 contract</title><style>body{font:15px/1.55 Inter,system-ui,sans-serif;max-width:920px;margin:24px auto;padding:0 16px;color:#2c3e50}a{color:#1976d2}li{margin:10px 0}.r{background:#e8f5e9;border:1px solid #a5d6a7;border-radius:10px;padding:10px 14px}.note{background:#fff8e1;border:1px solid #ffe0a3;border-radius:8px;padding:10px 12px}h1{font-size:26px}.muted{color:#607080;font-size:13px}table{border-collapse:collapse;width:100%}td,th{border:1px solid #e0e5eb;padding:6px 8px;text-align:left;vertical-align:top}th{background:#f3f6f9}</style></head><body><p><a href="index.html">Hub</a> · <a href="../">All mocks</a> · <a href="https://github.com/kartboy16/content-library/issues/854">#854</a></p><h1>#854 Suggest one library post to one advisor by email</h1>
+<p><strong>Status:</strong> Published on GitHub Pages. Not agent-ready. Soft Dev hold until a direction is picked. No build launched.</p>
+<h2>Sources (read-only)</h2>
+<ul>
+<li>Issue #854</li>
+<li>Related: weekly picks (#599 / #753, not on main), campaign approval emails (newsletter sends, not website publishing), #688 weekly digest (out of scope)</li>
+</ul>
+<h2>Recommendation</h2>
+<p><strong>A. Library card → advisor drawer.</strong> The usual trigger is a timely post the admin just found, so starting on the Content Library card keeps the post in context and opens a drawer to pick one advisor. Recipients, an email preview, and Send sit in the same drawer.</p>
+<p>B is the inverse: start in Manage Advisor Posts, pick the advisor, then the post. Use it if the admin is already looking at one advisor. C is a standalone compose modal with a new admin entry point; it works when the admin is on neither surface, but it adds chrome without the context of A or B.</p>
+<p>All three directions share the same advisor email and Approve / Schedule / Skip result pages.</p>
+<h2>Who sees what</h2>
+<table>
+<thead>
+<tr>
+<th>Surface</th>
+<th>Facing</th>
+<th>What happens</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Send suggestion (A card action, B MAP action, or C modal)</td>
+<td>Staff / admin</td>
+<td>Pick one post and one advisor, optional assistant recipients, preview, Send. Hand-triggered only; no cron in this slice.</td>
+</tr>
+<tr>
+<td>Suggestion email</td>
+<td>Advisor (and optional assistant)</td>
+<td>One card, Preview, Approve (publish now), Schedule, Skip, CASL footer. Sender identity may name the product.</td>
+</tr>
+<tr>
+<td>Preview</td>
+<td>Advisor</td>
+<td>The post as it would appear. Banner: not on the Insights page yet.</td>
+</tr>
+<tr>
+<td>Approve / Schedule / Skip result pages</td>
+<td>Advisor</td>
+<td>Token landing. Approve publishes to the website Insights page via the existing website queue / publish path (about 15 minutes after refresh).</td>
+</tr>
+<tr>
+<td>Insights post, share, and email links</td>
+<td>Client</td>
+<td><code>https://yourfirm.example/insights/federal-budget-rrsp-tfsa</code> only. No product-domain links or branding. Images may still be served from the product host.</td>
+</tr>
+</tbody>
+</table>
+<h2>Screens</h2>
+<table>
+<thead>
+<tr>
+<th>Screen</th>
+<th>Facing</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>A. Content Library grid + Send suggestion on the card</td>
+<td>Staff</td>
+<td>Drawer: advisor picker, recipients, email preview, Send</td>
+</tr>
+<tr>
+<td>B. Manage Advisor Posts + Send suggestion on the row</td>
+<td>Staff</td>
+<td>Drawer: post picker, then recipients, preview, Send</td>
+</tr>
+<tr>
+<td>C. Send suggestion page + compose modal</td>
+<td>Staff</td>
+<td>Modal: post + advisor + recipients + preview + Send</td>
+</tr>
+<tr>
+<td>Advisor email</td>
+<td>Advisor</td>
+<td>Shared by A/B/C</td>
+</tr>
+<tr>
+<td>Preview</td>
+<td>Advisor</td>
+<td>From the email Preview link</td>
+</tr>
+<tr>
+<td>Approved</td>
+<td>Advisor</td>
+<td>Published, link to <code>https://yourfirm.example/insights/federal-budget-rrsp-tfsa</code></td>
+</tr>
+<tr>
+<td>Schedule picker</td>
+<td>Advisor</td>
+<td>Date and time (PT), then confirm</td>
+</tr>
+<tr>
+<td>Scheduled</td>
+<td>Advisor</td>
+<td>Confirmation; not live yet</td>
+</tr>
+<tr>
+<td>Skipped</td>
+<td>Advisor</td>
+<td>Optional reason</td>
+</tr>
+<tr>
+<td>Expired / already used</td>
+<td>Advisor</td>
+<td>Nothing changed</td>
+</tr>
+<tr>
+<td>Insights post</td>
+<td>Client</td>
+<td>yourfirm.example only</td>
+</tr>
+</tbody>
+</table>
+<h2>States</h2>
+<p>Admin compose: ready, loading, empty (no advisors or no posts), error/retry, sending, success (sent; nothing published).
+Email: advisor recipient vs assistant (actions hidden for assistant in this mock — open question).
+Results: approved, schedule picker, scheduled, skipped, skip + optional reason, expired, already used.
+Insights: published post only (no draft state on the client site).</p>
+<h2>Copy</h2>
+<ul>
+<li>Admin: “Send suggestion” / “Nothing publishes until the advisor approves. Approving puts the post on their website's Insights page.” / “The advisor is always included. Add an assistant email if they should also receive this.” / “Suggestion sent… Nothing is published yet.”</li>
+<li>Email greeting: “Hi Jane, a post for you to review”</li>
+<li>Email notice: “Nothing publishes until you approve. Approving puts this post on your website's Insights page.”</li>
+<li>Buttons: “Approve (publish now)” / “Schedule” / “Skip” / “Preview”</li>
+<li>Approved: “Published” / “View on your Insights page” / “It can take about 15 minutes to appear after the site package refreshes.”</li>
+<li>Scheduled: “This post will publish to your website's Insights page on Nov 20, 2026, 9:00 AM PT.”</li>
+<li>Skipped: “You skipped this suggestion. It was not published and is not scheduled.”</li>
+<li>Expired: “This link has expired. Nothing was changed.”</li>
+<li>Already used: “This link was already used.”</li>
+<li>CASL footer: marked “PLACEHOLDER — not real compliance text.”</li>
+<li>Preview banner: “Preview only — this post is not on your Insights page yet.”</li>
+</ul>
+<p>No estimates or explainer prose in the mock UI. Sample article copy is generic and is not tax advice.</p>
+<p>Sample post: <strong>What the latest federal budget could mean for your RRSP and TFSA</strong>. Summary: A plain-language look at the latest federal budget, and what the proposed changes could mean for contribution room, withdrawals, and year-end planning. 4 min read.</p>
+<h2>In / out of scope</h2>
+<p><strong>In:</strong> hand-triggered admin Send suggestion (one post, one advisor), optional extra approval recipients, advisor email with one card and Approve / Schedule / Skip, secure expiring tokens, result pages, website publish via the existing Insights / package-refresh path, CASL footer placeholder, generic fixtures only.
+<strong>Out of scope:</strong> Rewrite in my voice (#687), weekly digest frequency (#688), auto-picking, a 3-post weekly slate, cron, live email send, inventing legal CASL copy, social or email-campaign destinations (this slice is website Insights), client-facing product branding or product-domain links.</p>
+<p>Reuse weekly-picks confirm, token, and send code where possible. Do not send a weekly slate. Staging first, high risk (email sending, publishing, white-label). QA inboxes only (designated test accounts). Only Alex merges to main. No build launched.</p>
+<h2>Desktop vs mobile</h2>
+<p>1280: library grid, MAP table, 440px right drawer, centered compose modal, email at 600px, result pages ~640px.
+390: stacked nav, full-width bottom sheet or modal, 44px actions, email card stacks the thumbnail, result buttons full width.</p>
+<h2>Agent-time estimate (hours, cloud build + FC Tester + fix loop)</h2>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>A (recommended)</th>
+<th>B</th>
+<th>C</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Cloud agent build</td>
+<td>10–16</td>
+<td>11–17</td>
+<td>12–18</td>
+</tr>
+<tr>
+<td>FC Tester (admin send, email + tokens, Approve publishes to Insights, Schedule, Skip, expiry / already-used, optional recipients, 1280/390, no product-domain links on the Insights page)</td>
+<td>4–7</td>
+<td>4–7</td>
+<td>4–8</td>
+</tr>
+<tr>
+<td>Fix loop</td>
+<td>3–5</td>
+<td>3–5</td>
+<td>3–5</td>
+</tr>
+<tr>
+<td><strong>Total</strong></td>
+<td><strong>17–28 h</strong></td>
+<td><strong>18–29 h</strong></td>
+<td><strong>19–31 h</strong></td>
+</tr>
+</tbody>
+</table>
+<p>The email, tokens, and publish path are shared, so most of the work is the same in every direction. A is a little lower because it extends an existing library card. C is a little higher because it adds a new entry point and a recent-suggestions list. High risk. Playground / staging first, then FC Tester. No build launched.</p>
+<h2>Open questions</h2>
+<ol>
+<li>How long do the Approve / Schedule / Skip tokens stay valid? This mock uses 7 days (expire Nov 19, 2026).</li>
+<li>Schedule limits: how far ahead, can it be later today, and what happens if that day already has a website post?</li>
+<li>What does Skip do besides dismiss this suggestion? Notify the admin? Block a resend of the same post? Affect weekly picks?</li>
+<li>If the advisor and an assistant both receive the email, who can approve? First action wins? Assistant view-only (as mocked)?</li>
+<li>Is Approve website Insights only, or can the advisor also pick other destinations (social / email) like weekly picks?</li>
+<li>Should the email, or only the Approved page, mention the ~15 minute package refresh delay?</li>
+<li>Where does the Preview link go — a product-hosted preview, or an unpublished preview on the advisor site?</li>
+<li>Can the same post be suggested to the same advisor more than once, including after Skip or expiry?</li>
+<li>Who may trigger Send suggestion (admins only, or also staff / assistants)?</li>
+<li>If A is picked, should MAP (B) also get a Send suggestion action, or is one entry point enough?</li>
+<li>Unsubscribe: from suggestion emails only, or from all product emails?</li>
+<li>Already-used vs expired: keep them as distinct pages (as mocked)? What if the post was already published another way?</li>
+</ol></body></html>

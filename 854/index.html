@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>#854 Suggest one library post to one advisor by email</title>
+<style>
+body{font:15px/1.55 Inter,system-ui,sans-serif;max-width:920px;margin:24px auto;padding:0 16px;color:#2c3e50}
+a{color:#1976d2}
+li{margin:10px 0}
+.r{background:#e8f5e9;border:1px solid #a5d6a7;border-radius:10px;padding:10px 14px}
+.note{background:#fff8e1;border:1px solid #ffe0a3;border-radius:8px;padding:10px 12px}
+h1{font-size:26px}
+.muted{color:#607080;font-size:13px}
+</style>
+</head>
+<body>
+<p><a href="../">All mocks</a> · <a href="https://github.com/kartboy16/content-library/issues/854">#854</a></p>
+<h1>#854 Suggest one library post to one advisor by email</h1>
+<p class="r"><b>Recommend A</b> — an action on a Content Library post card that opens a drawer to pick one advisor. The usual trigger is a timely post the admin just found, so the post stays in context. B is better when the admin is already in Manage Advisor Posts looking at one advisor. C adds a new compose entry point without the context of either surface. All three share the same email and result pages.</p>
+<div class="note">Sample post: <i>What the latest federal budget could mean for your RRSP and TFSA</i>. Fixtures are generic (Jane Advisor, Your Firm Name, yourfirm.example, example.com). Nothing publishes until the advisor approves.</div>
+<ul>
+<li><a href="a-library.html"><b>A. Library card → advisor drawer (recommended)</b></a>
+  · <a href="a-library.html?s=drawer">drawer</a>
+  · <a href="a-library.html?s=drawer&amp;phone">drawer phone</a>
+  · <a href="a-library.html?s=loading">loading</a>
+  · <a href="a-library.html?s=empty">empty</a>
+  · <a href="a-library.html?s=error">error</a>
+  · <a href="a-library.html?s=done">sent</a>
+  · <a href="a-library.html?phone">phone</a></li>
+<li><a href="b-map.html"><b>B. Manage Advisor Posts → pick post</b></a>
+  · <a href="b-map.html?s=pick">pick post</a>
+  · <a href="b-map.html?s=drawer">compose</a>
+  · <a href="b-map.html?s=drawer&amp;phone">compose phone</a>
+  · <a href="b-map.html?s=loading">loading</a>
+  · <a href="b-map.html?s=empty">empty</a>
+  · <a href="b-map.html?s=error">error</a>
+  · <a href="b-map.html?s=done">sent</a></li>
+<li><a href="c-compose.html"><b>C. Standalone compose modal</b></a>
+  · <a href="c-compose.html?s=drawer">modal</a>
+  · <a href="c-compose.html?s=drawer&amp;phone">modal phone</a>
+  · <a href="c-compose.html?s=loading">loading</a>
+  · <a href="c-compose.html?s=done">sent</a></li>
+<li><a href="email.html"><b>Advisor email</b></a> (shared)
+  · <a href="email.html?phone">phone</a>
+  · <a href="email.html?vo=on">assistant recipient</a>
+  · <a href="preview.html">Preview link target</a>
+  · <a href="preview.html?phone">preview phone</a></li>
+<li><b>Result pages</b>
+  · <a href="results.html?st=approved">Approved</a>
+  · <a href="results.html?st=schedule">Schedule picker</a>
+  · <a href="results.html?st=scheduled">Scheduled</a>
+  · <a href="results.html?st=skipped">Skipped</a>
+  · <a href="results.html?st=reason">Skip + reason</a>
+  · <a href="results.html?st=expired">Expired</a>
+  · <a href="results.html?st=used">Already used</a>
+  · <a href="results.html?st=approved&amp;phone">approved phone</a>
+  · <a href="insights.html">Insights page (client-facing, yourfirm.example)</a></li>
+<li><a href="build-contract.html">Build contract</a> · <a href="build-contract.md">.md</a></li>
+</ul>
+<p class="muted">Agent-time estimate and open questions are in the contract, not on the mock screens.</p>
+</body>
+</html>
