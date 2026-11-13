@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>#880 Bulk upload social posts by CSV</title>
+<style>
+body{font:15px/1.55 Inter,system-ui,sans-serif;max-width:920px;margin:24px auto;padding:0 16px;color:#2c3e50}
+a{color:#1976d2}
+li{margin:10px 0}
+.r{background:#e8f5e9;border:1px solid #a5d6a7;border-radius:10px;padding:10px 14px}
+.note{background:#fff8e1;border:1px solid #ffe0a3;border-radius:8px;padding:10px 12px}
+h1{font-size:26px}
+.muted{color:#607080;font-size:13px}
+</style>
+</head>
+<body>
+<p><a href="../">All mocks</a> · <a href="https://github.com/kartboy16/content-library/issues/880">#880</a></p>
+<h1>#880 Bulk upload social posts by CSV (like AFA)</h1>
+<p class="r"><b>Recommend A</b> — an <b>Upload CSV</b> button on Social Media → Your posts, for the current advisor only. After a preview, valid rows are scheduled and flagged rows are skipped, with an accurate count. Do not add AFA’s “For all advisors / For [advisor] only” choice in this slice: FC Social Media is already advisor-scoped, and a firm-wide fan-out of the same calendar is a different, higher-risk admin tool. B is the same scope, but Schedule stays off until every flagged row is fixed or removed. C adds that all-advisors choice for admins, with a confirmation.</p>
+<div class="note">Sample file: <a href="sample.csv" download>sample.csv</a> (11 rows, generic copy only). Fixtures are Jane Advisor, Your Firm Name, jane.advisor@example.com, example.com. Posts are scheduled only — nothing is published to networks until each send date (9:00 AM Pacific).</div>
+<ul>
+<li><a href="a-advisor.html"><b>A. This advisor only, skip bad rows (recommended)</b></a>
+  · <a href="a-advisor.html?s=upload">upload</a>
+  · <a href="a-advisor.html?s=upload&amp;phone">upload phone</a>
+  · <a href="a-advisor.html?s=profiles">profiles</a>
+  · <a href="a-advisor.html?s=preview">preview</a>
+  · <a href="a-advisor.html?s=preview&amp;phone">preview phone</a>
+  · <a href="a-advisor.html?s=parsing">reading</a>
+  · <a href="a-advisor.html?s=scheduling">scheduling</a>
+  · <a href="a-advisor.html?s=done">scheduled</a>
+  · <a href="a-advisor.html?s=done&amp;phone">scheduled phone</a>
+  · <a href="a-advisor.html?s=edit">edit</a>
+  · <a href="a-advisor.html?s=delete">delete</a>
+  · <a href="a-advisor.html?s=empty">empty list</a>
+  · <a href="a-advisor.html?s=emptycsv">empty CSV</a>
+  · <a href="a-advisor.html?s=errorfile">file error</a>
+  · <a href="a-advisor.html?s=errorsched">schedule error</a>
+  · <a href="a-advisor.html?s=noprofile">no profiles</a>
+  · <a href="a-advisor.html?s=list&amp;role=admin">admin acting as Jane</a>
+  · <a href="a-advisor.html?phone">phone</a></li>
+<li><a href="b-fix.html"><b>B. This advisor only, fix or remove bad rows first</b></a>
+  · <a href="b-fix.html?s=preview">preview (Schedule off)</a>
+  · <a href="b-fix.html?s=preview&amp;phone">preview phone</a>
+  · <a href="b-fix.html?s=upload">upload</a>
+  · <a href="b-fix.html?s=profiles">profiles</a>
+  · <a href="b-fix.html?s=done">scheduled</a>
+  · <a href="b-fix.html?phone">phone</a></li>
+<li><a href="c-all-advisors.html"><b>C. Admin can choose all advisors</b></a>
+  · <a href="c-all-advisors.html?s=audience">audience</a>
+  · <a href="c-all-advisors.html?s=audience&amp;phone">audience phone</a>
+  · <a href="c-all-advisors.html?s=preview&amp;aud=all">preview, all advisors</a>
+  · <a href="c-all-advisors.html?s=confirm&amp;aud=all">confirm</a>
+  · <a href="c-all-advisors.html?s=done&amp;aud=all">scheduled for 12 advisors</a>
+  · <a href="c-all-advisors.html?s=preview&amp;aud=one">preview, this advisor</a>
+  · <a href="c-all-advisors.html?s=list&amp;role=advisor">advisor (no audience step)</a>
+  · <a href="c-all-advisors.html?phone">phone</a></li>
+<li><a href="build-contract.html">Build contract</a> · <a href="build-contract.md">.md</a> · <a href="sample.csv" download>Sample CSV</a></li>
+</ul>
+<p class="muted">Agent-time estimate and open questions are in the contract, not on the mock screens.</p>
+</body>
+</html>

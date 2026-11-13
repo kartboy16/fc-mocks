@@ -1,0 +1,448 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>#880 A — Upload CSV for this advisor</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div class="mockbar"><a href="index.html">Hub</a> · #880 · <b>A: This advisor only</b> · <b>A</b> · <a href="b-fix.html">B</a> · <a href="c-all-advisors.html">C</a> · <a href="build-contract.html">Contract</a> · <a href="sample.csv" download>Sample CSV</a>
+<span class="sp"></span>
+<span class="grp"><button data-dev="desk" onclick="setDev('desk')">Desktop</button><button data-dev="phone" onclick="setDev('phone')">Phone</button></span>
+<span class="row2">State:
+<button data-sb="s:list" onclick="set('s','list')">list</button>
+<button data-sb="s:upload" onclick="set('s','upload')">upload</button>
+<button data-sb="s:profiles" onclick="set('s','profiles')">profiles</button>
+<button data-sb="s:preview" onclick="set('s','preview')">preview</button>
+<button data-sb="s:parsing" onclick="set('s','parsing')">reading</button>
+<button data-sb="s:scheduling" onclick="set('s','scheduling')">scheduling</button>
+<button data-sb="s:empty" onclick="set('s','empty')">empty list</button>
+<button data-sb="s:emptycsv" onclick="set('s','emptycsv')">empty CSV</button>
+<button data-sb="s:errorfile" onclick="set('s','errorfile')">file error</button>
+<button data-sb="s:errorsched" onclick="set('s','errorsched')">schedule error</button>
+<button data-sb="s:noprofile" onclick="set('s','noprofile')">no profiles</button>
+<button data-sb="s:done" onclick="set('s','done')">scheduled</button>
+<button data-sb="s:edit" onclick="set('s','edit')">edit</button>
+<button data-sb="s:delete" onclick="set('s','delete')">delete</button>
+ Role:
+<button data-sb="role:advisor" onclick="set('role','advisor')">advisor</button>
+<button data-sb="role:admin" onclick="set('role','admin')">admin</button>
+</span></div>
+<div id="dev" class="desk">
+
+<div class="pnav"><span>Content</span><span>Website</span><span class="on">Social Media</span><span>Email Campaigns</span><span>Calendar</span></div>
+<div class="app">
+<nav class="side">
+  <div class="brand">Your Firm Name</div>
+  <div class="nav">Content</div>
+  <div class="nav">Website</div>
+  <div class="nav on">Social Media</div>
+  <div class="nav">Email Campaigns</div>
+  <div class="nav">Calendar</div>
+</nav>
+<div class="main">
+  <div class="crumb">Social Media · Your posts</div>
+  <div class="acting" data-role="admin" data-show="">Acting as <b>Jane Advisor</b> · jane.advisor@example.com</div>
+  <div class="toprow">
+    <div>
+      <h1 style="margin:0">Social Media</h1>
+      <p class="sub" style="margin:4px 0 0">See what’s scheduled, what went out, and how it performed.</p>
+    </div>
+    <span class="sp"></span>
+  </div>
+
+  <div class="tabs" role="tablist" aria-label="Social Media sections">
+    <button class="tab" type="button">Post now</button>
+    <button class="tab" type="button">Build my calendar</button>
+    <button class="tab" type="button">Ready-made posts</button>
+    <button class="tab on" type="button">Your posts</button>
+    <button class="tab admin" type="button" data-role="admin" data-show="">Post for multiple advisors</button>
+  </div>
+
+  <div class="res ok" data-s="done" data-show="">8 posts scheduled, 3 skipped. They are on Jane Advisor’s calendar and will publish at 9:00 AM Pacific on each send date. Nothing has been published yet.</div>
+
+  <div class="res err" data-s="noprofile" data-show="">Connect a LinkedIn, Facebook, or Instagram account in Settings before you upload a CSV.</div>
+  <div class="res err" data-s="errorsched" data-show="">Scheduling stopped. No posts were added. Try again.</div>
+
+  <div class="toprow">
+    <p class="help" style="margin:0">Scheduled and completed social posts (same queue as the content calendar).</p>
+    <span class="sp"></span>
+    <button class="btn c" type="button" onclick="set('s','upload')">Upload CSV</button>
+  </div>
+
+  <div class="empty" data-s="empty" data-show="">
+    <h2>No social posts yet</h2>
+    <p class="help">Upload a CSV to schedule a calendar of posts, or create one post from Post now.</p>
+    <div class="btnrow" style="justify-content:center"><button class="btn c" type="button" onclick="set('s','upload')">Upload CSV</button></div>
+  </div>
+
+  <div class="grid" data-s="list upload profiles audience preview parsing scheduling done edit delete errorfile emptycsv errorsched noprofile confirm" data-show="grid">
+    <article class="pc" data-s="done" data-show="">
+      <div class="thumb th-rrsp">RRSP</div>
+      <div class="when"><label>Scheduled for</label><b>Tue, Dec 1, 2026, 9:00 AM PT</b></div>
+      <span class="chip w">Scheduled</span>
+      <p class="msg">RRSP contribution room resets soon. A short, plain-language look at what to consider before year-end.</p>
+      <div><span class="net on">LinkedIn · Jane Advisor</span><span class="net on">LinkedIn · Your Firm Name</span><span class="net on">Facebook · Your Firm Name</span></div>
+      <div class="acts">
+        <button class="btn sm" type="button" onclick="set('s','edit')">Edit</button>
+        <button class="btn sm danger" type="button" onclick="set('s','delete')">Delete</button>
+      </div>
+    </article>
+<article class="pc" data-s="done" data-show="">
+      <div class="thumb th-tfsa">TFSA</div>
+      <div class="when"><label>Scheduled for</label><b>Thu, Dec 3, 2026, 9:00 AM PT</b></div>
+      <span class="chip w">Scheduled</span>
+      <p class="msg">TFSA room starts fresh in the new year. Here is a simple recap you can share with your household.</p>
+      <div><span class="net on">LinkedIn · Jane Advisor</span><span class="net on">LinkedIn · Your Firm Name</span><span class="net on">Facebook · Your Firm Name</span></div>
+      <div class="acts">
+        <button class="btn sm" type="button" onclick="set('s','edit')">Edit</button>
+        <button class="btn sm danger" type="button" onclick="set('s','delete')">Delete</button>
+      </div>
+    </article>
+<article class="pc" data-s="done" data-show="">
+      <div class="thumb th-gift">Giving</div>
+      <div class="when"><label>Scheduled for</label><b>Tue, Dec 8, 2026, 9:00 AM PT</b></div>
+      <span class="chip w">Scheduled</span>
+      <p class="msg">Thinking about a year-end gift to a charity? A few questions that help a gift fit the rest of your plan.</p>
+      <div><span class="net on">LinkedIn · Jane Advisor</span><span class="net on">LinkedIn · Your Firm Name</span><span class="net on">Facebook · Your Firm Name</span></div>
+      <div class="acts">
+        <button class="btn sm" type="button" onclick="set('s','edit')">Edit</button>
+        <button class="btn sm danger" type="button" onclick="set('s','delete')">Delete</button>
+      </div>
+    </article>
+<article class="pc" data-s="done" data-show="">
+      <div class="thumb th-fund">Fund</div>
+      <div class="when"><label>Scheduled for</label><b>Thu, Dec 10, 2026, 9:00 AM PT</b></div>
+      <span class="chip w">Scheduled</span>
+      <p class="msg">An emergency fund is the part of a plan that keeps a surprise from becoming a setback. Here is a simple way to size it.</p>
+      <div><span class="net on">LinkedIn · Jane Advisor</span><span class="net on">LinkedIn · Your Firm Name</span><span class="net on">Facebook · Your Firm Name</span></div>
+      <div class="acts">
+        <button class="btn sm" type="button" onclick="set('s','edit')">Edit</button>
+        <button class="btn sm danger" type="button" onclick="set('s','delete')">Delete</button>
+      </div>
+    </article>
+<article class="pc" data-s="done" data-show="">
+      <div class="thumb th-check">Checklist</div>
+      <div class="when"><label>Scheduled for</label><b>Tue, Dec 15, 2026, 9:00 AM PT</b></div>
+      <span class="chip w">Scheduled</span>
+      <p class="msg">A year-end checklist for registered accounts: contribution room, withdrawals, and a few questions to ask before December 31.</p>
+      <div><span class="net on">LinkedIn · Jane Advisor</span><span class="net on">LinkedIn · Your Firm Name</span><span class="net on">Facebook · Your Firm Name</span></div>
+      <div class="acts">
+        <button class="btn sm" type="button" onclick="set('s','edit')">Edit</button>
+        <button class="btn sm danger" type="button" onclick="set('s','delete')">Delete</button>
+      </div>
+    </article>
+<article class="pc" data-s="done" data-show="">
+      <div class="thumb th-jan">January</div>
+      <div class="when"><label>Scheduled for</label><b>Wed, Jan 6, 2027, 9:00 AM PT</b></div>
+      <span class="chip w">Scheduled</span>
+      <p class="msg">A calm start to the year: three planning questions worth a short conversation in January.</p>
+      <div><span class="net on">LinkedIn · Jane Advisor</span><span class="net on">LinkedIn · Your Firm Name</span><span class="net on">Facebook · Your Firm Name</span></div>
+      <div class="acts">
+        <button class="btn sm" type="button" onclick="set('s','edit')">Edit</button>
+        <button class="btn sm danger" type="button" onclick="set('s','delete')">Delete</button>
+      </div>
+    </article>
+<article class="pc" data-s="done" data-show="">
+      <div class="thumb th-first">Start</div>
+      <div class="when"><label>Scheduled for</label><b>Fri, Jan 8, 2027, 9:00 AM PT</b></div>
+      <span class="chip w">Scheduled</span>
+      <p class="msg">The first contributions of the year are often the ones that actually happen. A short note on getting them on the calendar.</p>
+      <div><span class="net on">LinkedIn · Jane Advisor</span><span class="net on">LinkedIn · Your Firm Name</span><span class="net on">Facebook · Your Firm Name</span></div>
+      <div class="acts">
+        <button class="btn sm" type="button" onclick="set('s','edit')">Edit</button>
+        <button class="btn sm danger" type="button" onclick="set('s','delete')">Delete</button>
+      </div>
+    </article>
+<article class="pc" data-s="done" data-show="">
+      <div class="thumb th-bene">Review</div>
+      <div class="when"><label>Scheduled for</label><b>Wed, Jan 13, 2027, 9:00 AM PT</b></div>
+      <span class="chip w">Scheduled</span>
+      <p class="msg">A beneficiary review takes a few minutes and can save a long process later. Worth a look after any life change.</p>
+      <div><span class="net on">LinkedIn · Jane Advisor</span><span class="net on">LinkedIn · Your Firm Name</span><span class="net on">Facebook · Your Firm Name</span></div>
+      <div class="acts">
+        <button class="btn sm" type="button" onclick="set('s','edit')">Edit</button>
+        <button class="btn sm danger" type="button" onclick="set('s','delete')">Delete</button>
+      </div>
+    </article>
+    <article class="pc">
+      <div class="thumb th-calm">Markets</div>
+      <div class="when"><label>Scheduled for</label><b>Tue, Nov 18, 2026, 9:00 AM PT</b></div>
+      <span class="chip w">Scheduled</span>
+      <p class="msg">A calm week in the markets is a good time to revisit your long-term plan.</p>
+      <div><span class="net on">LinkedIn · Jane Advisor</span><span class="net on">Facebook · Your Firm Name</span></div>
+      <div class="acts">
+        <button class="btn sm" type="button" onclick="set('s','edit')">Edit</button>
+        <button class="btn sm danger" type="button" onclick="set('s','delete')">Delete</button>
+      </div>
+    </article>
+<article class="pc">
+      <div class="thumb th-review">Review</div>
+      <div class="when"><label>Scheduled for</label><b>Thu, Nov 20, 2026, 9:00 AM PT</b></div>
+      <span class="chip w">Scheduled</span>
+      <p class="msg">What a year-end review can cover in 30 minutes — and what it can wait on.</p>
+      <div><span class="net on">LinkedIn · Jane Advisor</span><span class="net on">LinkedIn · Your Firm Name</span></div>
+      <div class="acts">
+        <button class="btn sm" type="button" onclick="set('s','edit')">Edit</button>
+        <button class="btn sm danger" type="button" onclick="set('s','delete')">Delete</button>
+      </div>
+    </article>
+<article class="pc">
+      <div class="thumb th-emerg">Fund</div>
+      <div class="when"><label>Scheduled for</label><b>Tue, Nov 11, 2026, 9:00 AM PT</b></div>
+      <span class="chip g">Posted</span>
+      <p class="msg">Three questions to ask before you dip into an emergency fund.</p>
+      <div><span class="net on">LinkedIn · Jane Advisor</span></div>
+      <div class="acts"><span class="help" style="margin:0">Already posted — edit is closed.</span></div>
+    </article>
+  </div>
+</div>
+</div>
+
+<!-- Upload -->
+<div class="ov" data-s="upload emptycsv errorfile" data-show="flex" onclick="if(event.target===this)set('s','list')">
+  <div class="dlg" role="dialog" aria-labelledby="up-title">
+    <div class="dh"><span id="up-title">Upload CSV of posts</span><span class="sp"></span>
+      <button class="btn t sm" type="button" aria-label="Close" onclick="set('s','list')">×</button></div>
+    <div class="db">
+      <p class="steps">Step 1 of 3 · File</p>
+      <p>Schedule many posts at once. The CSV needs these columns:</p>
+      <div class="cols">
+        <b>message</b><span>The post text</span>
+        <b>imageURL</b><span>A public image URL for the post</span>
+        <b>sendDate</b><span>The day to publish, as YYYY-MM-DD</span>
+      </div>
+      <p class="help">Each sendDate is a calendar day. Posts are scheduled for 9:00 AM Pacific on that day. Nothing is published to your networks until then.</p>
+      <p><a class="btn sm" href="sample.csv" download>Download Sample CSV</a></p>
+      <div class="filebox">
+        <span class="name">sample-social-calendar.csv</span>
+        <span class="help" style="margin:0">11 rows · message, imageURL, sendDate</span>
+        <button class="btn sm skip" type="button">Replace file</button>
+      </div>
+      <div class="res err" data-s="errorfile" data-show="">We couldn’t read that file. Use a CSV with the columns message, imageURL, and sendDate (YYYY-MM-DD).</div>
+      <div class="res warn" data-s="emptycsv" data-show="">This file has no rows to schedule.</div>
+    </div>
+    <div class="da">
+      <button class="btn skip" type="button" onclick="set('s','list')">Cancel</button>
+      <button class="btn c" type="button" data-s="upload" data-show="" onclick="doParse()">Continue</button>
+    </div>
+  </div>
+</div>
+
+<!-- Parsing -->
+<div class="ov" data-s="parsing" data-show="flex">
+  <div class="dlg" role="dialog" aria-labelledby="ps-title">
+    <div class="dh"><span id="ps-title">Reading CSV</span></div>
+    <div class="db">
+      <p><span class="spin"></span> Checking rows and images…</p>
+      <div class="skel"></div>
+      <div class="skel"></div>
+      <div class="skel"></div>
+    </div>
+  </div>
+</div>
+
+<!-- Profiles -->
+<div class="ov" data-s="profiles" data-show="flex" onclick="if(event.target===this)set('s','upload')">
+  <div class="dlg" role="dialog" aria-labelledby="pr-title">
+    <div class="dh"><span id="pr-title">Choose profiles</span><span class="sp"></span>
+      <button class="btn t sm" type="button" aria-label="Close" onclick="set('s','upload')">×</button></div>
+    <div class="db">
+      <p class="steps">Step 2 of 3 · Profiles</p>
+      <p>These posts will go to the profiles you select. Only Jane Advisor’s connected profiles are listed.</p>
+      <label class="check js-profile on" onclick="toggleCheck(this); event.preventDefault();">
+        <input type="checkbox" checked>
+        <div><b>LinkedIn · Jane Advisor</b><small>Personal profile · connected</small></div>
+      </label>
+      <label class="check js-profile on" onclick="toggleCheck(this); event.preventDefault();">
+        <input type="checkbox" checked>
+        <div><b>LinkedIn · Your Firm Name</b><small>Company page · connected</small></div>
+      </label>
+      <label class="check js-profile on" onclick="toggleCheck(this); event.preventDefault();">
+        <input type="checkbox" checked>
+        <div><b>Facebook · Your Firm Name</b><small>Page · connected</small></div>
+      </label>
+      <p class="help">Instagram is not connected, so it is not listed. Connect it in Settings to include it next time.</p>
+    </div>
+    <div class="da">
+      <button class="btn skip" type="button" onclick="set('s','upload')">Back</button>
+      <button class="btn c js-need-profile" type="button" onclick="afterProfiles()">Continue</button>
+    </div>
+  </div>
+</div>
+
+
+
+<!-- Preview -->
+<div class="ov" data-s="preview" data-show="flex" onclick="if(event.target===this)set('s','profiles')">
+  <div class="dlg wide" role="dialog" aria-labelledby="pv-title">
+    <div class="dh"><span id="pv-title">Preview posts</span><span class="sp"></span>
+      <button class="btn t sm" type="button" aria-label="Close" onclick="set('s','profiles')">×</button></div>
+    <div class="db">
+      <p class="steps">Step 3 of 3 · Preview</p>
+      <p class="help">Flagged rows are skipped and are not scheduled. Nothing is published to your networks until each send date.</p>
+      <div class="res info">Ready to schedule <b class="js-ok-count">8</b> posts. <b class="js-bad-count">3</b> flagged rows will be skipped.</div>
+      <article class="prow valid" id="row-1">
+          <div class="thumb sm th-rrsp">RRSP</div>
+          <div class="body">
+            <div class="js-date"><b>Tue, Dec 1, 2026 · 9:00 AM PT</b></div>
+            <p class="js-msg">RRSP contribution room resets soon. A short, plain-language look at what to consider before year-end.</p>
+            
+            
+          </div>
+        </article>
+<article class="prow valid" id="row-2">
+          <div class="thumb sm th-tfsa">TFSA</div>
+          <div class="body">
+            <div class="js-date"><b>Thu, Dec 3, 2026 · 9:00 AM PT</b></div>
+            <p class="js-msg">TFSA room starts fresh in the new year. Here is a simple recap you can share with your household.</p>
+            
+            
+          </div>
+        </article>
+<article class="prow valid" id="row-3">
+          <div class="thumb sm th-gift">Giving</div>
+          <div class="body">
+            <div class="js-date"><b>Tue, Dec 8, 2026 · 9:00 AM PT</b></div>
+            <p class="js-msg">Thinking about a year-end gift to a charity? A few questions that help a gift fit the rest of your plan.</p>
+            
+            
+          </div>
+        </article>
+<article class="prow valid" id="row-4">
+          <div class="thumb sm th-fund">Fund</div>
+          <div class="body">
+            <div class="js-date"><b>Thu, Dec 10, 2026 · 9:00 AM PT</b></div>
+            <p class="js-msg">An emergency fund is the part of a plan that keeps a surprise from becoming a setback. Here is a simple way to size it.</p>
+            
+            
+          </div>
+        </article>
+<article class="prow valid" id="row-5">
+          <div class="thumb sm th-check">Checklist</div>
+          <div class="body">
+            <div class="js-date"><b>Tue, Dec 15, 2026 · 9:00 AM PT</b></div>
+            <p class="js-msg">A year-end checklist for registered accounts: contribution room, withdrawals, and a few questions to ask before December 31.</p>
+            
+            
+          </div>
+        </article>
+<article class="prow valid" id="row-6">
+          <div class="thumb sm th-jan">January</div>
+          <div class="body">
+            <div class="js-date"><b>Wed, Jan 6, 2027 · 9:00 AM PT</b></div>
+            <p class="js-msg">A calm start to the year: three planning questions worth a short conversation in January.</p>
+            
+            
+          </div>
+        </article>
+<article class="prow valid" id="row-7">
+          <div class="thumb sm th-first">Start</div>
+          <div class="body">
+            <div class="js-date"><b>Fri, Jan 8, 2027 · 9:00 AM PT</b></div>
+            <p class="js-msg">The first contributions of the year are often the ones that actually happen. A short note on getting them on the calendar.</p>
+            
+            
+          </div>
+        </article>
+<article class="prow valid" id="row-8">
+          <div class="thumb sm th-bene">Review</div>
+          <div class="body">
+            <div class="js-date"><b>Wed, Jan 13, 2027 · 9:00 AM PT</b></div>
+            <p class="js-msg">A beneficiary review takes a few minutes and can save a long process later. Worth a look after any life change.</p>
+            
+            
+          </div>
+        </article>
+<article class="prow bad" id="row-9">
+          <div class="thumb sm th-check">Photo</div>
+          <div class="body">
+            <div class="js-date"><b>Thu, Dec 17, 2026 · 9:00 AM PT</b></div>
+            <p class="js-msg">(No message in this row.)</p>
+            <div class="flag"><span class="chip r">Will be skipped</span> <span class="help" style="display:inline">Missing message — this row will be skipped.</span></div>
+            
+          </div>
+        </article>
+<article class="prow bad" id="row-10">
+          <div class="thumb sm th-mkt">Markets</div>
+          <div class="body">
+            <div class="js-date"><b>Sun, Nov 1, 2026 · 9:00 AM PT</b></div>
+            <p class="js-msg">Markets move. A long-term plan is built for that — here is what a quiet week is for.</p>
+            <div class="flag"><span class="chip r">Will be skipped</span> <span class="help" style="display:inline">This date is in the past — this row will be skipped.</span></div>
+            
+          </div>
+        </article>
+<article class="prow bad" id="row-11">
+          <div class="thumb sm th-broken">Image won’t load</div>
+          <div class="body">
+            <div class="js-date"><b>Tue, Dec 22, 2026 · 9:00 AM PT</b></div>
+            <p class="js-msg">Life insurance: how much is enough? A simple way to work out a starting number.</p>
+            <div class="flag"><span class="chip r">Will be skipped</span> <span class="help" style="display:inline">The image URL didn’t load — this row will be skipped.</span></div>
+            
+          </div>
+        </article>
+    </div>
+    <div class="da">
+      <span class="help sp" style="margin:0">11 rows in the file.</span>
+      <button class="btn skip" type="button" onclick="set('s','profiles')">Back</button>
+      <button class="btn c" id="btn-schedule" type="button" onclick="doSchedule()">Schedule 8 posts (3 skipped)</button>
+    </div>
+  </div>
+</div>
+
+
+
+<!-- Scheduling -->
+<div class="ov" data-s="scheduling" data-show="flex">
+  <div class="dlg" role="dialog" aria-labelledby="sc-title">
+    <div class="dh"><span id="sc-title">Scheduling posts</span></div>
+    <div class="db">
+      <p><span class="spin"></span> <span data-aud="one" data-show="">Scheduling 8 posts for Jane Advisor…</span><span data-aud="all" data-show="">Scheduling 8 posts for 12 advisors…</span></p>
+      <div class="skel"></div>
+      <div class="skel"></div>
+    </div>
+  </div>
+</div>
+
+<!-- Edit -->
+<div class="ov" data-s="edit" data-show="flex" onclick="if(event.target===this)set('s','done')">
+  <div class="dlg" role="dialog" aria-labelledby="ed-title">
+    <div class="dh"><span id="ed-title">Edit scheduled post</span><span class="sp"></span>
+      <button class="btn t sm" type="button" aria-label="Close" onclick="set('s','done')">×</button></div>
+    <div class="db">
+      <p class="help">This is the same editor used for a post you scheduled by hand. Changes apply to this post only.</p>
+      <div class="f"><label for="ed-msg">Message</label>
+        <textarea id="ed-msg">RRSP contribution room resets soon. A short, plain-language look at what to consider before year-end.</textarea></div>
+      <div class="f"><label for="ed-date">Send date and time (Pacific)</label>
+        <input id="ed-date" value="2026-12-01 09:00"></div>
+      <p class="help">Profiles: LinkedIn · Jane Advisor, LinkedIn · Your Firm Name, Facebook · Your Firm Name</p>
+    </div>
+    <div class="da">
+      <button class="btn skip" type="button" onclick="set('s','done')">Cancel</button>
+      <button class="btn c" type="button" onclick="set('s','done');toast('Post updated. It stays scheduled and has not been published.')">Save</button>
+    </div>
+  </div>
+</div>
+
+<!-- Delete -->
+<div class="ov" data-s="delete" data-show="flex" onclick="if(event.target===this)set('s','done')">
+  <div class="dlg" role="dialog" aria-labelledby="dl-title">
+    <div class="dh"><span id="dl-title">Delete this scheduled post?</span><span class="sp"></span>
+      <button class="btn t sm" type="button" aria-label="Close" onclick="set('s','done')">×</button></div>
+    <div class="db">
+      <p>This post will be removed from Jane Advisor’s calendar and will not be published. Other posts from this upload are not affected.</p>
+    </div>
+    <div class="da">
+      <button class="btn skip" type="button" onclick="set('s','done')">Keep post</button>
+      <button class="btn danger" type="button" onclick="set('s','done');toast('Post deleted. It will not be published.')">Delete post</button>
+    </div>
+  </div>
+</div>
+
+</div>
+<div class="toast" id="toast" role="status"></div>
+<script>window.DIR = "A";</script>
+<script src="mock.js"></script>
+</body>
+</html>
