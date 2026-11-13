@@ -1,0 +1,371 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect fill='%232b7de9' width='16' height='16' rx='3'/%3E%3C/svg%3E">
+<title>#873 B: Confirm every match</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&display=swap" rel="stylesheet">
+<style>
+
+:root{
+  --navy:#1e2a4a; --blue:#2b7de9; --blue-h:#4a96e0; --bg:#f4f8fc; --ink:#1e2a4a; --muted:#5b6b80;
+  --card:#fff; --line:#e4edf6;
+}
+*{box-sizing:border-box}
+body{margin:0;font:16px/1.5 "DM Sans",system-ui,sans-serif;background:var(--bg);color:var(--ink)}
+h1,h2,.greeting{font-family:Fraunces,Georgia,serif;font-weight:600}
+.mockbar{background:#1f2a44;color:#fff;padding:8px 14px;display:flex;flex-wrap:wrap;gap:8px;align-items:center;font-size:12.5px;position:sticky;top:0;z-index:50}
+.mockbar a{color:#cfe3ff}.mockbar .sp{flex:1}
+.mockbar button{background:#33415f;color:#fff;border:0;border-radius:4px;padding:6px 10px;min-height:32px;cursor:pointer;font:inherit}
+.mockbar button.on{background:var(--blue)}
+.banner{background:#f8f1d4;color:#6b5a16;text-align:center;font-size:12.5px;padding:8px 12px;border-bottom:1px solid #efe3b8}
+.app{display:flex;min-height:calc(100vh - 68px)}
+.side{width:232px;background:var(--navy);color:#fff;display:flex;flex-direction:column;padding:20px 16px 16px;flex-shrink:0}
+.brand{font-family:Fraunces,Georgia,serif;font-size:18px;font-weight:600;margin:0 8px 28px;letter-spacing:.01em}
+.nav button{display:flex;align-items:center;gap:10px;width:100%;text-align:left;background:transparent;border:0;color:#d7deea;padding:11px 14px;border-radius:12px;font:500 15px "DM Sans",sans-serif;cursor:pointer;margin-bottom:4px}
+.nav button.on{background:var(--blue);color:#fff}
+.nav button:hover:not(.on){background:rgba(255,255,255,.06)}
+.ico{width:18px;text-align:center;font-size:15px}
+.side .sp{flex:1}
+.who{display:flex;align-items:center;gap:10px;padding-top:16px;border-top:1px solid rgba(255,255,255,.12);margin-top:12px}
+.av{width:32px;height:32px;border-radius:50%;background:#3d4d73;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700}
+.who span{font-size:13.5px}
+.menu{display:none;margin:8px;background:var(--navy);color:#fff;border:0;border-radius:10px;padding:10px 14px;min-height:44px;font:600 14px "DM Sans",sans-serif;cursor:pointer}
+.main{flex:1;padding:48px 32px 80px;position:relative;display:flex;flex-direction:column;align-items:center}
+.home{width:min(640px,100%);margin:auto;text-align:center;padding-bottom:48px}
+.greeting{font-size:44px;line-height:1.15;margin:0 0 28px;color:var(--navy);letter-spacing:-.02em}
+.ask{display:flex;align-items:center;background:#fff;border:1px solid #e8eef5;border-radius:999px;box-shadow:0 8px 28px rgba(30,42,74,.08);padding:6px 8px 6px 20px;margin:0 0 16px}
+.ask input{flex:1;border:0;outline:none;font:16px "DM Sans",sans-serif;background:transparent;min-height:44px;color:var(--ink)}
+.ask input::placeholder{color:#8a97a8}
+.mic{width:44px;height:44px;border:0;background:transparent;border-radius:50%;cursor:pointer;color:#7b8aa0;font-size:18px}
+.mic:hover,.mic.on{color:var(--blue);background:#eef5ff}
+.cta{display:block;width:100%;background:var(--blue);color:#fff;border:0;border-radius:16px;padding:16px 20px;min-height:56px;font:600 18px "DM Sans",sans-serif;cursor:pointer;box-shadow:0 10px 24px rgba(43,125,233,.28)}
+.cta:hover{background:var(--blue-h)}
+.hint{margin:14px 0 0;color:var(--muted);font-size:14px}
+.foot{position:absolute;bottom:20px;left:0;right:0;text-align:center;color:#9aa6b5;font-size:12.5px}
+.card{width:min(680px,100%);background:#fff;border-radius:24px;padding:28px 32px 22px;box-shadow:0 16px 40px rgba(30,42,74,.08);margin:auto}
+.kicker{color:var(--blue);font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;margin:0 0 6px}
+.sublab{font-size:12.5px;color:var(--muted);margin:0 0 4px}
+.subj{font-family:Fraunces,Georgia,serif;font-size:26px;line-height:1.3;margin:0 0 18px;font-weight:600;hyphens:none;overflow-wrap:normal}
+.piece{display:grid;grid-template-columns:118px 1fr auto;gap:12px;align-items:start;padding:16px 0;border-top:1px solid var(--line)}
+.piece:first-of-type{border-top:1px solid var(--line)}
+.pill{display:inline-block;background:#eaf2fd;color:var(--blue);border-radius:999px;padding:6px 10px;font-size:11px;font-weight:700;letter-spacing:.04em;text-transform:uppercase}
+.piece h3{margin:0 0 4px;font:600 16px "DM Sans",sans-serif}
+.piece p{margin:0;color:var(--muted);font-size:14px}
+.swap{background:none;border:0;color:var(--blue);font:600 13px "DM Sans",sans-serif;cursor:pointer;padding:6px 0;min-height:36px;white-space:nowrap}
+.actions{display:flex;flex-wrap:wrap;gap:10px;margin:18px 0 8px}
+.btn{border-radius:12px;padding:12px 16px;min-height:44px;font:600 15px "DM Sans",sans-serif;cursor:pointer}
+.btn.primary{background:var(--blue);color:#fff;border:0}.btn.primary:hover{background:var(--blue-h)}
+.btn.ghost{background:#fff;color:var(--navy);border:1.5px solid #d5deea}
+.note{color:var(--muted);font-size:13.5px;margin:4px 0 0}
+.status{display:inline-block;background:#eef5ff;color:var(--blue);border-radius:999px;padding:4px 10px;font-size:12px;font-weight:700;margin-bottom:8px}
+.alert{background:#eef5ff;border:1px solid #c5dbf5;border-radius:12px;padding:16px;text-align:center}
+.bad{background:#fdecea;border:1px solid #f5c2c0;border-radius:12px;padding:16px;text-align:center}
+.empty{text-align:center;color:var(--muted);padding:48px 16px}
+.toast{position:fixed;bottom:16px;left:50%;transform:translateX(-50%);background:var(--navy);color:#fff;padding:10px 14px;border-radius:8px;display:none;z-index:60}
+@media(max-width:700px){
+  .side{display:none}.side.open{display:flex;position:fixed;inset:auto 0 0 0;top:68px;z-index:40;width:100%;height:auto;flex-direction:column}
+  .menu{display:block}
+  .main{padding:24px 16px 72px}
+  .greeting{font-size:32px}
+  .subj{font-size:22px}
+  .piece{grid-template-columns:1fr;gap:6px}
+  .actions .btn{flex:1}
+}
+
+
+.main{align-items:stretch}
+.page{width:min(1100px,100%);margin:0 auto}
+.page h1{font-family:Fraunces,Georgia,serif;font-size:28px;margin:0 0 6px;font-weight:600}
+.lead{color:var(--muted);margin:0 0 16px;font-size:14.5px}
+.toolbar{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin:0 0 14px}
+.tbl-wrap{background:#fff;border-radius:16px;box-shadow:0 12px 32px rgba(30,42,74,.08);overflow:auto}
+table.camps{width:100%;border-collapse:collapse;font-size:13.5px}
+table.camps th{text-align:left;font-size:12px;letter-spacing:.03em;text-transform:uppercase;color:var(--muted);padding:10px 12px;border-bottom:1px solid var(--line);background:#f7fafc;white-space:nowrap}
+table.camps td{padding:12px;border-bottom:1px solid var(--line);vertical-align:middle}
+table.camps tr.pick{cursor:pointer}
+table.camps tr.pick:hover{background:#f4f8fc}
+table.camps tr.on{background:#eef5ff}
+.chip{display:inline-block;border-radius:999px;padding:3px 9px;font-size:11.5px;font-weight:700;line-height:1.4;white-space:nowrap}
+.chip.ok{background:#e8f5e9;color:#1b7a32}
+.chip.wait{background:#fff4d6;color:#8a5a00}
+.chip.no{background:#fdecea;color:#b71c1c}
+.chip.mute{background:#eef1f5;color:#607080}
+.chip.info{background:#e3f2fd;color:#0d47a1}
+.card{background:#fff;border-radius:16px;box-shadow:0 12px 32px rgba(30,42,74,.08);padding:22px 24px;margin:0 0 16px}
+.card h2{font-family:Fraunces,Georgia,serif;font-size:22px;margin:0 0 8px;font-weight:600}
+.meta{display:grid;grid-template-columns:160px 1fr;gap:8px 12px;font-size:14px;margin:12px 0}
+.meta .k{color:var(--muted)}
+.trail{list-style:none;padding:0;margin:8px 0 0}
+.trail li{padding:10px 0;border-top:1px solid var(--line);font-size:14px}
+.trail b{display:block;margin-bottom:2px}
+.qitem{border:1.5px solid var(--line);border-radius:12px;padding:14px 16px;margin:0 0 10px;background:#fff}
+.qitem.amb{border-color:#f0c36d}
+.qitem.none{border-color:#e57373}
+.qitem.ok{border-color:#81c784}
+.slack{background:#fff;border-radius:16px;box-shadow:0 12px 32px rgba(30,42,74,.08);overflow:hidden}
+.slack .sh{background:#4a154b;color:#fff;padding:10px 16px;font:600 13.5px "DM Sans",sans-serif}
+.slack .sb{padding:16px 18px}
+.slack .who{font-weight:700;margin:0 0 6px}
+.slack pre{white-space:pre-wrap;font:14.5px/1.5 "DM Sans",sans-serif;margin:0;color:var(--ink)}
+.pair{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.lab{font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin:0 0 8px}
+select,input[type=text]{border:1.5px solid #d5deea;border-radius:10px;padding:8px 10px;font:14px "DM Sans",sans-serif;background:#fff}
+@media(max-width:700px){
+  .pair{grid-template-columns:1fr}
+  .meta{grid-template-columns:1fr}
+  table.camps th,table.camps td{padding:8px}
+}
+
+</style>
+</head>
+<body>
+<div class="mockbar"><a href="index.html">#873</a> · <b>B: Confirm every match</b> · <a href="a-column.html">A</a> · <a href="b-confirm.html">B</a> · <a href="c-detail.html">C</a> · <a href="build-contract.html">Contract</a>
+<span class="sp"></span>
+<button data-s="list" onclick="go('list')">list</button>
+<button data-s="detail" onclick="go('detail','camp_nov')">detail · approved</button>
+<button data-s="detail2" onclick="sel='camp_year';go('detail')">detail · awaiting</button>
+<button data-s="queue" onclick="go('queue')">confirm inbox</button>
+<button data-s="fix" onclick="go('fix')">fix match</button>
+<button data-s="slack" onclick="go('slack')">Slack before/after</button></div>
+<div class="banner">Proposal mockup — not on the live site. Example data only. Nothing is sent.</div>
+<button class="menu" type="button" onclick="document.getElementById('side').classList.toggle('open')" aria-label="Menu">Menu</button>
+<div class="app">
+  <aside class="side" id="side">
+    <div class="brand">Your Firm Name</div>
+    <nav class="nav">
+      <button data-nav="home" onclick="goNav('home')"><span class="ico">⌂</span> Home</button>
+      <button data-nav="library" onclick="goNav('library')"><span class="ico">▦</span> Library</button>
+      <button class="on" data-nav="campaigns" onclick="goNav('campaigns')"><span class="ico">✉</span> Campaigns</button>
+      <button data-nav="settings" onclick="goNav('settings')"><span class="ico">⚙</span> Settings</button>
+    </nav>
+    <div class="sp"></div>
+    <div class="who"><span class="av">JA</span><span>Jane Advisor</span></div>
+  </aside>
+  <div class="main" id="main"></div>
+</div>
+<div class="toast" id="toast"></div>
+<script>
+const DIR='b';
+
+const CAMPS = [
+  {id:'camp_nov', name:'November money update', subject:'Your November money update: TFSA room, the RRSP deadline, and a retirement check-in', status:'Scheduled', list:'Newsletter', recipients:'1,104',
+    compliance:'approved', approval:'approved', approvedAt:'Nov 13, 2026, 9:06 AM PT',
+    trail:[{when:'Nov 12, 2026, 3:14 PM PT', by:'Campaign logger (bot)', src:'Email from Your Dealer Compliance <compliance@example.com>', ref:'msg-20441', sub:'Approved: November money update', action:'Approved by compliance'}]},
+  {id:'camp_year', name:'Year-end checklist', subject:'A simple year-end money checklist', status:'Draft', list:'Clients', recipients:'842',
+    compliance:'awaiting', approval:'approved', approvedAt:'Nov 13, 2026, 9:18 AM PT', trail:[]},
+  {id:'camp_ins', name:'Life insurance: how much is enough?', subject:'How much life insurance is enough?', status:'Scheduled', list:'Clients', recipients:'842',
+    compliance:'none', approval:'approved', approvedAt:'Nov 12, 2026, 4:02 PM PT', trail:[]},
+  {id:'camp_rrsp', name:'RRSP deadline reminder', subject:'The RRSP deadline, in plain language', status:'Draft', list:'Newsletter', recipients:'1,104',
+    compliance:'declined', approval:'sent', approvedAt:'',
+    trail:[{when:'Nov 12, 2026, 11:40 AM PT', by:'Campaign logger (bot)', src:'Email from Your Dealer Compliance <compliance@example.com>', ref:'msg-20390', sub:'Not required / declined: RRSP deadline reminder', action:'Declined'}]},
+  {id:'camp_tax', name:'Tax tips for clients', subject:'A short tax-season checklist', status:'Draft', list:'Prospects', recipients:'218',
+    compliance:'awaiting', approval:'sent', approvedAt:'', trail:[]}
+];
+const QUEUE = [
+  {id:'q1', state:'recorded', from:'Your Dealer Compliance <compliance@example.com>', sub:'Approved: November money update', when:'Nov 12, 2026, 3:14 PM PT', ref:'msg-20441', match:'camp_nov', conf:'High', note:'Auto-recorded'},
+  {id:'q2', state:'ambiguous', from:'Your Dealer Compliance <compliance@example.com>', sub:'Approved — year-end / November update', when:'Nov 13, 2026, 8:02 AM PT', ref:'msg-20488', match:'', conf:'Low', note:'Two possible campaigns'},
+  {id:'q3', state:'nomatch', from:'Your Dealer Compliance <compliance@example.com>', sub:'Re: campaign approved', when:'Nov 13, 2026, 8:47 AM PT', ref:'msg-20501', match:'', conf:'None', note:'No campaign name or id in the subject or body'}
+];
+let view='list', sel='camp_nov', qSel='q2';
+function toast(m){const t=document.getElementById('toast');t.textContent=m;t.style.display='block';clearTimeout(t._t);t._t=setTimeout(()=>t.style.display='none',2200)}
+function camp(id){return CAMPS.find(c=>c.id===id)}
+function cChip(s){
+  if(s==='approved') return '<span class="chip ok">Approved by compliance</span>';
+  if(s==='awaiting') return '<span class="chip wait">Awaiting</span>';
+  if(s==='declined') return '<span class="chip no">Declined</span>';
+  return '<span class="chip mute">Not required</span>';
+}
+function aChip(s){
+  if(s==='approved') return '<span class="chip ok">Approved</span>';
+  if(s==='sent') return '<span class="chip info">Sent</span>';
+  if(s==='failed') return '<span class="chip no">Failed</span>';
+  return '<span class="chip mute">—</span>';
+}
+function setSw(){document.querySelectorAll('.mockbar [data-s]').forEach(b=>b.classList.toggle('on',b.getAttribute('data-s')===view))}
+function go(v,id){view=v;if(id)sel=id;render()}
+function goNav(n){
+  document.querySelectorAll('.nav button').forEach(b=>b.classList.toggle('on',b.getAttribute('data-nav')===n));
+  document.getElementById('side').classList.remove('open');
+  if(n==='campaigns'){go('list');return}
+  document.getElementById('main').innerHTML='<div class="empty"><h1>'+n[0].toUpperCase()+n.slice(1)+'</h1><p>This area is unchanged in this mock.</p><button class="btn primary" onclick="document.querySelectorAll(\'.nav button\').forEach(b=>b.classList.toggle(\'on\',b.getAttribute(\'data-nav\')===\'campaigns\'));go(\'list\')">Back to Campaigns</button></div>';
+  view='other';setSw();
+}
+function foot(){return '<p class="foot">Sample data only — Jane Advisor, Your Dealer Compliance, Your Firm Name, and example.com are placeholders.</p>'}
+function listTable(){
+  return `<div class="tbl-wrap"><table class="camps">
+    <thead><tr><th>Name</th><th>Subject</th><th>Status</th><th>Compliance</th><th>Approval</th></tr></thead>
+    <tbody>${CAMPS.map(c=>`<tr class="pick${c.id===sel?' on':''}" onclick="go('detail','${c.id}')">
+      <td><b>${c.name}</b></td><td>${c.subject}</td><td><span class="chip info">${c.status}</span></td>
+      <td>${cChip(c.compliance)}</td><td>${aChip(c.approval)}</td>
+    </tr>`).join('')}</tbody>
+  </table></div>`;
+}
+function escTxt(s){return String(s||'').replace(/[&<>]/g,function(ch){return {'&':'&amp;','<':'&lt;','>':'&gt;'}[ch]})}
+function slackText(c, withComp){
+  var lines=['Approved!! Jane Advisor approved this','\tEmail Campaign: '+c.subject,'\tTo List: '+c.list+' - '+c.recipients+' Recipients'];
+  if(withComp){
+    var line=c.compliance==='approved'?'Compliance: Approved by compliance'
+      :c.compliance==='declined'?'Compliance: Declined'
+      :c.compliance==='none'?'Compliance: Not required'
+      :'Compliance: Awaiting approval';
+    lines.push('\t'+line);
+  }
+  lines.push('Go to email campaign: <https://yourfirm.example/campaigns/'+c.id+'|'+c.subject+'>');
+  lines.push('View all email Campaigns: <https://yourfirm.example/campaigns|Email Campaigns>');
+  return lines.join('\n');
+}
+function slackCard(title, c, withComp){
+  return `<div class="slack"><div class="sh">#email_campaign_approved</div><div class="sb">
+    <div class="lab">${title}</div>
+    <div class="who">FC Bot</div>
+    <pre>${escTxt(slackText(c,withComp))}</pre>
+  </div></div>`;
+}
+function detail(c){
+  const trail=c.trail.length?`<ul class="trail">${c.trail.map(e=>`<li><b>${e.action}</b>Recorded by ${e.by}<br>When: ${e.when}<br>Source: ${e.src}<br>Subject: ${e.sub}<br>Email ref: ${e.ref}</li>`).join('')}</ul>`
+    :`<p class="help" style="color:var(--muted);font-size:14px">No compliance approval has been recorded yet.</p>`;
+  const admin=DIR!=='x';
+  return `<div class="card">
+    <button class="btn ghost" type="button" onclick="go('list')" style="margin-bottom:12px">Back to list</button>
+    <h2>${c.name}</h2>
+    <p class="lead">${c.subject}</p>
+    <div class="meta">
+      <div class="k">Status</div><div>${c.status}</div>
+      <div class="k">To</div><div>${c.list} · ${c.recipients} recipients</div>
+      <div class="k">Compliance</div><div>${cChip(c.compliance)}</div>
+      <div class="k">Approval</div><div>${aChip(c.approval)}${c.approvedAt?' · '+c.approvedAt:''}</div>
+    </div>
+    <p class="lab" style="margin-top:16px">Compliance audit trail</p>
+    ${trail}
+    ${admin?`<div class="actions" style="margin-top:16px">
+      <button class="btn ghost" type="button" onclick="go('fix')">Fix match</button>
+      ${DIR==='a'?`<button class="btn ghost" type="button" onclick="go('queue')">Open unmatched inbox</button>`:''}
+      ${DIR==='b'?`<button class="btn ghost" type="button" onclick="go('queue')">Open confirm inbox</button>`:''}
+    </div>`:''}
+  </div>`;
+}
+function fixPanel(){
+  const c=camp(sel);
+  return `<div class="card">
+    <button class="btn ghost" type="button" onclick="go('detail')" style="margin-bottom:12px">Back to campaign</button>
+    <h2>Fix a compliance match</h2>
+    <p class="lead">Recorded approval for <b>${c.name}</b>.</p>
+    <div class="meta">
+      <div class="k">Current status</div><div>${cChip(c.compliance)}</div>
+    </div>
+    <label class="lab" style="display:block;margin:12px 0 6px">Set status</label>
+    <select id="fixst" onchange="">
+      <option value="none">Not required</option>
+      <option value="awaiting">Awaiting</option>
+      <option value="approved" ${c.compliance==='approved'?'selected':''}>Approved by compliance</option>
+      <option value="declined" ${c.compliance==='declined'?'selected':''}>Declined</option>
+    </select>
+    <label class="lab" style="display:block;margin:12px 0 6px">Source email ref</label>
+    <input id="fixref" type="text" value="${(c.trail[0]&&c.trail[0].ref)||''}" style="width:100%;max-width:360px" placeholder="msg-…">
+    <div class="actions">
+      <button class="btn primary" type="button" onclick="applyFix()">Save</button>
+      <button class="btn ghost" type="button" onclick="c.compliance='awaiting';c.trail=[];toast('Cleared');go('detail')">Clear record</button>
+    </div>
+  </div>`;
+}
+function applyFix(){
+  const c=camp(sel);
+  const st=document.getElementById('fixst').value;
+  const ref=document.getElementById('fixref').value.trim()||'msg-manual';
+  c.compliance=st;
+  if(st==='approved'||st==='declined'){
+    c.trail=[{when:'Nov 13, 2026, 10:40 AM PT', by:'Pat Admin', src:'Recorded in Email Campaigns', ref, sub:c.subject, action:st==='approved'?'Approved by compliance':'Declined'}];
+  } else { c.trail=[]; }
+  toast('Saved'); go('detail');
+}
+function assignQ(qid, campId){
+  const q=QUEUE.find(x=>x.id===qid); const c=camp(campId);
+  if(!q||!c)return;
+  q.state='recorded'; q.match=campId; q.conf='Set by admin'; q.note='Assigned';
+  c.compliance='approved';
+  c.trail=[{when:'Nov 13, 2026, 10:40 AM PT', by:'Pat Admin', src:'Email from Your Dealer Compliance <compliance@example.com>', ref:q.ref, sub:q.sub, action:'Approved by compliance'}];
+  sel=campId; toast('Assigned'); go('detail');
+}
+function dismissQ(qid){
+  const q=QUEUE.find(x=>x.id===qid); if(!q)return;
+  q.state='dismissed'; q.note='Not a match'; toast('Dismissed'); render();
+}
+function confirmQ(qid){
+  const q=QUEUE.find(x=>x.id===qid);
+  if(!q||!q.match)return;
+  assignQ(qid, q.match);
+}
+function queuePanel(){
+  const title=DIR==='b'?'Confirm compliance emails':'Unmatched and ambiguous emails';
+  const lead=DIR==='b'
+    ?'Dealer compliance emails waiting to be confirmed against a campaign.'
+    :'Emails that did not match one campaign, or matched more than one.';
+  return `<div class="card">
+    <button class="btn ghost" type="button" onclick="go('list')" style="margin-bottom:12px">Back to list</button>
+    <h2>${title}</h2>
+    <p class="lead">${lead}</p>
+    ${QUEUE.map(q=>{
+      const cls=q.state==='recorded'?'ok':q.state==='ambiguous'?'amb':q.state==='dismissed'?'':'none';
+      const matches=q.state==='ambiguous'
+        ? CAMPS.filter(c=>c.id==='camp_nov'||c.id==='camp_year')
+        : CAMPS;
+      return `<div class="qitem ${cls}">
+        <b>${q.sub}</b>
+        <div class="help" style="color:var(--muted);font-size:13px;margin:4px 0 8px">${q.from}<br>${q.when} · Ref ${q.ref} · ${q.conf} confidence · ${q.note}</div>
+        ${q.state==='recorded'?`<p>Recorded on <b>${camp(q.match).name}</b></p>`:''}
+        ${q.state==='dismissed'?'<p>Dismissed — not a match.</p>':''}
+        ${(q.state==='nomatch'||q.state==='ambiguous'||(DIR==='b'&&q.state!=='recorded'&&q.state!=='dismissed'))?`
+          <label class="lab">Assign to campaign</label>
+          <div class="actions">
+            <select id="as-${q.id}">${matches.map(c=>`<option value="${c.id}" ${c.id===q.match?'selected':''}>${c.name}</option>`).join('')}</select>
+            <button class="btn primary" type="button" onclick="assignQ('${q.id}',document.getElementById('as-${q.id}').value)">Record approval</button>
+            <button class="btn ghost" type="button" onclick="dismissQ('${q.id}')">Not a match</button>
+          </div>`:''}
+      </div>`}).join('')}
+  </div>`;
+}
+function slackView(){
+  const year=camp('camp_year');
+  const nov=camp('camp_nov');
+  return `<div class="page">
+    <h1>Slack approval post</h1>
+    <div class="pair">
+      ${slackCard('Before — today', year, false)}
+      ${slackCard('After — advisor approved, compliance still awaiting', year, true)}
+    </div>
+    <div style="height:14px"></div>
+    ${slackCard('After — advisor approved, and compliance has already approved', nov, true)}
+    <div class="actions"><button class="btn ghost" type="button" onclick="go('list')">Back to list</button></div>
+  </div>`+foot();
+}
+function render(){
+  setSw();
+  const main=document.getElementById('main');
+  if(view==='slack'){main.innerHTML=slackView();return}
+  if(view==='queue'){main.innerHTML='<div class="page">'+queuePanel()+'</div>'+foot();return}
+  if(view==='fix'){main.innerHTML='<div class="page">'+fixPanel()+'</div>'+foot();return}
+  if(view==='detail'){main.innerHTML='<div class="page">'+detail(camp(sel))+'</div>'+foot();return}
+  const extra=DIR==='a'?`<button class="btn ghost" type="button" onclick="go('queue')">Unmatched inbox (2)</button>`
+    :DIR==='b'?`<button class="btn ghost" type="button" onclick="go('queue')">Confirm inbox (2)</button>`
+    :'';
+  main.innerHTML=`<div class="page">
+    <div class="toolbar"><h1>Campaigns</h1><div class="actions">${extra}<button class="btn ghost" type="button" onclick="go('slack')">Slack post</button><button class="btn primary" type="button">Create Campaign</button></div></div>
+    ${listTable()}
+  </div>`+foot();
+}
+(function boot(){
+  const q=location.search;
+  const m=q.match(/[?&]s=([a-z0-9-]+)/);
+  const c=q.match(/[?&]c=([a-z0-9_]+)/);
+  if(c)sel=c[1];
+  if(m) view=m[1]==='home'?'list':m[1];
+  render();
+})();
+
+</script>
+</body>
+</html>

@@ -1,0 +1,78 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>#862 build contract</title><style>body{font:15px/1.55 Inter,system-ui,sans-serif;max-width:920px;margin:24px auto;padding:0 16px;color:#2c3e50}a{color:#1976d2}li{margin:10px 0}.r{background:#e8f5e9;border:1px solid #a5d6a7;border-radius:10px;padding:10px 14px}.note{background:#fff8e1;border:1px solid #ffe0a3;border-radius:8px;padding:10px 12px}h1{font-size:26px}.muted{color:#607080;font-size:13px}table{border-collapse:collapse;width:100%}td,th{border:1px solid #e0e5eb;padding:6px 8px;text-align:left;vertical-align:top}th{background:#f3f6f9}</style></head><body><p><a href="index.html">Hub</a> · <a href="../">All mocks</a></p><h1>#862 Email editor: link box next to the selected text</h1>
+<p><strong>Status:</strong> Published on GitHub Pages at https://kartboy16.github.io/fc-mocks/862/. Not agent-ready. Soft Dev hold until a direction is picked.</p>
+<h2>Sources (read-only)</h2>
+<ul>
+<li>Issue #862</li>
+<li><code>imports/ui/EmailCampaigns/EmailContentEditor.jsx</code> on <code>origin/main</code> (<code>10e691a</code>)</li>
+</ul>
+<h2>Recommendation</h2>
+<p><strong>A — selection-anchored popover.</strong> One direction. The bug is that the link form is not next to the selected text. Anchoring a compact popover to the selection (and flipping or using a bottom sheet when space runs out) matches the expected behaviour without a second product concept.</p>
+<h2>Likely cause</h2>
+<p>This is not a third-party editor-library popover (there is no Froala, TinyMCE, Quill, or similar dependency). The editor is a custom <code>contentEditable</code> surface. Choosing Link sets <code>linkDialogOpen</code> and renders a grey <code>Box</code> with <code>mt: 2</code> <strong>after</strong> the editor canvas (<code>EmailContentEditor.jsx</code>, the “Link Dialog” block). The form therefore appears under the whole body, far from the highlight. Clicking an existing <code>&lt;a&gt;</code> opens the same under-editor panel. New links are written with <code>target="_blank"</code> and there is no Open-in-a-new-tab control today.</p>
+<h2>Screens</h2>
+<table>
+<thead>
+<tr>
+<th>Screen</th>
+<th>Facing</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Today</td>
+<td>Advisor / staff (editor)</td>
+<td>Current under-editor Link Text + URL + Insert link / Cancel</td>
+</tr>
+<tr>
+<td>Popover (A)</td>
+<td>Advisor / staff</td>
+<td>Anchored to the selection: URL, Open in a new tab, Apply, Cancel</td>
+</tr>
+<tr>
+<td>Right edge</td>
+<td>Advisor / staff</td>
+<td>Popover shifts left so it stays in view</td>
+</tr>
+<tr>
+<td>Bottom edge</td>
+<td>Advisor / staff</td>
+<td>Popover flips above the selection</td>
+</tr>
+<tr>
+<td>Edit existing</td>
+<td>Advisor / staff</td>
+<td>Same popover, prefilled URL, Remove available</td>
+</tr>
+<tr>
+<td>Mobile (390)</td>
+<td>Advisor / staff</td>
+<td>Bottom sheet with the same fields</td>
+</tr>
+</tbody>
+</table>
+<p>Client-facing email body links use <code>yourfirm.example</code> only.</p>
+<h2>States</h2>
+<p>today, open (new link), right edge, bottom edge, edit existing, mobile sheet. Apply / Remove / Cancel; nothing is sent.</p>
+<h2>Copy</h2>
+<ul>
+<li>“Link” / “Edit link”</li>
+<li>“URL”</li>
+<li>“Open in a new tab”</li>
+<li>“Apply” / “Remove” / “Cancel”</li>
+<li>Today: “Link Text”, “URL”, “Insert link”</li>
+</ul>
+<p>No estimates or explainer prose on the mock pages.</p>
+<h2>In / out of scope</h2>
+<p><strong>In:</strong> anchored popover, edge flipping, edit/remove, mobile sheet, Open in a new tab (new relative to today). <strong>Out:</strong> button-link and image-link panels (they stay as today’s under-editor panels unless later asked), live send, changing the Link Check UI.</p>
+<h2>Desktop vs mobile</h2>
+<p>1280: popover next to the highlight, 300px wide, flips at the right or bottom edge. 390: bottom sheet, 40px actions, same fields.</p>
+<h2>Agent-time estimate (hours, cloud build + FC Tester + fix loop)</h2>
+<p>Cloud agent build <strong>6–10 h</strong> + FC Tester <strong>3–5 h</strong> (add, edit, remove, scroll, right/bottom edges, 1280/390, selection not lost) + fix loop <strong>2–3 h</strong> ≈ <strong>11–18 h</strong>. Staging first. No build launched.</p>
+<h2>Open questions</h2>
+<ol>
+<li>Should Open in a new tab stay checked by default (today always uses <code>target="_blank"</code>)?</li>
+<li>Do the Insert button and image-link forms also move to an anchored popover, or stay as under-editor panels?</li>
+<li>Keyboard: does Enter apply and Esc cancel, and is the URL field focused on open?</li>
+<li>When the selected text itself is edited in the popover (today has a Link Text field; A omits it and uses the selection), should Link Text remain?</li>
+</ol></body></html>

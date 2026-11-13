@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>#873 Log compliance approvals on email campaigns</title>
+<style>
+body{font:15px/1.55 "DM Sans",Inter,system-ui,sans-serif;max-width:920px;margin:24px auto;padding:0 16px;color:#2c3e50}
+a{color:#2b7de9}li{margin:10px 0}
+.r{background:#e8f5e9;border:1px solid #a5d6a7;border-radius:10px;padding:10px 14px}
+.note{background:#fff8e1;border:1px solid #ffe0a3;border-radius:8px;padding:10px 12px}
+</style>
+</head>
+<body>
+<p><a href="../">All mocks</a> · <a href="https://github.com/kartboy16/content-library/issues/873">#873</a></p>
+<h1>#873 Log compliance approvals on email campaigns</h1>
+<p class="r"><b>Recommend A</b> — put “Approved by compliance” on the existing <b>Compliance</b> column (not the advisor Approval column), auto-record high-confidence Gmail matches, and send no-match or ambiguous emails to an admin inbox. The advisor-approved Slack post in #email_campaign_approved adds a Compliance line. B and C keep the same statuses and Slack line; they only change how matches are confirmed.</p>
+<div class="note">Fixtures are generic (Jane Advisor, Your Dealer Compliance, Your Firm Name, example.com). The logger is ops automation; this mock is the FC list, audit trail, admin fix, and Slack wording. Nothing is sent.</div>
+<ul>
+<li><a href="a-column.html"><b>A. Compliance column + unmatched inbox (recommended)</b></a>
+  · <a href="a-column.html?s=list">list</a>
+  · <a href="a-column.html?s=detail&amp;c=camp_nov">detail, approved</a>
+  · <a href="a-column.html?s=detail&amp;c=camp_year">detail, awaiting</a>
+  · <a href="a-column.html?s=queue">unmatched inbox</a>
+  · <a href="a-column.html?s=fix&amp;c=camp_nov">fix match</a>
+  · <a href="a-column.html?s=slack">Slack before/after</a>
+  · <a href="a-column.html?s=list&amp;phone">list phone</a></li>
+<li><a href="b-confirm.html"><b>B. Confirm every match</b></a>
+  · <a href="b-confirm.html?s=queue">confirm inbox</a>
+  · <a href="b-confirm.html?s=slack">Slack before/after</a></li>
+<li><a href="c-detail.html"><b>C. Fix on the campaign only</b></a>
+  · <a href="c-detail.html?s=fix&amp;c=camp_year">fix match</a>
+  · <a href="c-detail.html?s=slack">Slack before/after</a></li>
+<li><a href="build-contract.html">Build contract</a> · <a href="build-contract.md">.md</a></li>
+</ul>
+</body>
+</html>

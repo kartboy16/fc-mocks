@@ -1,0 +1,109 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>#865 build contract</title><style>body{font:15px/1.55 Inter,system-ui,sans-serif;max-width:920px;margin:24px auto;padding:0 16px;color:#2c3e50}a{color:#1976d2}li{margin:10px 0}.r{background:#e8f5e9;border:1px solid #a5d6a7;border-radius:10px;padding:10px 14px}.note{background:#fff8e1;border:1px solid #ffe0a3;border-radius:8px;padding:10px 12px}h1{font-size:26px}.muted{color:#607080;font-size:13px}table{border-collapse:collapse;width:100%}td,th{border:1px solid #e0e5eb;padding:6px 8px;text-align:left;vertical-align:top}th{background:#f3f6f9}</style></head><body><p><a href="index.html">Hub</a> · <a href="../">All mocks</a></p><h1>#865 Slimmer app header and footer</h1>
+<p><strong>Status:</strong> Published on GitHub Pages at https://kartboy16.github.io/fc-mocks/865/. Not agent-ready. Soft Dev hold until a direction is picked.</p>
+<h2>Sources (read-only)</h2>
+<ul>
+<li>Issue #865 (related: #851 advisor home / sidebar idea)</li>
+<li><code>imports/ui/ContentLibrary.jsx</code> left rail and mobile <code>AppBar</code> on <code>origin/main</code> (<code>10e691a</code>)</li>
+<li><code>imports/ui/Navbar.jsx</code> is a separate thin AppBar used on a few older pages (Dashboard, websites), not the main Content Library chrome</li>
+</ul>
+<h2>Recommendation</h2>
+<p><strong>A — keep the left rail and slim it.</strong> Every nav item stays where it is. The screen space comes back from a shorter logo, tighter item padding, a smaller profile footer, and a shorter mobile header.</p>
+<p><strong>B — slim top bar</strong> is a real fork: remove the rail, put primary destinations in a 48px top header, and move Settings &amp; Branding plus account items into More / Account menus. Consider B only if the team wants to leave the left edge for content (the #851 conversation) rather than trim the current rail.</p>
+<h2>What exists today</h2>
+<p>Desktop Content Library has no top AppBar. Chrome is a permanent 90px left rail (<code>py: 3</code>) with a wide vertical product logo, large icons, <code>mb: 2</code> between items, and a pinned Profile footer (48px avatar + label + 16px padding). Rail items: Content, Website, Social Media, Email Campaigns, Calendar, Settings &amp; Branding, Profile. Profile opens: View Profile, Branding &amp; settings, Billing &amp; plan, Help &amp; Support, Sign Out (plus admin-only items, which stay in that menu).</p>
+<p>Mobile: 56px AppBar (40px logo, menu, 36px avatar) and a temporary drawer of the same rail items.</p>
+<p>Approximate heights used on the mock (from today’s layout, not a live tape measure):</p>
+<table>
+<thead>
+<tr>
+<th>Chrome</th>
+<th>Today</th>
+<th>A</th>
+<th>B</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Desktop rail width</td>
+<td>90px</td>
+<td>76px</td>
+<td>none (full-width content)</td>
+</tr>
+<tr>
+<td>Logo block</td>
+<td>104px tall</td>
+<td>40px</td>
+<td>28–36px in the top bar</td>
+</tr>
+<tr>
+<td>Nav row</td>
+<td>~72px</td>
+<td>~48px</td>
+<td>48px bar</td>
+</tr>
+<tr>
+<td>Profile footer</td>
+<td>~88px</td>
+<td>~56px</td>
+<td>32px account button in the bar</td>
+</tr>
+<tr>
+<td>Mobile header</td>
+<td>56px</td>
+<td>48px</td>
+<td>48px</td>
+</tr>
+</tbody>
+</table>
+<h2>Screens</h2>
+<p>Today, A, and B, each at 1280 and 390, with a height readout and a nav-item map.</p>
+<h2>States</h2>
+<p>ready, mobile drawer open, More open (B), Account menu open (B). Admin-only items stay in the Profile / Account menu (not redesigned here).</p>
+<h2>Copy</h2>
+<p>Existing labels only: Content, Website, Social Media, Email Campaigns, Calendar, Settings &amp; Branding, Profile, View Profile, Branding &amp; settings, Billing &amp; plan, Help &amp; Support, Sign Out, More, Menu.</p>
+<p>No estimates or explainer prose on the mock pages beyond the height ticks and the item map.</p>
+<h2>In / out of scope</h2>
+<p><strong>In:</strong> slimmer header/footer chrome, all current destinations still reachable, desktop and mobile. <strong>Out:</strong> redesigning admin tools, changing #851’s advisor-home information architecture, rewriting page content, live logo asset (generic YFN mark used in fixtures).</p>
+<h2>Desktop vs mobile</h2>
+<p>1280: A shows the slim rail; B shows the top bar. 390: hamburger + 48px header (A and B); drawer lists the same items. Targets stay 40px.</p>
+<h2>Agent-time estimate (hours, cloud build + FC Tester + fix loop)</h2>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>A</th>
+<th>B</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Cloud agent build</td>
+<td>10–16</td>
+<td>12–18</td>
+</tr>
+<tr>
+<td>FC Tester (every nav item, Profile menu, desktop + 390, no missing destinations, account/help/billing)</td>
+<td>5–8</td>
+<td>5–8</td>
+</tr>
+<tr>
+<td>Fix loop</td>
+<td>3–5</td>
+<td>3–5</td>
+</tr>
+<tr>
+<td><strong>Total</strong></td>
+<td><strong>18–29 h</strong></td>
+<td><strong>20–31 h</strong></td>
+</tr>
+</tbody>
+</table>
+<p>Touches the shell of every signed-in page. Staging first. No build launched.</p>
+<h2>Open questions</h2>
+<ol>
+<li>Confirm the height targets (the table above is from code layout, not a device measurement).</li>
+<li>Does the vertical product logo shrink in place (A), or is a horizontal mark required?</li>
+<li>Short-height desktops already pin Profile earlier in the list (<code>isShortRail</code>); does A keep that behaviour?</li>
+<li>If B is picked, is Calendar kept in the top bar or moved to More on mid-width screens?</li>
+<li>How this should (or should not) line up with the #851 advisor-home sidebar idea.</li>
+</ol></body></html>

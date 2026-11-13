@@ -1,0 +1,115 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>#860 build contract</title><style>body{font:15px/1.55 "DM Sans",Inter,system-ui,sans-serif;max-width:860px;margin:24px auto;padding:0 16px;color:#2c3e50}a{color:#2b7de9}pre{white-space:pre-wrap;font-family:"DM Sans",Inter,system-ui,sans-serif;font-size:15px;line-height:1.55}</style></head><body><p><a href="index.html">Hub</a> · <a href="../">All mocks</a></p><h1>#860 Dashboard: key numbers on first login</h1>
+<p><strong>Status:</strong> Published on GitHub Pages at https://kartboy16.github.io/fc-mocks/860/. Not agent-ready. Soft Dev hold until a direction is picked.</p>
+<h2>Sources (read-only)</h2>
+<ul>
+<li>Issue #860</li>
+<li>Published #851 advisor home: <code>https://kartboy16.github.io/fc-mocks/851/</code> and <code>/workspace/fc-mocks-pub/851/</code></li>
+<li>Live Email Campaigns reports (read-only): <code>imports/ui/EmailCampaigns/SESReports.jsx</code> (<code>Open Rate</code>, <code>Click Rate</code>, unique opens ÷ delivered or sent, subscriber counts, “No sent campaigns yet.”)</li>
+<li>Live first-login Dashboard today (<code>imports/ui/Dashboard.jsx</code>) is a heavy “What would you like to do today?” card grid — the view the issue says is too much on first login</li>
+<li>Related: #851 (advisor home). This mock extends that home; it does not replace it.</li>
+</ul>
+<h2>Recommendation</h2>
+<p><strong>A. Extend the #851 advisor home with a numbers strip and a last-email module.</strong> One direction only. The issue asks to lead with key numbers on first login <em>and</em> to reconcile with #851 rather than build a competing home. There is no real fork: a separate numbers dashboard would fight the published #851 home.</p>
+<p>On first login the advisor still sees the #851 shell (Your Firm Name wordmark, Home / Library / Campaigns / Settings, time-of-day greeting, Ask FC, <strong>Write a campaign</strong>). The new work is:</p>
+<ol>
+<li>A compact <strong>numbers strip</strong> directly under the greeting: Open rate, Subscribers, Click rate, Sent this month. Figures use the same definitions as Email Campaigns → Reports (open/click as unique opens or clicks ÷ delivered, or sent if delivered is missing; subscribers from all lists). Tiles open the Campaigns reports stub.</li>
+<li>A <strong>last-email module</strong> under the strip (subject, sent date, list, delivered, open and click). “View reports” goes to the same stub.</li>
+<li>The #851 Write a campaign / Ask FC / suggested campaign / draft-only path stays below, unchanged.</li>
+</ol>
+<p>Empty, loading, and error apply to the numbers, not to the campaign CTA. If numbers fail, the rest of the home still works.</p>
+<h2>Screens</h2>
+<table>
+<thead>
+<tr>
+<th>Screen</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Home, ready</td>
+<td>Greeting, four-number strip, last-email module, then Ask FC + Write a campaign</td>
+</tr>
+<tr>
+<td>Home, no data</td>
+<td>New account: em dashes for rates, 0 subscribers, 0 sent; module explains that numbers appear after the first send</td>
+</tr>
+<tr>
+<td>Home, loading</td>
+<td>Skeleton tiles and module; Write a campaign stays available</td>
+</tr>
+<tr>
+<td>Home, error</td>
+<td>“Couldn’t load your numbers” + Try again; Write a campaign stays available</td>
+</tr>
+<tr>
+<td>Suggested campaign / draft / suggest loading, empty, error</td>
+<td>Unchanged from #851</td>
+</tr>
+<tr>
+<td>Campaigns reports stub</td>
+<td>Opened from a tile or View reports; sample last-email row only</td>
+</tr>
+</tbody>
+</table>
+<p>Menu matches #851: Home, Library, Campaigns, Settings. Library and Settings are stubs that return home. Sidebar collapses at 390px.</p>
+<h2>States</h2>
+<p>ready (has sends and subscribers), empty (new account, no data), loading, error (retry). Campaign path (unchanged): suggest loading, suggest empty, suggest error, suggested, draft.</p>
+<h2>Copy</h2>
+<ul>
+<li>Greeting, Ask FC, Write a campaign, and suggestion/draft copy match #851.</li>
+<li>Strip labels: “Open rate” / “Subscribers” / “Click rate” / “Sent this month”</li>
+<li>Ready captions: “Last send · Nov 4” / “All lists” / “November 2026”</li>
+<li>Empty captions: “No sends yet” / “No lists yet”; values “—” for rates, “0” for counts</li>
+<li>Module, ready: “Last email” + the last subject + “Sent Nov 4, 2026 to Newsletter · 1,104 delivered” + “View reports”</li>
+<li>Module, empty: “Your email” / “No campaigns sent yet” / “When you send your first email, open rate, clicks, and subscriber counts will show up here. You can still write a campaign from the library.”</li>
+<li>Error: “Couldn’t load your numbers” / “Your home is still here. Nothing was changed.” / “Try again”</li>
+<li>Reports stub: “Open rate is unique opens ÷ delivered (or sent). Same figures as Email Campaigns → Reports.”</li>
+<li>Banner: “Proposal mockup — not on the live site. Example data only. Nothing is sent.”</li>
+</ul>
+<p>No estimates or explainer prose in the mock UI. Sample numbers and titles are fixtures, not live data.</p>
+<p>Sample last email (same subject as #851): <strong>Your November money update: TFSA room, the RRSP deadline, and a retirement check-in</strong>. Open rate 42.3%, click rate 8.1%, 1,284 subscribers, 3 sent this month, 1,104 delivered to Newsletter on Nov 4, 2026.</p>
+<h2>In / out of scope</h2>
+<p><strong>In:</strong> numbers strip and last-email module on the published #851 home, empty / loading / error for numbers, click-through to a reports stub, 1280/390, generic fixtures. Reuse of the #851 Write a campaign path.
+<strong>Out of scope:</strong> a second home or a redesigned Dashboard card grid, inventing metrics the reports do not already have, live data wiring in this mock, send/schedule/approval, client-site branding or product-domain links, production deploy.</p>
+<p>Playground first (issue track). <code>risk:high</code> only if a later build exposes campaign data incorrectly; the mocked path is advisor-facing and does not send. No build launched.</p>
+<h2>Desktop vs mobile</h2>
+<p>1280: navy sidebar 232px, centered ~680px stack, four number tiles in a row.
+390: sidebar behind Menu, two-by-two tiles, stacked module and full-width Write a campaign, 44px targets.</p>
+<h2>Agent-time estimate (hours, cloud build + FC Tester + fix loop)</h2>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Hours</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Cloud agent build (strip + module on the #851 home, SES report definitions, empty / loading / error)</td>
+<td>5–8</td>
+</tr>
+<tr>
+<td>FC Tester (ready, new account, loading, error + retry, numbers match Reports definitions, tiles open reports, #851 campaign path still works, 1280/390, generic fixtures)</td>
+<td>2–4</td>
+</tr>
+<tr>
+<td>Fix loop</td>
+<td>1–2</td>
+</tr>
+<tr>
+<td><strong>Total</strong></td>
+<td><strong>8–14 h</strong></td>
+</tr>
+</tbody>
+</table>
+<p>Playground first. This is an extension of #851, not a new surface. No build launched.</p>
+<h2>Open questions</h2>
+<ol>
+<li>Which window do the strip figures use — last send only (as mocked for open/click), last 30 days, or a roll-up of all sends?</li>
+<li>Is “Sent this month” calendar-month, last 30 days, or something else?</li>
+<li>Email-only numbers (as mocked, from SES reports), or should website / social stats appear too?</li>
+<li>Should the numbers strip stay visible on the suggested-campaign and draft views, or only on the first-login home (as mocked)?</li>
+<li>If numbers fail to load, should the rest of the home stay usable (as mocked)?</li>
+<li>Playground vs staging as the first deploy target (the issue says playground)?</li>
+</ol></body></html>

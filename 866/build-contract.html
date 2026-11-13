@@ -1,0 +1,130 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>#866 build contract</title><style>body{font:15px/1.55 "DM Sans",Inter,system-ui,sans-serif;max-width:860px;margin:24px auto;padding:0 16px;color:#2c3e50}a{color:#2b7de9}pre{white-space:pre-wrap;font-family:"DM Sans",Inter,system-ui,sans-serif;font-size:15px;line-height:1.55}</style></head><body><p><a href="index.html">Hub</a> · <a href="../">All mocks</a></p><h1>#866 Guided step-by-step flow for a new email</h1>
+<p><strong>Status:</strong> Published on GitHub Pages at https://kartboy16.github.io/fc-mocks/866/. Not agent-ready. Soft Dev hold until a direction is picked.</p>
+<h2>Sources (read-only)</h2>
+<ul>
+<li>Issue #866</li>
+<li>Live editor (no git writes): <code>imports/ui/EmailCampaigns/CreateCampaign.jsx</code> and the Campaigns list “Create Campaign” control in <code>SESCampaignsList.jsx</code></li>
+<li>Required-field checks in <code>handleSave</code> / <code>handleSend</code> (CreateCampaign.jsx): campaign name, subject, and HTML content; a list <strong>or</strong> at least one tag; From Email, and it must be a valid address; Compliance Email if “Send copy to compliance?” is on; approval recipients if “Send approval email” is on; schedule date in the future if scheduling</li>
+<li>Related: #851 (Write a campaign on the advisor home) — a later question is whether that path should start this flow</li>
+</ul>
+<h2>Recommendation</h2>
+<p><strong>A. A four-step guided flow in front of the current editor.</strong> One direction only. The issue is that required fields are easy to miss on the all-at-once form, not that the form should go away. Advanced users get a visible <strong>Use the full editor</strong> hatch, and everything already entered is carried over.</p>
+<p>Steps, as asked, with fields matched to the live editor:</p>
+<ol>
+<li><strong>Audience</strong> — Send to List or Send to Tags. Helper: “Choose a list or one or more tags to send to.” Required: one or the other (same rule as today). Choosing a list clears tags, and choosing a tag clears the list.</li>
+<li><strong>Subject</strong> — Campaign Name (required), Subject (required), From Name (optional, as today), From Email (required, valid). Preheader is shown as optional because the issue asked for a subject/preheader step; it is <strong>not</strong> a field on the live form (open question).</li>
+<li><strong>Content</strong> — Email Content (required), the same body field as today.</li>
+<li><strong>Review</strong> — a checklist of every required item (with Fix links), a summary preview, optional compliance copy and approval email (same conditionals as today), Send now or Schedule, then <strong>Save draft</strong>, <strong>Schedule</strong>, or <strong>Send</strong>. Nothing sends without an explicit confirm.</li>
+</ol>
+<p>Continue is blocked when the step is invalid (inline errors, step-level stay). Jumping ahead on the stepper is blocked for the same reason. The review actions are blocked until the checklist is complete.</p>
+<h2>Screens</h2>
+<table>
+<thead>
+<tr>
+<th>Screen</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Campaigns list</td>
+<td>Existing “Create Campaign” starts the guided flow; a full-editor link is also here</td>
+</tr>
+<tr>
+<td>Step 1 Audience</td>
+<td>Lists: All subscribers, Clients, Newsletter, Prospects (counts are fixtures). Tags: Clients, Newsletter, Prospects</td>
+</tr>
+<tr>
+<td>Step 2 Subject</td>
+<td>Name, subject, optional preheader, from name, from email</td>
+</tr>
+<tr>
+<td>Step 3 Content</td>
+<td>Email Content textarea; optional “Insert sample article text” uses a yourfirm.example Insights link</td>
+</tr>
+<tr>
+<td>Step 4 Review</td>
+<td>Checklist, preview, compliance / approval / schedule options, Save draft / Schedule / Send</td>
+</tr>
+<tr>
+<td>Validation / blocked</td>
+<td>Empty audience Continue stays on step 1 with “Please select a list or at least one tag”</td>
+</tr>
+<tr>
+<td>Full editor</td>
+<td>“Create New Campaign” — live field labels, prefilled, “Back to guided steps”</td>
+</tr>
+<tr>
+<td>Confirm send / schedule</td>
+<td>Explicit confirm; cancel leaves the review</td>
+</tr>
+<tr>
+<td>Saved / sent / scheduled</td>
+<td>Draft is draft-only; send and schedule are queued in the mock only</td>
+</tr>
+</tbody>
+</table>
+<p>Menu matches the #851 / #860 advisor chrome. Home, Library, and Settings are stubs.</p>
+<h2>States</h2>
+<p>empty form, filled sample, step 1–4, blocked validation, full editor with carried data, confirm, saved draft, queued send, scheduled. Loading and a generic send error are not the core of this issue; the block/empty/review path is.</p>
+<h2>Copy (aligned with the live editor where it already exists)</h2>
+<ul>
+<li>“Create Campaign” / “Create New Campaign”</li>
+<li>“Use the full editor” / “Back to guided steps” / “This is the current editor. Everything you already entered came with you.”</li>
+<li>“Choose a list or one or more tags to send to.”</li>
+<li>“Please select a list or at least one tag”</li>
+<li>“Campaign name is required” / “Subject is required” / “From Email is required” / “Please enter a valid email address” / “Email content is required”</li>
+<li>“Send copy to compliance?” / “Compliance Officer Name” / “Compliance Email” / “Compliance Email is required when sending copy to compliance”</li>
+<li>“Send approval email” / “Approval Recipients” / “Approval recipients are required” / “Saves the draft, then sends the approval package with the current email body.”</li>
+<li>“Schedule date must be in the future”</li>
+<li>“Send this email?” / “Schedule this email?” / “Nothing has been sent yet.” / “Confirm send” / “Confirm schedule”</li>
+<li>“Draft — not sent” / “This draft is saved as a draft only. It has not been sent, scheduled, or sent for approval.”</li>
+<li>Banner: “Proposal mockup — not on the live site. Example data only. Nothing is sent.”</li>
+<li>Preheader helper: “Not required. The live Create Campaign form does not have this field today.”</li>
+</ul>
+<p>No estimates or explainer prose in the mock UI except the short preheader note (it is a product fact, not an estimate).</p>
+<p>Sample campaign: <strong>November money update</strong>. Subject: <strong>Your November money update: TFSA room, the RRSP deadline, and a retirement check-in</strong>. From: Jane Advisor &lt;jane.advisor@example.com&gt;. Audience: Newsletter (1,104 contacts). Body links to <code>https://yourfirm.example/insights/november-money-update</code> only.</p>
+<h2>In / out of scope</h2>
+<p><strong>In:</strong> guided four-step new-email flow, required fields matched to CreateCampaign.jsx, inline and step-level validation, review checklist, explicit confirm before send/schedule, Use the full editor with data carried over, 1280/390, generic fixtures, playground tryout.
+<strong>Out of scope:</strong> replacing the current editor, live send or SES/Mailchimp wiring, inventing legal footer/CASL copy, spell-check / header-footer unsaved-edits / external compliance attestation (those stay in the current editor path; open question whether review should run them too), client-site branding or product-domain links, production deploy.</p>
+<p>Playground first (issue track). High risk if a later build can send mail. The mocked path does not send. No build launched.</p>
+<h2>Desktop vs mobile</h2>
+<p>1280: navy sidebar 232px, ~760px step column, two-up from-name / from-email.
+390: sidebar behind Menu, stacked fields, stepper can scroll sideways, 44px actions, hatch is full width.</p>
+<h2>Agent-time estimate (hours, cloud build + FC Tester + fix loop)</h2>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Hours</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Cloud agent build (four steps, validation, review checklist, confirm, data-carrying escape hatch into the current editor)</td>
+<td>10–16</td>
+</tr>
+<tr>
+<td>FC Tester (each required field blocks Continue, review blocks Send/Schedule, hatch carries data both ways, list-or-tags rule, from-email format, compliance/approval conditionals, nothing sends without confirm, 1280/390, generic fixtures, yourfirm.example links only in the sample body)</td>
+<td>4–7</td>
+</tr>
+<tr>
+<td>Fix loop</td>
+<td>2–4</td>
+</tr>
+<tr>
+<td><strong>Total</strong></td>
+<td><strong>16–27 h</strong></td>
+</tr>
+</tbody>
+</table>
+<p>Playground first. No build launched.</p>
+<h2>Open questions</h2>
+<ol>
+<li>Preheader is in the requested steps but is not a field on the live Create Campaign form. Add it to both, or drop it from the guided flow?</li>
+<li>Does “Use the full editor” keep the same in-progress campaign (as mocked), or start a copy in the existing dialog?</li>
+<li>After review, should Send / Schedule also run today’s spell-check, unsaved header/footer check, cooldown, and compliance attestation before the confirm?</li>
+<li>Should <strong>Write a campaign</strong> on the #851 / #860 home start this guided flow, or still open the suggested-campaign draft?</li>
+<li>Is the guided flow the default for every new email, or an optional path beside Create Campaign?</li>
+<li>Who may use it (every advisor, or only accounts that still miss required fields)?</li>
+</ol></body></html>

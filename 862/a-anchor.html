@@ -1,0 +1,221 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8"><link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 16 16%27%3E%3Crect width=%2716%27 height=%2716%27 fill=%27%231976d2%27/%3E%3C/svg%3E">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>#862 A: Link popover next to the selection</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;font:14px/1.45 Inter,Roboto,system-ui,sans-serif;background:#f5f7fa;color:#2C3E50}
+a{color:#1976d2}
+.mockbar{background:#1f2a44;color:#fff;padding:8px 14px;display:flex;flex-wrap:wrap;gap:6px;align-items:center;font-size:12.5px;position:sticky;top:0;z-index:200}
+.mockbar a{color:#cfe3ff}
+.mockbar .sp{flex:1}
+.mockbar button{background:#33415f;color:#fff;border:1px solid #4a5a80;border-radius:6px;padding:4px 8px;font:12px Inter,sans-serif;cursor:pointer;min-height:32px}
+.mockbar button.on{background:#2196F3;border-color:#2196F3}
+.banner{background:#fff8e1;color:#6b5a16;text-align:center;font-size:12.5px;padding:6px 12px;border-bottom:1px solid #ffe0a3}
+.app{display:flex;min-height:calc(100vh - 70px)}
+.rail{width:90px;flex-shrink:0;background:linear-gradient(180deg,#f5f7fa 0%,#c3cfe2 100%);box-shadow:2px 0 8px rgba(0,0,0,.08);display:flex;flex-direction:column;align-items:center;padding:16px 0 12px}
+.mark{width:56px;height:28px;background:#1976d2;color:#fff;border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;margin-bottom:16px}
+.rail a,.rail .ri{display:flex;flex-direction:column;align-items:center;width:100%;padding:8px 4px;margin:0 0 8px;color:#1976d2;text-decoration:none;font-size:11px;text-align:center;border-left:3px solid transparent;box-sizing:border-box}
+.rail .ri.on{background:#e3f0fd;border-left-color:#1976d2;font-weight:600}
+.rail .ico{font-size:20px;margin-bottom:2px}
+.rail .prof{margin-top:auto;padding-bottom:8px}
+.main{flex:1;min-width:0;padding:16px 20px 40px}
+h1{font-size:22px;color:#1976d2;font-weight:600;margin:0 0 12px}
+.crumb{font-size:13px;color:#5b6572;margin:0 0 10px}
+.fld{margin:0 0 12px}
+.fld label{display:block;font-size:12px;font-weight:600;margin:0 0 4px;color:#546e7a}
+.fld input[type=text],.fld input[type=url]{width:100%;max-width:640px;padding:8px 10px;border:1px solid #cfd8dc;border-radius:4px;font:inherit}
+.tb{display:flex;flex-wrap:wrap;gap:6px;align-items:center;background:#fff;border:1px solid #e0e0e0;border-bottom:0;border-radius:4px 4px 0 0;padding:6px 8px}
+.tb .g{display:inline-flex;border:1px solid #cfd8dc;border-radius:4px;overflow:hidden}
+.tb .g button,.tb select,.tb .txt{background:#fff;border:0;border-right:1px solid #cfd8dc;padding:4px 8px;font:12.5px Inter,sans-serif;min-height:32px;cursor:pointer;color:#37474f}
+.tb .g button:last-child{border-right:0}
+.tb .g button.on,.tb .g button:hover{background:#e3f2fd;color:#1565c0}
+.tb select{border:1px solid #cfd8dc;border-radius:4px;min-width:100px}
+.tb .sep{width:1px;height:22px;background:#cfd8dc;margin:0 4px}
+.edwrap{position:relative;border:1px solid #e0e0e0;border-radius:0 0 4px 4px;background:#fff;min-height:420px;overflow:visible}
+.ed{padding:16px;outline:none;font-family:Aptos,Calibri,Arial,sans-serif;font-size:20px;line-height:1.6;min-height:420px;white-space:normal}
+.ed p{margin:0 0 .5em}
+.ed.tight p{margin:0 0 .25em}
+.ed.half p{margin:0 0 .75em}
+.ed.wide p{margin:0 0 1.25em}
+.ed a{color:#1976d2;text-decoration:underline}
+.sel{background:#bbdefb}
+.panel{margin-top:16px;padding:16px;border:1px solid #e0e0e0;border-radius:4px;background:#f5f5f5;max-width:640px}
+.panel h3{margin:0 0 10px;font-size:14px}
+.panel label{display:block;font-size:12px;font-weight:600;margin:8px 0 4px}
+.panel input[type=text],.panel input[type=url]{width:100%;padding:8px 10px;border:1px solid #cfd8dc;border-radius:4px;font:inherit}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:10px}
+.btn{border:1px solid #2196F3;color:#1976D2;background:#fff;border-radius:6px;padding:8px 14px;font-weight:600;font-size:13px;cursor:pointer;font-family:inherit;min-height:40px}
+.btn.c{background:#1976D2;color:#fff;border-color:#1976D2}
+.btn.d{border-color:#c62828;color:#c62828}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.pop{position:absolute;z-index:80;width:340px;background:#fff;border:1px solid #cfd8dc;border-radius:8px;box-shadow:0 8px 28px rgba(30,42,74,.18);padding:12px}
+.pop h3{margin:0 0 8px;font-size:13px}
+.pop label{display:block;font-size:12px;font-weight:600;margin:6px 0 3px}
+.pop input[type=url],.pop input[type=text]{width:100%;padding:8px 10px;border:1px solid #cfd8dc;border-radius:4px;font:13px/1.3 Inter,sans-serif;box-sizing:border-box}
+.pop .chk{display:flex;align-items:center;gap:8px;margin:8px 0;font-size:13px;font-weight:400}
+.sheet{position:fixed;left:0;right:0;bottom:0;z-index:90;background:#fff;border-radius:12px 12px 0 0;box-shadow:0 -8px 28px rgba(30,42,74,.18);padding:16px 16px 24px;max-height:70vh}
+.dim{color:#607080;font-size:12px}
+.toast{position:fixed;bottom:16px;left:50%;transform:translateX(-50%);background:#1f2a44;color:#fff;padding:10px 14px;border-radius:6px;display:none;z-index:120}
+.compare{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:12px 0}
+.card{background:#fff;border:1px solid #e0e5eb;border-radius:8px;padding:12px}
+.card h2{font-size:14px;margin:0 0 8px;color:#1976d2}
+.tick{display:inline-block;background:#eceff1;color:#37474f;border-radius:10px;padding:1px 7px;font-size:11px;font-weight:700}
+@media(max-width:700px){
+  .rail{display:none}
+  .main{padding:12px}
+  .tb{overflow:auto}
+  .compare{grid-template-columns:1fr}
+}
+
+.ed.bottompad{min-height:640px}
+.ed.bottompad #bottomline{margin-top:280px}
+.ed.showright #rightline{display:block;text-align:right;margin:0 0 .5em}
+#rightline{display:none}
+
+</style></head>
+<body>
+<div class="mockbar"><a href="index.html">#862 local draft</a> · <b>A</b> · <a href="build-contract.html">Contract</a>
+<span class="sp"></span>
+<button data-s="today">today</button>
+<button data-s="open">popover</button>
+<button data-s="right">right edge</button>
+<button data-s="bottom">bottom edge</button>
+<button data-s="edit">edit existing</button>
+</div>
+<div class="banner">Proposal mockup — not on the live site. Example data only. Nothing is sent.</div>
+<div class="app">
+<aside class="rail" aria-label="App">
+  <div class="mark">YFN</div>
+  <div class="ri"><span class="ico">&#9636;</span>Content</div>
+  <div class="ri"><span class="ico">&#9638;</span>Website</div>
+  <div class="ri"><span class="ico">&#8599;</span>Social Media</div>
+  <div class="ri on"><span class="ico">&#9993;</span>Email Campaigns</div>
+  <div class="ri"><span class="ico">&#128197;</span>Calendar</div>
+  <div class="ri"><span class="ico">&#9881;</span>Settings &amp; Branding</div>
+  <div class="ri prof"><span class="ico">&#9679;</span>Profile</div>
+</aside>
+<div class="main">
+  <p class="crumb">Email Campaigns · Edit campaign</p>
+  <h1>November update</h1>
+  <div class="fld"><label>Subject</label><input type="text" value="Your November money update" readonly></div>
+  <div class="tb" role="toolbar" aria-label="Formatting">
+  <span class="g"><button type="button" title="Visual" class="on">Visual</button><button type="button" title="HTML">HTML</button></span>
+  <span class="sep"></span>
+  <span class="g"><button type="button" title="Bold"><b>B</b></button><button type="button" title="Italic"><i>I</i></button><button type="button" title="Underline"><u>U</u></button></span>
+  <select aria-label="Style" id="styleSel"><option>Normal</option><option>Heading 1</option><option>Heading 2</option><option>Heading 3</option></select>
+  
+  <select aria-label="Font"><option>Aptos</option><option>Calibri</option><option>Arial</option></select>
+  <select aria-label="Size"><option>20</option><option>16</option><option>14</option></select>
+  <button type="button" class="txt" style="border:1px solid #cfd8dc;border-radius:4px;padding:4px 8px;background:#fff;min-height:32px">Clear Styles</button>
+  <span class="sep"></span>
+  <span class="g"><button type="button" title="Bullets">&bull;</button><button type="button" title="Numbers">1.</button></span>
+  <span class="g"><button type="button" title="Align left">L</button><button type="button" title="Align center">C</button><button type="button" title="Align right">R</button></span>
+  <span class="sep"></span>
+  <span class="g"><button type="button" class="on" id="linkbtn" title="Insert Link">Link</button><button type="button" title="Insert button">Button</button><button type="button" title="Image">Image</button><button type="button" title="Code">&lt;/&gt;</button></span>
+  <span class="g"><button type="button" title="Undo">Undo</button><button type="button" title="Redo">Redo</button></span>
+</div>
+  <div class="edwrap" id="edwrap">
+    <div class="ed" id="ed"><p>Hi everyone,</p>
+<p>A short look at what the latest federal budget could mean for your <span class="sel" id="sel">RRSP and TFSA</span>.</p>
+<p id="rightline">See <span id="rightsel">this note</span>.</p>
+<p>Read the full note: <a href="https://yourfirm.example/insights/federal-budget-rrsp-tfsa" id="exist">yourfirm.example/insights/federal-budget-rrsp-tfsa</a></p>
+<p>Jane Advisor &middot; Your Firm Name</p>
+<p id="bottomline">A closing note about <span class="sel-slot" id="bottomsel">year-end planning</span>.</p></div>
+    <div class="pop" id="pop" hidden>
+      <h3 id="poptitle">Link</h3>
+      <label for="url">URL</label>
+      <input id="url" type="url" value="https://yourfirm.example/insights/federal-budget-rrsp-tfsa">
+      <label class="chk"><input id="blank" type="checkbox" checked> Open in a new tab</label>
+      <div class="row">
+        <button class="btn c" type="button" id="apply">Apply</button>
+        <button class="btn d" type="button" id="remove" hidden>Remove</button>
+        <button class="btn" type="button" id="cancel">Cancel</button>
+      </div>
+    </div>
+  </div>
+  <div class="panel" id="todaypanel" hidden>
+    <label>Link Text</label>
+    <input type="text" value="RRSP and TFSA">
+    <label>URL</label>
+    <input type="url" value="https://">
+    <div class="row">
+      <button class="btn c" type="button">Insert link</button>
+      <button class="btn" type="button">Cancel</button>
+    </div>
+  </div>
+</div>
+</div>
+<div class="sheet" id="sheet" hidden>
+  <h3 id="sheettitle" style="margin:0 0 8px;font-size:15px">Link</h3>
+  <label for="surl" style="display:block;font-size:12px;font-weight:600;margin:6px 0 3px">URL</label>
+  <input id="surl" type="url" value="https://yourfirm.example/insights/federal-budget-rrsp-tfsa" style="width:100%;padding:8px 10px;border:1px solid #cfd8dc;border-radius:4px;font:inherit">
+  <label class="chk"><input type="checkbox" checked> Open in a new tab</label>
+  <div class="row">
+    <button class="btn c" type="button" id="sapply">Apply</button>
+    <button class="btn d" type="button" id="sremove" hidden>Remove</button>
+    <button class="btn" type="button" id="scancel">Cancel</button>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+<script>
+const params=new URLSearchParams(location.search);
+let state=params.get('s')||'open';
+const isPhone=params.has('phone')||matchMedia('(max-width:700px)').matches;
+function toast(m){const t=document.getElementById('toast');t.textContent=m;t.style.display='block';clearTimeout(t._t);t._t=setTimeout(()=>t.style.display='none',1400)}
+function place(anchor, pop, prefer){
+  const wr=document.getElementById('edwrap').getBoundingClientRect();
+  const ar=anchor.getBoundingClientRect();
+  const pw=pop.offsetWidth||340, ph=pop.offsetHeight||190;
+  let left=ar.left-wr.left;
+  let top=ar.bottom-wr.top+8;
+  if(prefer==='right') left=ar.right-wr.left-pw;
+  if(left+pw>wr.width-8) left=Math.max(8, wr.width-pw-8);
+  if(left<8) left=8;
+  const fitsBelow=top+ph<=wr.height-8;
+  const spaceAbove=ar.top-wr.top;
+  if(!fitsBelow && spaceAbove>=ph+8){top=ar.top-wr.top-ph-8;}
+  if(top<8) top=8;
+  pop.style.left=left+'px';
+  pop.style.top=top+'px';
+}
+function render(){
+  document.querySelectorAll('.mockbar [data-s]').forEach(b=>b.classList.toggle('on',b.dataset.s===state));
+  const pop=document.getElementById('pop');
+  const sheet=document.getElementById('sheet');
+  const today=document.getElementById('todaypanel');
+  const sel=document.getElementById('sel');
+  const exist=document.getElementById('exist');
+  const ed=document.getElementById('ed');
+  ed.classList.toggle('bottompad', state==='bottom');
+  ed.classList.toggle('showright', state==='right');
+  sel.className='sel';
+  document.getElementById('rightsel').className='';
+  document.getElementById('bottomsel').className='sel-slot';
+  today.hidden=state!=='today';
+  pop.hidden=true; sheet.hidden=true;
+  document.getElementById('remove').hidden=state!=='edit';
+  document.getElementById('sremove').hidden=state!=='edit';
+  document.getElementById('poptitle').textContent=state==='edit'?'Edit link':'Link';
+  document.getElementById('sheettitle').textContent=state==='edit'?'Edit link':'Link';
+  if(state==='today') return;
+  let anchor=sel;
+  if(state==='edit') anchor=exist;
+  if(state==='bottom'){sel.classList.remove('sel'); document.getElementById('bottomsel').classList.add('sel'); anchor=document.getElementById('bottomsel');}
+  if(state==='right'){sel.classList.remove('sel'); document.getElementById('rightsel').classList.add('sel'); anchor=document.getElementById('rightsel');}
+  if(isPhone){sheet.hidden=false;return;}
+  pop.hidden=false;
+  const pref=state==='right'?'right':''; requestAnimationFrame(()=>{place(anchor,pop,pref);requestAnimationFrame(()=>place(anchor,pop,pref));});
+}
+document.querySelectorAll('.mockbar [data-s]').forEach(b=>b.onclick=()=>{state=b.dataset.s;history.replaceState(null,'','?s='+state+(isPhone?'&phone':''));render()});
+document.getElementById('apply').onclick=()=>toast('Link applied. Nothing was sent.');
+document.getElementById('sapply').onclick=()=>toast('Link applied. Nothing was sent.');
+document.getElementById('remove').onclick=()=>toast('Link removed.');
+document.getElementById('sremove').onclick=()=>toast('Link removed.');
+document.getElementById('cancel').onclick=()=>{document.getElementById('pop').hidden=true;toast('Cancelled');};
+document.getElementById('scancel').onclick=()=>{document.getElementById('sheet').hidden=true;toast('Cancelled');};
+render();
+addEventListener('resize',render);
+</script>
+</body></html>

@@ -1,0 +1,450 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect fill='%232b7de9' width='16' height='16' rx='3'/%3E%3C/svg%3E">
+<title>#866 Guided new email</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&display=swap" rel="stylesheet">
+<style>
+
+:root{
+  --navy:#1e2a4a; --blue:#2b7de9; --blue-h:#4a96e0; --bg:#f4f8fc; --ink:#1e2a4a; --muted:#5b6b80;
+  --card:#fff; --line:#e4edf6;
+}
+*{box-sizing:border-box}
+body{margin:0;font:16px/1.5 "DM Sans",system-ui,sans-serif;background:var(--bg);color:var(--ink)}
+h1,h2,.greeting{font-family:Fraunces,Georgia,serif;font-weight:600}
+.mockbar{background:#1f2a44;color:#fff;padding:8px 14px;display:flex;flex-wrap:wrap;gap:8px;align-items:center;font-size:12.5px;position:sticky;top:0;z-index:50}
+.mockbar a{color:#cfe3ff}.mockbar .sp{flex:1}
+.mockbar button{background:#33415f;color:#fff;border:0;border-radius:4px;padding:6px 10px;min-height:32px;cursor:pointer;font:inherit}
+.mockbar button.on{background:var(--blue)}
+.banner{background:#f8f1d4;color:#6b5a16;text-align:center;font-size:12.5px;padding:8px 12px;border-bottom:1px solid #efe3b8}
+.app{display:flex;min-height:calc(100vh - 68px)}
+.side{width:232px;background:var(--navy);color:#fff;display:flex;flex-direction:column;padding:20px 16px 16px;flex-shrink:0}
+.brand{font-family:Fraunces,Georgia,serif;font-size:18px;font-weight:600;margin:0 8px 28px;letter-spacing:.01em}
+.nav button{display:flex;align-items:center;gap:10px;width:100%;text-align:left;background:transparent;border:0;color:#d7deea;padding:11px 14px;border-radius:12px;font:500 15px "DM Sans",sans-serif;cursor:pointer;margin-bottom:4px}
+.nav button.on{background:var(--blue);color:#fff}
+.nav button:hover:not(.on){background:rgba(255,255,255,.06)}
+.ico{width:18px;text-align:center;font-size:15px}
+.side .sp{flex:1}
+.who{display:flex;align-items:center;gap:10px;padding-top:16px;border-top:1px solid rgba(255,255,255,.12);margin-top:12px}
+.av{width:32px;height:32px;border-radius:50%;background:#3d4d73;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700}
+.who span{font-size:13.5px}
+.menu{display:none;margin:8px;background:var(--navy);color:#fff;border:0;border-radius:10px;padding:10px 14px;min-height:44px;font:600 14px "DM Sans",sans-serif;cursor:pointer}
+.main{flex:1;padding:48px 32px 80px;position:relative;display:flex;flex-direction:column;align-items:center}
+.home{width:min(640px,100%);margin:auto;text-align:center;padding-bottom:48px}
+.greeting{font-size:44px;line-height:1.15;margin:0 0 28px;color:var(--navy);letter-spacing:-.02em}
+.ask{display:flex;align-items:center;background:#fff;border:1px solid #e8eef5;border-radius:999px;box-shadow:0 8px 28px rgba(30,42,74,.08);padding:6px 8px 6px 20px;margin:0 0 16px}
+.ask input{flex:1;border:0;outline:none;font:16px "DM Sans",sans-serif;background:transparent;min-height:44px;color:var(--ink)}
+.ask input::placeholder{color:#8a97a8}
+.mic{width:44px;height:44px;border:0;background:transparent;border-radius:50%;cursor:pointer;color:#7b8aa0;font-size:18px}
+.mic:hover,.mic.on{color:var(--blue);background:#eef5ff}
+.cta{display:block;width:100%;background:var(--blue);color:#fff;border:0;border-radius:16px;padding:16px 20px;min-height:56px;font:600 18px "DM Sans",sans-serif;cursor:pointer;box-shadow:0 10px 24px rgba(43,125,233,.28)}
+.cta:hover{background:var(--blue-h)}
+.hint{margin:14px 0 0;color:var(--muted);font-size:14px}
+.foot{position:absolute;bottom:20px;left:0;right:0;text-align:center;color:#9aa6b5;font-size:12.5px}
+.card{width:min(680px,100%);background:#fff;border-radius:24px;padding:28px 32px 22px;box-shadow:0 16px 40px rgba(30,42,74,.08);margin:auto}
+.kicker{color:var(--blue);font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;margin:0 0 6px}
+.sublab{font-size:12.5px;color:var(--muted);margin:0 0 4px}
+.subj{font-family:Fraunces,Georgia,serif;font-size:26px;line-height:1.3;margin:0 0 18px;font-weight:600;hyphens:none;overflow-wrap:normal}
+.piece{display:grid;grid-template-columns:118px 1fr auto;gap:12px;align-items:start;padding:16px 0;border-top:1px solid var(--line)}
+.piece:first-of-type{border-top:1px solid var(--line)}
+.pill{display:inline-block;background:#eaf2fd;color:var(--blue);border-radius:999px;padding:6px 10px;font-size:11px;font-weight:700;letter-spacing:.04em;text-transform:uppercase}
+.piece h3{margin:0 0 4px;font:600 16px "DM Sans",sans-serif}
+.piece p{margin:0;color:var(--muted);font-size:14px}
+.swap{background:none;border:0;color:var(--blue);font:600 13px "DM Sans",sans-serif;cursor:pointer;padding:6px 0;min-height:36px;white-space:nowrap}
+.actions{display:flex;flex-wrap:wrap;gap:10px;margin:18px 0 8px}
+.btn{border-radius:12px;padding:12px 16px;min-height:44px;font:600 15px "DM Sans",sans-serif;cursor:pointer}
+.btn.primary{background:var(--blue);color:#fff;border:0}.btn.primary:hover{background:var(--blue-h)}
+.btn.ghost{background:#fff;color:var(--navy);border:1.5px solid #d5deea}
+.note{color:var(--muted);font-size:13.5px;margin:4px 0 0}
+.status{display:inline-block;background:#eef5ff;color:var(--blue);border-radius:999px;padding:4px 10px;font-size:12px;font-weight:700;margin-bottom:8px}
+.alert{background:#eef5ff;border:1px solid #c5dbf5;border-radius:12px;padding:16px;text-align:center}
+.bad{background:#fdecea;border:1px solid #f5c2c0;border-radius:12px;padding:16px;text-align:center}
+.empty{text-align:center;color:var(--muted);padding:48px 16px}
+.toast{position:fixed;bottom:16px;left:50%;transform:translateX(-50%);background:var(--navy);color:#fff;padding:10px 14px;border-radius:8px;display:none;z-index:60}
+@media(max-width:700px){
+  .side{display:none}.side.open{display:flex;position:fixed;inset:auto 0 0 0;top:68px;z-index:40;width:100%;height:auto;flex-direction:column}
+  .menu{display:block}
+  .main{padding:24px 16px 72px}
+  .greeting{font-size:32px}
+  .subj{font-size:22px}
+  .piece{grid-template-columns:1fr;gap:6px}
+  .actions .btn{flex:1}
+}
+
+
+.wrap{width:min(760px,100%);margin:0 auto;padding-bottom:48px}
+.steps{display:flex;gap:6px;margin:0 0 18px;flex-wrap:wrap}
+.step{flex:1;min-width:70px;background:#fff;border:1.5px solid var(--line);border-radius:12px;padding:10px 8px;font:600 12.5px "DM Sans",sans-serif;color:var(--muted);text-align:center;cursor:pointer}
+.step.on{border-color:var(--blue);background:#eef5ff;color:var(--blue)}
+.step.done{border-color:#b7d4f5;color:var(--navy)}
+.step .n{display:block;font-size:11px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;margin-bottom:2px}
+.panel{background:#fff;border-radius:24px;padding:28px 32px 22px;box-shadow:0 16px 40px rgba(30,42,74,.08)}
+.panel h1{font-family:Fraunces,Georgia,serif;font-size:28px;margin:0 0 6px;font-weight:600}
+.lead{color:var(--muted);margin:0 0 18px;font-size:14.5px}
+label.fld{display:block;font-size:13px;font-weight:600;margin:14px 0 6px}
+label.fld .req{color:#c62828;margin-left:3px}
+input[type=text],input[type=email],input[type=datetime-local],select,textarea{width:100%;border:1.5px solid #d5deea;border-radius:10px;padding:10px 12px;font:15px "DM Sans",sans-serif;background:#fff;color:var(--ink)}
+input:focus,select:focus,textarea:focus{outline:2px solid #2196f3;outline-offset:1px;border-color:var(--blue)}
+input.bad,select.bad,textarea.bad{border-color:#e57373;background:#fff6f6}
+.err{color:#c62828;font-size:12.5px;margin:6px 0 0}
+.help{color:var(--muted);font-size:13px;margin:6px 0 0}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.choice{display:flex;align-items:flex-start;gap:10px;border:1.5px solid var(--line);border-radius:12px;padding:12px 14px;margin:0 0 8px;cursor:pointer;background:#fff}
+.choice.on{border-color:var(--blue);background:#eef5ff}
+.choice input{margin-top:3px}
+.tags{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
+.tag{border:1.5px solid #d5deea;background:#fff;border-radius:999px;padding:8px 12px;font:600 13px "DM Sans",sans-serif;cursor:pointer;min-height:40px}
+.tag.on{border-color:var(--blue);background:#eef5ff;color:var(--blue)}
+.hatch{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin:0 0 16px}
+.hatch .link{background:none;border:0;color:var(--blue);font:600 14px "DM Sans",sans-serif;cursor:pointer;padding:8px 0;min-height:44px}
+.check{list-style:none;padding:0;margin:0 0 16px}
+.check li{display:flex;gap:10px;align-items:flex-start;padding:10px 0;border-top:1px solid var(--line);font-size:14.5px}
+.check .ok{color:#2e7d32;font-weight:700}
+.check .no{color:#c62828;font-weight:700}
+.pv{background:#f7fafc;border:1px solid var(--line);border-radius:12px;padding:14px 16px;margin:0 0 16px}
+.pv .from{font-size:13px;color:var(--muted)}
+.pv h3{margin:8px 0 4px;font:600 18px "DM Sans",sans-serif}
+.pv .pre{color:var(--muted);font-size:13.5px;margin:0 0 10px}
+.pv .body{font-size:14.5px;white-space:pre-wrap}
+.confirm{position:fixed;inset:0;background:rgba(30,40,60,.45);display:flex;align-items:flex-start;justify-content:center;padding:80px 16px;z-index:80}
+.confirm .box{background:#fff;border-radius:16px;padding:22px;max-width:420px;width:100%;box-shadow:0 16px 40px rgba(30,42,74,.2)}
+.full{background:#fff;border-radius:16px;padding:22px 24px;box-shadow:0 16px 40px rgba(30,42,74,.08)}
+.full h1{font:600 22px "DM Sans",sans-serif;margin:0 0 12px}
+@media(max-width:700px){
+  .row2{grid-template-columns:1fr}
+  .panel{padding:20px 16px 18px}
+  .steps{flex-wrap:nowrap;overflow:auto}
+  .step{min-width:96px}
+  .hatch .link{width:100%;text-align:left}
+}
+
+</style>
+</head>
+<body>
+<div class="mockbar"><a href="index.html">#866</a> · <b>A: Guided flow</b> · <a href="build-contract.html">Contract</a>
+<span class="sp"></span>
+<button data-s="list" onclick="go('list')">campaigns</button>
+<button data-s="s1" onclick="goStep(1)">audience</button>
+<button data-s="s2" onclick="goStep(2)">subject</button>
+<button data-s="s3" onclick="goStep(3)">content</button>
+<button data-s="s4" onclick="goStep(4)">review</button>
+<button data-s="invalid" onclick="showInvalid()">blocked</button>
+<button data-s="full" onclick="go('full')">full editor</button>
+<button data-s="saved" onclick="F=filled();go('saved')">saved</button>
+<button data-s="sent" onclick="F=filled();go('sent')">sent</button>
+<button data-s="sched" onclick="F=filled();go('sched')">scheduled</button>
+<button type="button" onclick="resetEmpty()">empty form</button>
+<button type="button" onclick="F=filled();render()">fill sample</button>
+</div>
+<div class="banner">Proposal mockup — not on the live site. Example data only. Nothing is sent.</div>
+<button class="menu" type="button" onclick="document.getElementById('side').classList.toggle('open')" aria-label="Menu">Menu</button>
+<div class="app">
+  <aside class="side" id="side">
+    <div class="brand">Your Firm Name</div>
+    <nav class="nav">
+      <button data-nav="home" onclick="toast('Home is unchanged in this mock')"><span class="ico">⌂</span> Home</button>
+      <button data-nav="library" onclick="toast('Library is unchanged in this mock')"><span class="ico">▦</span> Library</button>
+      <button class="on" data-nav="campaigns" onclick="go('list')"><span class="ico">✉</span> Campaigns</button>
+      <button data-nav="settings" onclick="toast('Settings is unchanged in this mock')"><span class="ico">⚙</span> Settings</button>
+    </nav>
+    <div class="sp"></div>
+    <div class="who"><span class="av">JA</span><span>Jane Advisor</span></div>
+  </aside>
+  <div class="main" id="main"></div>
+</div>
+<div class="toast" id="toast"></div>
+<script>
+const LISTS=[
+  {id:'all',n:'All subscribers',c:'1,284'},
+  {id:'clients',n:'Clients',c:'842'},
+  {id:'newsletter',n:'Newsletter',c:'1,104'},
+  {id:'prospects',n:'Prospects',c:'218'}
+];
+const TAGS=['Clients','Newsletter','Prospects'];
+const SAMPLE_BODY='A plain-language look at unused contribution room, the RRSP deadline, and a short retirement check-in.\n\nRead the article: https://yourfirm.example/insights/november-money-update';
+function empty(){return {list:'',tags:[],name:'',subject:'',preheader:'',fromName:'Jane Advisor',fromEmail:'jane.advisor@example.com',html:'',compliance:false,cName:'',cEmail:'',approval:false,recipients:'',when:'now',at:'2026-11-20T09:00'};}
+function filled(){return {list:'newsletter',tags:[],name:'November money update',subject:'Your November money update: TFSA room, the RRSP deadline, and a retirement check-in',preheader:'A short year-end read on TFSA room and the RRSP deadline.',fromName:'Jane Advisor',fromEmail:'jane.advisor@example.com',html:SAMPLE_BODY,compliance:false,cName:'',cEmail:'',approval:false,recipients:'',when:'now',at:'2026-11-20T09:00'};}
+let F=empty(), view='s1', step=1, errs={}, confirm=null, attempted=false;
+function toast(m){const t=document.getElementById('toast');t.textContent=m;t.style.display='block';clearTimeout(t._t);t._t=setTimeout(()=>t.style.display='none',2200)}
+function setSw(){
+  const key=view==='s1'||view==='s2'||view==='s3'||view==='s4'?view:view;
+  document.querySelectorAll('.mockbar [data-s]').forEach(b=>b.classList.toggle('on',b.getAttribute('data-s')===key));
+}
+function go(v){view=v;if(v==='s1')step=1;if(v==='s2')step=2;if(v==='s3')step=3;if(v==='s4')step=4;confirm=null;attempted=false;errs={};render()}
+function goStep(n){step=n;view='s'+n;confirm=null;attempted=false;errs={};render()}
+function resetEmpty(){F=empty();attempted=false;errs={};go('s1')}
+function showInvalid(){F=empty();F.fromEmail='';attempted=true;view='s1';step=1;errs=validateStep(1);render()}
+function esc(s){return String(s||'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'lt;'.replace('lt','&lt;'),'>':'&gt;','"':'&quot;'}[c]))}
+function isEmail(v){return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test((v||'').trim())}
+function hasAudience(){return !!(F.list || (F.tags&&F.tags.length))}
+function listLabel(){
+  if(F.tags&&F.tags.length) return 'Tags: '+F.tags.join(', ');
+  const L=LISTS.find(x=>x.id===F.list);
+  return L? L.n+' ('+L.c+' contacts)':'None selected';
+}
+function validateStep(n){
+  const e={};
+  if(n===1){
+    if(!hasAudience()) e.audience='Please select a list or at least one tag';
+  }
+  if(n===2){
+    if(!F.name.trim()) e.name='Campaign name is required';
+    if(!F.subject.trim()) e.subject='Subject is required';
+    if(!F.fromEmail.trim()) e.fromEmail='From Email is required';
+    else if(!isEmail(F.fromEmail)) e.fromEmail='Please enter a valid email address';
+  }
+  if(n===3){
+    if(!F.html.trim()) e.html='Email content is required';
+  }
+  if(n===4){
+    Object.assign(e, validateStep(1), validateStep(2), validateStep(3));
+    if(F.compliance && !F.cEmail.trim()) e.cEmail='Compliance Email is required when sending copy to compliance';
+    else if(F.compliance && F.cEmail.trim() && !isEmail(F.cEmail)) e.cEmail='Please enter a valid email address';
+    if(F.approval){
+      const rec=(F.recipients||'').split(',').map(s=>s.trim()).filter(Boolean);
+      if(!rec.length) e.recipients='Approval recipients are required';
+      else if(rec.some(v=>!isEmail(v))) e.recipients='Please enter a valid email address';
+    }
+    if(F.when==='schedule'){
+      const d=new Date(F.at);
+      if(!F.at||!(d instanceof Date)||isNaN(d.getTime())||d<=new Date()) e.at='Schedule date must be in the future';
+    }
+  }
+  return e;
+}
+function missingReview(){
+  return [
+    {ok:hasAudience(), label:'Audience (a list or at least one tag)', go:1},
+    {ok:!!F.name.trim(), label:'Campaign name', go:2},
+    {ok:!!F.subject.trim(), label:'Subject', go:2},
+    {ok:!!F.fromEmail.trim()&&isEmail(F.fromEmail), label:'From Email (valid address)', go:2},
+    {ok:!!F.html.trim(), label:'Email content', go:3},
+    {ok:!F.compliance||(!!F.cEmail.trim()&&isEmail(F.cEmail)), label:'Compliance Email (only if sending a copy to compliance)', go:4},
+    {ok:!F.approval||(!!F.recipients.trim()&&F.recipients.split(',').every(v=>!v.trim()||isEmail(v.trim()))&&F.recipients.split(',').filter(v=>v.trim()).length>0), label:'Approval recipients (only if sending an approval email)', go:4},
+    {ok:F.when!=='schedule'||(F.at&&new Date(F.at)>new Date()), label:'Schedule date in the future (only if scheduling)', go:4}
+  ];
+}
+function canAdvance(n){return Object.keys(validateStep(n)).length===0}
+function tryNext(){
+  attempted=true;
+  errs=validateStep(step);
+  if(Object.keys(errs).length){render();return}
+  goStep(step+1);
+}
+function read(){
+  const g=id=>document.getElementById(id);
+  if(g('name'))F.name=g('name').value;
+  if(g('subject'))F.subject=g('subject').value;
+  if(g('preheader'))F.preheader=g('preheader').value;
+  if(g('fromName'))F.fromName=g('fromName').value;
+  if(g('fromEmail'))F.fromEmail=g('fromEmail').value;
+  if(g('html'))F.html=g('html').value;
+  if(g('cName'))F.cName=g('cName').value;
+  if(g('cEmail'))F.cEmail=g('cEmail').value;
+  if(g('recipients'))F.recipients=g('recipients').value;
+  if(g('at'))F.at=g('at').value;
+}
+function setList(id){F.list=id;F.tags=[];attempted=true;errs=validateStep(1);render()}
+function toggleTag(t){
+  F.list='';
+  if(F.tags.indexOf(t)>-1)F.tags=F.tags.filter(x=>x!==t);
+  else F.tags=F.tags.concat([t]);
+  attempted=true;errs=validateStep(1);render();
+}
+function hatch(){
+  return `<div class="hatch"><span class="help">Required fields are marked. You can’t skip a step until they are filled.</span>
+    <button class="link" type="button" onclick="read();go('full')">Use the full editor</button></div>`;
+}
+function stepper(){
+  const labels=['Audience','Subject','Content','Review'];
+  return `<div class="steps">${labels.map((l,i)=>{
+    const n=i+1; const cls=n===step?' on':(n<step?' done':'');
+    return `<button type="button" class="step${cls}" onclick="attempted=true;errs=validateStep(step);if(n<step||canAdvance(step)||n===step){if(n>step){if(!canAdvance(step)){render();return}}goStep(n)}else{render()}">${'<span class="n">Step '+n+'</span>'+l}</button>`;
+  }).join('')}</div>`;
+}
+/* careful: the stepper onclick is messy in a template. I'll rewrite stepper more safely below in a different way if needed. */
+function foot(){return `<p class="foot">Sample data only — Jane Advisor, Your Firm Name, and yourfirm.example are placeholders.</p>`}
+function actions(nextLabel){
+  return `<div class="actions">
+    ${step>1?'<button class="btn ghost" type="button" onclick="read();goStep(step-1)">Back</button>':'<button class="btn ghost" type="button" onclick="go(\'list\')">Cancel</button>'}
+    <button class="btn primary" type="button" onclick="read();tryNext()">${nextLabel||'Continue'}</button>
+  </div>`;
+}
+function fieldErr(k){return (attempted&&errs[k])?`<div class="err">${esc(errs[k])}</div>`:''}
+function cls(k){return attempted&&errs[k]?' bad':''}
+function stepAudience(){
+  return `<div class="wrap">${stepper()}${hatch()}<div class="panel">
+    <h1>Audience</h1>
+    <p class="lead">Choose a list or one or more tags to send to.</p>
+    <label class="fld">Send to List<span class="req">*</span></label>
+    ${LISTS.map(L=>`<label class="choice${F.list===L.id?' on':''}"><input type="radio" name="list" ${F.list===L.id?'checked':''} onchange="setList('${L.id}')"><span><b>${esc(L.n)}</b><div class="help">${L.c} contacts</div></span></label>`).join('')}
+    <label class="fld">Send to Tags</label>
+    <div class="tags">${TAGS.map(t=>`<button type="button" class="tag${F.tags.indexOf(t)>-1?' on':''}" onclick="toggleTag('${t}')">${t}</button>`).join('')}</div>
+    ${fieldErr('audience')}
+    ${actions()}
+  </div></div>`+foot();
+}
+function stepSubject(){
+  return `<div class="wrap">${stepper()}${hatch()}<div class="panel">
+    <h1>Subject</h1>
+    <p class="lead">Name the campaign and write the subject people will see. Preheader is optional — it is not a field on the current editor.</p>
+    <label class="fld" for="name">Campaign Name<span class="req">*</span></label>
+    <input id="name" type="text" class="${cls('name')}" value="${esc(F.name)}" oninput="F.name=this.value">
+    ${fieldErr('name')}
+    <label class="fld" for="subject">Subject<span class="req">*</span></label>
+    <input id="subject" type="text" class="${cls('subject')}" value="${esc(F.subject)}" oninput="F.subject=this.value">
+    ${fieldErr('subject')}
+    <label class="fld" for="preheader">Preheader</label>
+    <input id="preheader" type="text" value="${esc(F.preheader)}" oninput="F.preheader=this.value" placeholder="Optional inbox preview line">
+    <p class="help">Not required. The live Create Campaign form does not have this field today.</p>
+    <div class="row2">
+      <div>
+        <label class="fld" for="fromName">From Name</label>
+        <input id="fromName" type="text" value="${esc(F.fromName)}" oninput="F.fromName=this.value">
+      </div>
+      <div>
+        <label class="fld" for="fromEmail">From Email<span class="req">*</span></label>
+        <input id="fromEmail" type="email" class="${cls('fromEmail')}" value="${esc(F.fromEmail)}" oninput="F.fromEmail=this.value">
+        ${fieldErr('fromEmail')}
+      </div>
+    </div>
+    ${actions()}
+  </div></div>`+foot();
+}
+function stepContent(){
+  return `<div class="wrap">${stepper()}${hatch()}<div class="panel">
+    <h1>Content</h1>
+    <p class="lead">Write the email body. This is the same required Email Content field as the current editor.</p>
+    <label class="fld" for="html">Email Content<span class="req">*</span></label>
+    <textarea id="html" rows="12" class="${cls('html')}" oninput="F.html=this.value">${esc(F.html)}</textarea>
+    ${fieldErr('html')}
+    <p class="help"><button class="link" type="button" onclick="F.html=SAMPLE_BODY;render()">Insert sample article text</button> — uses a yourfirm.example Insights link.</p>
+    ${actions()}
+  </div></div>`+foot();
+}
+function stepReview(){
+  const items=missingReview();
+  const ready=items.every(i=>i.ok);
+  return `<div class="wrap">${stepper()}${hatch()}<div class="panel">
+    <h1>Review</h1>
+    <p class="lead">Check every required field before you save, schedule, or send. Nothing is sent until you confirm.</p>
+    <ul class="check">${items.map(i=>`<li><span class="${i.ok?'ok':'no'}">${i.ok?'✓':'!'}</span><span>${esc(i.label)}${i.ok?'':' — missing'}${i.ok?'':` · <button class="link" type="button" onclick="goStep(${i.go})">Fix</button>`}</span></li>`).join('')}</ul>
+    <div class="pv">
+      <div class="from">From ${esc(F.fromName||'—')} &lt;${esc(F.fromEmail||'—')}&gt; · To ${esc(listLabel())}</div>
+      <div class="help">Campaign name: ${esc(F.name||'—')}</div>
+      <h3>${esc(F.subject||'(No subject)')}</h3>
+      ${F.preheader?`<p class="pre">${esc(F.preheader)}</p>`:''}
+      <div class="body">${esc(F.html||'(No content)')}</div>
+    </div>
+    <label class="choice${F.compliance?' on':''}"><input type="checkbox" ${F.compliance?'checked':''} onchange="F.compliance=this.checked;render()"><span>Send copy to compliance?</span></label>
+    ${F.compliance?`<div class="row2"><div><label class="fld" for="cName">Compliance Officer Name</label><input id="cName" type="text" value="${esc(F.cName)}" oninput="F.cName=this.value"></div><div><label class="fld" for="cEmail">Compliance Email${F.compliance?'<span class="req"> *</span>':''}</label><input id="cEmail" type="email" class="${cls('cEmail')}" value="${esc(F.cEmail)}" oninput="F.cEmail=this.value">${fieldErr('cEmail')}</div></div>`:''}
+    <label class="choice${F.approval?' on':''}"><input type="checkbox" ${F.approval?'checked':''} onchange="F.approval=this.checked;render()"><span>Send approval email</span></label>
+    ${F.approval?`<label class="fld" for="recipients">Approval Recipients<span class="req">*</span></label><input id="recipients" type="text" class="${cls('recipients')}" value="${esc(F.recipients)}" oninput="F.recipients=this.value" placeholder="Comma-separated email addresses"><p class="help">Saves the draft, then sends the approval package with the current email body.</p>${fieldErr('recipients')}`:''}
+    <label class="fld">When</label>
+    <label class="choice${F.when==='now'?' on':''}"><input type="radio" name="when" ${F.when==='now'?'checked':''} onchange="F.when='now';render()"><span>Send now</span></label>
+    <label class="choice${F.when==='schedule'?' on':''}"><input type="radio" name="when" ${F.when==='schedule'?'checked':''} onchange="F.when='schedule';render()"><span>Schedule</span></label>
+    ${F.when==='schedule'?`<label class="fld" for="at">Schedule date and time (PT)<span class="req">*</span></label><input id="at" type="datetime-local" class="${cls('at')}" value="${esc(F.at)}" oninput="F.at=this.value">${fieldErr('at')}`:''}
+    <div class="actions">
+      <button class="btn ghost" type="button" onclick="read();goStep(3)">Back</button>
+      <button class="btn ghost" type="button" onclick="read();attempted=true;errs=validateStep(4);if(!Object.keys(errs).length){go('saved')}else render()">Save draft</button>
+      <button class="btn primary" type="button" onclick="read();attempted=true;errs=validateStep(4);if(!Object.keys(errs).length){confirm=F.when==='schedule'?'sched':'send';render()}else render()">${F.when==='schedule'?'Schedule':'Send'}</button>
+    </div>
+  </div></div>`+foot()+(confirm?confirmBox():'');
+}
+function confirmBox(){
+  const sched=confirm==='sched';
+  return `<div class="confirm" onclick="if(event.target===this){confirm=null;render()}"><div class="box" role="dialog" aria-label="Confirm">
+    <h2 style="margin:0 0 8px;font:600 20px Fraunces,Georgia,serif">${sched?'Schedule this email?':'Send this email?'}</h2>
+    <p class="help" style="margin:0 0 16px">${sched?'It will be scheduled for '+esc(F.at)+' PT. Nothing is sent until then.':'Nothing has been sent yet. Confirming queues this send in the mock only.'}</p>
+    <div class="actions">
+      <button class="btn ghost" type="button" onclick="confirm=null;render()">Cancel</button>
+      <button class="btn primary" type="button" onclick="confirm=null;go(sched?'sched':'sent')">${sched?'Confirm schedule':'Confirm send'}</button>
+    </div>
+  </div></div>`;
+}
+function result(title, note){
+  return `<div class="wrap"><div class="panel">
+    <span class="status">${esc(title)}</span>
+    <h1 style="margin-top:8px">${esc(F.subject||F.name||'Campaign')}</h1>
+    <p class="lead">${esc(note)}</p>
+    <div class="actions"><button class="btn ghost" type="button" onclick="go('list')">Back to Campaigns</button></div>
+  </div></div>`+foot();
+}
+function campaigns(){
+  return `<div class="wrap"><div class="panel">
+    <div class="hatch"><h1 style="margin:0">Campaigns</h1><button class="btn primary" type="button" onclick="F=empty();go('s1')">Create Campaign</button></div>
+    <p class="lead">Start a new email with the guided steps, or open the current editor.</p>
+    <p><button class="link" type="button" onclick="F=empty();go('full')">Use the full editor</button></p>
+    <div class="pv"><b>November money update</b><div class="help">Sent Nov 4, 2026 · Newsletter · 42.3% open</div></div>
+  </div></div>`+foot();
+}
+function fullEditor(){
+  return `<div class="wrap"><div class="full">
+    <div class="hatch"><h1>Create New Campaign</h1><button class="link" type="button" onclick="read();go('s1')">Back to guided steps</button></div>
+    <p class="help">This is the current editor. Everything you already entered came with you.</p>
+    <label class="fld" for="name">Campaign Name<span class="req">*</span></label>
+    <input id="name" type="text" class="${cls('name')}" value="${esc(F.name)}" oninput="F.name=this.value">${fieldErr('name')}
+    <label class="fld" for="subject">Subject<span class="req">*</span></label>
+    <input id="subject" type="text" class="${cls('subject')}" value="${esc(F.subject)}" oninput="F.subject=this.value">${fieldErr('subject')}
+    ${F.preheader?`<p class="help">Preheader (guided only, not a field here today): ${esc(F.preheader)}</p>`:''}
+    <div class="row2">
+      <div><label class="fld" for="fromName">From Name</label><input id="fromName" type="text" value="${esc(F.fromName)}" oninput="F.fromName=this.value"></div>
+      <div><label class="fld" for="fromEmail">From Email<span class="req">*</span></label><input id="fromEmail" type="email" class="${cls('fromEmail')}" value="${esc(F.fromEmail)}" oninput="F.fromEmail=this.value">${fieldErr('fromEmail')}</div>
+    </div>
+    <label class="fld">Send to List</label>
+    <select onchange="F.list=this.value;if(this.value)F.tags=[];render()">
+      <option value="">Select a list</option>
+      ${LISTS.map(L=>`<option value="${L.id}" ${F.list===L.id?'selected':''}>${esc(L.n)} (${L.c} contacts)</option>`).join('')}
+    </select>
+    <label class="fld">Send to Tags</label>
+    <div class="tags">${TAGS.map(t=>`<button type="button" class="tag${F.tags.indexOf(t)>-1?' on':''}" onclick="toggleTag('${t}')">${t}</button>`).join('')}</div>
+    <p class="help">Choose a list or one or more tags to send to.</p>
+    ${fieldErr('audience')}
+    <label class="fld" for="html">Email Content<span class="req">*</span></label>
+    <textarea id="html" rows="10" class="${cls('html')}" oninput="F.html=this.value">${esc(F.html)}</textarea>
+    ${fieldErr('html')}
+    <div class="actions">
+      <button class="btn ghost" type="button" onclick="read();go('list')">Cancel</button>
+      <button class="btn ghost" type="button" onclick="read();attempted=true;errs=validateStep(4);if(!Object.keys(validateStep(1)).length&&!Object.keys(validateStep(2)).length&&!Object.keys(validateStep(3)).length){go('saved')}else render()">Save Draft</button>
+      <button class="btn primary" type="button" onclick="read();attempted=true;errs=validateStep(4);if(!Object.keys(errs).length){confirm='send';render()}else render()">Send</button>
+    </div>
+  </div></div>`+foot()+(confirm?confirmBox():'');
+}
+function render(){
+  setSw();
+  const main=document.getElementById('main');
+  if(view==='list'){main.innerHTML=campaigns();return}
+  if(view==='full'){main.innerHTML=fullEditor();return}
+  if(view==='saved'){main.innerHTML=result('Draft — not sent','This draft is saved as a draft only. It has not been sent, scheduled, or sent for approval.');return}
+  if(view==='sent'){main.innerHTML=result('Queued to send','Confirming queued this send in the mock only. No email was delivered.');return}
+  if(view==='sched'){main.innerHTML=result('Scheduled','Scheduled for '+esc(F.at)+' PT. Nothing has been sent.');return}
+  if(step===2){main.innerHTML=stepSubject();return}
+  if(step===3){main.innerHTML=stepContent();return}
+  if(step===4){main.innerHTML=stepReview();return}
+  main.innerHTML=stepAudience();
+}
+(function boot(){
+  const q=location.search;
+  if(/[?&]fill=1/.test(q)||/[?&]s=(s2|s3|s4|review|full|saved|sent|sched)/.test(q)) F=filled();
+  const m=q.match(/[?&]s=([a-z0-9]+)/);
+  if(m){
+    const v=m[1];
+    if(v==='audience'||v==='s1')go('s1');
+    else if(v==='subject'||v==='s2')go('s2');
+    else if(v==='content'||v==='s3')go('s3');
+    else if(v==='review'||v==='s4')go('s4');
+    else if(v==='invalid'||v==='blocked')showInvalid();
+    else if(v==='full'||v==='editor')go('full');
+    else go(v);
+    return;
+  }
+  render();
+})();
+</script>
+</body>
+</html>

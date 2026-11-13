@@ -1,0 +1,153 @@
+<!doctype html><html lang="en"><head>
+<meta charset="utf-8"><link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 16 16%27%3E%3Crect width=%2716%27 height=%2716%27 fill=%27%231976d2%27/%3E%3C/svg%3E">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>#865 A: Slimmer left rail</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;font:14px/1.45 Inter,Roboto,system-ui,sans-serif;background:#f5f7fa;color:#2C3E50}
+a{color:#1976d2}
+.mockbar{background:#1f2a44;color:#fff;padding:8px 14px;display:flex;flex-wrap:wrap;gap:6px;align-items:center;font-size:12.5px;position:sticky;top:0;z-index:200}
+.mockbar a{color:#cfe3ff}.mockbar .sp{flex:1}
+.mockbar button{background:#33415f;color:#fff;border:1px solid #4a5a80;border-radius:6px;padding:4px 8px;font:12px Inter,sans-serif;cursor:pointer;min-height:32px}
+.mockbar button.on{background:#2196F3;border-color:#2196F3}
+.banner{background:#fff8e1;color:#6b5a16;text-align:center;font-size:12.5px;padding:6px 12px;border-bottom:1px solid #ffe0a3}
+.shell{display:flex;min-height:calc(100vh - 70px)}
+/* TODAY rail */
+.rail{width:90px;flex-shrink:0;background:linear-gradient(180deg,#f5f7fa 0%,#c3cfe2 100%);box-shadow:2px 0 8px rgba(0,0,0,.08);display:flex;flex-direction:column;align-items:center;padding:24px 0 16px}
+.logo{width:74px;height:104px;background:#1565c0;color:#fff;border-radius:4px;display:flex;flex-direction:column;align-items:center;justify-content:center;font-weight:700;font-size:11px;text-align:center;margin-bottom:24px;letter-spacing:.02em;line-height:1.15;padding:8px}
+.logo small{font-size:9px;font-weight:500;opacity:.85;margin-top:4px}
+.ri{display:flex;flex-direction:column;align-items:center;width:100%;padding:10px 4px 8px;margin:0 0 16px;color:#1976d2;font-size:12px;text-align:center;border-left:3px solid transparent;box-sizing:border-box;cursor:pointer}
+.ri.on{background:#e3f0fd;border-left-color:#1976d2;font-weight:600}
+.ri .ico{width:28px;height:28px;border-radius:6px;background:#bbdefb;color:#1565c0;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:700;margin-bottom:6px}
+.ri.on .ico{background:#90caf9}
+.prof{margin-top:auto;padding-bottom:16px}
+.av{width:48px;height:48px;border-radius:50%;background:#1976d2;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px;margin:0 auto 6px}
+/* SLIM A rail */
+.shell.a .rail{width:76px;padding:8px 0 8px}
+.shell.a .logo{width:40px;height:40px;margin-bottom:8px;font-size:9px;padding:4px}
+.shell.a .logo small{display:none}
+.shell.a .ri{padding:6px 2px;margin:0 0 4px;font-size:11px}
+.shell.a .ri .ico{width:22px;height:22px;font-size:12px;margin-bottom:2px}
+.shell.a .av{width:32px;height:32px;font-size:11px;margin-bottom:2px}
+.shell.a .prof{padding-bottom:8px}
+/* TOPBAR B */
+.topbar{display:none;background:#fff;border-bottom:1px solid #e0e5eb;align-items:center;gap:4px;padding:0 12px;height:48px;flex-shrink:0;position:relative}
+.shell.b{flex-direction:column}
+.shell.b .rail{display:none}
+.shell.b .topbar{display:flex}
+.topbar .logo{width:36px;height:28px;margin:0 8px 0 0;font-size:9px;padding:2px}
+.topbar .logo small{display:none}
+.topbar .ni{display:flex;align-items:center;gap:6px;padding:0 10px;height:48px;color:#1976d2;font-size:13px;font-weight:500;background:none;border:0;cursor:pointer;border-bottom:3px solid transparent}
+.topbar .ni.on{border-bottom-color:#1976d2;font-weight:600;background:#e3f0fd}
+.topbar .more,.topbar .avwrap{margin-left:auto}
+.topbar .av{width:32px;height:32px;margin:0}
+.menu{position:absolute;right:12px;top:48px;background:#fff;border:1px solid #e0e0e0;border-radius:8px;box-shadow:0 8px 24px rgba(0,0,0,.12);min-width:240px;z-index:80;padding:6px 0}
+.menu button{display:block;width:100%;text-align:left;background:none;border:0;padding:10px 14px;font:14px Inter,sans-serif;cursor:pointer}
+.menu button:hover{background:#e3f0fd}
+/* mobile top */
+.mbar{display:none;background:#f5f7fa;border-bottom:1px solid #e0e5eb;align-items:center;gap:8px;padding:0 8px;height:56px;flex-shrink:0}
+.mbar .logo{width:auto;height:40px;margin:0;flex-direction:row;padding:0 8px;font-size:11px}
+.mbar .logo small{display:none}
+.mbar button{background:none;border:0;min-width:40px;min-height:40px;cursor:pointer;color:#1976d2;font-weight:700}
+.shell.a .mbar{height:48px}
+.shell.a .mbar .logo{height:28px;font-size:9px}
+.main{flex:1;min-width:0;padding:16px 20px 40px;position:relative}
+h1{font-size:22px;color:#1976d2;font-weight:600;margin:0 0 8px}
+.crumb{font-size:13px;color:#5b6572;margin:0 0 10px}
+.measure{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 12px}
+.tick{display:inline-block;background:#eceff1;color:#37474f;border-radius:10px;padding:2px 8px;font-size:11px;font-weight:700}
+.map{background:#fff;border:1px solid #e0e5eb;border-radius:8px;padding:12px;max-width:640px}
+.map table{width:100%;border-collapse:collapse;font-size:13px}
+.map th,.map td{text-align:left;padding:6px 8px;border-bottom:1px solid #eee;vertical-align:top}
+.map th{color:#607080;font-size:12px}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px}
+.card{background:#fff;border:1px solid #e0e5eb;border-radius:8px;padding:14px;min-height:88px}
+.drawer{position:fixed;left:0;top:120px;bottom:0;width:min(260px,80vw);background:linear-gradient(180deg,#f5f7fa 0%,#c3cfe2 100%);z-index:210;box-shadow:8px 0 24px rgba(0,0,0,.15);padding:16px 0;display:none;flex-direction:column;align-items:center}
+.drawer.open{display:flex}
+@media(max-width:700px){
+  .rail{display:none}
+  .mbar{display:flex}
+  .shell.b .topbar{display:none}
+  .shell.b .mbar{display:flex;height:48px;background:#fff}
+  .main{padding:12px}
+  .map{overflow:visible}
+  .map table{display:block}
+  .map thead,.map tbody,.map tr{display:block}
+  .map th{display:none}
+  .map td{display:block;border:0;padding:2px 0}
+  .map tr{border-bottom:1px solid #eee;padding:8px 0}
+  .map td:first-child{font-weight:700;padding-bottom:4px}
+  .map td[data-k]:before{content:attr(data-k) ": ";color:#607080;font-weight:600}
+}
+</style></head>
+<body>
+<div class="mockbar"><a href="index.html">#865 local draft</a> · <a href="today.html">Today</a> · <a href="a-rail.html">A</a> · <a href="b-topbar.html">B</a> · <a href="build-contract.html">Contract</a>
+<span class="sp"></span></div>
+<div class="banner">Proposal mockup — not on the live site. Example data only.</div>
+<div class="shell a">
+  <div class="mbar">
+    <button type="button" id="hamb" aria-label="Open navigation">Menu</button>
+    <div class="logo">YFN</div>
+    <span style="flex:1"></span>
+    <div class="av">JA</div>
+  </div>
+  <div class="topbar">
+    <div class="logo">YFN</div>
+    <button class="ni on" type="button">Content</button>
+    <button class="ni" type="button">Website</button>
+    <button class="ni" type="button">Social Media</button>
+    <button class="ni" type="button">Email Campaigns</button>
+    <button class="ni" type="button">Calendar</button>
+    <button class="ni more" type="button" id="morebtn">More</button>
+    <button class="ni avwrap" type="button" id="acctbtn" aria-label="Account"><span class="av">JA</span></button>
+    <div class="menu" id="more" hidden><button type="button">Settings &amp; Branding</button></div><div class="menu" id="acct" hidden style="right:12px"><button type="button">View Profile</button><button type="button">Branding &amp; settings</button><button type="button">Billing &amp; plan</button><button type="button">Help &amp; Support</button><button type="button">Sign Out</button></div>
+  </div>
+  <aside class="rail" aria-label="App">
+    <div class="logo">YFN<small>wordmark</small></div>
+    <div class="ri on"><span class="ico">C</span>Content</div><div class="ri"><span class="ico">W</span>Website</div><div class="ri"><span class="ico">S</span>Social Media</div><div class="ri"><span class="ico">E</span>Email Campaigns</div><div class="ri"><span class="ico">K</span>Calendar</div><div class="ri"><span class="ico">B</span>Settings &amp; Branding</div><div class="ri prof"><div class="av">JA</div>Profile</div>
+  </aside>
+  <div class="drawer" id="drawer">
+    <div class="logo">YFN</div>
+    <div class="ri on"><span class="ico">C</span>Content</div><div class="ri"><span class="ico">W</span>Website</div><div class="ri"><span class="ico">S</span>Social Media</div><div class="ri"><span class="ico">E</span>Email Campaigns</div><div class="ri"><span class="ico">K</span>Calendar</div><div class="ri"><span class="ico">B</span>Settings &amp; Branding</div><div class="ri prof"><div class="av">JA</div>Profile</div>
+  </div>
+  <div class="main">
+    <p class="crumb">Content</p>
+    <h1>Content Library</h1>
+    <div class="measure"><span class="tick">Rail 76px wide</span><span class="tick">Logo 40px</span><span class="tick">Nav row 48px</span><span class="tick">Profile footer 56px</span><span class="tick">Mobile header 48px</span></div>
+    <div class="map"><table><tr><th>Item</th><th>Today</th><th>This direction</th></tr><tr><td>Content</td><td data-k="Today">Rail</td><td data-k="This direction">Slim rail (same place)</td></tr><tr><td>Website</td><td data-k="Today">Rail</td><td data-k="This direction">Slim rail (same place)</td></tr><tr><td>Social Media</td><td data-k="Today">Rail</td><td data-k="This direction">Slim rail (same place)</td></tr><tr><td>Email Campaigns</td><td data-k="Today">Rail</td><td data-k="This direction">Slim rail (same place)</td></tr><tr><td>Calendar</td><td data-k="Today">Rail</td><td data-k="This direction">Slim rail (same place)</td></tr><tr><td>Settings &amp; Branding</td><td data-k="Today">Rail</td><td data-k="This direction">Slim rail (same place)</td></tr><tr><td>Profile</td><td data-k="Today">Rail footer</td><td data-k="This direction">Slim rail footer (same place)</td></tr><tr><td>View Profile</td><td data-k="Today">Profile menu</td><td data-k="This direction">Profile menu</td></tr><tr><td>Branding &amp; settings</td><td data-k="Today">Profile menu</td><td data-k="This direction">Profile menu</td></tr><tr><td>Billing &amp; plan</td><td data-k="Today">Profile menu</td><td data-k="This direction">Profile menu</td></tr><tr><td>Help &amp; Support</td><td data-k="Today">Profile menu</td><td data-k="This direction">Profile menu</td></tr><tr><td>Sign Out</td><td data-k="Today">Profile menu</td><td data-k="This direction">Profile menu</td></tr></table></div>
+    <div class="cards" style="margin-top:16px">
+      <div class="card"><b>What the latest federal budget could mean for your RRSP and TFSA</b><p class="muted" style="color:#607080;font-size:13px">Jane Advisor · Your Firm Name</p></div>
+      <div class="card"><b>A simple year-end money checklist</b><p style="color:#607080;font-size:13px">Jane Advisor · Your Firm Name</p></div>
+    </div>
+  </div>
+</div>
+<script>
+const d=document.getElementById('drawer');
+const h=document.getElementById('hamb');
+function drawerTop(){
+  const mock=document.querySelector('.mockbar');
+  const ban=document.querySelector('.banner');
+  const mb=document.querySelector('.mbar');
+  const y=(mock?mock.offsetHeight:0)+(ban?ban.offsetHeight:0)+(mb?mb.offsetHeight:0);
+  if(d) d.style.top=y+'px';
+}
+if(h) h.onclick=()=>{d.classList.toggle('open'); drawerTop();};
+drawerTop();
+addEventListener('resize',drawerTop);
+const more=document.getElementById('more'), acct=document.getElementById('acct');
+const mb=document.getElementById('morebtn'), ab=document.getElementById('acctbtn');
+function placeMenu(btn,menu){
+  const bar=btn.closest('.topbar').getBoundingClientRect();
+  const r=btn.getBoundingClientRect();
+  menu.style.top=bar.height+'px';
+  menu.style.right='auto';
+  menu.hidden=false;
+  let left=r.left-bar.left;
+  const mw=menu.offsetWidth||240;
+  if(left+mw>bar.width-8) left=Math.max(8, bar.width-mw-8);
+  menu.style.left=left+'px';
+}
+if(mb) mb.onclick=()=>{more.hidden=!more.hidden; if(acct) acct.hidden=true; if(!more.hidden) placeMenu(mb,more);};
+if(ab) ab.onclick=()=>{acct.hidden=!acct.hidden; if(more) more.hidden=true; if(!acct.hidden) placeMenu(ab,acct);};
+</script>
+</body></html>

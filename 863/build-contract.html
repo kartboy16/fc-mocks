@@ -1,0 +1,105 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>#863 build contract</title><style>body{font:15px/1.55 Inter,system-ui,sans-serif;max-width:920px;margin:24px auto;padding:0 16px;color:#2c3e50}a{color:#1976d2}li{margin:10px 0}.r{background:#e8f5e9;border:1px solid #a5d6a7;border-radius:10px;padding:10px 14px}.note{background:#fff8e1;border:1px solid #ffe0a3;border-radius:8px;padding:10px 12px}h1{font-size:26px}.muted{color:#607080;font-size:13px}table{border-collapse:collapse;width:100%}td,th{border:1px solid #e0e5eb;padding:6px 8px;text-align:left;vertical-align:top}th{background:#f3f6f9}</style></head><body><p><a href="index.html">Hub</a> · <a href="../">All mocks</a></p><h1>#863 Email editor: half-space option between paragraphs</h1>
+<p><strong>Status:</strong> Published on GitHub Pages at https://kartboy16.github.io/fc-mocks/863/. Not agent-ready. Soft Dev hold until a direction is picked.</p>
+<h2>Sources (read-only)</h2>
+<ul>
+<li>Issue #863</li>
+<li><code>imports/ui/EmailCampaigns/EmailContentEditor.jsx</code> and <code>imports/utils/editorBlockStyles.js</code> / <code>emailBodyFontDefaults.js</code> on <code>origin/main</code> (<code>10e691a</code>)</li>
+</ul>
+<h2>Recommendation</h2>
+<p><strong>A — Spacing menu in the toolbar</strong> (Tight, Half, Wide), beside the existing Style and Font controls. There is no spacing control in the product today; typography already lives on that bar, so a menu there is the most discoverable place for a new option.</p>
+<p><strong>B — Paragraph settings</strong> is a real placement fork: the same three options in a Paragraph panel opened from the toolbar, closer to “paragraph settings.” Use B only if the bar is considered too full.</p>
+<h2>What exists today</h2>
+<p>The toolbar has Normal / Heading 1–3, Font (Aptos default), and Size (20). There is no Tight/Wide menu. The visual editor forces <code>p { margin-top: 0; margin-bottom: 0.5em }</code> “in preview only (sent email unchanged).” Sent HTML is passed through <code>normalizeHtmlForEmail</code>, which does not appear to inline that paragraph margin, so clients may apply their own default (often about 1em). That preview-vs-sent gap is a likely reason spacing feels cramped in one place and too wide in another. The mock does not invent which CSS will render identically in Outlook and Gmail — that stays an open question.</p>
+<p>Proposed starting values (for the build, not shown as estimates on mock pages): Tight 0.25em, Half 0.75em, Wide 1.25em after each paragraph, plus line-height 1.6 (already used in the editor). Final values must be proven in clients. Existing campaigns keep their current spacing (acceptance criterion).</p>
+<h2>Screens</h2>
+<table>
+<thead>
+<tr>
+<th>Screen</th>
+<th>Facing</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>A toolbar · Half (default pick)</td>
+<td>Advisor / staff</td>
+<td>Spacing menu on the bar, editor uses Half</td>
+</tr>
+<tr>
+<td>Tight / Wide</td>
+<td>Advisor / staff</td>
+<td>Same control, other values</td>
+</tr>
+<tr>
+<td>Before</td>
+<td>Advisor / staff</td>
+<td>Side-by-side Tight and Wide only, then After · Half</td>
+</tr>
+<tr>
+<td>B Paragraph panel</td>
+<td>Advisor / staff</td>
+<td>Spacing in a Paragraph panel</td>
+</tr>
+<tr>
+<td>Mobile 390</td>
+<td>Advisor / staff</td>
+<td>Menu still on the wrapping toolbar</td>
+</tr>
+</tbody>
+</table>
+<p>Client-facing preview links use <code>yourfirm.example</code> only.</p>
+<h2>States</h2>
+<p>before, tight, half, wide. Nothing is sent.</p>
+<h2>Copy</h2>
+<ul>
+<li>“Spacing” (A) / “Paragraph” + “Spacing” (B)</li>
+<li>“Tight” / “Half” / “Wide”</li>
+<li>“Before · Tight” / “Before · Wide” / “After · Half”</li>
+</ul>
+<p>No estimates or explainer prose on the mock pages.</p>
+<h2>In / out of scope</h2>
+<p><strong>In:</strong> third spacing option, control placement (A or B), editor preview, existing campaigns unchanged. <strong>Out:</strong> inventing client-proof CSS, changing heading margins except as a follow-on, live send.</p>
+<h2>Desktop vs mobile</h2>
+<p>1280: toolbar + side-by-side before/after. 390: wrapping toolbar, stacked previews, 40px selects.</p>
+<h2>Agent-time estimate (hours, cloud build + FC Tester + fix loop)</h2>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>A</th>
+<th>B</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Cloud agent build</td>
+<td>8–12</td>
+<td>8–13</td>
+</tr>
+<tr>
+<td>FC Tester (editor + sent preview, Tight/Half/Wide, existing campaigns unchanged, 1280/390; Gmail / Outlook / Apple Mail as far as the test plan allows)</td>
+<td>5–8</td>
+<td>5–8</td>
+</tr>
+<tr>
+<td>Fix loop</td>
+<td>3–5</td>
+<td>3–5</td>
+</tr>
+<tr>
+<td><strong>Total</strong></td>
+<td><strong>16–25 h</strong></td>
+<td><strong>16–26 h</strong></td>
+</tr>
+</tbody>
+</table>
+<p>High risk: touches sent email HTML. Staging first. No build launched.</p>
+<h2>Open questions</h2>
+<ol>
+<li>Which margin and line-height values render the same in the editor, Gmail, Outlook, and Apple Mail (email-safe CSS)? This is the issue’s acceptance criterion and is not settled here.</li>
+<li>Should the chosen spacing be inlined on each <code>&lt;p&gt;</code> so sent email matches the editor (today the 0.5em rule is preview-only)?</li>
+<li>Do existing campaigns stay on “current” (no Tight/Half/Wide label) until a later edit, and what is the default for new campaigns?</li>
+<li>Do headings and lists follow the same three options, or only body paragraphs?</li>
+<li>A vs B placement if the toolbar is already crowded on smaller screens.</li>
+</ol></body></html>
