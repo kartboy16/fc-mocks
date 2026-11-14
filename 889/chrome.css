@@ -1,15 +1,16 @@
 *{box-sizing:border-box}
-body{margin:0;font:14px/1.45 Roboto,Inter,system-ui,sans-serif;background:#fff;color:#2C3E50}
+html,body{height:100%}
+body{margin:0;font:14px/1.45 Roboto,Inter,system-ui,sans-serif;background:#fff;color:#2C3E50;display:flex;flex-direction:column;min-height:100dvh}
 a{color:#1976d2}
 button,input,select,textarea{font:inherit}
-.mockbar{background:#1f2a44;color:#fff;padding:8px 14px;display:flex;flex-wrap:wrap;gap:6px;align-items:center;font-size:12.5px;position:sticky;top:0;z-index:200}
+.mockbar{background:#1f2a44;color:#fff;padding:8px 14px;display:flex;flex-wrap:wrap;gap:6px;align-items:center;font-size:12.5px;position:relative;z-index:200;flex-shrink:0}
 .mockbar a{color:#cfe3ff}
 .mockbar .sp{flex:1}
 .mockbar button{background:#33415f;color:#fff;border:1px solid #4a5a80;border-radius:6px;padding:4px 8px;font:12px Roboto,sans-serif;cursor:pointer;min-height:32px}
 .mockbar button.on{background:#2196F3;border-color:#2196F3}
-.banner{background:#fff8e1;color:#6b5a16;text-align:center;font-size:12.5px;padding:6px 12px;border-bottom:1px solid #ffe0a3}
-.shell{display:flex;min-height:calc(100vh - 70px);background:#fff}
-.rail{width:90px;flex-shrink:0;background:linear-gradient(180deg,#f5f7fa 0%,#c3cfe2 100%);box-shadow:2px 0 8px rgba(0,0,0,.08);display:flex;flex-direction:column;align-items:center;padding:24px 0 16px}
+.banner{background:#fff8e1;color:#6b5a16;text-align:center;font-size:12.5px;padding:6px 12px;border-bottom:1px solid #ffe0a3;flex-shrink:0}
+.shell{display:flex;flex:1;min-height:0;background:#fff}
+.rail{width:90px;flex-shrink:0;background:linear-gradient(180deg,#f5f7fa 0%,#c3cfe2 100%);box-shadow:2px 0 8px rgba(0,0,0,.08);display:flex;flex-direction:column;align-items:center;padding:24px 0 16px;height:auto;min-height:100%;overflow:hidden}
 .logo{width:74px;height:104px;background:#1565c0;color:#fff;border-radius:4px;display:flex;flex-direction:column;align-items:center;justify-content:center;font-weight:700;font-size:11px;text-align:center;margin-bottom:24px;letter-spacing:.02em;line-height:1.15;padding:8px}
 .logo small{font-size:9px;font-weight:500;opacity:.85;margin-top:4px}
 .ri{display:flex;flex-direction:column;align-items:center;width:100%;padding:10px 4px 8px;margin:0 0 16px;color:#1976d2;font-size:12px;text-align:center;border-left:3px solid transparent;box-sizing:border-box;cursor:default;text-decoration:none}
@@ -28,7 +29,7 @@ button,input,select,textarea{font:inherit}
 .drawer{position:fixed;left:0;bottom:0;width:min(260px,80vw);background:linear-gradient(180deg,#f5f7fa 0%,#c3cfe2 100%);z-index:210;box-shadow:8px 0 24px rgba(0,0,0,.15);padding:16px 0;display:none;flex-direction:column;align-items:center}
 .drawer.open{display:flex}
 .drawer .logo{margin-bottom:16px}
-.main{flex:1;min-width:0;min-height:0;display:flex;flex-direction:column;align-items:center;padding:16px 24px 24px;position:relative;background:#fff}
+.main{flex:1;min-width:0;min-height:0;display:flex;flex-direction:column;align-items:center;padding:16px 24px 12px;position:relative;background:#fff;overflow:auto}
 .chatwrap{width:100%;max-width:800px;flex:1;min-height:0;display:flex;flex-direction:column}
 .toolbar{width:100%;display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:8px;flex-shrink:0}
 .iconbtn{background:none;border:0;color:#1976d2;cursor:pointer;padding:6px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;min-width:36px;min-height:36px}
@@ -68,7 +69,7 @@ button,input,select,textarea{font:inherit}
 .msg .lbl{font-size:11px;font-weight:700;color:#607080;margin:0 0 6px;letter-spacing:.02em}
 .msg a{font-weight:600}
 .who-line{display:flex;align-items:center;gap:8px;margin:0 0 8px;color:#1976d2;font-size:14px;font-weight:600}
-.who-line .change{margin-left:auto;background:none;border:0;color:#1976d2;cursor:pointer;font-size:13px;font-weight:500;padding:6px 8px;min-height:36px}
+.who-line .change{margin-left:8px;background:none;border:0;color:#1976d2;cursor:pointer;font-size:13px;font-weight:500;padding:6px 8px;min-height:36px}
 .who-line .change:hover{text-decoration:underline}
 .switcher{display:flex;align-items:center;gap:8px;width:100%;justify-content:center;margin:0 0 8px}
 .switcher label{font-size:13px;color:#5b6572}
