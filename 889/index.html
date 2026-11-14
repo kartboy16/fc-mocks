@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>#889 Playground: rename AI tab to Assistant + four assistants</title>
+<style>
+body{font:15px/1.55 Roboto,Inter,system-ui,sans-serif;max-width:920px;margin:24px auto;padding:0 16px;color:#2c3e50}
+a{color:#1976d2}
+li{margin:10px 0}
+.r{background:#e8f5e9;border:1px solid #a5d6a7;border-radius:10px;padding:10px 14px}
+.note{background:#fff8e1;border:1px solid #ffe0a3;border-radius:8px;padding:10px 12px}
+h1{font-size:26px}
+.muted{color:#607080;font-size:13px}
+</style>
+</head>
+<body>
+<p><a href="../">All mocks</a> · <a href="https://github.com/kartboy16/content-library/issues/889">#889</a></p>
+<h1>#889 Playground: rename AI tab to Assistant + four assistants</h1>
+<p class="r"><b>Recommend A</b> as the first slice: rename the left-rail <b>AI</b> tab to <b>Assistant</b>, then show four picker cards (Marketing Assistant, Insurance Assistant, Investment Assistant, Client Manager) with a one-line description and starter prompts, and open a simple chat for the one you pick. The live Playground chat already works this way for a single assistant, so A reuses that pattern. C — a chat that remembers context, proposes actions such as “Draft LinkedIn post” with Approve / Edit, and suggests next steps — is the right follow-up once the four assistants exist. B is more compact (a switcher on one chat) but hides the descriptions and prompts that make the four roles clear.</p>
+<div class="note">Chrome matches the current Playground left rail (90px gradient, YFN wordmark, Jane Advisor as JA). Fixtures are Jane Advisor, Your Firm Name, Your Dealer Compliance, Alex Client, example.com, and “news page”. Insurance and investment copy is a drafting aid only — placeholder compliance wording is in the mocks. Compare with <a href="today.html">Today (current AI tab)</a>.</div>
+<ul>
+<li><a href="today.html">Today: current AI tab</a> — the live empty chat, still labelled AI, before the rename.</li>
+<li><a href="a-picker.html"><b>A. Picker cards, then a chat (recommended)</b></a>
+  · <a href="a-picker.html?s=picker">picker</a>
+  · <a href="a-picker.html?s=chat">Marketing chat</a>
+  · <a href="a-picker.html?s=empty">empty chat</a>
+  · <a href="a-picker.html?s=insurance">Insurance empty</a>
+  · <a href="a-picker.html?s=loading">loading</a>
+  · <a href="a-picker.html?s=error">error</a>
+  · <a href="a-picker.html?s=history">history</a>
+</li>
+<li><a href="b-switcher.html"><b>B. One chat with an assistant switcher</b></a>
+  · <a href="b-switcher.html?s=empty">empty</a>
+  · <a href="b-switcher.html?s=chat">chat</a>
+  · <a href="b-switcher.html?s=switch">switch confirm</a>
+  · <a href="b-switcher.html?s=loading">loading</a>
+  · <a href="b-switcher.html?s=error">error</a>
+</li>
+<li><a href="c-agent.html"><b>C. Agent-style workspace (follow-up)</b></a>
+  · <a href="c-agent.html?s=workspace">workspace</a>
+  · <a href="c-agent.html?s=approved">approved draft</a>
+  · <a href="c-agent.html?s=insurance">Insurance action</a>
+  · <a href="c-agent.html?s=loading">loading</a>
+  · <a href="c-agent.html?s=error">error</a>
+</li>
+<li><a href="build-contract.html">Build contract</a> · <a href="build-contract.md">.md</a></li>
+</ul>
+</body>
+</html>
