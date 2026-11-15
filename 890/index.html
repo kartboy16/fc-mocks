@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>#890 FTT Mail: admin-only delivery details</title>
+<style>
+body{font:15px/1.55 Roboto,Inter,system-ui,sans-serif;max-width:920px;margin:24px auto;padding:0 16px;color:#2c3e50}
+a{color:#1976d2}
+li{margin:10px 0}
+.r{background:#e8f5e9;border:1px solid #a5d6a7;border-radius:10px;padding:10px 14px}
+.note{background:#fff8e1;border:1px solid #ffe0a3;border-radius:8px;padding:10px 12px}
+h1{font-size:26px}
+.muted{color:#607080;font-size:13px}
+</style>
+</head>
+<body>
+<p><a href="../">All mocks</a> · <a href="https://github.com/kartboy16/content-library/issues/890">#890</a></p>
+<h1>#890 FTT Mail: admin-only delivery details</h1>
+<p class="r"><b>Recommend A</b> as the first slice: add a <b>Delivery</b> tab on the existing campaign report, and a delivery timeline on Subscriber History. Admins already open those two places when a subscriber says a campaign shows Sent but the mail never arrived. A puts counts (Sent, Delivered, Bounced permanent/temporary, Complained, No result yet), a filterable paged list, and per-subscriber SES events with real event times in that path. B keeps the tab bar as it is and tucks the same data into a collapsible panel, which is easier to miss. C, a cross-campaign Delivery log under Admin, is the right follow-up once A exists — not the first slice.</p>
+<div class="note">Chrome matches Email Campaigns › Reports (campaign report dialog and Subscriber History). Fixtures are Jane Advisor, Your Firm Name, and example.com / outlook.example / hotmail.example addresses only. The “sent but not received” row is <code>pat.client@outlook.example</code> on <b>November market notes</b>. Compare with <a href="today.html">Today</a>, where bounce times are all the send time and history has opens and clicks only. Related backend work: <a href="https://github.com/kartboy16/content-library/issues/844">#844</a> (store bounce diagnostics). Delivery details are admin-only, including while impersonating; the advisor never sees them.</div>
+<ul>
+<li><a href="today.html">Today: current campaign report and Subscriber History</a>
+  · <a href="today.html?s=report">report</a>
+  · <a href="today.html?s=bounces">bounces tab</a>
+  · <a href="today.html?s=history">Subscriber History</a>
+</li>
+<li><a href="a-tab.html"><b>A. Delivery tab + history timeline (recommended)</b></a>
+  · <a href="a-tab.html?s=delivery&amp;expand=pat.client@outlook.example">Delivery tab, bounce expanded</a>
+  · <a href="a-tab.html?s=history&amp;email=pat.client@outlook.example">Subscriber History</a>
+  · <a href="a-tab.html?s=delivery&amp;status=none">No result yet</a>
+  · <a href="a-tab.html?s=empty">empty</a>
+  · <a href="a-tab.html?s=loading">loading</a>
+  · <a href="a-tab.html?s=error">error</a>
+  · <a href="a-tab.html?who=advisor&amp;s=delivery">advisor view</a>
+  · <a href="a-tab.html?s=delivery&amp;phone=1">390</a>
+</li>
+<li><a href="b-panel.html"><b>B. Collapsible admin panel on the existing report</b></a>
+  · <a href="b-panel.html?s=report&amp;open=1">panel open</a>
+  · <a href="b-panel.html?s=drawer">drawer</a>
+  · <a href="b-panel.html?s=history">Subscriber History</a>
+  · <a href="b-panel.html?s=empty">empty</a>
+  · <a href="b-panel.html?s=loading">loading</a>
+  · <a href="b-panel.html?s=error">error</a>
+  · <a href="b-panel.html?who=advisor">advisor view</a>
+</li>
+<li><a href="c-log.html"><b>C. Admin Delivery log (follow-up)</b></a>
+  · <a href="c-log.html?s=log">Delivery log</a>
+  · <a href="c-log.html?s=report">link from campaign report</a>
+  · <a href="c-log.html?s=history">link from Subscriber History</a>
+  · <a href="c-log.html?s=empty">empty</a>
+  · <a href="c-log.html?s=loading">loading</a>
+  · <a href="c-log.html?s=error">error</a>
+  · <a href="c-log.html?who=advisor">advisor blocked</a>
+</li>
+<li><a href="build-contract.html">Build contract</a> · <a href="build-contract.md">.md</a></li>
+</ul>
+<p class="muted">Not agent-ready. Soft Dev hold until a direction is picked.</p>
+</body>
+</html>

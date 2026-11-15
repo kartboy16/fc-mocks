@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>#890 Today: campaign report and Subscriber History</title>
+<link rel="stylesheet" href="chrome.css">
+</head>
+<body>
+<div class="mockbar">
+  <a href="../">All mocks</a> · <a href="index.html">#890 hub</a> · <a href="a-tab.html">A</a> ·
+  <a href="b-panel.html">B</a> · <a href="c-log.html">C</a> · <b>Today</b> ·
+  <a href="build-contract.html">Contract</a>
+  <span class="sp"></span>
+  <button type="button" data-sw="dev:desk" onclick="sw('dev','desk')">Desktop</button>
+  <button type="button" data-sw="dev:phone" onclick="sw('dev','phone')">390</button>
+  <button type="button" data-sw="s:report" onclick="sw('s','report')">Campaign report</button>
+  <button type="button" data-sw="s:bounces" onclick="sw('s','bounces')">Bounces tab</button>
+  <button type="button" data-sw="s:history" onclick="sw('s','history')">Subscriber History</button>
+</div>
+<div id="root"></div>
+<script src="data.js"></script>
+<script src="app.js"></script>
+<script>
+var S = { dev: "desk", s: "report" };
+function readQ() {
+  var q = new URLSearchParams(location.search);
+  if (q.get("phone") === "1") S.dev = "phone";
+  if (["report","bounces","history"].indexOf(q.get("s")) >= 0) S.s = q.get("s");
+}
+function writeQ() {
+  var u = new URL(location.href);
+  u.searchParams.delete("phone"); u.searchParams.set("s", S.s);
+  if (S.dev === "phone") u.searchParams.set("phone", "1");
+  history.replaceState(null, "", u);
+}
+function sw(k, v) { S[k] = v; render(); }
+
+function dialog() {
+  var C = FC890.CAMPAIGN;
+  if (S.s === "history") {
+    return `<div class="scrim"><div class="dlg" role="dialog" aria-label="Subscriber History">
+      <div class="dh"><div>Subscriber History: pat.client@outlook.example</div></div>
+      <div class="db">
+        <div class="meta-row">
+          <div class="meta-card"><div class="v">4</div><div class="l">Total opens</div></div>
+          <div class="meta-card"><div class="v">1</div><div class="l">Total clicks</div></div>
+          <div class="meta-card"><div class="v">3</div><div class="l">Campaigns engaged</div></div>
+          <div class="meta-card"><div class="v">Oct 13, 2026, 10:00 AM PT</div><div class="l">Last open</div></div>
+        </div>
+        <div class="note warn">Today’s history only loads Open and Click events. There is no send, delivery, bounce, or complaint timeline. Every time below is stored from <code>event.mail.timestamp</code>, which is the send time — so the October open shows 10:00 AM, not 10:22 AM.</div>
+        <div class="tlh">Campaign-by-campaign engagement</div>
+        <table class="list"><thead><tr><th>Campaign</th><th>Opens</th><th>Clicks</th><th>Last engagement</th></tr></thead>
+        <tbody>
+          <tr><td>October newsletter</td><td>2</td><td>1</td><td>Oct 13, 2026, 10:00 AM PT</td></tr>
+          <tr><td>September notes</td><td>2</td><td>0</td><td>Sep 8, 2026, 9:00 AM PT</td></tr>
+        </tbody></table>
+        <p class="hint">November market notes does not appear here because this subscriber has no opens or clicks on it — even though the campaign shows Sent, and SES recorded a temporary bounce at 9:02:18 AM PT.</p>
+        <div class="tlh">Event timeline</div>
+        <table class="list"><thead><tr><th>Event</th><th>Campaign</th><th>Date</th></tr></thead>
+        <tbody>
+          <tr><td><span class="chip sent">Open</span></td><td>October newsletter</td><td>Oct 13, 2026, 10:00 AM PT</td></tr>
+          <tr><td><span class="chip sent">Click</span></td><td>October newsletter</td><td>Oct 13, 2026, 10:00 AM PT</td></tr>
+          <tr><td><span class="chip sent">Open</span></td><td>September notes</td><td>Sep 8, 2026, 9:00 AM PT</td></tr>
+        </tbody></table>
+      </div>
+      <div class="df"><button class="btn ghost" type="button" onclick="sw('s','report')">Back to report</button><button class="btn ghost" type="button">Close</button></div>
+    </div></div>`;
+  }
+  var tab = S.s === "bounces" ? "bounces" : "opens";
+  var pane = tab === "bounces" ? `
+      <div class="note warn">Today’s bounce list has type only (Permanent / Temporary). It does not show the diagnostic code, SMTP reason, or the real bounce time. Every row below shows 9:00 AM PT — that is the send time from <code>event.mail.timestamp</code>, not <code>event.bounce.timestamp</code>.</div>
+      <table class="list"><thead><tr><th>Email</th><th>Type</th><th>Time (stored as send time)</th></tr></thead>
+      <tbody>
+        <tr><td>pat.client@outlook.example</td><td><span class="chip temporary">Temporary</span></td><td>Nov 10, 2026, 9:00 AM PT</td></tr>
+        <tr><td>robin.client@hotmail.example</td><td><span class="chip temporary">Temporary</span></td><td>Nov 10, 2026, 9:00 AM PT</td></tr>
+        <tr><td>taylor.client@outlook.example</td><td><span class="chip temporary">Temporary</span></td><td>Nov 10, 2026, 9:00 AM PT</td></tr>
+        <tr><td>morgan.client@example.com</td><td><span class="chip permanent">Permanent</span></td><td>Nov 10, 2026, 9:00 AM PT</td></tr>
+        <tr><td>jordan.client@example.com</td><td><span class="chip permanent">Permanent</span></td><td>Nov 10, 2026, 9:00 AM PT</td></tr>
+      </tbody></table>
+      <p class="hint">The report also has no Complained or No result yet counts. A Hotmail-type address that was accepted at send and later temporarily refused still looks like “Sent” everywhere except this bounce row, and the time is not the bounce time.</p>`
+    : `<p class="hint">Click a subscriber to see their open and click history. There is no Delivery tab, and delivery events are not shown.</p>
+      <div class="emp">512 unique opens — this is the current report.</div>`;
+  return `<div class="scrim"><div class="dlg" role="dialog" aria-label="Campaign report">
+    <div class="dh"><div>Campaign Report: ${C.name}
+      <div class="sub">${C.subject}<br>Audience: ${C.audience} · Sent ${C.sentAt}</div>
+    </div></div>
+    <div class="db">
+      ${FC890App.reportStats()}
+      <div class="tabs">
+        <button class="tab${tab==="opens"?" on":""}" type="button" onclick="sw('s','report')">Opens (${C.uniqueOpens})</button>
+        <button class="tab" type="button">Clicks (${C.uniqueClicks})</button>
+        <button class="tab${tab==="bounces"?" on":""}" type="button" onclick="sw('s','bounces')">Bounces (${C.bounced})</button>
+        <button class="tab" type="button">Recipients (${C.sent.toLocaleString()})</button>
+      </div>
+      ${pane}
+    </div>
+    <div class="df"><button class="btn ghost" type="button">Close</button></div>
+  </div></div>`;
+}
+
+function render() {
+  writeQ();
+  document.getElementById("root").innerHTML = FC890App.shell({ dev: S.dev, who: "advisor", body: dialog() });
+  document.getElementById("stage").className = S.dev;
+  if (window.FC890App && FC890App.afterRender) FC890App.afterRender();
+  document.querySelectorAll("[data-sw]").forEach(function (b) {
+    var p = b.getAttribute("data-sw").split(":");
+    b.classList.toggle("on", String(S[p[0]]) === p[1]);
+  });
+}
+readQ();
+render();
+</script>
+</body>
+</html>

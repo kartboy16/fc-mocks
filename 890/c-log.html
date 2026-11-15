@@ -1,0 +1,215 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>#890 C: Admin Delivery log</title>
+<link rel="stylesheet" href="chrome.css">
+</head>
+<body>
+<div class="mockbar">
+  <a href="../">All mocks</a> · <a href="index.html">#890 hub</a> · <a href="a-tab.html">A</a> ·
+  <a href="b-panel.html">B</a> · <b>C: Delivery log</b> · <a href="today.html">Today</a> ·
+  <a href="build-contract.html">Contract</a>
+  <span class="sp"></span>
+  <button type="button" data-sw="dev:desk" onclick="sw('dev','desk')">Desktop</button>
+  <button type="button" data-sw="dev:phone" onclick="sw('dev','phone')">390</button>
+  <button type="button" data-sw="who:admin" onclick="sw('who','admin')">Admin impersonating</button>
+  <button type="button" data-sw="who:advisor" onclick="sw('who','advisor')">Advisor view</button>
+  <button type="button" data-sw="s:log" onclick="sw('s','log')">Delivery log</button>
+  <button type="button" data-sw="s:report" onclick="sw('s','report')">From campaign report</button>
+  <button type="button" data-sw="s:history" onclick="sw('s','history')">From Subscriber History</button>
+  <button type="button" data-sw="s:empty" onclick="sw('s','empty')">Empty</button>
+  <button type="button" data-sw="s:loading" onclick="sw('s','loading')">Loading</button>
+  <button type="button" data-sw="s:error" onclick="sw('s','error')">Error</button>
+</div>
+<div id="root"></div>
+<script src="data.js"></script>
+<script src="app.js"></script>
+<script>
+var S = { dev: "desk", who: "admin", s: "log", q: "", status: "all", bounce: "all", campaign: "all", advisor: "Jane Advisor", expand: "pat.client@outlook.example", histEmail: "pat.client@outlook.example" };
+
+function readQ() {
+  var q = new URLSearchParams(location.search);
+  if (q.get("phone") === "1") S.dev = "phone";
+  if (q.get("who") === "advisor") S.who = "advisor";
+  if (["log","report","history","empty","loading","error"].indexOf(q.get("s")) >= 0) S.s = q.get("s");
+  if (q.get("status")) S.status = q.get("status");
+  if (q.get("q")) S.q = q.get("q");
+  if (q.get("campaign")) S.campaign = q.get("campaign");
+  if (q.has("expand")) S.expand = q.get("expand");
+  if (q.get("email")) S.histEmail = q.get("email");
+}
+function writeQ() {
+  var u = new URL(location.href);
+  var p = u.searchParams;
+  ["s","who","status","q","campaign","expand","email","phone"].forEach(function (k) { p.delete(k); });
+  p.set("s", S.s); p.set("who", S.who);
+  if (S.dev === "phone") p.set("phone", "1");
+  if (S.q) p.set("q", S.q);
+  if (S.status !== "all") p.set("status", S.status);
+  if (S.campaign !== "all") p.set("campaign", S.campaign);
+  if (S.expand) p.set("expand", S.expand);
+  history.replaceState(null, "", u);
+}
+function sw(k, v) {
+  S[k] = v;
+  if (k === "s" && v === "log") { S.campaign = "all"; S.q = ""; S.status = "all"; S.expand = "pat.client@outlook.example"; }
+  if (k === "s" && v === "report") { S.campaign = "November market notes"; }
+  if (k === "s" && v === "history") S.histEmail = "pat.client@outlook.example";
+  render();
+}
+
+function logRows() {
+  var rows = FC890.CROSS.slice();
+  if (S.campaign && S.campaign !== "all") rows = rows.filter(function (r) { return r.campaign === S.campaign; });
+  if (S.advisor && S.advisor !== "all") rows = rows.filter(function (r) { return r.advisor === S.advisor; });
+  var q = (S.q || "").trim().toLowerCase();
+  if (q) rows = rows.filter(function (r) { return r.row.email.indexOf(q) !== -1; });
+  if (S.status && S.status !== "all") rows = rows.filter(function (r) { return r.row.status === S.status; });
+  return rows;
+}
+
+function logTable() {
+  if (S.s === "loading") return `<div class="ld"><span class="spin"></span><div style="margin-top:10px">Loading delivery log…</div></div>`;
+  if (S.s === "error") return `<div class="er"><div class="al">Couldn’t load the delivery log. Try again. Nothing was changed on any campaign.</div><button class="btn" type="button" onclick="sw('s','log')">Try again</button></div>`;
+  if (S.s === "empty") return `<div class="note warn">No SES delivery events match these filters. If a campaign was just sent, wait for the SNS webhook. If it was sent a while ago, the webhook may not have been received.</div><div class="emp">No delivery events yet</div>`;
+  var rows = logRows();
+  if (!rows.length) return `<div class="emp">No rows match these filters.</div>`;
+  var body = rows.map(function (r) {
+    var open = S.expand === (r.row.email + "|" + r.campaign);
+    var key = r.row.email + "|" + r.campaign;
+    return `<tr>
+      <td><button class="ex" type="button" onclick="toggleLog('${key}')">${open ? "▾" : "▸"}</button></td>
+      <td>${r.row.email}</td>
+      <td>${r.campaign}</td>
+      <td>${r.advisor}</td>
+      <td><span class="chip ${FC890.chipClass(r.row.status, r.row.bounceType)}">${FC890.statusLabel(r.row.status)}</span></td>
+      <td>${r.row.lastEventAt}</td>
+    </tr>${open ? `<tr class="exp"><td colspan="6">${FC890App.eventBlock(r.row.events)}</td></tr>` : ""}`;
+  }).join("");
+  var cards = rows.map(function (r) {
+    var key = r.row.email + "|" + r.campaign;
+    var open = S.expand === key;
+    return `<div class="card">
+      <div class="em">${r.row.email}</div>
+      <div class="meta"><span class="chip ${FC890.chipClass(r.row.status, r.row.bounceType)}">${FC890.statusLabel(r.row.status)}</span> ${r.campaign} · ${r.advisor}</div>
+      <div class="meta">${r.row.lastEventAt}</div>
+      <button class="btn ghost" type="button" onclick="toggleLog('${key}')">${open ? "Hide events" : "Show events"}</button>
+      ${open ? `<div class="more">${FC890App.eventBlock(r.row.events)}</div>` : ""}
+    </div>`;
+  }).join("");
+  return `<div class="list-wrap"><table class="list">
+    <thead><tr><th style="width:44px"></th><th>Subscriber</th><th>Campaign</th><th>Advisor</th><th>Result</th><th>Last SES event</th></tr></thead>
+    <tbody>${body}</tbody>
+  </table><div class="cards">${cards}</div></div>
+  <div class="page"><div>Showing 1–${rows.length} of ${rows.length}</div>
+    <div class="btns"><button class="btn" type="button" disabled>Previous</button><button class="btn" type="button" disabled>Next</button></div></div>`;
+}
+
+function toggleLog(key) { S.expand = S.expand === key ? "" : key; render(); }
+
+function logPage() {
+  return `
+    <div class="note">${FC890App.badge()} Cross-campaign search of SES delivery events. Advisors never see this page.</div>
+    <div class="tbar">
+      <label class="grow">Search email
+        <input class="srch" id="q" value="${S.q}" placeholder="subscriber@example.com" oninput="S.q=this.value;renderListOnly()">
+      </label>
+      <label>Advisor
+        <select class="sel" id="adv" onchange="S.advisor=this.value;render()">
+          <option${S.advisor==="Jane Advisor"?" selected":""}>Jane Advisor</option>
+          <option${S.advisor==="Sam Planner"?" selected":""}>Sam Planner</option>
+          <option value="all"${S.advisor==="all"?" selected":""}>All advisors</option>
+        </select>
+      </label>
+      <label>Campaign
+        <select class="sel" id="cg" onchange="S.campaign=this.value;render()">
+          <option value="all"${S.campaign==="all"?" selected":""}>All campaigns</option>
+          <option${S.campaign==="November market notes"?" selected":""}>November market notes</option>
+          <option${S.campaign==="October newsletter"?" selected":""}>October newsletter</option>
+          <option${S.campaign==="September notes"?" selected":""}>September notes</option>
+        </select>
+      </label>
+      <label>Status
+        <select class="sel" id="st" onchange="S.status=this.value;render()">
+          <option value="all">All</option>
+          <option value="delivered"${S.status==="delivered"?" selected":""}>Delivered</option>
+          <option value="bounced"${S.status==="bounced"?" selected":""}>Bounced</option>
+          <option value="complained"${S.status==="complained"?" selected":""}>Complained</option>
+          <option value="none"${S.status==="none"?" selected":""}>No result yet</option>
+        </select>
+      </label>
+    </div>
+    <div id="list">${logTable()}</div>`;
+}
+
+function renderListOnly() {
+  var list = document.getElementById("list");
+  if (list) list.innerHTML = logTable();
+}
+
+function reportDialog() {
+  var admin = S.who !== "advisor";
+  var C = FC890.CAMPAIGN;
+  return `<div class="scrim"><div class="dlg" role="dialog" aria-label="Campaign report">
+    <div class="dh"><div>Campaign Report: ${C.name}
+      <div class="sub">${C.subject}<br>Audience: ${C.audience} · Sent ${C.sentAt}${admin ? " · " + FC890App.badge() : ""}</div>
+    </div></div>
+    <div class="db">
+      ${FC890App.reportStats()}
+      ${admin ? `<div class="note">${FC890App.badge()} Need send, delivery, bounce, and complaint detail with real SES times?
+        <button class="btn" type="button" style="margin-left:8px" onclick="sw('s','log');S.campaign='November market notes'">Open in Delivery log</button></div>`
+        : `<p class="hint">Advisor view — no Delivery log link, and no delivery data is sent to this client.</p>`}
+      <div class="tabs"><div class="tab on">Opens (${C.uniqueOpens})</div><div class="tab">Clicks (${C.uniqueClicks})</div><div class="tab">Bounces (${C.bounced})</div><div class="tab">Recipients (${C.sent.toLocaleString()})</div></div>
+      <p class="hint">Existing report tabs stay as they are. Direction C adds a link out to the admin Delivery log, pre-filtered to this campaign.</p>
+    </div>
+    <div class="df"><button class="btn ghost" type="button">Close</button></div>
+  </div></div>`;
+}
+
+function historyDialog() {
+  var admin = S.who !== "advisor";
+  return `<div class="scrim"><div class="dlg" role="dialog" aria-label="Subscriber History">
+    <div class="dh"><div>Subscriber History: ${S.histEmail}
+      <div class="sub">${admin ? FC890App.badge() : "Opens and clicks only"}</div></div></div>
+    <div class="db">
+      ${admin ? `<div class="note">${FC890App.badge()}
+        <button class="btn" type="button" onclick="S.s='log';S.q='pat.client@outlook.example';S.campaign='all';render()">Open in Delivery log</button>
+        — pre-filtered to this subscriber, across campaigns.</div>${FC890App.historyBody(S.histEmail)}`
+        : `<p class="hint">The advisor sees opens and clicks only. There is no Delivery log link.</p><div class="emp">Open and click events only, as they are today.</div>`}
+    </div>
+    <div class="df"><button class="btn ghost" type="button" onclick="sw('s','report')">Back to report</button><button class="btn ghost" type="button">Close</button></div>
+  </div></div>`;
+}
+
+function render() {
+  writeQ();
+  var adminPage = S.s === "log" || S.s === "empty" || S.s === "loading" || S.s === "error";
+  var body = "";
+  if (S.who === "advisor" && adminPage) {
+    body = `<div class="note warn">Advisors cannot open Admin › Delivery log. This is the Email Campaigns › Reports view they would see instead — no delivery data.</div>`;
+    document.getElementById("root").innerHTML = FC890App.shell({ dev: S.dev, who: "advisor", adminPage: false, body: "" });
+    document.querySelector(".main").insertAdjacentHTML("beforeend", body);
+  } else if (adminPage) {
+    document.getElementById("root").innerHTML = FC890App.shell({ dev: S.dev, who: S.who, adminPage: true, body: "" });
+    document.querySelector(".main").insertAdjacentHTML("beforeend", logPage());
+  } else if (S.s === "history") {
+    document.getElementById("root").innerHTML = FC890App.shell({ dev: S.dev, who: S.who, body: historyDialog() });
+  } else {
+    document.getElementById("root").innerHTML = FC890App.shell({ dev: S.dev, who: S.who, body: reportDialog() });
+  }
+  var stage = document.getElementById("stage");
+  if (stage) stage.className = S.dev;
+  if (window.FC890App && FC890App.afterRender) FC890App.afterRender();
+  document.querySelectorAll("[data-sw]").forEach(function (b) {
+    var p = b.getAttribute("data-sw").split(":");
+    b.classList.toggle("on", String(S[p[0]]) === p[1]);
+  });
+}
+
+readQ();
+render();
+</script>
+</body>
+</html>
