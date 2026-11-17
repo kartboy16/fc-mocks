@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>#869 Blocked send when the sending domain isn’t verified</title>
+<style>
+body{font:15px/1.55 Roboto,Inter,system-ui,sans-serif;max-width:920px;margin:24px auto;padding:0 16px;color:#2c3e50}
+a{color:#1976d2}
+li{margin:10px 0}
+.r{background:#e8f5e9;border:1px solid #a5d6a7;border-radius:10px;padding:10px 14px}
+.note{background:#fff8e1;border:1px solid #ffe0a3;border-radius:8px;padding:10px 12px}
+h1{font-size:26px}
+.muted{color:#607080;font-size:13px}
+</style>
+</head>
+<body>
+<p><a href="../">All mocks</a> · <a href="https://github.com/kartboy16/content-library/issues/869">#869</a> · also covers <a href="https://github.com/kartboy16/content-library/issues/900">#900</a></p>
+<h1>#869 Blocked send when the sending domain isn’t verified</h1>
+<p class="r"><b>Recommend A</b> as the first slice: a hard-block dialog at the point of Send or Schedule, in both Create Campaign and the campaigns list, plus a short unverified-domain hint on the Create Campaign form so the advisor sees the problem before they click. The send is blocked. There is no “use default sender” option. Two actions: primary <b>Verify your domain</b> opens Email Campaigns → Settings; secondary <b>Get help setting up your domain</b> opens a prefilled message to support. The campaign stays a draft, or an already-scheduled campaign keeps its existing schedule — the new schedule is not saved. B disables Send and Schedule up front, which needs a domain-status check on every load and is easier to miss on the list. C, a pre-flight checklist, is heavier than a two-action block needs.</p>
+<div class="note">Fixtures are Jane Advisor, Your Firm Name, and yourfirm.com only. The same hard block is shown from Send and from Schedule. Compare with <a href="today.html">Today</a>, where a confirm offers a default sender and Create Campaign then shows a broken error. Related: <a href="https://github.com/kartboy16/content-library/issues/900">#900</a> (current From at send time — the hard-block UI here replaces a default-sender fallback).</div>
+<ul>
+<li><a href="today.html">Today: default-sender confirm, then a broken error on Create Campaign</a>
+  · <a href="today.html?s=create-send">CreateCampaign Send</a>
+  · <a href="today.html?s=create-sched">CreateCampaign Schedule</a>
+  · <a href="today.html?s=create-send-err">after OK, error</a>
+  · <a href="today.html?s=list-send">list Send</a>
+  · <a href="today.html?s=list-sched">list Schedule</a>
+  · <a href="today.html?s=create-send&amp;phone=1">390</a>
+</li>
+<li><a href="a-modal.html"><b>A. Block dialog at Send or Schedule (recommended)</b></a>
+  · <a href="a-modal.html?s=create-send">CreateCampaign Send</a>
+  · <a href="a-modal.html?s=create-sched">CreateCampaign Schedule</a>
+  · <a href="a-modal.html?s=list-send">campaigns-list Send</a>
+  · <a href="a-modal.html?s=list-sched">campaigns-list Schedule</a>
+  · <a href="a-modal.html?s=list-keep">already scheduled, schedule kept</a>
+  · <a href="a-modal.html?s=settings">Settings after Verify your domain</a>
+  · <a href="a-modal.html?s=mail">help email</a>
+  · <a href="a-modal.html?s=create-send&amp;phone=1">390 CreateCampaign</a>
+  · <a href="a-modal.html?s=list-send&amp;phone=1">390 list</a>
+</li>
+<li><a href="b-banner.html"><b>B. Inline blocking banner, Send and Schedule disabled</b></a>
+  · <a href="b-banner.html?s=create-send">CreateCampaign, buttons off</a>
+  · <a href="b-banner.html?s=create-sched">CreateCampaign Schedule</a>
+  · <a href="b-banner.html?s=list-send">campaigns list, Send off</a>
+  · <a href="b-banner.html?s=settings">Settings</a>
+  · <a href="b-banner.html?s=mail">help email</a>
+  · <a href="b-banner.html?s=create-send&amp;phone=1">390</a>
+</li>
+<li><a href="c-checklist.html"><b>C. Pre-flight checklist panel</b></a>
+  · <a href="c-checklist.html?s=create-send">CreateCampaign Send</a>
+  · <a href="c-checklist.html?s=create-sched">CreateCampaign Schedule</a>
+  · <a href="c-checklist.html?s=list-send">campaigns-list Send</a>
+  · <a href="c-checklist.html?s=list-sched">campaigns-list Schedule</a>
+  · <a href="c-checklist.html?s=list-keep">already scheduled, schedule kept</a>
+  · <a href="c-checklist.html?s=settings">Settings</a>
+  · <a href="c-checklist.html?s=mail">help email</a>
+  · <a href="c-checklist.html?s=create-send&amp;phone=1">390</a>
+</li>
+<li><a href="build-contract.html">Build contract</a> · <a href="build-contract.md">.md</a></li>
+</ul>
+<p class="muted">Not agent-ready. Soft Dev hold until a direction is picked.</p>
+</body>
+</html>

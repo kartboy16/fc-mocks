@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>#869 C: Pre-flight checklist</title>
+<link rel="stylesheet" href="chrome.css">
+</head>
+<body>
+<div class="mockbar">
+  <a href="../">All mocks</a> · <a href="index.html">#869 hub</a> ·
+  <a href="today.html">Today</a> ·
+  <a href="a-modal.html">A</a> ·
+  <a href="b-banner.html">B</a> ·
+  <a href="c-checklist.html">C</a> ·
+  <a href="build-contract.html">Contract</a>
+  <span class="sp"></span>
+  <button type="button" data-sw="dev:desk" onclick="sw('dev','desk')">Desktop</button>
+  <button type="button" data-sw="dev:phone" onclick="sw('dev','phone')">390</button>
+  
+  <button type="button" data-sw="s:create-send" onclick="sw('s','create-send')">CreateCampaign Send</button>
+  <button type="button" data-sw="s:create-sched" onclick="sw('s','create-sched')">CreateCampaign Schedule</button>
+  <button type="button" data-sw="s:list-send" onclick="sw('s','list-send')">List Send</button>
+  <button type="button" data-sw="s:list-sched" onclick="sw('s','list-sched')">List Schedule</button>
+  <button type="button" data-sw="s:list-keep" onclick="sw('s','list-keep')">Scheduled stays scheduled</button>
+  <button type="button" data-sw="s:settings" onclick="sw('s','settings')">Settings</button>
+  <button type="button" data-sw="s:mail" onclick="sw('s','mail')">Help email</button>
+
+</div>
+<div id="root"></div>
+<script src="data.js"></script>
+<script src="app.js"></script>
+<script>FC869App.boot({ dir: "c", s: "create-send" });</script>
+</body>
+</html>
