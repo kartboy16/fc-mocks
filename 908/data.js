@@ -25,6 +25,14 @@
     { email: "drew.client@example.com", first: "Drew", last: "Client", status: "subscribed", tags: [], phone: "", city: "Vancouver", changed: "Sep 22, 2026, 3:12 PM", consent: "In person", consentNote: "" }
   ];
 
+  const page2 = [
+    { email: "lee.client@example.com", first: "Lee", last: "Client", status: "subscribed", tags: ["Newsletter"], phone: "", city: "", changed: "Sep 18, 2026, 9:10 AM", consent: "Website form", consentNote: "" },
+    { email: "cameron.example@example.com", first: "Cameron", last: "Example", status: "subscribed", tags: ["Clients"], phone: "", city: "", changed: "Sep 16, 2026, 4:02 PM", consent: "In person", consentNote: "" },
+    { email: "skyler.client@example.com", first: "Skyler", last: "Client", status: "unsubscribed", tags: [], phone: "", city: "", changed: "Sep 12, 2026, 11:28 AM", consent: "Event", consentNote: "" },
+    { email: "jamie.client@example.com", first: "Jamie", last: "Client", status: "subscribed", tags: ["News page"], phone: "", city: "", changed: "Sep 9, 2026, 2:51 PM", consent: "Website form", consentNote: "" },
+    { email: "robin.example@example.com", first: "Robin", last: "Example", status: "subscribed", tags: ["Prospects"], phone: "", city: "", changed: "Sep 3, 2026, 8:17 AM", consent: "In person", consentNote: "" }
+  ];
+
   const history = {
     "subscriber@example.com": [
       { who: "Jane Advisor", action: "updated name and phone for subscriber@example.com", when: "Nov 16, 2026, 11:42 AM PT" },
@@ -102,6 +110,7 @@
     audience: audience,
     audiences: [audience, otherAudience],
     people: people,
+    page2: page2,
     history: history,
     allHistory: allHistory,
     tags: ["Newsletter", "Clients", "News page", "Prospects"],

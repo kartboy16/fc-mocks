@@ -20,6 +20,9 @@
 
 **C (26–42 h)** is a compact card list with a per-subscriber detail page (profile, actions, history). Better if most advisors work on a phone, but more routing than this needs as a first slice.
 
+## Revision (Nov 17, 2026)
+Every row shows visible **Unsubscribe** (or **Re-subscribe** on an unsubscribed row) and **Remove** buttons. These, and Permanently delete in the ⋮ menu, work on every row and use that row’s email in the confirm, toast, and updated status. The same three actions stay visible in the A drawer footer, the B edit/history modal, and the C detail page. A bulk bar supports select-all and “N selected · Unsubscribe · Remove”, each with a confirm and a done toast. At 390, each card has a visible action row.
+
 ## Hard rules (all directions)
 - This view is shown only when the advisor’s email provider is Mailchimp. FTT Mail advisors keep today’s Subscribers tab (`SESContacts`) and never see this Mailchimp view.
 - There is no Mailchimp ↔ FTT Mail sync, import, or copy either way.

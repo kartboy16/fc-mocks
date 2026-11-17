@@ -17,7 +17,7 @@ h1{font-size:26px}
 <body>
 <p><a href="../">All mocks</a> · <a href="https://github.com/kartboy16/content-library/issues/908">#908</a></p>
 <h1>#908 Mailchimp subscriber management in FC</h1>
-<p class="r"><b>Recommend A</b> as the first slice: a Mailchimp Subscribers tab with a paged table and a side drawer for add, edit, and change history. The page is clearly labelled as the Mailchimp audience, not the FTT Mail list. Add requires a CASL consent checkbox and a consent source. Unsubscribe, Remove (archive), and Permanently delete are separate actions, with a type-the-email confirm on permanent delete. Re-subscribing someone who unsubscribed shows that Mailchimp will send a confirmation email and leave them Pending. B puts the same actions in modals and adds a list-wide History tab, which is useful for an audit sweep but splits the per-subscriber work. C is a compact card list with a detail page — better if most advisors work on a phone, but more routing than this needs first. A already works at 390 with a full-screen drawer.</p>
+<p class="r"><b>Recommend A</b> as the first slice: a Mailchimp Subscribers tab with a paged table and a side drawer for add, edit, and change history. The page is clearly labelled as the Mailchimp audience, not the FTT Mail list. Add requires a CASL consent checkbox and a consent source. Every row has visible <b>Unsubscribe</b> (or <b>Re-subscribe</b>) and <b>Remove</b> buttons; Permanently delete stays under ⋮ and in the drawer. There is also bulk select with Unsubscribe and Remove. Re-subscribing someone who unsubscribed shows that Mailchimp will send a confirmation email and leave them Pending. B puts the same actions in modals and adds a list-wide History tab, which is useful for an audit sweep but splits the per-subscriber work. C is a compact card list with a detail page — better if most advisors work on a phone, but more routing than this needs first. A already works at 390 with a full-screen drawer.</p>
 <div class="note">Fixtures are Jane Advisor, Your Firm Name, subscriber@example.com, and example.com only. This view is only for advisors still on Mailchimp. There is no Mailchimp ↔ FTT Mail sync. Compare with <a href="today.html">Today</a>, where Mailchimp Audiences is read-only and there is no Subscribers tab. CASL wording in the add form is a placeholder for compliance review.</div>
 <ul>
 <li><a href="today.html">Today: Mailchimp Audiences, read-only counts, no Subscribers tab</a>
@@ -27,6 +27,8 @@ h1{font-size:26px}
 </li>
 <li><a href="a-drawer.html"><b>A. Table plus side drawer (recommended)</b></a>
   · <a href="a-drawer.html?s=list">List, 1–50 of 1,284</a>
+  · <a href="a-drawer.html?s=list">Visible row actions</a>
+  · <a href="a-drawer.html?s=bulk">Bulk select</a>
   · <a href="a-drawer.html?s=search">Search by email</a>
   · <a href="a-drawer.html?s=add">Add subscriber</a>
   · <a href="a-drawer.html?s=add-err">Add, consent missing</a>

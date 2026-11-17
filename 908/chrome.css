@@ -231,3 +231,28 @@ td.nowrap,th.nowrap,.nowrap{white-space:nowrap}
 
 .btn.danger{background:#c62828;border-color:#c62828;color:#fff}
 .btn.danger[disabled]{background:#cfd8e3;border-color:#cfd8e3;color:#546e7a;opacity:1;cursor:not-allowed}
+
+/* Revision: visible row actions + bulk */
+.list td.cb,.list th.cb{width:36px;padding-left:10px;padding-right:4px}
+.list td.cb input,.list th.cb input,.pcard .cb input{width:16px;height:16px;accent-color:#1976d2}
+.row-acts{display:flex;align-items:center;justify-content:flex-end;gap:6px;flex-wrap:wrap}
+.row-acts .btn{min-height:32px;padding:0 10px;font-size:12.5px;font-weight:600;white-space:nowrap}
+.menu-wrap{position:relative;display:inline-flex}
+.menu-wrap .menu{right:0;top:100%;z-index:15}
+.pcard{position:relative}
+.pcard .top{display:flex;align-items:flex-start;gap:8px}
+.pcard .top .body{flex:1;min-width:0}
+.pcard .row-acts{justify-content:flex-start;margin-top:10px}
+.phone .row-acts .btn{min-height:44px;flex:1 1 calc(50% - 6px)}
+.phone .pcard .row-acts{width:100%}
+.bulkbar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;background:#e3f0fd;border:1px solid #bbdefb;border-radius:6px;padding:8px 12px;margin:0 0 12px}
+.bulkbar .n{font-weight:600;margin-right:4px}
+.phone .bulkbar{flex-direction:column;align-items:stretch}
+.phone .bulkbar .btn{width:100%;min-height:44px}
+.df .left-acts{margin-right:auto;display:flex;flex-wrap:wrap;gap:8px}
+.phone .df .left-acts{margin:0 0 8px;width:100%}
+.phone .df .left-acts .btn{flex:1}
+.list td.acts-cell{white-space:nowrap}
+#stage.desk{min-height:1040px}
+.bulk-list{margin:0;padding:0 0 0 18px}
+.bulk-list li{margin:2px 0;font-size:13.5px}
