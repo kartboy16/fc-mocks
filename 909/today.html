@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>#909 Today: reminder switch snaps back, no Decline</title>
+<link rel="stylesheet" href="chrome.css">
+</head>
+<body>
+<div class="mockbar">
+  <a href="../">All mocks</a> · <a href="index.html">#909 hub</a> ·
+  <a href="today.html">Today</a> ·
+  <a href="approval.html">Mock</a> ·
+  <a href="build-contract.html">Contract</a>
+  <span class="sp"></span>
+  <button type="button" data-sw="dev:desk" onclick="sw('dev','desk')">Desktop</button>
+  <button type="button" data-sw="dev:phone" onclick="sw('dev','phone')">390</button>
+  <button type="button" data-sw="s:today" onclick="sw('s','today')">Before toggle</button>
+  <button type="button" data-sw="s:today-err" onclick="sw('s','today-err')">After toggle</button>
+</div>
+<div id="root"></div>
+<script src="app.js"></script>
+<script>FC909App.boot({ dir: "today", s: "today" });</script>
+</body>
+</html>

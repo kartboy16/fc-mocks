@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>#909 Decline an FTT Mail approval request and fix the reminder switch</title>
+<style>
+body{font:15px/1.55 Roboto,Inter,system-ui,sans-serif;max-width:920px;margin:24px auto;padding:0 16px;color:#2c3e50}
+a{color:#1976d2}
+li{margin:10px 0}
+.r{background:#e8f5e9;border:1px solid #a5d6a7;border-radius:10px;padding:10px 14px}
+.note{background:#fff8e1;border:1px solid #ffe0a3;border-radius:8px;padding:10px 12px}
+h1{font-size:26px}
+.muted{color:#607080;font-size:13px}
+</style>
+</head>
+<body>
+<p><a href="../">All mocks</a> · <a href="https://github.com/kartboy16/content-library/issues/909">#909</a></p>
+<h1>#909 Decline an FTT Mail approval request and fix the reminder switch</h1>
+<p class="r"><b>One direction</b>, matched to the mockups posted in the #fc-bugs thread, plus the error, confirm, and undo states those images didn’t include. Estimated at 14–22 agent hours (cloud agent build plus FC Tester). In the Approval email modal, during support login as Jane Advisor, a red-outline <b>Decline request</b> sits in the footer. After a light confirm, the request is declined, reminders turn off, and the modal shows who declined and when. <b>Undo decline</b> restores pending status and leaves reminders off until they are switched back on. Turning Automatic reminders off must persist. If the save fails, an error appears inside the dialog — not only in a snackbar — the switch reverts, and Retry (and Sign in again, when the support session has expired) are offered.</p>
+<div class="note">Fixtures are Jane Advisor, Jane Admin, Sample Campaign: The Financial Side of Caregiving, jane@example.com, and assistant@example.com only. Compare with <a href="today.html">Today</a>, where the switch snaps back on and the error is only a snackbar, and there is no way to decline the request. A declined request, or one with reminders off, must be skipped by the Nov 18 reminder run.</div>
+<ul>
+<li><a href="today.html">Today: switch snaps back, snackbar only, no Decline</a>
+  · <a href="today.html?s=today">before toggle</a>
+  · <a href="today.html?s=today-err">after toggle</a>
+  · <a href="today.html?s=today&amp;phone=1">390</a>
+</li>
+<li><a href="approval.html"><b>Approval email modal (the direction)</b></a>
+  · <a href="approval.html?s=pending">Pending, Decline request</a>
+  · <a href="approval.html?s=saving">Saving reminders</a>
+  · <a href="approval.html?s=saved">Reminders off, saved</a>
+  · <a href="approval.html?s=err-perm">Permission error</a>
+  · <a href="approval.html?s=err-session">Expired session</a>
+  · <a href="approval.html?s=confirm">Decline confirm</a>
+  · <a href="approval.html?s=declined">Declined</a>
+  · <a href="approval.html?s=undone">After undo, reminders still off</a>
+  · <a href="approval.html?s=advisor">Advisor’s own view (no Decline)</a>
+  · <a href="approval.html?s=pending&amp;phone=1">390 pending</a>
+  · <a href="approval.html?s=declined&amp;phone=1">390 declined</a>
+  · <a href="approval.html?s=err-session&amp;phone=1">390 expired session</a>
+</li>
+<li><a href="build-contract.html">Build contract</a> · <a href="build-contract.md">Markdown</a></li>
+</ul>
+<p class="muted">Not agent-ready. Soft Dev hold until the direction is confirmed.</p>
+</body>
+</html>

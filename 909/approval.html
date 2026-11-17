@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>#909 Approval email: decline request and reminder switch</title>
+<link rel="stylesheet" href="chrome.css">
+</head>
+<body>
+<div class="mockbar">
+  <a href="../">All mocks</a> · <a href="index.html">#909 hub</a> ·
+  <a href="today.html">Today</a> ·
+  <a href="approval.html">Mock</a> ·
+  <a href="build-contract.html">Contract</a>
+  <span class="sp"></span>
+  <button type="button" data-sw="dev:desk" onclick="sw('dev','desk')">Desktop</button>
+  <button type="button" data-sw="dev:phone" onclick="sw('dev','phone')">390</button>
+  <button type="button" data-sw="s:pending" onclick="sw('s','pending')">Pending</button>
+  <button type="button" data-sw="s:saving" onclick="sw('s','saving')">Saving</button>
+  <button type="button" data-sw="s:saved" onclick="sw('s','saved')">Reminders off</button>
+  <button type="button" data-sw="s:err-perm" onclick="sw('s','err-perm')">Permission error</button>
+  <button type="button" data-sw="s:err-session" onclick="sw('s','err-session')">Expired session</button>
+  <button type="button" data-sw="s:confirm" onclick="sw('s','confirm')">Decline confirm</button>
+  <button type="button" data-sw="s:declined" onclick="sw('s','declined')">Declined</button>
+  <button type="button" data-sw="s:undone" onclick="sw('s','undone')">After undo</button>
+  <button type="button" data-sw="s:advisor" onclick="sw('s','advisor')">Advisor view</button>
+</div>
+<div id="root"></div>
+<script src="app.js"></script>
+<script>FC909App.boot({ dir: "mock", s: "pending" });</script>
+</body>
+</html>

@@ -1,0 +1,130 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>#909 Build contract</title>
+<style>body{font:15px/1.55 Roboto,Inter,system-ui,sans-serif;max-width:860px;margin:24px auto;padding:0 16px;color:#2c3e50}a{color:#1976d2}code{background:#f4f4f5;padding:.1em .35em;border-radius:4px;font-size:.92em}pre{background:#f4f4f5;padding:12px 14px;border-radius:8px;overflow:auto;font-size:13px}table{border-collapse:collapse;width:100%;margin:12px 0}th,td{border:1px solid #e0e5eb;padding:6px 8px;text-align:left;vertical-align:top}th{background:#f3f6f9}h1{font-size:26px}h2{font-size:20px;margin-top:28px}.hold{background:#fff8e1;border:1px solid #ffe0a3;border-radius:8px;padding:10px 12px}</style></head><body>
+<p><a href="index.html">#909 hub</a> · <a href="build-contract.md">Markdown</a> · <a href="https://github.com/kartboy16/content-library/issues/909">#909</a></p>
+<h1>#909 Decline an FTT Mail approval request and fix the reminder switch</h1>
+<p class="hold"><b>Status:</b> Not agent-ready. Soft Dev hold until the direction is confirmed.</p>
+<p><b>Risk:</b> high — FTT Mail campaign approvals and the approval-reminder job (email sending). Staging only; never merge this issue to main.</p>
+<p><b>Estimate:</b> 14–22 agent hours (cloud agent build 8–13, FC Tester 4–6, fix loop 2–3).</p>
+
+<h2>Sources (read-only)</h2>
+<ul>
+<li>Issue <a href="https://github.com/kartboy16/content-library/issues/909">#909</a></li>
+<li>Reporter mockups in the #fc-bugs thread (two screenshots: pending with Decline request, and the declined state). This mock matches those screens and adds the confirm, reminder-switch error, undo, and 390 states the images did not include.</li>
+<li>Live UI: <code>imports/ui/EmailCampaigns/ApprovalEmailDialog.jsx</code>, opened from <code>SESCampaignsList.jsx</code>.</li>
+<li>Live toggle: <code>ses.setApprovalAutoResend</code> in <code>server/ses-methods.js</code> requires <code>this.userId === advisorId</code>, then <code>canManageCampaignApproval</code>. During support login the user is the advisor, so a missing or expired impersonation token (24h TTL) is rejected and the error only appears in a snackbar. The switch snaps back on.</li>
+<li>Live reminder job: <code>server/ses-approval-email-reminder-scheduler.js</code> already skips <code>approvalAutoResendDisabled: { $ne: true }</code>. It must also skip <code>advisorApprovalStatus: 'declined'</code>.</li>
+<li>Staging has <code>emailCampaigns.decideAdvisorApproval</code>, but the button only shows when there is a compliance copy. Main has no Decline for FTT Mail campaigns.</li>
+<li>Related: <a href="https://github.com/kartboy16/content-library/issues/389">#389</a> (Content approvals decline), <a href="https://github.com/kartboy16/content-library/issues/820">#820</a> (stop reminders after approve).</li>
+</ul>
+
+<h2>Direction</h2>
+<p>One direction, not A/B/C. Build the Approval email modal to match the reporter’s screens, over the Email Campaigns list, including the red support bar when an admin is logged in as the advisor.</p>
+
+<h3>Pending (support login as the advisor, or an admin acting for them)</h3>
+<ul>
+<li>Header <b>Approval email</b>, then the campaign title, a <b>Pending approval</b> orange outline chip, <b>Last sent 6d ago</b>, <b>Opens 1 · Clicks 0</b>.</li>
+<li><b>NEXT SEND TO:</b> email chips. A <b>Customize before send</b> collapsible row (recipients; approval-message editing stays as it is today for FTT Mail).</li>
+<li><b>SEND HISTORY:</b> dated rows with orange <b>Auto · 7d</b> / <b>3d</b> / <b>1d</b> chips and a grey <b>Initial</b> chip.</li>
+<li><b>Automatic reminders</b> card with subtext “At 1, 3, 7, and 14 days if not approved.” and a blue switch on the right.</li>
+<li>Helper under the card: “Admins can decline on the advisor’s behalf. Declining stops all reminders.”</li>
+<li>Footer: red-outline <b>Decline request</b> on the left; <b>Close</b> text button and blue <b>Resend now</b> (send icon) on the right.</li>
+</ul>
+<p><b>Decline request</b> is admin-only. It is visible during support login as the advisor, because the actor is an admin. It is not visible when the advisor is in their own session (no support bar, footer is only Close and Resend now). Non-admin, non-owner users still cannot change another advisor’s approval.</p>
+
+<h3>Reminder switch</h3>
+<p>An admin, a support login as the advisor (with a valid impersonation token), or the advisor themselves can turn Automatic reminders off, and the setting persists after reload. While saving, the switch is busy and the card shows “Saving…”. On success, show a short inline confirmation in the card.</p>
+<p>If the save fails, do <b>not</b> rely on a snackbar alone:</p>
+<ul>
+<li>The error appears <b>inside the reminders card</b>.</li>
+<li>The switch reverts to the previous value.</li>
+<li>Offer <b>Retry</b>.</li>
+<li>Permission denied copy: “You don’t have permission to change automatic reminders. The setting was not changed.”</li>
+<li>Expired support session copy: “Your support session has expired, so the setting was not changed.” plus a <b>Sign in again</b> action, which tells the admin to return to their account and log in as the advisor again.</li>
+</ul>
+<p>Also fix the server so a support login with a valid token, an admin, and the advisor themselves can persist the toggle. A failed call must not leave the UI showing the new value.</p>
+
+<h3>Decline confirm</h3>
+<p>A light confirm <b>inside the modal</b> (not a second full dialog): “Decline this approval request?” Body: “The request will be marked declined, and automatic reminders will be turned off. No further reminder emails will be sent.” Optional reason field for the audit log. <b>Cancel</b> returns to pending. <b>Decline request</b> commits.</p>
+
+<h3>Declined state</h3>
+<ul>
+<li>Red banner at the top, with an icon: “This approval request has been declined. All reminder emails have been stopped.”</li>
+<li>Red-outline <b>Declined</b> chip, <b>Last sent 6d ago</b>, and “Declined by Jane Admin (admin) · Nov 17, 2026, 9:30 AM” (live: the acting admin’s name and the timestamp).</li>
+<li>Reminders switch off and disabled, subtext “Reminders stopped because this request was declined”.</li>
+<li>Footer is only <b>Close</b> and <b>Undo decline</b> (blue text buttons). No Decline button and no Resend now.</li>
+</ul>
+
+<h3>Undo decline</h3>
+<p>Restores pending status. Reminders stay <b>off</b> and remain editable, until someone switches them back on. The declined banner, chip, and “Declined by…” line go away. Decline request and Resend now return to the footer.</p>
+
+<h2>Nov 18 reminder run</h2>
+<p>The reporter flagged that the 14-day reminder is due on the Nov 18 run unless the switch sticks or the request is declined. The reminder job must skip a campaign when:</p>
+<ul>
+<li><code>approvalAutoResendDisabled</code> is true, or</li>
+<li><code>advisorApprovalStatus</code> is <code>'declined'</code>.</li>
+</ul>
+<p>Turning reminders off, or declining the request, must be persisted before that run, or the reminder still goes out. Undo does not turn reminders back on, so an undone request stays skipped until the switch is turned on again.</p>
+
+<h2>Audit fields</h2>
+<p>On decline, set at least:</p>
+<ul>
+<li><code>advisorApprovalStatus: 'declined'</code></li>
+<li><code>declinedBy</code> (acting user id; display name in the modal, e.g. Jane Admin)</li>
+<li><code>declinedAt</code> (ISO timestamp; the issue also mentions <code>declinedByAdvisorAt</code> — use the existing field if it already stores this, and keep a single source of truth)</li>
+<li><code>approvalAutoResendDisabled: true</code></li>
+<li>optional decline reason, if entered</li>
+</ul>
+<p>On undo: set <code>advisorApprovalStatus</code> back to pending (clear the declined status), clear <code>declinedBy</code> / <code>declinedAt</code> (and the reason), and leave <code>approvalAutoResendDisabled: true</code> until the switch is turned on.</p>
+
+<h2>Screens</h2>
+<table>
+<tr><th>Screen</th><th>Notes</th></tr>
+<tr><td><a href="today.html">Today, before toggle</a></td><td>Current modal. No Decline request. Switch is on.</td></tr>
+<tr><td><a href="today.html?s=today-err">Today, after toggle</a></td><td>Switch snaps back on. Error only in a snackbar: “Only admins or authorized impersonation sessions can change auto-reminder settings.”</td></tr>
+<tr><td><a href="approval.html?s=pending">Pending</a></td><td>Matches the first reporter mockup: support bar, Decline request in the footer, reminders on.</td></tr>
+<tr><td><a href="approval.html?s=saving">Saving</a></td><td>Switch busy, “Saving…” in the reminders card.</td></tr>
+<tr><td><a href="approval.html?s=saved">Reminders off, saved</a></td><td>Inline success. Campaign will be skipped by the reminder job. Still pending; Decline still available.</td></tr>
+<tr><td><a href="approval.html?s=err-perm">Permission error</a></td><td>Inline error in the card, switch reverted, Retry.</td></tr>
+<tr><td><a href="approval.html?s=err-session">Expired session</a></td><td>Inline error, switch reverted, Retry and Sign in again.</td></tr>
+<tr><td><a href="approval.html?s=confirm">Decline confirm</a></td><td>Light confirm inside the modal, optional reason.</td></tr>
+<tr><td><a href="approval.html?s=declined">Declined</a></td><td>Matches the second reporter mockup: banner, chip, who and when, reminders off and disabled, Close and Undo decline.</td></tr>
+<tr><td><a href="approval.html?s=undone">After undo</a></td><td>Pending again. Reminders stay off until switched back on.</td></tr>
+<tr><td><a href="approval.html?s=advisor">Advisor’s own view</a></td><td>No support bar. No Decline request. Reminder switch still works for the advisor.</td></tr>
+<tr><td><a href="approval.html?s=pending&amp;phone=1">390 pending / declined / error</a></td><td>Bottom sheet, 44px targets, stacked footer, support bar at the top.</td></tr>
+</table>
+
+<h2>Copy (fixtures)</h2>
+<ul>
+<li>Support bar: “You're logged in as Jane Advisor for support.” <b>Return to my account</b></li>
+<li>Campaign title: <b>Sample Campaign: The Financial Side of Caregiving</b></li>
+<li>Recipients: jane@example.com, assistant@example.com</li>
+<li>Decliner line (example): “Declined by Jane Admin (admin) · Nov 17, 2026, 9:30 AM”</li>
+<li>All other strings as in the screens above</li>
+</ul>
+<p>No estimates or explainer prose in the mock UI (hub and contract only). Generic names only.</p>
+
+<h2>In / out of scope</h2>
+<p><b>In:</b> Approval email modal on FTT Mail (SES) campaigns, admin / support-login and advisor views; reminder-switch persist plus inline error, Retry, Sign in again, saving, and success; Decline request, in-modal confirm (optional reason), declined state, Undo decline; reminder job skip for declined and for reminders-off campaigns; audit fields as above; staging tests with test accounts only — no live sends to real advisors.</p>
+<p><b>Out:</b> Mailchimp approval decline (already exists on another path); changing Resend now, Customize before send, or send-history behaviour beyond what’s needed to keep the modal intact; shipping this to main (staging only); renaming or moving the reminder milestones (1, 3, 7, 14 days).</p>
+
+<h2>Mobile (390)</h2>
+<p>The modal is a bottom sheet. 44px targets. Footer actions stack full width (Resend now, Close, then Decline request; or Close and Undo decline in the declined state). The support bar stays at the top. History and chips wrap. The reminders card keeps the switch on the right.</p>
+
+<h2>Agent-time estimate (hours, cloud build + FC Tester + fix loop)</h2>
+<table>
+<tr><th></th><th>Hours</th></tr>
+<tr><td>Cloud agent build</td><td>8–13</td></tr>
+<tr><td>FC Tester</td><td>4–6</td></tr>
+<tr><td>Fix loop</td><td>2–3</td></tr>
+<tr><td><b>Total</b></td><td><b>14–22 h</b></td></tr>
+</table>
+<p>Covers the auth fix for <code>ses.setApprovalAutoResend</code>, inline reminder-switch states, Decline / confirm / declined / undo, reminder-job skip, audit fields, and staging tests.</p>
+
+<h2>Open questions</h2>
+<ol>
+<li>Should the optional decline reason be required? (Recommended: optional.)</li>
+<li>Prefer the existing <code>declinedByAdvisorAt</code> field name, or add <code>declinedBy</code> / <code>declinedAt</code> and map the display from those? (Recommended: keep one timestamp field, and store who declined in <code>declinedBy</code>.)</li>
+<li>After undo, should a short inline note say reminders are still off? (The mock shows a one-line hint.)</li>
+</ol>
+</body></html>
