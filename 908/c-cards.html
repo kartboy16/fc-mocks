@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>#908 C: Compact cards and a detail page</title>
+<link rel="stylesheet" href="chrome.css">
+</head>
+<body>
+<div class="mockbar">
+  <a href="../">All mocks</a> · <a href="index.html">#908 hub</a> ·
+  <a href="today.html">Today</a> ·
+  <a href="a-drawer.html">A</a> ·
+  <a href="b-modals.html">B</a> ·
+  <a href="c-cards.html">C</a> ·
+  <a href="build-contract.html">Contract</a>
+  <span class="sp"></span>
+  <button type="button" data-sw="dev:desk" onclick="sw('dev','desk')">Desktop</button>
+  <button type="button" data-sw="dev:phone" onclick="sw('dev','phone')">390</button>
+  
+  <button type="button" data-sw="s:list" onclick="sw('s','list')">List</button>
+  <button type="button" data-sw="s:detail" onclick="sw('s','detail')">Detail</button>
+  <button type="button" data-sw="s:add" onclick="sw('s','add')">Add</button>
+  <button type="button" data-sw="s:unsub" onclick="sw('s','unsub')">Unsubscribe</button>
+  <button type="button" data-sw="s:resub" onclick="sw('s','resub')">Re-subscribe</button>
+  <button type="button" data-sw="s:remove" onclick="sw('s','remove')">Remove</button>
+  <button type="button" data-sw="s:delete" onclick="sw('s','delete')">Delete</button>
+  <button type="button" data-sw="s:empty" onclick="sw('s','empty')">Empty</button>
+  <button type="button" data-sw="s:loading" onclick="sw('s','loading')">Loading</button>
+  <button type="button" data-sw="s:error-connect" onclick="sw('s','error-connect')">Not connected</button>
+  <button type="button" data-sw="s:error-api" onclick="sw('s','error-api')">API error</button>
+
+</div>
+<div id="root"></div>
+<script src="data.js"></script>
+<script src="app.js"></script>
+<script>FC908App.boot({ dir: "c", s: "list" });</script>
+</body>
+</html>

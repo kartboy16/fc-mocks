@@ -1,0 +1,117 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>#908 Build contract</title>
+<style>body{font:15px/1.55 Roboto,Inter,system-ui,sans-serif;max-width:860px;margin:24px auto;padding:0 16px;color:#2c3e50}a{color:#1976d2}code{background:#f4f4f5;padding:.1em .35em;border-radius:4px;font-size:.92em}table{border-collapse:collapse;width:100%;margin:12px 0}th,td{border:1px solid #e0e5eb;padding:6px 8px;text-align:left;vertical-align:top}th{background:#f3f6f9}h1{font-size:26px}h2{font-size:20px;margin-top:28px}.hold{background:#fff8e1;border:1px solid #ffe0a3;border-radius:8px;padding:10px 12px}</style></head><body>
+<p><a href="index.html">#908 hub</a> · <a href="build-contract.md">Markdown</a> · <a href="https://github.com/kartboy16/content-library/issues/908">Issue</a></p>
+<h1>#908 Mailchimp subscriber management in FC</h1>
+<p class="hold"><b>Status:</b> Not agent-ready. Soft Dev hold until a direction is picked.</p>
+<p><b>Risk:</b> high — this adds write access to a live Mailchimp audience (subscribe, unsubscribe, archive, permanent delete) and records a change history. Build to staging first. FC Tester must use a <b>test Mailchimp audience only</b>.</p>
+<h2>Sources (read-only)</h2>
+<ul>
+<li>Issue <a href="https://github.com/kartboy16/content-library/issues/908">#908</a></li>
+<li>Product rule from Alex (Nov 17, 2026): this view is only for advisors still on Mailchimp. There is <b>no Mailchimp ↔ FTT Mail sync</b>. Once an advisor moves off Mailchimp, the old list is done.</li>
+<li>Today, FC only reads Mailchimp members (<code>server/mailchimp/import-methods.js</code>, <code>server/mailchimp/reports-methods.js</code>). There is no subscriber write capability.</li>
+<li>Live Mailchimp hub: <code>imports/ui/EmailCampaigns/mailchimp/MailchimpHub.jsx</code> — Campaigns, Default Lists, Templates, Audiences, Reports, Settings. No Subscribers tab.</li>
+<li>Live Audiences (read-only): <code>imports/ui/EmailCampaigns/mailchimp/MailchimpAudiencesList.jsx</code>.</li>
+<li>Closest existing UI (FTT Mail only, do not show this to Mailchimp advisors): <code>imports/ui/EmailCampaigns/SESContacts.jsx</code> — paged Subscribers (default 50), search, Add Subscriber with a permission checkbox, Edit, history of opens/clicks (engagement, not change audit).</li>
+<li>Provider switch: <code>imports/ui/EmailCampaigns/EmailCampaigns.jsx</code> — Mailchimp advisors get <code>MailchimpHub</code>; FTT Mail advisors get <code>FTTHub</code> with a Subscribers tab.</li>
+</ul>
+<h2>Recommendation</h2>
+<p><b>A. A Mailchimp Subscribers tab with a paged table and a side drawer for add, edit, and change history. 22–36 h.</b> This is the first slice. The tab is clearly labelled Mailchimp, with a helper line that this is the Mailchimp audience (News page audience in the fixture), not the FTT Mail list. The table is paged 50 per page, with search by email and “1–50 of 1,284”. The drawer holds Add (CASL checkbox + consent source), Edit (name, merge fields, tags), and per-subscriber History (who changed what and when). Unsubscribe, Remove (Mailchimp archive), and Permanently delete stay separate. Permanent delete requires typing the email and spells out that it can’t be undone and Mailchimp will not let the address be added again easily. Re-subscribing an unsubscribed person shows that Mailchimp sends a confirmation email and leaves them Pending. A already works at 390 with a full-screen drawer.</p>
+<p><b>B (24–38 h)</b> uses the same actions and the same copy, but add / edit / per-subscriber history are modals, and a list-wide <b>History</b> tab shows every change on the audience. Useful for an audit sweep, but it splits the per-subscriber work and adds a tab.</p>
+<p><b>C (26–42 h)</b> is a compact card list with a per-subscriber detail page (profile, actions, history). Better if most advisors work on a phone, but more routing than this needs as a first slice.</p>
+<h2>Hard rules (all directions)</h2>
+<ul>
+<li>This view is shown only when the advisor’s email provider is Mailchimp. FTT Mail advisors keep today’s Subscribers tab (<code>SESContacts</code>) and never see this Mailchimp view.</li>
+<li>There is no Mailchimp ↔ FTT Mail sync, import, or copy either way.</li>
+<li>The page must be unmistakably the Mailchimp list: title <b>Mailchimp Subscribers</b>, a Mailchimp badge, and a helper line that names the audience and says it is not the FTT Mail list.</li>
+<li>List calls are capped at <b>50 per page</b>, with limit, offset/paging, and field projection. Never load the whole audience.</li>
+<li>Search is by email (server-side).</li>
+<li>Add requires a <b>CASL consent checkbox</b> and a <b>consent source</b>. Both are required. CASL wording in this mock is a <b>placeholder for compliance review</b>.</li>
+<li>Unsubscribe, Remove (archive), and Permanently delete are three different actions. Do not combine them, and do not label archive as “Delete”.</li>
+<li>Permanent delete has a strong confirm: type the email, explain that it can’t be undone, and that Mailchimp will not let that address be added again easily.</li>
+<li>Re-subscribing an unsubscribed person does not silently set them back to subscribed. The UI must say Mailchimp will send a confirmation email, and the member’s status becomes <b>Pending</b> until they confirm.</li>
+<li>Every change writes an audit log in FC (who, when, action, email, and consent source on add). “Who” is the FC advisor (Jane Advisor in the fixture), not a raw Mailchimp API actor.</li>
+<li>Advisor-facing copy never links to the platform marketing domain and never uses real client or advisor names.</li>
+</ul>
+<h2>Screens</h2>
+<table>
+<tr><th>Screen</th><th>Direction</th><th>Notes</th></tr>
+<tr><td>Today, Audiences</td><td>—</td><td>Current Mailchimp hub. Read-only audience names and counts. No Subscribers tab. Helper: counts come from Mailchimp; there is no way to add, edit, or remove subscribers from here.</td></tr>
+<tr><td>Today, Settings</td><td>—</td><td>Mailchimp is connected.</td></tr>
+<tr><td>List</td><td>A, B, C</td><td>Paged 50, “1–50 of 1,284”, search by email, Mailchimp badge and helper line. A/B: table (cards at 390). C: card list on desktop and 390.</td></tr>
+<tr><td>Search</td><td>A, B, C</td><td>Search <code>subscriber@example.com</code> → “1–1 of 1”.</td></tr>
+<tr><td>Page 2</td><td>A</td><td>“51–100 of 1,284”.</td></tr>
+<tr><td>Add</td><td>A, B, C</td><td>Email, name, consent source (In person, Website form, Event, Imported list, Other + note), required CASL checkbox. A: drawer. B/C: modal.</td></tr>
+<tr><td>Add, consent missing</td><td>A, B, C</td><td>Add blocked until the checkbox is ticked and a source is chosen.</td></tr>
+<tr><td>Edit</td><td>A, B, C</td><td>Name, phone and city merge fields, tags. Email is read-only. A: drawer. B: modal. C: on the detail page.</td></tr>
+<tr><td>History</td><td>A, B, C</td><td>“Jane Advisor updated name and phone for subscriber@example.com, Nov 16, 2026, 11:42 AM PT.” A: drawer tab. B: per-subscriber modal plus a list-wide History tab. C: on the detail page.</td></tr>
+<tr><td>Unsubscribe</td><td>A, B, C</td><td>Confirm, then toast and status Unsubscribed.</td></tr>
+<tr><td>Re-subscribe</td><td>A, B, C</td><td><code>alex.client@example.com</code> was unsubscribed. Dialog explains the confirmation email. After confirm, status is Pending and a toast says the email was sent.</td></tr>
+<tr><td>Remove</td><td>A, B, C</td><td>Labelled <b>Remove</b>. Archives in Mailchimp. They can be added again later if there is consent. Not a permanent delete.</td></tr>
+<tr><td>Permanently delete</td><td>A, B, C</td><td>Type <code>subscriber@example.com</code> to enable the button. Warns it can’t be undone and Mailchimp won’t let the address be added again easily.</td></tr>
+<tr><td>Empty / loading / not connected / API error</td><td>A, B, C</td><td>Empty and loading on the list. Not connected points to Settings. API error has Try again and says this is a Mailchimp API error, not an FTT Mail problem.</td></tr>
+<tr><td>Success toasts</td><td>A, B, C</td><td>Added, updated, unsubscribed, removed, permanently deleted, confirmation email sent.</td></tr>
+<tr><td>390</td><td>A, B, C</td><td>44px targets, stacked actions. A: full-screen drawer. B: bottom-sheet modals. C: card list and a full detail page.</td></tr>
+</table>
+<h2>States</h2>
+<p>List (paged), search, page 2, add, add blocked, edit, history, unsubscribe, re-subscribe / pending, remove, permanent delete, empty, loading, Mailchimp not connected, Mailchimp API error, success toasts. Also Today (no Subscribers tab).</p>
+<h2>Copy</h2>
+<ul>
+<li>Title: <b>Mailchimp Subscribers</b></li>
+<li>Badge: <b>Mailchimp</b></li>
+<li>Helper: “This is your Mailchimp audience, News page audience. It is not the FTT Mail list. Changes here update Mailchimp only.”</li>
+<li>Search placeholder: “Search by email”</li>
+<li>Pager: “1–50 of 1,284”</li>
+<li>Add title: <b>Add subscriber</b></li>
+<li>CASL checkbox (placeholder for compliance review): “This person gave me permission to email them (CASL consent).”</li>
+<li>CASL helper (placeholder): “You must have express consent before adding someone to this Mailchimp audience. They will not get a confirmation email when you add them here.”</li>
+<li>Consent source label: <b>Consent source</b>. Options: In person, Website form, Event, Imported list, Other (plus a note).</li>
+<li>CASL error: “Confirm that this person gave you permission to email them, and choose how you got that consent.”</li>
+<li>Unsubscribe title / body: “Unsubscribe this person?” / “subscriber@example.com will be marked Unsubscribed in Mailchimp and will stop getting campaigns. You can ask Mailchimp to send them a confirmation email later if they want to subscribe again.”</li>
+<li>Re-subscribe title / body: “Mailchimp will send a confirmation email” / “alex.client@example.com unsubscribed earlier, so Mailchimp will not add them back right away. Mailchimp will email them a confirmation link instead. Their status stays Pending until they confirm.” Primary: <b>Send confirmation email</b></li>
+<li>Remove title / body: “Remove this subscriber?” / “Remove archives subscriber@example.com in Mailchimp. They stop getting campaigns, and you can add them again later if you have consent. This is not a permanent delete.”</li>
+<li>Permanent delete title / body: “Permanently delete this subscriber?” / “This cannot be undone. Mailchimp permanently deletes subscriber@example.com from the News page audience and will not let you add this address again easily. Type the email to confirm.”</li>
+<li>Empty: “No subscribers in this Mailchimp audience yet. Add a subscriber to get started.”</li>
+<li>Empty search: “No Mailchimp subscribers match that email.”</li>
+<li>Loading: “Loading Mailchimp subscribers…”</li>
+<li>Not connected title / body: “Mailchimp isn’t connected” / “Connect it in Email Campaigns → Settings to manage this audience.”</li>
+<li>API error title / body: “Couldn’t load subscribers” / “This is a Mailchimp API error, not an FTT Mail problem. Try again in a moment.”</li>
+<li>Toasts: “Subscriber added to the Mailchimp audience.” / “Subscriber updated in Mailchimp.” / “Jane Advisor unsubscribed subscriber@example.com, Nov 17, 2026, 10:20 AM PT.” / “Removed subscriber@example.com from the Mailchimp audience.” / “Permanently deleted subscriber@example.com. This cannot be undone.” / “Confirmation email sent to alex.client@example.com. Their status is Pending until they confirm.”</li>
+<li>History helper (B tab): “Every change Jane Advisor (or anyone on this account) makes to the Mailchimp audience is recorded here. This log is stored in FC, not in Mailchimp.”</li>
+<li>Today helper: “Audience counts come from Mailchimp. There is no way to add, edit, unsubscribe, or remove subscribers from here.”</li>
+</ul>
+<p>Fixtures: Jane Advisor, Your Firm Name, News page audience (1,284), Event follow-ups (86), subscriber@example.com (Pat Example), alex.client@example.com (Alex Client, unsubscribed), casey.example@example.com (pending), avery.client@example.com (cleaned), example.com, 604-555-0100. No estimates or explainer prose in the mock UI (hub and contract only).</p>
+<h2>Mailchimp API notes</h2>
+<ul>
+<li>List: <code>GET /lists/{list_id}/members</code> with <code>count=50</code>, <code>offset</code>, optional email search, and <code>fields=</code> projection. Do not fetch the whole audience. Map Mailchimp <code>status</code> values: <code>subscribed</code>, <code>unsubscribed</code>, <code>pending</code>, <code>cleaned</code>.</li>
+<li>Add or update by email: <code>PUT /lists/{list_id}/members/{subscriber_hash}</code> (MD5 of the lowercased email). New adds set <code>status=subscribed</code> only after CASL + source are stored in FC. Store consent source (and the Other note) on the FC audit record; Mailchimp does not have a CASL source field.</li>
+<li>Edit: <code>PATCH</code> or <code>PUT</code> member with <code>merge_fields</code> and <code>tags</code> (Mailchimp tag add/remove endpoints as needed). Do not change email in this slice.</li>
+<li>Unsubscribe: <code>PATCH</code> member <code>status=unsubscribed</code>.</li>
+<li>Remove (archive): <code>DELETE /lists/{list_id}/members/{subscriber_hash}</code>. This <b>archives</b>. It is not a permanent delete. Label the action <b>Remove</b> in the UI.</li>
+<li>Permanent delete: <code>POST /lists/{list_id}/members/{subscriber_hash}/actions/delete-permanent</code>. Irreversible. Mailchimp will reject later attempts to re-add the same address.</li>
+<li>Re-subscribe of an unsubscribed member: do not force <code>status=subscribed</code>. Mailchimp sends a confirmation email and the member becomes <code>pending</code> until they confirm. Surface that in the UI and in the audit log.</li>
+<li>Rate limits: page slowly, disable double-submits, and show the API error state on 4xx/5xx. Never page through a large audience in one request.</li>
+<li>Audit log: an FC collection, advisor-scoped, append-only. Fields: actor (advisor id + display name), action, email, audience id, at (timestamp), and metadata (consent source, tag changes). List and search with limit, paging, and field projection. This is not Mailchimp’s activity feed.</li>
+<li>Auth: advisor-scoped, same pattern as the other Mailchimp methods (<code>mailchimpFetch</code>).</li>
+</ul>
+<h2>In / out of scope</h2>
+<p><b>In:</b> Mailchimp Subscribers tab on <code>MailchimpHub</code> (plus History tab in B, or a detail route in C); paged list (50) + email search; add with CASL + source; edit name, merge fields, tags; unsubscribe; Remove (archive); permanent delete with type-to-confirm; pending re-subscribe message; FC audit log and history views; empty / loading / not connected / API error / toasts; 1280 and 390; generic fixtures; tests against a test Mailchimp audience.</p>
+<p><b>Out of scope:</b> any Mailchimp ↔ FTT Mail sync or migration of members; changing the FTT Mail Subscribers UI; CSV import/export in this slice; bulk actions; creating or renaming Mailchimp audiences or segments; changing email provider; Mailchimp engagement history (opens/clicks) — that’s reports, not this audit log; writing CASL legal copy as final (compliance must review the placeholder).</p>
+<h2>Desktop vs mobile</h2>
+<p>1280: 90px left rail, Email Campaigns page, new Subscribers tab. A: table + 480px right drawer. B: table + centered modals, History as a tab. C: card list, detail replaces the list.</p>
+<p>390: rail behind Menu, 44px targets, tools stack, table becomes cards in A/B. A drawer is full screen. B dialogs are a bottom sheet. C is the default mobile layout (cards + detail).</p>
+<h2>Agent-time estimate (hours, cloud build + FC Tester + fix loop)</h2>
+<table>
+<tr><th></th><th>A</th><th>B</th><th>C</th></tr>
+<tr><td>Cloud agent build</td><td>14–22</td><td>16–24</td><td>17–26</td></tr>
+<tr><td>FC Tester</td><td>6–9</td><td>6–9</td><td>6–10</td></tr>
+<tr><td>Fix loop</td><td>2–5</td><td>2–5</td><td>3–6</td></tr>
+<tr><td><b>Total</b></td><td><b>22–36 h</b></td><td><b>24–38 h</b></td><td><b>26–42 h</b></td></tr>
+</table>
+<p>A covers the new tab, paged list + search, server write methods, CASL add, edit, the three removal actions, pending re-subscribe, FC audit log in the drawer, states, and tests on a test audience. B adds the list-wide History tab and uses modals. C adds a detail route and a card layout.</p>
+<h2>Open questions</h2>
+<p>1. If the advisor has more than one Mailchimp audience, is this view the default audience with a picker, or one combined list? (Recommended: default audience, with a picker when there is more than one.)</p>
+<p>2. Should <code>cleaned</code> members appear, and can they be removed or permanently deleted? (Recommended: show them, no “Send confirmation email”; Remove and Permanently delete still available.)</p>
+<p>3. Bulk unsubscribe / remove in this slice? (Recommended: no. Single-subscriber only until the first slice ships.)</p>
+<p>4. Final CASL checkbox and helper wording — compliance review before build, or ship the placeholder and swap copy? (Recommended: review before build if the wording will be in the first PR.)</p>
+</body></html>

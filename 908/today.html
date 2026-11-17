@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>#908 Today: Mailchimp Audiences, no Subscribers tab</title>
+<link rel="stylesheet" href="chrome.css">
+</head>
+<body>
+<div class="mockbar">
+  <a href="../">All mocks</a> · <a href="index.html">#908 hub</a> ·
+  <a href="today.html">Today</a> ·
+  <a href="a-drawer.html">A</a> ·
+  <a href="b-modals.html">B</a> ·
+  <a href="c-cards.html">C</a> ·
+  <a href="build-contract.html">Contract</a>
+  <span class="sp"></span>
+  <button type="button" data-sw="dev:desk" onclick="sw('dev','desk')">Desktop</button>
+  <button type="button" data-sw="dev:phone" onclick="sw('dev','phone')">390</button>
+  
+  <button type="button" data-sw="s:audiences" onclick="sw('s','audiences')">Audiences</button>
+  <button type="button" data-sw="s:settings" onclick="sw('s','settings')">Settings</button>
+
+</div>
+<div id="root"></div>
+<script src="data.js"></script>
+<script src="app.js"></script>
+<script>FC908App.boot({ dir: "today", s: "audiences" });</script>
+</body>
+</html>
