@@ -21,7 +21,7 @@
 **C (26–42 h)** is a compact card list with a per-subscriber detail page (profile, actions, history). Better if most advisors work on a phone, but more routing than this needs as a first slice.
 
 ## Revision (Nov 17, 2026)
-Every row shows visible **Unsubscribe** (or **Re-subscribe** on an unsubscribed row) and **Remove** buttons. These, and Permanently delete in the ⋮ menu, work on every row and use that row’s email in the confirm, toast, and updated status. The same three actions stay visible in the A drawer footer, the B edit/history modal, and the C detail page. A bulk bar supports select-all and “N selected · Unsubscribe · Remove”, each with a confirm and a done toast. At 390, each card has a visible action row.
+**Unsubscribe**, **Remove**, and **Permanently delete** live only in the Edit drawer footer (the edit modal in B, the detail page in C). List rows and phone cards show Edit and a History link only — no Unsubscribe, Remove, ⋮, checkboxes, or bulk bar. The drawer actions work for any subscriber: the confirm, toast, and updated status use that row’s email. Re-subscribe still explains that Mailchimp sends a confirmation email and leaves them Pending.
 
 ## Hard rules (all directions)
 - This view is shown only when the advisor’s email provider is Mailchimp. FTT Mail advisors keep today’s Subscribers tab (`SESContacts`) and never see this Mailchimp view.
@@ -41,12 +41,12 @@ Every row shows visible **Unsubscribe** (or **Re-subscribe** on an unsubscribed 
 | --- | --- | --- |
 | Today, Audiences | — | Current Mailchimp hub. Read-only audience names and counts. No Subscribers tab. Helper: counts come from Mailchimp; there is no way to add, edit, or remove subscribers from here. |
 | Today, Settings | — | Mailchimp is connected. |
-| List | A, B, C | Paged 50, “1–50 of 1,284”, search by email, Mailchimp badge and helper line. A/B: table (cards at 390). C: card list on desktop and 390. |
+| List | A, B, C | Paged 50, “1–50 of 1,284”, search by email, Mailchimp badge and helper line. Row actions are Edit and History only. A/B: table (cards at 390). C: card list on desktop and 390. |
 | Search | A, B, C | Search `subscriber@example.com` → “1–1 of 1”. |
 | Page 2 | A | “51–100 of 1,284”. |
 | Add | A, B, C | Email, name, consent source (In person, Website form, Event, Imported list, Other + note), required CASL checkbox. A: drawer. B/C: modal. |
 | Add, consent missing | A, B, C | Add blocked until the checkbox is ticked and a source is chosen. |
-| Edit | A, B, C | Name, phone and city merge fields, tags. Email is read-only. A: drawer. B: modal. C: on the detail page. |
+| Edit | A, B, C | Name, phone and city merge fields, tags. Email is read-only. A: drawer. B: modal. C: on the detail page. Footer (or the C Actions section) has Unsubscribe or Re-subscribe, Remove, and Permanently delete. |
 | History | A, B, C | “Jane Advisor updated name and phone for subscriber@example.com, Nov 16, 2026, 11:42 AM PT.” A: drawer tab. B: per-subscriber modal plus a list-wide History tab. C: on the detail page. |
 | Unsubscribe | A, B, C | Confirm, then toast and status Unsubscribed. |
 | Re-subscribe | A, B, C | `alex.client@example.com` was unsubscribed. Dialog explains the confirmation email. After confirm, status is Pending and a toast says the email was sent. |
@@ -119,5 +119,5 @@ A covers the new tab, paged list + search, server write methods, CASL add, edit,
 ## Open questions
 1. If the advisor has more than one Mailchimp audience, is this view the default audience with a picker, or one combined list? (Recommended: default audience, with a picker when there is more than one.)
 2. Should `cleaned` members appear, and can they be removed or permanently deleted? (Recommended: show them, no “Send confirmation email”; Remove and Permanently delete still available.)
-3. Bulk unsubscribe / remove in this slice? (Recommended: no. Single-subscriber only until the first slice ships.)
+3. Bulk unsubscribe / remove in this slice? Decided: no. Unsubscribe, Remove, and Permanently delete live only in the Edit drawer, for one subscriber at a time.
 4. Final CASL checkbox and helper wording — compliance review before build, or ship the placeholder and swap copy? (Recommended: review before build if the wording will be in the first PR.)

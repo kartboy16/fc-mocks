@@ -190,29 +190,14 @@
     return null;
   }
 
-  function rowActs(p, opts) {
-    opts = opts || {};
+  function rowActs(p) {
     const email = p.email;
     const a = attr(email);
-    const st = statusAction(p);
-    const stBtn = st
-      ? `<button class="btn quiet" type="button" data-act="${st.kind}" data-email="${esc(email)}" onclick="act('${st.kind}','${a}')">${esc(st.label)}</button>`
-      : "";
-    const rmBtn = `<button class="btn quiet" type="button" data-act="remove" data-email="${esc(email)}" onclick="act('remove','${a}')">Remove</button>`;
     const editS = state.dir === "c" ? "detail" : "edit";
     const histS = state.dir === "b" ? "history-modal" : (state.dir === "c" ? "detail-history" : "history");
-    const open = state.menu === email;
-    const icons = opts.icons === false ? "" : `
-      <button class="ico-btn" type="button" title="Edit" data-act="edit" data-email="${esc(email)}" onclick="act('${editS}','${a}')">✎</button>
-      <button class="ico-btn" type="button" title="History" data-act="history" data-email="${esc(email)}" onclick="act('${histS}','${a}')">🕒</button>`;
     return `<div class="row-acts">
-      ${stBtn}${rmBtn}${icons}
-      <span class="menu-wrap">
-        <button class="ico-btn" type="button" title="More" data-act="menu" data-email="${esc(email)}" onclick="event.stopPropagation();toggleMenu('${a}')">⋮</button>
-        ${open ? `<div class="menu" role="menu">
-          <button type="button" data-act="delete" data-email="${esc(email)}" onclick="event.stopPropagation();act('delete','${a}')">Permanently delete</button>
-        </div>` : ""}
-      </span>
+      <button class="btn quiet" type="button" data-act="edit" data-email="${esc(email)}" onclick="event.stopPropagation();act('${editS}','${a}')">Edit</button>
+      <button class="btn link" type="button" data-act="history" data-email="${esc(email)}" onclick="event.stopPropagation();act('${histS}','${a}')">History</button>
     </div>`;
   }
 
@@ -228,29 +213,11 @@
       <button class="btn quiet" type="button" data-act="delete" data-email="${esc(email)}" style="color:#c62828;border-color:#c62828" onclick="act('delete','${a}')">Permanently delete</button>`;
   }
 
-  function isSel(email) { return state.selected.indexOf(email) !== -1; }
-
-  function bulkBar() {
-    const n = state.selected.filter(function (e) { return findLive(e) && !findLive(e).gone; }).length;
-    if (!n) return "";
-    const unsubN = selectedSubscribed().length;
-    const unsubDis = unsubN ? "" : " disabled";
-    return `<div class="bulkbar" role="region" aria-label="Bulk actions">
-      <span class="n">${n} selected</span>
-      <button class="btn quiet" type="button" data-act="bulk-unsub" ${unsubDis} onclick="act('bulk-unsub')">Unsubscribe</button>
-      <button class="btn quiet" type="button" data-act="bulk-remove" onclick="act('bulk-remove')">Remove</button>
-      <button class="btn link" type="button" onclick="clearSel()">Clear</button>
-    </div>`;
-  }
-
   function table(rows, hiEmail) {
     const vis = rows;
-    const allOn = vis.length > 0 && vis.every(function (p) { return isSel(p.email); });
-    const some = vis.some(function (p) { return isSel(p.email); });
     const tr = vis.map(function (p) {
       const on = hiEmail && p.email === hiEmail;
       return `<tr class="${on ? "hi" : ""}" data-email="${esc(p.email)}">
-        <td class="cb"><input type="checkbox" data-sel="${esc(p.email)}" ${isSel(p.email) ? "checked" : ""} onclick="event.stopPropagation();toggleSel('${attr(p.email)}')"></td>
         <td>${esc(p.email)}</td>
         <td>${esc(nameOf(p))}</td>
         <td>${chip(p.status)}</td>
@@ -263,8 +230,7 @@
     return `<div class="card list-wrap">
       <table class="list">
         <thead><tr>
-          <th class="cb"><input type="checkbox" id="selAll" ${allOn ? "checked" : ""} ${some && !allOn ? "data-indeterminate=1" : ""} onclick="toggleAll()" aria-label="Select all on this page"></th>
-          <th>Email</th><th>Name</th><th>Status</th><th>Tags</th><th>Last changed</th><th>Actions</th>
+          <th>Email</th><th>Name</th><th>Status</th><th>Tags</th><th>Last changed</th><th></th>
         </tr></thead>
         <tbody>${tr}</tbody>
       </table>
@@ -274,10 +240,9 @@
 
   function cardItem(p, hiEmail) {
     const hi = hiEmail && p.email === hiEmail;
-    const go = state.dir === "c" ? `onclick="if(!event.target.closest('button,input,.row-acts,.menu'))act('detail','${attr(p.email)}')"` : "";
+    const go = state.dir === "c" ? `onclick="if(!event.target.closest('button,input,.row-acts'))act('detail','${attr(p.email)}')"` : "";
     return `<div class="pcard" data-email="${esc(p.email)}" style="${hi ? "background:#f5f9fd" : ""}" ${go}>
       <div class="top">
-        <label class="cb"><input type="checkbox" data-sel="${esc(p.email)}" ${isSel(p.email) ? "checked" : ""} onclick="event.stopPropagation();toggleSel('${attr(p.email)}')"></label>
         <div class="body">
           <div class="nm">${esc(p.email)}</div>
           <div class="meta">${esc(nameOf(p))} · ${chip(p.status)} · ${esc(p.changed || "")}</div>
@@ -537,7 +502,7 @@
     if (s === "search" && rows.length === 0) {
       return ident() + tools() + `<div class="empty">${esc(C().emptySearch)}</div>`;
     }
-    return ident() + tools() + bulkBar() + body;
+    return ident() + tools() + body;
   }
 
   function historyTab() {
@@ -674,7 +639,7 @@
       return dir === "a" ? drawer("history") : modal("history-modal");
     }
     if (s === "history-modal") return modal("history-modal");
-    if (s === "unsub" || s === "resub" || s === "remove" || s === "delete" || s === "bulk-unsub" || s === "bulk-remove") {
+    if (s === "unsub" || s === "resub" || s === "remove" || s === "delete") {
       return modal(s);
     }
     return "";
@@ -695,27 +660,6 @@
       if (!state.email) state.email = "subscriber@example.com";
       markGone(targetEmail());
       pushHist(targetEmail(), (s === "delete-done" ? "permanently deleted " : "removed (archived) ") + targetEmail());
-    }
-    if (s === "bulk" || s === "bulk-unsub" || s === "bulk-remove" || s === "bulk-unsub-done" || s === "bulk-remove-done") {
-      if (!state.selected.length) state.selected = defaultBulk();
-    }
-    if (s === "bulk-unsub-done") {
-      const targets = selectedSubscribed();
-      state.lastBulk = targets.length;
-      targets.forEach(function (p) {
-        setStatus(p.email, "unsubscribed");
-        pushHist(p.email, "unsubscribed " + p.email);
-      });
-      state.selected = [];
-    }
-    if (s === "bulk-remove-done") {
-      const targets = selectedPeople();
-      state.lastBulk = targets.length;
-      targets.forEach(function (p) {
-        markGone(p.email);
-        pushHist(p.email, "removed (archived) " + p.email);
-      });
-      state.selected = [];
     }
     if (s === "resub" && !state.email) state.email = "alex.client@example.com";
     if ((s === "unsub" || s === "remove" || s === "delete" || s === "edit" || s === "history" || s === "history-modal" || s === "detail" || s === "detail-history") && !state.email) {
@@ -815,14 +759,17 @@
   }
 
   function isBulkScene(s) {
-    return s === "bulk" || s === "bulk-unsub" || s === "bulk-remove" || s === "bulk-unsub-done" || s === "bulk-remove-done";
+    return false;
   }
 
   function readQ() {
     const q = new URLSearchParams(location.search);
     if (q.get("phone") === "1") state.dev = "phone";
     if (q.get("dev") === "phone") state.dev = "phone";
-    if (q.get("s")) state.s = q.get("s");
+    if (q.get("s")) {
+      const scene = q.get("s");
+      state.s = (scene === "bulk" || scene.indexOf("bulk-") === 0) ? "list" : scene;
+    }
     if (q.get("email")) state.email = q.get("email");
     if (q.get("q")) state.q = q.get("q");
   }
@@ -864,6 +811,7 @@
     if (k === "s") {
       resetLive();
       state.cameFrom = state.s;
+      if (v === "bulk" || v === "bulk-unsub" || v === "bulk-remove" || v === "bulk-unsub-done" || v === "bulk-remove-done") v = "list";
       state.s = v;
       if (v === "page2") state.page = 2;
       else if (v !== "search") state.page = 1;
@@ -888,10 +836,6 @@
 
   function act(kind, email) {
     if (email) state.email = email;
-    if (kind === "bulk-unsub" || kind === "bulk-remove") {
-      if (kind === "bulk-unsub" && !selectedSubscribed().length) return;
-      if (kind === "bulk-remove" && !selectedPeople().length) return;
-    }
     state.cameFrom = state.s;
     state.s = kind;
     state.menu = "";
@@ -913,22 +857,6 @@
     } else if (kind === "delete-done") {
       markGone(targetEmail());
       pushHist(targetEmail(), "permanently deleted " + targetEmail());
-    } else if (kind === "bulk-unsub-done") {
-      const targets = selectedSubscribed();
-      state.lastBulk = targets.length;
-      targets.forEach(function (p) {
-        setStatus(p.email, "unsubscribed");
-        pushHist(p.email, "unsubscribed " + p.email);
-      });
-      state.selected = [];
-    } else if (kind === "bulk-remove-done") {
-      const targets = selectedPeople();
-      state.lastBulk = targets.length;
-      targets.forEach(function (p) {
-        markGone(p.email);
-        pushHist(p.email, "removed (archived) " + p.email);
-      });
-      state.selected = [];
     }
     state.s = kind;
     state.menu = "";

@@ -20,7 +20,7 @@
 <p><b>B (24–38 h)</b> uses the same actions and the same copy, but add / edit / per-subscriber history are modals, and a list-wide <b>History</b> tab shows every change on the audience. Useful for an audit sweep, but it splits the per-subscriber work and adds a tab.</p>
 <p><b>C (26–42 h)</b> is a compact card list with a per-subscriber detail page (profile, actions, history). Better if most advisors work on a phone, but more routing than this needs as a first slice.</p>
 <h2>Revision (Nov 17, 2026)</h2>
-<p>Every row shows visible <b>Unsubscribe</b> (or <b>Re-subscribe</b> on an unsubscribed row) and <b>Remove</b> buttons. These, and Permanently delete in the ⋮ menu, work on every row and use that row’s email in the confirm, toast, and updated status. The same three actions stay visible in the A drawer footer, the B edit/history modal, and the C detail page. A bulk bar supports select-all and “N selected · Unsubscribe · Remove”, each with a confirm and a done toast. At 390, each card has a visible action row.</p>
+<p><b>Unsubscribe</b>, <b>Remove</b>, and <b>Permanently delete</b> live only in the Edit drawer footer (the edit modal in B, the detail page in C). List rows and phone cards show Edit and a History link only — no Unsubscribe, Remove, ⋮, checkboxes, or bulk bar. The drawer actions work for any subscriber: the confirm, toast, and updated status use that row’s email. Re-subscribe still explains that Mailchimp sends a confirmation email and leaves them Pending.</p>
 <h2>Hard rules (all directions)</h2>
 <ul>
 <li>This view is shown only when the advisor’s email provider is Mailchimp. FTT Mail advisors keep today’s Subscribers tab (<code>SESContacts</code>) and never see this Mailchimp view.</li>
@@ -40,12 +40,12 @@
 <tr><th>Screen</th><th>Direction</th><th>Notes</th></tr>
 <tr><td>Today, Audiences</td><td>—</td><td>Current Mailchimp hub. Read-only audience names and counts. No Subscribers tab. Helper: counts come from Mailchimp; there is no way to add, edit, or remove subscribers from here.</td></tr>
 <tr><td>Today, Settings</td><td>—</td><td>Mailchimp is connected.</td></tr>
-<tr><td>List</td><td>A, B, C</td><td>Paged 50, “1–50 of 1,284”, search by email, Mailchimp badge and helper line. A/B: table (cards at 390). C: card list on desktop and 390.</td></tr>
+<tr><td>List</td><td>A, B, C</td><td>Paged 50, “1–50 of 1,284”, search by email, Mailchimp badge and helper line. Row actions are Edit and History only. A/B: table (cards at 390). C: card list on desktop and 390.</td></tr>
 <tr><td>Search</td><td>A, B, C</td><td>Search <code>subscriber@example.com</code> → “1–1 of 1”.</td></tr>
 <tr><td>Page 2</td><td>A</td><td>“51–100 of 1,284”.</td></tr>
 <tr><td>Add</td><td>A, B, C</td><td>Email, name, consent source (In person, Website form, Event, Imported list, Other + note), required CASL checkbox. A: drawer. B/C: modal.</td></tr>
 <tr><td>Add, consent missing</td><td>A, B, C</td><td>Add blocked until the checkbox is ticked and a source is chosen.</td></tr>
-<tr><td>Edit</td><td>A, B, C</td><td>Name, phone and city merge fields, tags. Email is read-only. A: drawer. B: modal. C: on the detail page.</td></tr>
+<tr><td>Edit</td><td>A, B, C</td><td>Name, phone and city merge fields, tags. Email is read-only. A: drawer. B: modal. C: on the detail page. Footer (or the C Actions section) has Unsubscribe or Re-subscribe, Remove, and Permanently delete.</td></tr>
 <tr><td>History</td><td>A, B, C</td><td>“Jane Advisor updated name and phone for subscriber@example.com, Nov 16, 2026, 11:42 AM PT.” A: drawer tab. B: per-subscriber modal plus a list-wide History tab. C: on the detail page.</td></tr>
 <tr><td>Unsubscribe</td><td>A, B, C</td><td>Confirm, then toast and status Unsubscribed.</td></tr>
 <tr><td>Re-subscribe</td><td>A, B, C</td><td><code>alex.client@example.com</code> was unsubscribed. Dialog explains the confirmation email. After confirm, status is Pending and a toast says the email was sent.</td></tr>
@@ -114,6 +114,6 @@
 <h2>Open questions</h2>
 <p>1. If the advisor has more than one Mailchimp audience, is this view the default audience with a picker, or one combined list? (Recommended: default audience, with a picker when there is more than one.)</p>
 <p>2. Should <code>cleaned</code> members appear, and can they be removed or permanently deleted? (Recommended: show them, no “Send confirmation email”; Remove and Permanently delete still available.)</p>
-<p>3. Bulk unsubscribe / remove in this slice? (Recommended: no. Single-subscriber only until the first slice ships.)</p>
+<p>3. Bulk unsubscribe / remove in this slice? Decided: no. Unsubscribe, Remove, and Permanently delete live only in the Edit drawer, for one subscriber at a time.</p>
 <p>4. Final CASL checkbox and helper wording — compliance review before build, or ship the placeholder and swap copy? (Recommended: review before build if the wording will be in the first PR.)</p>
 </body></html>
