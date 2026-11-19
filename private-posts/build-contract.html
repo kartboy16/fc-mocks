@@ -24,8 +24,8 @@
 <li><strong>Posts have <code>isPublic</code>, and a missing value is private</strong> (<code>imports/utils/htmlPostsLibraryQuery.js</code>, the Oct 1 decision). Advisors only get <code>isPublic: true</code> posts, plus posts in their advisor sources (<code>availableToAdvisorSourceIds</code>), plus posts with <strong><code>privateToUserId</code> equal to their own id</strong>.</li>
 <li><strong>A per-owner field already exists: <code>privateToUserId</code>.</strong> Today it is written only by <code>contentLibrary.materializeRssHtmlPost</code> (a private copy of an RSS article). It is honoured by the library visibility query, <code>HTMLPostsByIds</code>, Pick for me (<code>buildVisibilityQuery</code> and <code>buildPrivatePostProtectionQuery</code>), the trash owner check and the delete guard (which also accepts <code>createdBy</code>).</li>
 <li><strong>No advisor-facing way to author an HTML post exists yet.</strong> <code>CreateContent.jsx</code> has no save call. <code>HTMLPosts.setPublicStatus</code> and the other admin methods are admin-only. So this feature needs new methods.</li>
-<li><strong>Admins see everything.</strong> For an admin the visibility query is <code>{}</code> and <code>htmlPostIsVisibleToViewer</code> returns true. The UI shows the red lock for private posts. That conflicts with "never seen by anyone else", so owner-only posts must be excluded for admins as well, unless Alex says otherwise (open question 1).</li>
-<li><strong>Support impersonation</strong> (<code>server/support-impersonation.js</code>) lets support or admin act as an advisor, so <code>this.userId</code> is the advisor. A check on <code>userId</code> alone does not keep support out. See open question 1.</li>
+<li><strong>Admins see everything.</strong> For an admin the visibility query is <code>{}</code> and <code>htmlPostIsVisibleToViewer</code> returns true. The UI shows the red lock for private posts. Alex answered open question 1 (Nov 19): admins and support may see owner-only posts. Admin views keep showing them, labelled Private with the owner's name. They must still be excluded from every advisor-facing surface.</li>
+<li><strong>Support impersonation</strong> (<code>server/support-impersonation.js</code>) lets support or admin act as an advisor, so <code>this.userId</code> is the advisor. That is fine: support sessions are allowed to see the advisor's private posts (open question 1, answered yes).</li>
 <li><strong>Gaps found that matter for owner-only posts:</strong></li>
 <li><code>getPostForView</code> (<code>server/user-methods.js</code>, about line 1273) treats a post with no <code>availableToAdvisorSourceIds</code> as "not found". It does not honour <code>privateToUserId</code>, so an owner could not open their own post there.</li>
 <li><code>/html-post/:id</code> (<code>server/api/html-post-serve.js</code>) serves a <code>rawHtml</code> post by id with <strong>no visibility check</strong>. <code>/api/post/:postId</code> (<code>server/api/embed.js</code>) also appears to look up by id with only a trashed check. Ids are random, but owner-only posts must not be fetchable by id by anyone except through the publish path below.</li>
@@ -184,7 +184,7 @@
 <h2>Open questions for Alex</h2>
 <p>Defaults in the mocks are shown in brackets. Each one changes the build.</p>
 <ol>
-<li><strong>Can admins or support sessions see these posts?</strong> [No. Excluded from admin lists too. Support impersonation is a gap, see audit.] If support must be able to help an advisor, add a logged, read-only view.</li>
+<li><strong>Can admins or support sessions see these posts?</strong> [<strong>Answered by Alex, Nov 19: Yes.</strong> Admins and support sessions can see these posts. Nobody else can: no other advisors, library feed, search or Pick for Me.]</li>
 <li><strong>Can he schedule, email or share them to his own clients?</strong> [Yes, as an intentional publish. The post then lives on his own site. "Only him" applies to the library, other advisors, search and Pick for me.] If the answer is "never seen by anyone, ever", remove Use and keep Preview only.</li>
 <li><strong>Can he later make one shareable or public? Is that one-way?</strong> [No. Not in scope.] If yes: who approves, and does it become an FC library post, or go only to his firm?</li>
 <li><strong>What happens if the advisor account is deleted or moved to another firm?</strong> [Posts stay with the account owner id. Deleted account: posts are deleted after the normal retention window. Move: posts stay with the advisor, not the firm.]</li>
@@ -197,7 +197,7 @@
 <li><strong>Do private posts get a firm or team owner?</strong> [No. One advisor owner. Teams out of scope.]</li>
 <li><strong>Who can request deletion for compliance or records retention?</strong> [Owner only. Retention rule needs a decision for regulated firms.]</li>
 <li><strong>Can one be previewed by a link before publishing?</strong> [No. Preview is inside the app only.]</li>
-<li><strong>Do admins need a way to find a post an advisor reports as lost?</strong> [Not in v1. Talk to the advisor, or restore from Trash on his account via support.]</li>
+<li><strong>Do admins need a way to find a post an advisor reports as lost?</strong> [Yes, admins can see them, so they can find it. Restore from Trash on his account via support.]</li>
 </ol>
 <h2>In scope</h2>
 <ul>
@@ -213,7 +213,7 @@
 <li>Approval workflows, AI drafting, importing, collaboration and comments.</li>
 <li>Billing or limits.</li>
 <li>Webhooks, bulk actions and exports of private posts.</li>
-<li>Admin or support viewing (unless Alex answers yes to question 1).</li>
+<li>A separate logged support view (admins and support already see the posts through admin lists and impersonation).</li>
 </ul>
 <h2>Mobile notes (390)</h2>
 <ul>
@@ -227,8 +227,8 @@
 <p>Use two test advisors, <strong>Jane Advisor</strong> (owner) and <strong>Sam Advisor</strong> (other), plus an admin, a support user and a logged-out visitor. Sample post titles only.
 - Sam cannot fetch Jane's post by id through any method, publication, REST route or embed route. The answer is "not found", never "not allowed".
 - Jane's post is absent from Sam's library feed, <code>libraryPage</code>, <code>libraryCount</code>, search (text, category, topic), Favorites, Hidden, Compliance Approved and Pick for me, including the outside-access path.
-- Jane's post is absent from the admin library, Manage Advisor Posts, Users and trash lists (or present only if Alex answers yes to question 1).
-- A support impersonation session sees Jane's posts only if Alex answers yes to question 1.
+- Jane's post is present in admin views (labelled Private, owner Jane Advisor), and absent from Sam Advisor's library, search, Pick for Me and every by-id route.
+- A support impersonation session as Jane sees Jane's posts. A session as Sam does not.
 - A logged-out request to <code>/html-post/:id</code>, <code>/api/post/:id</code> and <code>/api/posts/:advisorId</code> returns not found for an unpublished owner-only post.
 - After Jane publishes to her site, the published URL works for visitors, the source post is still hidden from Sam, and taking the page down returns 404.
 - The collection wrapper: a query without <code>includeOwnerOnlyFor</code> never returns an owner-only post. A scan test fails on any raw <code>HTMLPosts</code> access without the exclusion.
@@ -290,5 +290,5 @@
 </tr>
 </tbody>
 </table>
-<p>Add 10–16 h if Alex wants the separate-collection option. Add 4–8 h for a logged support view if he answers yes to question 1.</p>
+<p>Add 10–16 h if Alex wants the separate-collection option. Admin and support visibility needs no extra time.</p>
 <p>Not agent-ready. Soft Dev hold until a direction is picked.</p></body></html>
