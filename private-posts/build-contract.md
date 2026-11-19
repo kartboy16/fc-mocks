@@ -112,7 +112,7 @@ Mock: https://kartboy16.github.io/fc-mocks/private-posts/a-section.html?s=check-
 **Server gate.** Website queue, email campaign create or schedule, and social schedule each call one shared `assertPostChecked(postId, userId, channel)`. It fails when there is no check, the check is stale, the check errored, or open findings exist with no acknowledgement for this hash. No path may skip it, including REST routes and schedulers. Test every path.
 
 ### Warn or block (open with Alex)
-Alex has not decided whether unresolved compliance findings should **block** publishing or only **warn**. Until he answers, the build is **warn and acknowledge**: the advisor ticks "I've reviewed these findings and want to continue" and presses Continue. The gate reads a single setting (`postCheck.mode`: `warn`, `block-compliance`, `block-all`) so changing the answer is a config change, not a rebuild. In block mode the checkbox is replaced by "Fix or mark reviewed to continue", and Continue stays off. A checker **error** always blocks, in every mode, because there is no result to acknowledge.
+Alex decided (Nov 19): unresolved compliance findings **warn**, and the advisor must acknowledge them. The build is **warn and acknowledge**: the advisor ticks "I've reviewed these findings and want to continue" and presses Continue. The gate reads a single setting (`postCheck.mode`: `warn`, `block-compliance`, `block-all`) so changing the answer is a config change, not a rebuild. In block mode the checkbox is replaced by "Fix or mark reviewed to continue", and Continue stays off. A checker **error** always blocks, in every mode, because there is no result to acknowledge.
 
 ### Checker states and screens (Direction A, `a-section.html?s=`; add `&phone=1` for 390)
 | Scene (`?s=`) | What it shows |
@@ -186,7 +186,7 @@ Defaults in the mocks are shown in brackets. Each one changes the build.
 12. **Who can request deletion for compliance or records retention?** [Owner only. Retention rule needs a decision for regulated firms.]
 13. **Can one be previewed by a link before publishing?** [No. Preview is inside the app only.]
 14. **Do admins need a way to find a post an advisor reports as lost?** [Yes, admins can see them, so they can find it. Restore from Trash on his account via support.]
-15. **Should unresolved compliance findings block publishing, or only warn?** [Warn and acknowledge until Alex decides, per #964. Setting `postCheck.mode` switches it. A checker error always blocks.] Does the answer differ for compliance findings and proofreading findings?
+15. **Should unresolved compliance findings block publishing, or only warn?** [Decided by Alex, Nov 19: compliance findings warn and the advisor must acknowledge them. Setting `postCheck.mode` switches it. A checker error always blocks.] Does the answer differ for compliance findings and proofreading findings?
 16. **If a scheduled post is edited after it was scheduled, what happens?** [Hold the send and tell the advisor, because the check is for the old text.]
 17. **Who owns the compliance rule list and the wording?** [Legal. Placeholder in the mocks.] How often does it change, and does a new rule re-flag posts already published?
 18. **Which proofreading engine?** [Reuse the en_CA dictionary for spelling. Grammar needs a rules library or an AI service, which is a build decision and may add hours.]
