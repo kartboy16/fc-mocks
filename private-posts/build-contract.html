@@ -6,6 +6,7 @@
 <p><strong>Status:</strong> Not agent-ready. Soft Dev hold until Alex picks a direction. No issue has been filed.</p>
 <p><strong>Risk: high.</strong> This is a visibility feature in the same code that leaked private posts in #321 and #330. A single missed query would show one advisor's private post to another advisor, to the shared feed, to Pick for me or to search. Build to staging first, run pstack blast-radius and interrogate on the PR, then FC Tester on staging. Alex merges to main.</p>
 <p>Mock hub: https://kartboy16.github.io/fc-mocks/private-posts/</p>
+<p><strong>Update (Nov 19, #964):</strong> Alex added a required compliance and proofreading checker for every created post. It is mocked in Direction A only. See the section "Compliance and proofreading checker" below. Added estimate: <strong>23–34 agent hours</strong>, so Direction A is <strong>45–68 h</strong> with the checker.</p>
 <h2>Request</h2>
 <p>Alex (Nov 19, 2026, 2:29 PM PT): "A user wants to create his own posts in our system. I need their posts to never be seen by anyone else but that user."</p>
 <p>An advisor writes his own posts in the app. Nobody else can ever see them: not other advisors, not the shared Content Library feed, not Pick for me, not search.</p>
@@ -171,6 +172,129 @@
 </tr>
 </tbody>
 </table>
+<h2>Compliance and proofreading checker (Direction A, #964)</h2>
+<p>Alex (Nov 19, 2026): "Also need to make sure posts that are created always have a compliance and proof read checker."</p>
+<p>Mock: https://kartboy16.github.io/fc-mocks/private-posts/a-section.html?s=check-found (all checker scenes are in the switcher on <code>a-section.html</code>, each works with <code>&amp;phone=1</code>).</p>
+<h3>What the advisor sees</h3>
+<ul>
+<li>A <strong>Checks</strong> panel in the My posts editor, with a status chip and two groups, <strong>Compliance</strong> and <strong>Proofreading</strong>, as tabs with counts. A one-line status bar sits above the editor so the state is visible on a phone without scrolling.</li>
+<li>Findings highlight the text in the post (amber underline for compliance, red wavy for proofreading). Each finding shows a label, the quoted text, a short message and a suggested change.</li>
+<li>Actions: <strong>Fix</strong> (apply the suggested change; the compliance "Past performance" finding says <strong>Add disclosure</strong>) and <strong>Mark reviewed</strong> for compliance findings; <strong>Fix</strong> and <strong>Dismiss</strong> for proofreading findings. Compliance findings cannot be dismissed as false positives, only marked reviewed. Resolved findings move to a collapsed "Resolved" list with Undo.</li>
+<li><strong>Applying a Fix</strong> re-checks the changed sentence in the background. <strong>Typing</strong> makes the whole result stale.</li>
+<li>The list shows a small Checked or "n to review" chip on each post.</li>
+</ul>
+<h3>Where the checker runs (server)</h3>
+<ol>
+<li><strong>On every save</strong>, automatically, after the content is written. The advisor never has to remember to run it. A <strong>Run check</strong> button also exists, for a post that was never checked.</li>
+<li><strong>Before any schedule, email or share</strong>, the server requires a check that matches the post's <strong>current content</strong> (a hash of title, summary and body). If the post changed after the last check, the step is refused and the advisor is sent to "Checks are out of date".</li>
+<li><strong>At send time for scheduled items</strong>, the scheduler re-checks the stored hash. If the post was edited after scheduling, the item is held and the advisor is told. (Open question 16.)</li>
+<li>The <strong>server is the authority.</strong> Browser-side spell check is advisory. The existing spell check runs in the browser only, and its dictionary can fail to load. Here the server loads the same en_CA dictionary and runs the check itself.</li>
+</ol>
+<p><strong>What the server stores on the post</strong> (<code>postCheck</code>): <code>version</code> (checker version, shown as "Checker v1"), <code>contentHash</code>, <code>ranAt</code>, <code>status</code> (ok, error), <code>error</code> per group, and <code>findings[]</code> each with <code>id</code>, <code>group</code> (compliance or proofreading), <code>ruleId</code>, <code>range</code>, <code>quote</code>, <code>message</code>, <code>suggestion</code>, <code>state</code> (open, fixed, dismissed, reviewed), <code>stateBy</code>, <code>stateAt</code>.</p>
+<p><strong>Acknowledgement log</strong> (<code>postCheckAcks</code>, one row per acknowledgement): <code>postId</code>, <code>userId</code>, <code>ackAt</code> (server time), <code>channel</code> (website, email or social), <code>checkVersion</code>, <code>contentHash</code>, <code>findingIds</code> that were unresolved. Rows are never edited or deleted. The acknowledgement is only valid for that content hash. It is what the admin and compliance audit reads.</p>
+<p><strong>Server gate.</strong> Website queue, email campaign create or schedule, and social schedule each call one shared <code>assertPostChecked(postId, userId, channel)</code>. It fails when there is no check, the check is stale, the check errored, or open findings exist with no acknowledgement for this hash. No path may skip it, including REST routes and schedulers. Test every path.</p>
+<h3>Warn or block (open with Alex)</h3>
+<p>Alex has not decided whether unresolved compliance findings should <strong>block</strong> publishing or only <strong>warn</strong>. Until he answers, the build is <strong>warn and acknowledge</strong>: the advisor ticks "I've reviewed these findings and want to continue" and presses Continue. The gate reads a single setting (<code>postCheck.mode</code>: <code>warn</code>, <code>block-compliance</code>, <code>block-all</code>) so changing the answer is a config change, not a rebuild. In block mode the checkbox is replaced by "Fix or mark reviewed to continue", and Continue stays off. A checker <strong>error</strong> always blocks, in every mode, because there is no result to acknowledge.</p>
+<h3>Checker states and screens (Direction A, <code>a-section.html?s=</code>; add <code>&amp;phone=1</code> for 390)</h3>
+<table>
+<thead>
+<tr>
+<th>Scene (<code>?s=</code>)</th>
+<th>What it shows</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>check-idle</code></td>
+<td>Post never checked. "Not checked yet", with Run check.</td>
+</tr>
+<tr>
+<td><code>save-check</code></td>
+<td>Right after Save. Toast "Saved. Running checks…". The checker starts on its own. Editing is paused.</td>
+</tr>
+<tr>
+<td><code>checking</code></td>
+<td>A manual run. Spinner, "Checking compliance and proofreading…".</td>
+</tr>
+<tr>
+<td><code>check-found</code></td>
+<td>Findings present. Compliance tab with 3 findings, highlights in the text.</td>
+</tr>
+<tr>
+<td><code>check-proof</code></td>
+<td>Same post, Proofreading tab with 3 findings.</td>
+</tr>
+<tr>
+<td><code>check-fixed</code></td>
+<td>Some resolved: one Fixed, one Reviewed, one Dismissed, two still open. Resolved list collapsed.</td>
+</tr>
+<tr>
+<td><code>check-clean</code></td>
+<td>No findings. "No findings. Compliance and proofreading both checked."</td>
+</tr>
+<tr>
+<td><code>check-stale</code></td>
+<td>Post edited after the last check. Highlights turn grey and dashed, findings are dimmed and their buttons are off. "Out of date", with Run check.</td>
+</tr>
+<tr>
+<td><code>check-error</code></td>
+<td>The checker couldn't run. The post is saved. Try again. Scheduling, email and share are blocked.</td>
+</tr>
+<tr>
+<td><code>check-partial</code></td>
+<td>Compliance ran, proofreading couldn't. The tabs work separately.</td>
+</tr>
+<tr>
+<td><code>ack</code></td>
+<td>Before Add to my website, with unresolved findings: "Review before you continue", the two open findings, an unticked checkbox, Continue disabled.</td>
+</tr>
+<tr>
+<td><code>ack-checked</code></td>
+<td>Same, ticked. Continue enabled.</td>
+</tr>
+<tr>
+<td><code>ack-email</code>, <code>ack-social</code></td>
+<td>The same step before Email my clients and Share on social.</td>
+</tr>
+<tr>
+<td><code>ack-stale</code></td>
+<td>Post edited since the last check. No acknowledgement possible. "Run checks".</td>
+</tr>
+<tr>
+<td><code>ack-error</code></td>
+<td>The checks couldn't run. Try again.</td>
+</tr>
+<tr>
+<td><code>ack-clear</code></td>
+<td>No unresolved findings. The step is skipped. The website dialog says "Checked, no findings".</td>
+</tr>
+<tr>
+<td><code>ack-done</code></td>
+<td>After Continue. The website dialog shows "You acknowledged 2 findings", with time and name.</td>
+</tr>
+</tbody>
+</table>
+<p>The Use menu in A (<code>use</code>) now opens the acknowledge step for Add to my website, Email my clients and Share on social.</p>
+<h3>What was reused from content-library (read-only audit)</h3>
+<ul>
+<li><code>imports/utils/spellCheck.js</code>: the Typo en_CA dictionary, the financial-term allowlist (RRSP, TFSA and so on), and the HTML-to-words cleanup. Reuse it for the <strong>spelling</strong> half of Proofreading. It currently runs only in the browser and only on email campaigns.</li>
+<li><code>imports/ui/EmailCampaigns/SpellCheckWarningDialog.jsx</code>: the warn pattern (a "Go back" button and a "<Action> Anyway" button) and the "Spell check couldn't load" state. The acknowledge step follows this pattern and adds the checkbox. The existing rule "never silent-save when the dictionary is unavailable" carries over as "checker error blocks".</li>
+<li><code>server/compliance-gate.js</code> and <code>imports/utils/externalComplianceAttestation.js</code>: the server gate that refuses a send, and an attestation record with the actor, a time and a version stamp. Model the acknowledgement log and <code>assertPostChecked</code> on these. The per-advisor compliance mode (email approval or external attestation) is unchanged, and the new checker applies to every created post even when that mode is off.</li>
+<li>Not reusable: the <strong>Compliance Approved</strong> topic (<code>compliance-approved</code>) is a content label, not a checker. There is <strong>no existing grammar check, AI proofreader or compliance-wording scanner</strong> in content-library. Grammar and compliance rules are new work. (The local copy of the repo was older than main, so newer files were read through the GitHub API at c300f76. Re-check before building.)</li>
+</ul>
+<h3>Compliance and legal text</h3>
+<p>Rule text, wording suggestions (for example "aims to improve outcomes", "Add disclosure") and the acknowledgement sentence are <strong>flagged placeholders</strong> (orange PLACEHOLDER lines in the mock). Legal supplies the real rule list, messages and wording. The findings in the mocks are generic samples.</p>
+<h3>Mobile (390)</h3>
+<p>The status bar sits at the top. The panel sits below the post. Tabs, findings and buttons are 40px or taller. The acknowledge step is a bottom sheet with Continue first. Tapping a highlight to jump to its finding is not mocked.</p>
+<h3>Tests added by the checker</h3>
+<ul>
+<li>Saving a post always starts a check. Editing one character makes the result stale.</li>
+<li>Schedule, email and share are each refused with no check, a stale check, an errored check, and open findings with no acknowledgement (in warn mode). They succeed with a current check and a matching acknowledgement, and with no open findings.</li>
+<li>The acknowledgement row holds user, time, channel, version, hash and finding ids, and it is not valid after the post changes.</li>
+<li>Another advisor cannot read or acknowledge Jane's check results (same owner-only rules as the post).</li>
+<li>Each of website queue, email and social is covered, including REST and scheduler paths.</li>
+<li>Proofreading and compliance fail independently (<code>check-partial</code>). The check list is capped and paged, and returns no post body.</li>
+</ul>
 <h2>Copy</h2>
 <p>Key strings (final wording is a product call):
 - Banner: "Only you can see this post" and "Other advisors, the Content Library, search and Pick for me never show it."
@@ -198,6 +322,11 @@
 <li><strong>Who can request deletion for compliance or records retention?</strong> [Owner only. Retention rule needs a decision for regulated firms.]</li>
 <li><strong>Can one be previewed by a link before publishing?</strong> [No. Preview is inside the app only.]</li>
 <li><strong>Do admins need a way to find a post an advisor reports as lost?</strong> [Yes, admins can see them, so they can find it. Restore from Trash on his account via support.]</li>
+<li><strong>Should unresolved compliance findings block publishing, or only warn?</strong> [Warn and acknowledge until Alex decides, per #964. Setting <code>postCheck.mode</code> switches it. A checker error always blocks.] Does the answer differ for compliance findings and proofreading findings?</li>
+<li><strong>If a scheduled post is edited after it was scheduled, what happens?</strong> [Hold the send and tell the advisor, because the check is for the old text.]</li>
+<li><strong>Who owns the compliance rule list and the wording?</strong> [Legal. Placeholder in the mocks.] How often does it change, and does a new rule re-flag posts already published?</li>
+<li><strong>Which proofreading engine?</strong> [Reuse the en_CA dictionary for spelling. Grammar needs a rules library or an AI service, which is a build decision and may add hours.]</li>
+<li><strong>Can an admin or support user acknowledge findings on the advisor's behalf?</strong> [No. Only the owner acknowledges, and the log records who.]</li>
 </ol>
 <h2>In scope</h2>
 <ul>
@@ -206,10 +335,12 @@
 <li>Server enforcement and tests on every surface listed.</li>
 <li>Use flows: add to website, email, share on social, with the advisor's own domain on everything clients see.</li>
 <li>390px layout.</li>
+<li>Compliance and proofreading checker in Direction A: runs on save, server-stored result and version, the acknowledge step before schedule, email and share, and the acknowledgement log.</li>
 </ul>
 <h2>Out of scope</h2>
 <ul>
 <li>Making a post public or shared with other advisors, firms or teams.</li>
+<li>A blocking mode beyond the single <code>postCheck.mode</code> setting, a rule editor, and per-firm rule sets.</li>
 <li>Approval workflows, AI drafting, importing, collaboration and comments.</li>
 <li>Billing or limits.</li>
 <li>Webhooks, bulk actions and exports of private posts.</li>
@@ -290,5 +421,15 @@
 </tr>
 </tbody>
 </table>
+<p><strong>Checker (Direction A only, #964): 23–34 h added.</strong>
+| Checker piece | Hours |
+| --- | --- |
+| Check service (spelling reuse, placeholder compliance rules, grammar), result storage with version and hash, run on save | 6–9 |
+| Server gate on website, email and social paths, acknowledgement log, error codes, <code>postCheck.mode</code> setting | 4–6 |
+| Editor UI: panel, tabs, highlights, Fix, Dismiss, Mark reviewed, stale, error, 390 | 7–10 |
+| Acknowledge step in three flows, list chips | 3–4 |
+| Tests across every path plus FC Tester on staging | 3–5 |
+| <strong>Checker total</strong> | <strong>23–34</strong> |</p>
+<p><strong>Direction A with the checker: 45–68 h.</strong> The grammar engine (open question 18) is the main swing. An AI-based grammar service could add 4–8 h.</p>
 <p>Add 10–16 h if Alex wants the separate-collection option. Admin and support visibility needs no extra time.</p>
 <p>Not agent-ready. Soft Dev hold until a direction is picked.</p></body></html>

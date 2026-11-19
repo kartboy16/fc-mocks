@@ -1,13 +1,13 @@
 (function () {
   const DOM = "example-advisor.ca";
-  const state = { dir: "a", s: "list", dev: "desk" };
+  const state = { dir: "a", s: "list", dev: "desk", tab: null };
   const PAGES = { a: "a-section.html", b: "b-visibility.html", c: "c-private-space.html" };
 
   const MINE = [
-    { id: "m1", t: "Welcome to my practice", x: "A short introduction to how I work with families, and what to expect from our first meeting.", d: "Nov 18", st: "live", stl: "Live on your website", bg: "pt1", slug: "welcome-to-my-practice" },
-    { id: "m2", t: "March client seminar: notes and talking points", x: "Draft outline for the spring seminar at the community hall.", d: "Nov 17", st: "draft", stl: "Draft", bg: "pt2", slug: "march-client-seminar" },
-    { id: "m3", t: "Why I review your plan every spring", x: "A yearly check-in keeps your goals, budget and insurance in step with real life.", d: "Nov 15", st: "sched", stl: "Scheduled for Nov 24", bg: "pt3", slug: "why-i-review-your-plan-every-spring" },
-    { id: "m4", t: "A note on market ups and downs", x: "What I tell clients when the headlines get loud.", d: "Nov 12", st: "sent", stl: "Emailed Nov 12", bg: "pt4", slug: "a-note-on-market-ups-and-downs" }
+    { id: "m1", t: "Welcome to my practice", x: "A short introduction to how I work with families, and what to expect from our first meeting.", d: "Nov 18", st: "live", stl: "Live on your website", bg: "pt1", slug: "welcome-to-my-practice", ck: "ok" },
+    { id: "m2", t: "March client seminar: notes and talking points", x: "Draft outline for the spring seminar at the community hall.", d: "Nov 17", st: "draft", stl: "Draft", bg: "pt2", slug: "march-client-seminar", ck: "warn" },
+    { id: "m3", t: "Why I review your plan every spring", x: "A yearly check-in keeps your goals, budget and insurance in step with real life.", d: "Nov 15", st: "sched", stl: "Scheduled for Nov 24", bg: "pt3", slug: "why-i-review-your-plan-every-spring", ck: "ok" },
+    { id: "m4", t: "A note on market ups and downs", x: "What I tell clients when the headlines get loud.", d: "Nov 12", st: "sent", stl: "Emailed Nov 12", bg: "pt4", slug: "a-note-on-market-ups-and-downs", ck: "ok" }
   ];
   const FC = [
     { t: "Five year-end tax moves worth a look", x: "A quick checklist to review before December 31.", d: "Nov 19", bg: "f1" },
@@ -18,9 +18,11 @@
     { t: "How inflation changes your plan", x: "Why a plan needs a yearly refresh.", d: "Nov 5", bg: "f6" }
   ];
   const SEL = MINE[2];
+  let POST = SEL;
+  let NOTE = "";
 
   const SCENES = {
-    a: [["all", "All Content"], ["list", "My posts"], ["empty", "Empty"], ["loading", "Loading"], ["error-load", "Load error"], ["create", "Create"], ["error-title", "Title missing"], ["saving", "Saving"], ["saved", "Saved"], ["error-save", "Save error"], ["edit", "Edit"], ["use", "Use menu"], ["site", "Website"], ["site-done", "Published"], ["email", "Email"], ["social", "Social"], ["no-site", "No website"], ["pv-web", "Client: website"], ["pv-email", "Client: email"], ["pv-social", "Client: social"], ["trash", "Trash"]],
+    a: [["all", "All Content"], ["list", "My posts"], ["empty", "Empty"], ["loading", "Loading"], ["error-load", "Load error"], ["create", "Create"], ["error-title", "Title missing"], ["saving", "Saving"], ["saved", "Saved"], ["error-save", "Save error"], ["edit", "Edit"], ["check-idle", "Check: not run"], ["save-check", "Check on save"], ["checking", "Check: checking"], ["check-found", "Check: findings"], ["check-proof", "Check: proofreading"], ["check-fixed", "Check: some fixed"], ["check-clean", "Check: no findings"], ["check-stale", "Check: out of date"], ["check-error", "Check: error"], ["check-partial", "Check: partial error"], ["use", "Use menu"], ["ack", "Acknowledge: website"], ["ack-checked", "Acknowledge: ticked"], ["ack-email", "Acknowledge: email"], ["ack-social", "Acknowledge: social"], ["ack-stale", "Acknowledge: out of date"], ["ack-error", "Acknowledge: error"], ["ack-clear", "Website: no findings"], ["ack-done", "Website: acknowledged"], ["site", "Website"], ["site-done", "Published"], ["email", "Email"], ["social", "Social"], ["no-site", "No website"], ["pv-web", "Client: website"], ["pv-email", "Client: email"], ["pv-social", "Client: social"], ["trash", "Trash"]],
     b: [["all", "All, mixed"], ["search", "Search"], ["mine", "My posts filter"], ["empty", "Empty"], ["loading", "Loading"], ["error-load", "Load error"], ["create", "Create"], ["error-title", "Title missing"], ["saving", "Saving"], ["saved", "Saved"], ["error-save", "Save error"], ["edit", "Edit"], ["use", "Use menu"], ["site", "Website"], ["site-done", "Published"], ["email", "Email"], ["social", "Social"], ["no-site", "No website"], ["pv-web", "Client: website"], ["pv-email", "Client: email"], ["pv-social", "Client: social"], ["trash", "Trash"]],
     c: [["content", "Content tab"], ["copy", "Private copy"], ["list", "My posts"], ["empty", "Empty"], ["loading", "Loading"], ["error-load", "Load error"], ["create", "Create"], ["error-title", "Title missing"], ["saving", "Saving"], ["saved", "Saved"], ["error-save", "Save error"], ["edit", "Edit"], ["use", "Use menu"], ["site", "Website"], ["site-done", "Published"], ["email", "Email"], ["social", "Social"], ["no-site", "No website"], ["pv-web", "Client: website"], ["pv-email", "Client: email"], ["pv-social", "Client: social"], ["trash", "Trash"]]
   };
@@ -31,7 +33,7 @@
     return { s: p.get("s"), phone: p.get("phone") === "1" };
   }
   window.sw = function (k, v) {
-    if (k === "dev") state.dev = v; else state.s = v;
+    if (k === "dev") state.dev = v; else { state.s = v; state.tab = null; }
     const p = new URLSearchParams(location.search);
     p.set("s", state.s);
     if (state.dev === "phone") p.set("phone", "1"); else p.delete("phone");
@@ -71,7 +73,7 @@
   }
   const chipFor = (m) => `<span class="chip ${m.st === "live" ? "live" : m.st === "sched" ? "sched2" : m.st === "sent" ? "sent2" : "draft2"}">${m.stl}</span>`;
   function privCard(m, withMenu) {
-    return `<div class="pc"><div class="th ${m.bg}">${lock()}</div><div class="cb"><div class="ct">${m.t}</div><div class="ce">${m.x}</div><div class="cm">${m.d} ${chipFor(m)}</div></div>
+    return `<div class="pc"><div class="th ${m.bg}">${lock()}</div><div class="cb"><div class="ct">${m.t}</div><div class="ce">${m.x}</div><div class="cm">${m.d} ${chipFor(m)}${ckChip(m)}</div></div>
       <div class="ca"><button class="btn quiet" type="button" ${go("edit")}>Edit</button><button class="btn" type="button" ${go("use")}>Use ▾</button>${withMenu ? useMenu() : ""}</div></div>`;
   }
   function fcCard(p, copy) {
@@ -79,7 +81,8 @@
       <div class="ca"><button class="btn" type="button">Add Now ▾</button>${copy ? `<button class="btn quiet" type="button" ${go("copy")}>Make a private copy</button>` : ""}</div></div>`;
   }
   function useMenu() {
-    return `<div class="menu pp"><button type="button" ${go("site")}>Add to my website</button><button type="button" ${go("email")}>Email my clients</button><button type="button" ${go("social")}>Share on social</button><hr><button type="button" ${go("pv-web")}>Preview what clients see</button><button type="button" ${go("edit")}>Edit</button><button type="button" class="dg" ${go("trash")}>Move to Trash</button></div>`;
+    const a = state.dir === "a";
+    return `<div class="menu pp"><button type="button" ${go(a ? "ack" : "site")}>Add to my website</button><button type="button" ${go(a ? "ack-email" : "email")}>Email my clients</button><button type="button" ${go(a ? "ack-social" : "social")}>Share on social</button><hr><button type="button" ${go("pv-web")}>Preview what clients see</button><button type="button" ${go("edit")}>Edit</button><button type="button" class="dg" ${go("trash")}>Move to Trash</button></div>`;
   }
   function skeletons(n) {
     let h = "";
@@ -93,16 +96,181 @@
     return `<div class="errbox"><div class="alert error" style="text-align:left"><b>Couldn't load your posts</b>Check your connection and try again. Nothing was changed.</div><button class="btn pri" type="button" ${go(state.dir === "a" ? "list" : state.dir === "b" ? "mine" : "list")}>Try again</button></div>`;
   }
 
+  /* ---------- checker (direction A) ---------- */
+  const CK_TIME = "Nov 19, 2026, 3:12 PM PT";
+  const CK_VER = "Checker v1";
+  const FIND = {
+    c1: { g: "c", k: "Guarantee wording", q: "guarentees better returns", m: "Possible promise of returns.", fx: "aims to improve outcomes", fb: "Fix" },
+    c2: { g: "c", k: "No-risk claim", q: "there is no risk to your savings", m: "Wording that implies no risk.", fx: "investing always carries risk", fb: "Fix" },
+    c3: { g: "c", k: "Past performance", q: "Past results show a 12% yearly gain, so you can expect the same going forward.", m: "Past results used to predict future results, with no disclosure.", fx: "[Disclosure wording to be supplied]", fb: "Add disclosure" },
+    p1: { g: "p", k: "Spelling", q: "guarentees", m: "Possible misspelling.", fx: "guarantees", fb: "Fix" },
+    p2: { g: "p", k: "Grammar", q: "Their are", m: "Wrong word.", fx: "There are", fb: "Fix" },
+    p3: { g: "p", k: "Repeated word", q: "we we", m: "Repeated word.", fx: "we", fb: "Fix" }
+  };
+  const ALLOPEN = { c1: "open", c2: "open", c3: "open", p1: "open", p2: "open", p3: "open" };
+  const CK_SCENES = ["check-idle", "save-check", "checking", "check-found", "check-proof", "check-fixed", "check-clean", "check-stale", "check-error", "check-partial"];
+  /* state per scene: status, finding states, tab */
+  function ckModel(s) {
+    const m = { status: "idle", f: Object.assign({}, ALLOPEN), tab: "c", stale: false, err: null, time: null };
+    if (s === "create" || s === "error-title") m.status = "new";
+    else if (s === "check-idle") m.status = "idle";
+    else if (s === "save-check" || s === "checking") m.status = "checking";
+    else if (s === "check-found") { m.status = "found"; m.time = CK_TIME; }
+    else if (s === "check-proof") { m.status = "found"; m.tab = "p"; m.time = CK_TIME; }
+    else if (s === "check-fixed") { m.status = "found"; m.time = CK_TIME; m.f = { c1: "fixed", c2: "open", c3: "reviewed", p1: "fixed", p2: "dismissed", p3: "open" }; }
+    else if (s === "check-clean") { m.status = "clean"; m.time = CK_TIME; m.f = { c1: "fixed", c2: "fixed", c3: "fixed", p1: "fixed", p2: "fixed", p3: "fixed" }; }
+    else if (s === "check-stale") { m.status = "stale"; m.stale = true; m.time = CK_TIME; }
+    else if (s === "check-error") { m.status = "error"; m.err = "both"; }
+    else if (s === "check-partial") { m.status = "partial"; m.err = "p"; m.time = CK_TIME; }
+    else { m.status = "clean"; m.time = CK_TIME; m.f = { c1: "fixed", c2: "fixed", c3: "fixed", p1: "fixed", p2: "fixed", p3: "fixed" }; }
+    if (state.tab && ["found", "stale", "partial"].includes(m.status)) m.tab = state.tab;
+    return m;
+  }
+  const openIds = (m, g) => Object.keys(FIND).filter((k) => FIND[k].g === g && m.f[k] === "open");
+  function ckCounts(m) { return { c: openIds(m, "c").length, p: openIds(m, "p").length }; }
+  function ckChipHtml(m) {
+    const n = ckCounts(m);
+    const t = n.c + n.p;
+    if (m.status === "new") return `<span class="chip draft2">Not checked</span>`;
+    if (m.status === "idle") return `<span class="chip draft2">Not checked</span>`;
+    if (m.status === "checking") return `<span class="chip sent2"><span class="spin sm"></span> Checking…</span>`;
+    if (m.status === "stale") return `<span class="chip sched2">Out of date</span>`;
+    if (m.status === "error") return `<span class="chip ckerr">Couldn't run</span>`;
+    if (m.status === "partial") return `<span class="chip ckerr">Proofreading couldn't run</span>`;
+    if (m.status === "clean" || t === 0) return `<span class="chip live">No findings</span>`;
+    return `<span class="chip sched2">${t} to review</span>`;
+  }
+  function ckChip(p) {
+    if (state.dir !== "a" || !p.ck) return "";
+    return p.ck === "ok" ? ` <span class="chip live">Checked</span>` : p.ck === "warn" ? ` <span class="chip sched2">6 to review</span>` : ` <span class="chip draft2">Not checked</span>`;
+  }
+  function ckBodyHtml(m) {
+    const f = m.f;
+    const mk = (cls, inner) => `<mark class="mk ${cls}${m.stale ? " old" : ""}">${inner}</mark>`;
+    const spell = f.p1 === "fixed" ? "guarantees" : "guarentees";
+    const spellHtml = f.p1 === "open" ? mk("p", spell) : spell;
+    let s2c;
+    if (f.c1 === "fixed") s2c = FIND.c1.fx;
+    else if (f.c1 === "open") s2c = mk("c", `${spellHtml} better returns`);
+    else s2c = `${spellHtml} better returns`;
+    let s2d;
+    if (f.c2 === "fixed") s2d = FIND.c2.fx;
+    else if (f.c2 === "open") s2d = mk("c", FIND.c2.q);
+    else s2d = FIND.c2.q;
+    const their = f.p2 === "fixed" ? "There are" : f.p2 === "open" ? mk("p", "Their are") : "Their are";
+    const wewe = f.p3 === "fixed" ? "we" : f.p3 === "open" ? mk("p", "we we") : "we we";
+    let s4;
+    if (f.c3 === "fixed") s4 = "Past results do not predict future results. " + FIND.c3.fx;
+    else if (f.c3 === "open") s4 = mk("c", FIND.c3.q);
+    else s4 = FIND.c3.q;
+    const edited = m.stale ? ` <span class="edited">Call me any time this week.</span>` : "";
+    return `<p>Every spring I sit down with each family and walk through what changed: income, goals, insurance and the plan itself.</p><p>Our approach ${s2c} than going it alone, and ${s2d}.</p><p>${their} usually two or three small things to update. Most years ${wewe} finish in about an hour.</p><p>${s4}${edited}</p>`;
+  }
+  function findingCard(id, m) {
+    const d = FIND[id];
+    const st = m.f[id];
+    const isC = d.g === "c";
+    const done = st !== "open";
+    const lbl = { fixed: "Fixed", dismissed: "Dismissed", reviewed: "Reviewed" }[st];
+    const acts = done
+      ? `<span class="fstate">${lbl}</span><button class="btn link" type="button">Undo</button>`
+      : `<button class="btn quiet" type="button" ${m.stale ? "disabled" : ""}>${d.fb}</button><button class="btn quiet" type="button" ${m.stale ? "disabled" : ""}>${isC ? "Mark reviewed" : "Dismiss"}</button>`;
+    return `<div class="fd ${d.g}${done ? " done" : ""}${m.stale ? " stale" : ""}"><div class="fh"><span class="fk">${d.k}</span></div><div class="fq">“${d.q}”</div><div class="fm">${d.m}</div>${done ? "" : `<div class="fx">Suggested: <b>${d.fx}</b></div>`}<div class="fa">${acts}</div></div>`;
+  }
+  function ckPanel(m, s) {
+    const n = ckCounts(m);
+    const tab = m.tab;
+    let inner = "";
+    if (m.status === "new") {
+      inner = `<p class="ckmsg">Checks run automatically when you save.</p>`;
+    } else if (m.status === "idle") {
+      inner = `<p class="ckmsg">Not checked yet. Checks run automatically when you save. You can also run them now.</p><button class="btn pri" type="button" ${go("checking")}>Run check</button>`;
+    } else if (m.status === "checking") {
+      inner = `<div class="ckwait"><span class="spin"></span><div><b>Checking compliance and proofreading…</b><div class="hintrow">${s === "save-check" ? "Started automatically after save." : "This takes a few seconds."} You can keep reading. Editing is paused.</div></div></div>`;
+    } else if (m.status === "error") {
+      inner = `<div class="alert error"><b>The checker couldn't run</b>Your post is saved. You can try again. Until the checks run, you can't schedule, email or share this post.</div><button class="btn pri" type="button" ${go("checking")}>Try again</button>`;
+    } else {
+      const tabs = `<div class="cktabs"><button type="button" class="${tab === "c" ? "on" : ""}" onclick="ckTab('c')">Compliance <span class="n">${m.status === "clean" ? 0 : n.c}</span></button><button type="button" class="${tab === "p" ? "on" : ""}" onclick="ckTab('p')">Proofreading <span class="n">${m.err === "p" ? "–" : m.status === "clean" ? 0 : n.p}</span></button></div>`;
+      let list = "";
+      const g = tab;
+      const ids = Object.keys(FIND).filter((k) => FIND[k].g === g);
+      if (m.stale) list += `<div class="alert warn"><b>You've edited this post since the last check</b>These results may be out of date. Checks run again when you save, or run them now.</div>`;
+      if (m.err === "p" && g === "p") {
+        list += `<div class="alert error"><b>Proofreading couldn't run</b>Try again. Until it runs, you can't schedule, email or share this post.</div><button class="btn pri" type="button" ${go("checking")}>Try again</button>`;
+      } else if (m.status === "clean") {
+        list += `<div class="alert ok"><b>No findings</b>${g === "c" ? "Nothing to review in compliance." : "No spelling or grammar issues found."}</div>`;
+      } else {
+        if (g === "c") list += `<div class="ph">Compliance rule wording to be supplied by legal. These are sample findings.</div>`;
+        const open = ids.filter((k) => m.f[k] === "open");
+        const res = ids.filter((k) => m.f[k] !== "open");
+        list += open.map((k) => findingCard(k, m)).join("");
+        if (!open.length) list += `<div class="alert ok"><b>Nothing left to review here</b>${res.length} resolved.</div>`;
+        if (res.length) list += `<details class="resd"><summary>Resolved (${res.length})</summary>${res.map((k) => findingCard(k, m)).join("")}</details>`;
+      }
+      inner = tabs + list;
+    }
+    let foot = "";
+    if (m.time) foot = `<div class="ckf"><span>Checked ${m.time} · ${CK_VER}</span><button class="btn link" type="button" ${go("checking")}>${m.stale ? "Run check" : "Run again"}</button></div>`;
+    return `<div class="panel ck"><div class="ckh"><h3>Checks</h3>${ckChipHtml(m)}</div>${inner}${foot}</div>`;
+  }
+  function ckBar(m) {
+    const n = ckCounts(m);
+    const t = n.c + n.p;
+    let tone = "n", txt;
+    if (m.status === "new") { txt = "Checks run automatically when you save."; }
+    else if (m.status === "idle") { txt = "Not checked yet."; }
+    else if (m.status === "checking") { tone = "b"; txt = "Checking compliance and proofreading…"; }
+    else if (m.status === "stale") { tone = "w"; txt = "Out of date. You've edited this post since the last check."; }
+    else if (m.status === "error") { tone = "e"; txt = "The checker couldn't run. You can't schedule, email or share yet."; }
+    else if (m.status === "partial") { tone = "e"; txt = `Compliance: ${n.c} to review. Proofreading couldn't run.`; }
+    else if (m.status === "clean" || t === 0) { tone = "g"; txt = "No findings. Compliance and proofreading both checked."; }
+    else { tone = "w"; txt = `${t} to review: ${n.c} compliance, ${n.p} proofreading.`; }
+    return `<div class="ckbar ${tone}"><b>Checks</b> ${txt}</div>`;
+  }
+  window.ckTab = function (t) { state.tab = t; render(); };
+
+  function ackList(items) {
+    return items.map((k) => { const d = FIND[k]; return `<div class="ackit ${d.g}"><span class="tg">${d.g === "c" ? "Compliance" : "Proofreading"}</span><div><b>“${d.q}”</b><div class="hintrow" style="margin:2px 0 0">${d.m}</div></div></div>`; }).join("");
+  }
+  function ackDlg(kind) {
+    const target = { ack: "Add to your website", "ack-checked": "Add to your website", "ack-email": "Email my clients", "ack-social": "Share on social" }[kind];
+    const next = { ack: "ack-done", "ack-checked": "ack-done", "ack-email": "email", "ack-social": "social" }[kind];
+    const on = kind === "ack-checked";
+    POST = MINE[1];
+    const body = `<div class="alert warn"><b>2 findings are still unresolved</b>You can continue, but you need to confirm you've reviewed them. Your confirmation is saved with the time and your name.</div>
+      ${ackList(["c2", "p3"])}
+      <label class="checkline" style="margin-top:12px"><input type="checkbox" ${on ? "checked" : ""} onchange="document.getElementById('ackgo').disabled=!this.checked"> I've reviewed these findings and want to continue.</label>
+      <div class="ph">Acknowledgement wording to be supplied by legal.</div>
+      <div class="hintrow">Checked ${CK_TIME} · ${CK_VER}</div>`;
+    const foot = `<button class="btn quiet" type="button" ${go("check-fixed")}>Go back and fix</button><button id="ackgo" class="btn pri" type="button" ${on ? "" : "disabled"} ${go(next)}>Continue</button>`;
+    return dlg("Review before you continue", `${target} · ${POST.t}`, body, foot);
+  }
+  function ackStaleDlg() {
+    POST = MINE[1];
+    return dlg("Checks are out of date", POST.t,
+      `<div class="alert warn"><b>You've edited this post since it was last checked</b>Run the checks again before you schedule, email or share it. This keeps the check in step with what your clients will read.</div><div class="hintrow">Last checked ${CK_TIME} · ${CK_VER}</div>`,
+      `<button class="btn quiet" type="button" ${go("list")}>Cancel</button><button class="btn pri" type="button" ${go("checking")}>Run checks</button>`);
+  }
+  function ackErrDlg() {
+    POST = MINE[1];
+    return dlg("The checks couldn't run", POST.t,
+      `<div class="alert error"><b>You can't schedule, email or share yet</b>The compliance and proofreading checks didn't finish. Your post is saved. Try again in a moment.</div>`,
+      `<button class="btn quiet" type="button" ${go("list")}>Cancel</button><button class="btn pri" type="button" ${go("checking")}>Try again</button>`);
+  }
+
   /* ---------- editor ---------- */
   function editor(mode) {
     const edit = mode === "edit" || mode === "saved" || mode === "saving" && false;
+    const isA = state.dir === "a";
+    const ckScene = isA && CK_SCENES.includes(mode);
     const filled = mode !== "create" && mode !== "error-title";
-    const busy = mode === "saving";
-    const m = SEL;
+    const ckm = isA ? ckModel(mode === "saving" ? "create" : mode) : null;
+    const busy = mode === "saving" || (isA && ckm.status === "checking");
+    const m = ckScene ? MINE[1] : SEL;
     const title = filled ? m.t : mode === "error-title" ? "" : "";
     const sum = filled ? m.x : "";
     const h = mode === "create" || mode === "error-title" ? "New post" : "Edit post";
-    const bodyHtml = filled
+    const bodyHtml = ckScene ? ckBodyHtml(ckm) : filled
       ? `<p>Every spring I sit down with each family and walk through what changed: income, goals, insurance and the plan itself.</p><p>It takes about an hour, and most years we make two or three small adjustments. Some years nothing needs to move, which is a good result too.</p><p>If it has been more than a year since we last spoke, reply to this note and we will find a time.</p>`
       : `<p class="ph2">Start writing your post…</p>`;
     const vis = state.dir === "b"
@@ -118,15 +286,15 @@
     const back = state.dir === "c" ? "← My posts" : state.dir === "a" ? "← My posts" : "← Content";
     const backTo = state.dir === "b" ? "mine" : "list";
     const top = `<div class="ed-top"><button class="btn link" type="button" ${go(backTo)}>${back}</button><h2>${h}</h2>${state.dir === "b" ? lock() : ""}<span class="sp"></span>
-      ${mode === "saved" ? `<span class="saved-note">Saved just now</span>` : ""}
-      <button class="btn quiet" type="button" ${busy ? "disabled" : ""} ${go("saved")}>Save draft</button>
-      <button class="btn pri" type="button" ${busy ? "disabled" : ""} ${go("saving")}>${busy ? "Saving…" : "Save post"}</button></div>`;
+      ${mode === "saved" || mode === "save-check" ? `<span class="saved-note">Saved just now</span>` : ""}
+      <button class="btn quiet" type="button" ${busy ? "disabled" : ""} ${go(isA ? "save-check" : "saved")}>Save draft</button>
+      <button class="btn pri" type="button" ${busy ? "disabled" : ""} ${go(isA ? "save-check" : "saving")}>${mode === "saving" ? "Saving…" : "Save post"}</button></div>`;
     const main = `<div class="panel">
         <div class="field"><label>Title</label><input class="${mode === "error-title" ? "bad" : ""}" value="${title}" placeholder="Post title" ${busy ? "disabled" : ""}>${mode === "error-title" ? `<span class="err">Title is required</span>` : ""}</div>
         <div class="field"><label>Summary</label><textarea placeholder="One or two sentences shown on the card" ${busy ? "disabled" : ""}>${sum}</textarea></div>
         <div class="field" style="margin:0"><label>Post</label><div class="tb"><span>B</span><span><i>I</i></span><span><u>U</u></span><span>❝</span><span>≡</span><span>🔗</span><span>🖼</span></div><div class="ebody">${bodyHtml}</div></div></div>`;
-    const side = `<div>${vis}${img}</div>`;
-    const inner = `${top}${alerts}${lockBanner}<div class="ed-grid">${main}${side}</div>`;
+    const side = `<div>${isA ? ckPanel(ckm, mode) : ""}${vis}${img}</div>`;
+    const inner = `${top}${alerts}${lockBanner}${isA ? ckBar(ckm) : ""}<div class="ed-grid">${main}${side}</div>`;
     return inner;
   }
 
@@ -136,30 +304,30 @@
   }
   function baseList() { return state.dir === "b" ? "mine" : "list"; }
   function siteDlg() {
-    return dlg("Add to your website", SEL.t,
+    return dlg("Add to your website", POST.t,
       `<div class="timing"><label><input type="radio" name="t"> Publish now</label><label><input type="radio" name="t" checked> Schedule</label></div>
        <div class="row2"><div class="field"><label>Date</label><input value="Nov 24, 2026"></div><div class="field"><label>Time</label><input value="9:00 AM"></div></div>
-       <div class="linkprev"><span>It will be published at</span><b>${DOM}/news/${SEL.slug}</b></div>
-       <div class="alert info"><b>This puts the post on your website</b>Anyone with the link can read it there. It is still not shared with other advisors.</div>
+       <div class="linkprev"><span>It will be published at</span><b>${DOM}/news/${POST.slug}</b></div>
+       ${NOTE}<div class="alert info"><b>This puts the post on your website</b>Anyone with the link can read it there. It is still not shared with other advisors.</div>
        <div class="ph">Compliance wording to be supplied by legal.</div>`,
       `<button class="btn quiet" type="button" ${go("pv-web")}>Preview</button><button class="btn" type="button" ${go(baseList())}>Cancel</button><button class="btn pri" type="button" ${go("site-done")}>Schedule for Nov 24</button>`);
   }
   function emailDlg() {
-    return dlg("Email my clients", SEL.t,
+    return dlg("Email my clients", POST.t,
       `<div class="field"><label>Send to</label><select><option>Newsletter (128 contacts)</option></select></div>
        <div class="field"><label>From</label><input value="Jane Advisor &lt;jane@${DOM}&gt;" readonly></div>
-       <div class="field"><label>Subject</label><input value="${SEL.t}"></div>
-       <div class="linkprev"><span>The email links to</span><b>${DOM}/news/${SEL.slug}</b></div>
-       <div class="alert info"><b>Your clients will read it on your website</b>Publishing the email also publishes this post on ${DOM}.</div>
+       <div class="field"><label>Subject</label><input value="${POST.t}"></div>
+       <div class="linkprev"><span>The email links to</span><b>${DOM}/news/${POST.slug}</b></div>
+       ${NOTE}<div class="alert info"><b>Your clients will read it on your website</b>Publishing the email also publishes this post on ${DOM}.</div>
        <div class="ph">Compliance wording to be supplied by legal.</div>`,
       `<button class="btn quiet" type="button" ${go("pv-email")}>Preview</button><button class="btn" type="button" ${go(baseList())}>Cancel</button><button class="btn pri" type="button" ${go("site-done")}>Continue</button>`);
   }
   function socialDlg() {
-    return dlg("Share on social", SEL.t,
+    return dlg("Share on social", POST.t,
       `<div class="checkline"><input type="checkbox" checked> LinkedIn (Jane Advisor)</div><div class="checkline"><input type="checkbox" checked> Facebook (Your Firm Name)</div>
        <div class="field" style="margin-top:10px"><label>Caption</label><textarea>A yearly check-in keeps your goals, budget and insurance in step. Read more on my website.</textarea></div>
-       <div class="linkprev"><span>The post links to</span><b>${DOM}/news/${SEL.slug}</b></div>
-       <div class="alert info"><b>Followers open the post on your website</b>Sharing also publishes this post on ${DOM}.</div>
+       <div class="linkprev"><span>The post links to</span><b>${DOM}/news/${POST.slug}</b></div>
+       ${NOTE}<div class="alert info"><b>Followers open the post on your website</b>Sharing also publishes this post on ${DOM}.</div>
        <div class="ph">Compliance wording to be supplied by legal.</div>`,
       `<button class="btn quiet" type="button" ${go("pv-social")}>Preview</button><button class="btn" type="button" ${go(baseList())}>Cancel</button><button class="btn pri" type="button" ${go("site-done")}>Schedule posts</button>`);
   }
@@ -201,6 +369,10 @@
   /* ---------- scenes per direction ---------- */
   function contentActive() { return state.dir === "c" ? "content" : "content"; }
   function overlayFor(s, withListMenu) {
+    if (s === "ack" || s === "ack-checked" || s === "ack-email" || s === "ack-social") return scrim(ackDlg(s));
+    if (s === "ack-stale") return scrim(ackStaleDlg());
+    if (s === "ack-error") return scrim(ackErrDlg());
+    if (s === "ack-clear" || s === "ack-done") return scrim(siteDlg());
     if (s === "site") return scrim(siteDlg());
     if (s === "email") return scrim(emailDlg());
     if (s === "social") return scrim(socialDlg());
@@ -209,8 +381,8 @@
     if (s === "site-done") return toast(`Scheduled for Nov 24 on ${DOM}. Only you can see it until then.`);
     return "";
   }
-  function myGrid(menuOn) {
-    return `<div class="grid">${MINE.map((m, i) => privCard(m, menuOn && i === 2)).join("")}</div>`;
+  function myGrid(menuOn, at) {
+    return `<div class="grid">${MINE.map((m, i) => privCard(m, menuOn && i === (at == null ? 2 : at))).join("")}</div>`;
   }
 
   function sceneA() {
@@ -218,13 +390,16 @@
     const mine = `<button type="button" class="pbtn${s !== "all" ? " on" : ""}" ${go("list")}>🔒 My posts <span class="n">${s === "empty" ? 0 : MINE.length}</span></button>`;
     if (s === "all") return frame("content", `${libHead("all", mine)}<div class="grid">${FC.map((p) => fcCard(p)).join("")}</div>`);
     if (["pv-web", "pv-email", "pv-social"].includes(s)) return frame("content", { "pv-web": pvWeb, "pv-email": pvEmail, "pv-social": pvSocial }[s]());
-    if (["create", "error-title", "saving", "saved", "error-save", "edit"].includes(s)) return frame("content", editor(s), s === "saved" ? toast("Saved. Only you can see this post.") : "");
+    if (["create", "error-title", "saving", "saved", "error-save", "edit"].concat(CK_SCENES).includes(s)) return frame("content", editor(s), s === "saved" ? toast("Saved. Only you can see this post.") : s === "save-check" ? toast("Saved. Running checks…") : "");
+    POST = MINE[1]; NOTE = "";
+    if (s === "ack-clear") { POST = MINE[2]; NOTE = `<div class="alert ok"><b>Checked, no findings</b>Compliance and proofreading, ${CK_TIME}.</div>`; }
+    if (s === "ack-done") NOTE = `<div class="alert ok"><b>You acknowledged 2 findings</b>Nov 19, 2026, 3:20 PM PT, by Jane Advisor. This is saved with the post.</div>`;
     const head = `${libHead("mine", mine)}<div class="secthead"><h2>My posts</h2>${lock("Only you can see these")}<span class="sp"></span><button class="btn pri" type="button" ${go("create")}>+ Write a post</button></div>`;
     let body;
     if (s === "empty") body = emptyBox();
     else if (s === "loading") body = skeletons(4);
     else if (s === "error-load") body = errBox();
-    else body = myGrid(s === "use");
+    else body = myGrid(s === "use", 1);
     return frame("content", head + body, overlayFor(s));
   }
 
