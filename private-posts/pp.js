@@ -145,7 +145,8 @@
     return p.ck === "ok" ? ` <span class="chip live">Checked</span>` : p.ck === "warn" ? ` <span class="chip sched2">6 to review</span>` : ` <span class="chip draft2">Not checked</span>`;
   }
   function ckBodyHtml(m) {
-    const f = m.f;
+    const none = ["idle", "new", "checking", "error"].includes(m.status);
+    const f = none ? { c1: "reviewed", c2: "reviewed", c3: "reviewed", p1: "dismissed", p2: "dismissed", p3: "dismissed" } : m.f;
     const mk = (cls, inner) => `<mark class="mk ${cls}${m.stale ? " old" : ""}">${inner}</mark>`;
     const spell = f.p1 === "fixed" ? "guarantees" : "guarentees";
     const spellHtml = f.p1 === "open" ? mk("p", spell) : spell;
