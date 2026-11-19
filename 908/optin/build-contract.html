@@ -1,0 +1,196 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>#908 opt-in addendum: build contract</title>
+<style>body{font:15px/1.55 Roboto,Inter,system-ui,sans-serif;max-width:860px;margin:24px auto;padding:0 16px;color:#2c3e50}a{color:#1976d2}code{background:#f4f4f5;padding:.1em .35em;border-radius:4px;font-size:.92em}table{border-collapse:collapse;width:100%;margin:12px 0}th,td{border:1px solid #e0e5eb;padding:6px 8px;text-align:left;vertical-align:top}th{background:#f3f6f9}h1{font-size:26px}h2{font-size:20px;margin-top:28px}h3{font-size:16px}</style></head><body>
+<p><a href="index.html">Opt-in hub</a> · <a href="../index.html">#908 hub</a> · <a href="../build-contract.html">#908 build contract</a> · <a href="build-contract.md">Markdown</a> · <a href="https://github.com/kartboy16/content-library/issues/908">Issue</a></p>
+<h1>#908 addendum: offer a confirmation email when Add hits a Mailchimp compliance state</h1>
+<p style="background:#fff8e1;border:1px solid #ffe0a3;border-radius:8px;padding:10px 12px"><strong>Status:</strong> Not agent-ready. Soft Dev hold until a direction is picked.</p>
+<p><strong>Risk:</strong> high, same as #908. This writes to a live Mailchimp audience and sends an email to a real person through Mailchimp. Build to staging first. FC Tester uses a <strong>test Mailchimp audience only</strong>, with addresses the tester controls.</p>
+<p><strong>Builds on:</strong> Direction A (table plus side drawer), already on staging through #914 and #959, mock revision 974d143. Nothing in A changes except what is listed here. Rows still show only <strong>Edit</strong> and <strong>History</strong>. Unsubscribe, Remove and Permanently delete stay in the Edit drawer footer. There is no bulk select.</p>
+<h2>Request</h2>
+<p>Alex (via Chief of Staff, Nov 19, 2026): when an advisor adds an email address that Mailchimp holds in a <strong>compliance state</strong> (the person unsubscribed before, so Mailchimp refuses to add them back directly), Add should offer to send a <strong>confirmation (opt-in) email</strong>. The contact then sits in <strong>Pending</strong> until they confirm. Today (#959) the advisor only gets an explanation.</p>
+<p>Mock: https://kartboy16.github.io/fc-mocks/908/optin/</p>
+<h2>Recommendation</h2>
+<p><strong>Option 1: an inline notice inside the Add drawer, with a primary "Send confirmation email" button. 5–9 agent hours.</strong>
+- Add stays in one place. The advisor keeps the name, consent source and consent checkbox they already entered, and decides without losing context.
+- One extra tap, no second layer on top of the drawer. It works the same at 390 (the primary button sits on top of the stacked footer).
+- The already-pending case reuses the same slot with "Resend confirmation email".</p>
+<p><strong>Option 2 (6–10 h):</strong> the Add drawer stays behind and a confirm dialog opens after Save. Most familiar pattern and the same copy, but a dialog on a drawer is a layer on a layer, and at 390 it becomes a bottom sheet over a full-screen drawer.</p>
+<p><strong>Option 3 (8–13 h):</strong> no blocking step. Save closes the drawer, the existing Unsubscribed row is highlighted, and a strip under the row offers "Send confirmation email". Least intrusive, but it breaks the "rows show only Edit and History" rule while the strip is up, needs row-level state (offer, sending, failed, already pending) in the list, and is easy to miss on a long list at 390.</p>
+<h2>What happens in Mailchimp (assumptions to verify on a test audience)</h2>
+<ul>
+<li>Today, Add sends <code>PUT /lists/{list_id}/members/{subscriber_hash}</code> with <code>status=subscribed</code>. For a member Mailchimp holds in a compliance state it returns HTTP 400 with the title <strong>Member In Compliance State</strong>. #959 already maps this to a clear message. Use that same mapping as the trigger for the offer. Do not string-match the message text; match the title or error type.</li>
+<li>The offer sends the same call with <code>status=pending</code>. Mailchimp emails the contact a confirmation link, and the member becomes <code>pending</code> until they confirm. Verify this on the test audience.</li>
+<li><strong>Cleaned</strong> (bounced) and permanently deleted addresses cannot be offered this. They keep the existing error message and show no offer.</li>
+<li>Resend of a confirmation to a member who is already <code>pending</code>: Mailchimp may not resend on a plain <code>pending</code> update. Verify on the test audience whether resend needs a different call, and whether Mailchimp limits how often a confirmation can be sent. The mock has no cooldown copy. <strong>Placeholder:</strong> allow one resend per contact per 24 hours and show "Try again later" if blocked. Final rule to be set after the test.</li>
+<li>Confirmation by the contact is done on Mailchimp's page. FC does not receive a webhook in this slice. The Pending status updates the next time the list loads. Webhooks are out of scope.</li>
+</ul>
+<h2>Screens and states</h2>
+<p>All three options share the list, the Pending row and the Pending Edit and History views. Scenes are <code>?s=</code> values on each option page (<code>opt1-inline.html</code>, <code>opt2-dialog.html</code>, <code>opt3-row.html</code>); add <code>&amp;phone=1</code> for 390.</p>
+<table>
+<thead>
+<tr>
+<th>Scene (<code>?s=</code>)</th>
+<th>Options</th>
+<th>What it shows</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>list</code></td>
+<td>1, 2, 3</td>
+<td>Subscribers list. Jordan Sample (<code>jordan.sample@example.com</code>) is Unsubscribed. Casey Example (<code>casey.example@example.com</code>) is already Pending.</td>
+</tr>
+<tr>
+<td><code>add</code></td>
+<td>1, 2, 3</td>
+<td>Add drawer filled in for <code>jordan.sample@example.com</code>, consent ticked. Add subscriber starts the flow.</td>
+</tr>
+<tr>
+<td><code>add-pending</code></td>
+<td>1, 2, 3</td>
+<td>Same, for <code>casey.example@example.com</code>. Add subscriber starts the already-pending flow.</td>
+</tr>
+<tr>
+<td><code>offer</code></td>
+<td>1, 2, 3</td>
+<td>The offer. 1: warning notice in the drawer, footer primary becomes Send confirmation email. 2: confirm dialog over the drawer. 3: drawer closed, strip under the Unsubscribed row plus a toast.</td>
+</tr>
+<tr>
+<td><code>sending</code></td>
+<td>1, 2, 3</td>
+<td>Spinner and "Sending…", buttons disabled, fields locked. Double submit is blocked.</td>
+</tr>
+<tr>
+<td><code>sent</code></td>
+<td>1, 2, 3</td>
+<td>Drawer or dialog closes. The contact is at the top of the list as <strong>Pending</strong> with "Confirmation sent Nov 19". Toast: "Confirmation email sent to jordan.sample@example.com. Their status is Pending until they confirm."</td>
+</tr>
+<tr>
+<td><code>failed</code></td>
+<td>1, 2, 3</td>
+<td>"Couldn't send the confirmation email. Mailchimp didn't accept the request. Nothing was changed, and jordan.sample@example.com is still Unsubscribed. Try again in a moment." Primary: Try again.</td>
+</tr>
+<tr>
+<td><code>already</code></td>
+<td>1, 2, 3</td>
+<td>Add for an address that is already Pending. Nothing new is added. 1: info notice with Resend confirmation email (primary) and View subscriber. 2: dialog "Already waiting for confirmation" with Resend and Close. 3: strip on Casey's row with Resend and Dismiss.</td>
+</tr>
+<tr>
+<td><code>resent</code></td>
+<td>1, 2, 3</td>
+<td>After Resend: Casey moves to the top, last changed updates, toast "Confirmation email sent again to casey.example@example.com. Their status is Pending until they confirm."</td>
+</tr>
+<tr>
+<td><code>edit-pending</code></td>
+<td>all</td>
+<td>Edit drawer for a Pending contact. See below.</td>
+</tr>
+<tr>
+<td><code>history-pending</code></td>
+<td>all</td>
+<td>History tab with the confirmation request and any resend.</td>
+</tr>
+</tbody>
+</table>
+<h3>Pending in the list</h3>
+<ul>
+<li>Status chip <strong>Pending</strong> (amber) with a small line "Confirmation sent Nov 15". At 390 the line sits after the chip in the card meta.</li>
+<li>Rows keep only <strong>Edit</strong> and <strong>History</strong>. No resend button on the row.</li>
+<li>Pending contacts do not get campaigns until they confirm. Show the same chip everywhere the status appears.</li>
+</ul>
+<h3>What an advisor can do with a Pending contact (Edit drawer, Profile tab)</h3>
+<ul>
+<li>A "Waiting for confirmation" notice at the top of the drawer: when the email was sent, and that they get no campaigns until they confirm.</li>
+<li><strong>Resend confirmation email</strong> (primary, subject to the resend limit above).</li>
+<li><strong>Cancel the request</strong>: returns the contact to Unsubscribed (<code>PATCH status=unsubscribed</code>). Logged in History.</li>
+<li>Name, phone, city and tags stay editable.</li>
+<li><strong>Remove</strong> is disabled while Pending, matching #959 (Remove is refused on Pending and Cleaned). Tooltip: "Remove isn't available while a contact is Pending".</li>
+<li><strong>Permanently delete</strong> stays available, with the existing type-to-confirm.</li>
+</ul>
+<h3>History entries (audit log, FC-side)</h3>
+<ul>
+<li>"Jane Advisor asked Mailchimp to send a confirmation email to jordan.sample@example.com. Status is Pending until they confirm" (this wording matches today's re-subscribe entry).</li>
+<li>"Jane Advisor sent the confirmation email again to casey.example@example.com. Status is Pending until they confirm".</li>
+<li>A failed send changes nothing in Mailchimp, so it is not a history entry. It is an error-level server log with the email masked (as in #959).</li>
+<li>"Who" is the FC advisor display name, as in #908.</li>
+</ul>
+<h2>Copy</h2>
+<ul>
+<li>Offer title (1): "{email} unsubscribed earlier". Body: "Mailchimp won't add someone back after they unsubscribe. Mailchimp can email them a confirmation link instead. They stay Pending, and get no campaigns, until they confirm."</li>
+<li>Primary button, all options: <strong>Send confirmation email</strong>. Sending: <strong>Sending…</strong>. Retry: <strong>Try again</strong>.</li>
+<li>Option 2 title: "Send a confirmation email?". Option 3 strip: "Not added. {email} unsubscribed earlier." and toast "{email} wasn't added: they unsubscribed earlier."</li>
+<li>Already pending (1 and 3): "{email} is already Pending" / "We emailed them a confirmation link on Nov 15, 2026, 4:05 PM PT. They haven't confirmed yet, so nothing new was added." Option 2 title: "Already waiting for confirmation".</li>
+<li><strong>Placeholder, CASL and consent copy:</strong> "[Placeholder CASL copy, to be confirmed by compliance] Only send this if they asked to hear from you again." This is marked as a placeholder in the mock. Compliance must set the final wording, and decide whether the advisor's existing consent checkbox is enough for someone who has unsubscribed, or whether the confirmation email must be the only consent. Do not ship the placeholder as final legal copy.</li>
+<li>The Add drawer's existing note ("They will not get a confirmation email when you add them here.") is hidden once the offer is shown, because it would now be wrong.</li>
+<li>Advisor-facing copy uses "confirmation email" and "Pending", never "double opt-in" or "compliance state". It never names the platform's marketing domain.</li>
+</ul>
+<h2>In scope</h2>
+<ul>
+<li>Detect the Mailchimp compliance-state error on Add and return a typed result to the client (for example <code>{ offer: "confirmation", email }</code>) instead of only an error string.</li>
+<li>A server method that sends the confirmation by setting <code>status=pending</code>, with advisor-scoped auth, the same <code>mailchimpFetch</code> pattern, double-submit protection, and an audit entry.</li>
+<li>A server method to resend, and one to cancel the request (back to Unsubscribed).</li>
+<li>The chosen option's offer UI and the states above, the Pending chip and sub-line, the Pending Edit and History views, 1280 and 390.</li>
+<li><strong>Caps on every subscriber or user lookup:</strong> list calls keep <code>count=50</code>, <code>offset</code> paging and <code>fields=</code> projection. The already-pending check on Add looks up one member by subscriber hash with <code>fields=</code> limited to <code>status</code> and the last-changed time. It never loads the audience or searches without a limit. Any audit-history read for the Pending view uses a limit, paging and field projection.</li>
+<li>Tests with stubbed Mailchimp HTTP for: compliance error to offer, success to pending, failure with nothing changed, already pending, resend allowed and blocked, cancel request. FC Tester runs the real flow against a test audience.</li>
+</ul>
+<h2>Out of scope</h2>
+<ul>
+<li>Mailchimp webhooks or any automatic refresh of Pending to Subscribed.</li>
+<li>Offering this for Cleaned or permanently deleted addresses.</li>
+<li>A status filter or "Pending" count on the list. A bulk resend. CSV import.</li>
+<li>Customizing the confirmation email Mailchimp sends.</li>
+<li>Any Mailchimp to FTT Mail sync.</li>
+<li>Final CASL or legal wording (placeholder only).</li>
+<li>Changing Direction A's rows, drawer, or the three removal actions.</li>
+</ul>
+<h2>Desktop vs mobile</h2>
+<ul>
+<li>1280: Add is the 480px right drawer. Option 2's dialog is centered over it. Option 3's strip is a full-width row under the contact.</li>
+<li>390: the drawer is full screen with a stacked footer (primary on top, 44px targets). Option 2's dialog is a bottom sheet. Option 3's strip stacks its buttons inside the card and the list scrolls to it.</li>
+</ul>
+<h2>Agent-time estimate (hours, cloud build plus FC Tester plus fix loop)</h2>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Option 1</th>
+<th>Option 2</th>
+<th>Option 3</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Cloud agent build</td>
+<td>3–5</td>
+<td>4–6</td>
+<td>5–8</td>
+</tr>
+<tr>
+<td>FC Tester</td>
+<td>1.5–2.5</td>
+<td>1.5–2.5</td>
+<td>2–3</td>
+</tr>
+<tr>
+<td>Fix loop</td>
+<td>0.5–1.5</td>
+<td>0.5–1.5</td>
+<td>1–2</td>
+</tr>
+<tr>
+<td><strong>Total</strong></td>
+<td><strong>5–9 h</strong></td>
+<td><strong>6–10 h</strong></td>
+<td><strong>8–13 h</strong></td>
+</tr>
+</tbody>
+</table>
+<p>These are on top of #914 and #959, not a rebuild of #908.</p>
+<h2>Open questions</h2>
+<ol>
+<li>Compliance review: is the advisor's consent checkbox enough to offer a confirmation to someone who unsubscribed, and what is the final wording? (Recommended: review before build.)</li>
+<li>Resend limit: after the test-audience check, what is the cooldown and the message when Mailchimp refuses? (Placeholder: one per 24 hours.)</li>
+<li>Should "Cancel the request" exist in this slice, or only Resend? (Recommended: keep it, it is one <code>PATCH</code> and gives a way out of a mistaken offer.)</li>
+<li>Do we want Pending to refresh without a page reload once the contact confirms? (Recommended: no, later with a webhook.)</li>
+</ol>
+</body></html>

@@ -1,0 +1,31 @@
+.mockbar button.grp{margin-left:6px}
+.chip.pending{background:#fff8e1;color:#a85a00}
+.st-sub{display:block;font-size:11.5px;color:#7a6a3a;margin-top:3px}
+.pcard .st-sub{display:inline;margin:0 0 0 4px}
+.offer-row td{padding:0 12px 10px;background:#f5f9fd;border-bottom:1px solid #eef1f4}
+.strip{display:flex;align-items:center;gap:12px;flex-wrap:wrap;border-radius:6px;padding:10px 12px;font-size:13.5px}
+.strip.warn{background:#fff8e1;border:1px solid #ffe0a3;color:#5d4a0b}
+.strip.info{background:#eef6fc;border:1px solid #bbdefb;color:#0d47a1}
+.strip.error{background:#fdecea;border:1px solid #f5c2c0;color:#7f1d1d}
+.strip .tx{flex:1;min-width:200px}
+.strip .tx b{display:block;margin-bottom:2px}
+.strip .acts2{display:flex;gap:8px;flex-wrap:wrap}
+.phone .strip{margin-top:10px;align-items:stretch;flex-direction:column}
+.phone .strip .acts2 .btn{flex:1}
+.legal{font-size:12px;color:#5b6572;font-style:italic;margin:8px 0 0}
+.alert .legal{color:inherit;opacity:.85}
+.spin-sm{display:inline-block;width:14px;height:14px;border:2px solid currentColor;border-right-color:transparent;border-radius:50%;animation:sp .8s linear infinite;vertical-align:-2px;margin-right:6px}
+.scrim.top{z-index:14;background:rgba(0,0,0,.45);align-items:center}
+.scrim.top .confirm{margin:0 auto}
+.phone .scrim.top{align-items:flex-end;padding:0}
+.phone .scrim.top .confirm{margin:0;width:100%;max-width:none;border-radius:16px 16px 0 0;padding-bottom:20px}
+.phone .scrim.top .confirm .cf{flex-direction:column-reverse}
+.phone .scrim.top .confirm .cf .btn{width:100%}
+.pend-box{margin:0 0 14px}
+.pend-box .alert-acts{margin-top:10px}
+.fieldlock input,.fieldlock select{background:#f3f5f7}
+.btn[disabled]{opacity:.55;cursor:not-allowed}
+.hintline{font-size:12px;color:#7f1d1d;margin:4px 0 0}
+#stage.phone .app{height:844px}
+#stage.phone .col{height:844px;overflow:hidden}
+#stage.phone .main{overflow:auto;min-height:0}

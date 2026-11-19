@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>#908 opt-in Option 1: inline notice in the Add drawer</title>
+<link rel="stylesheet" href="../chrome.css">
+<link rel="stylesheet" href="optin.css">
+</head>
+<body>
+<div class="mockbar">
+  <a href="../../">All mocks</a> · <a href="../index.html">#908 hub</a> · <a href="index.html">Opt-in hub</a> ·
+  <a href="opt1-inline.html">1</a> · <a href="opt2-dialog.html">2</a> · <a href="opt3-row.html">3</a> · <a href="build-contract.html">Contract</a>
+  <span class="sp"></span>
+  <button type="button" data-sw="dev:desk" onclick="swDev('desk')">Desktop</button>
+  <button type="button" data-sw="dev:phone" onclick="swDev('phone')">390</button>
+  <button type="button" data-sw="s:list" onclick="jump('list')">List</button>
+  <button type="button" data-sw="s:add" onclick="jump('add')">Add (unsubscribed address)</button>
+  <button type="button" data-sw="s:add-pending" onclick="jump('add-pending')">Add (already pending)</button>
+  <button type="button" data-sw="s:offer" onclick="jump('offer')">Offer shown</button>
+  <button type="button" data-sw="s:sending" onclick="jump('sending')">Sending</button>
+  <button type="button" data-sw="s:sent" onclick="jump('sent')">Sent, Pending row</button>
+  <button type="button" data-sw="s:failed" onclick="jump('failed')">Send failed</button>
+  <button type="button" data-sw="s:already" onclick="jump('already')">Already pending</button>
+  <button type="button" data-sw="s:resent" onclick="jump('resent')">Resent</button>
+  <button type="button" data-sw="s:edit-pending" onclick="jump('edit-pending')">Edit, Pending</button>
+  <button type="button" data-sw="s:history-pending" onclick="jump('history-pending')">History, Pending</button>
+</div>
+<div id="root"></div>
+<script src="../data.js"></script>
+<script src="optin.js"></script>
+<script>Optin.boot({ opt: 1, s: "list" });</script>
+</body>
+</html>

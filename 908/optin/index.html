@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>#908 Add hits a Mailchimp compliance state: offer a confirmation email</title>
+<style>
+body{font:15px/1.55 Roboto,Inter,system-ui,sans-serif;max-width:920px;margin:24px auto;padding:0 16px;color:#2c3e50}
+a{color:#1976d2}
+li{margin:10px 0}
+.r{background:#e8f5e9;border:1px solid #a5d6a7;border-radius:10px;padding:10px 14px}
+.note{background:#fff8e1;border:1px solid #ffe0a3;border-radius:8px;padding:10px 12px}
+h1{font-size:26px}
+.muted{color:#607080;font-size:13px}
+</style>
+</head>
+<body>
+<p><a href="../../">All mocks</a> · <a href="../">#908 hub</a> · <a href="https://github.com/kartboy16/content-library/issues/908">#908</a></p>
+<h1>#908 Add an address Mailchimp won't re-add: offer a confirmation email</h1>
+<p class="r"><b>Recommend Option 1</b>: an inline notice inside the Add drawer with a primary <b>Send confirmation email</b> button. The advisor keeps what they typed, decides in one place, and the contact then shows as <b>Pending</b> in the list. Option 2 uses a confirm dialog after Save, which is familiar but stacks a dialog on the drawer. Option 3 closes the drawer and offers the email on the contact's row, which is the least intrusive but is easy to miss and breaks the rule that rows show only Edit and History. All three share the same Pending row, the same Pending Edit and History views, and the same resend and cancel actions. They build on Direction A, which is already on staging.</p>
+<div class="note">Fixtures are Jane Advisor, Your Firm Name and example.com addresses only. <code>jordan.sample@example.com</code> is Unsubscribed and gets the offer. <code>casey.example@example.com</code> is already Pending. CASL and consent wording is a flagged placeholder for compliance review. Use the scene buttons at the top of each page, or the links below. Add <code>&amp;phone=1</code> for 390.</div>
+<ul>
+<li><a href="opt1-inline.html"><b>Option 1. Inline notice in the Add drawer (recommended)</b></a>
+  · <a href="opt1-inline.html?s=add">Add</a>
+  · <a href="opt1-inline.html?s=offer">Offer shown</a>
+  · <a href="opt1-inline.html?s=sending">Sending</a>
+  · <a href="opt1-inline.html?s=sent">Sent, Pending row</a>
+  · <a href="opt1-inline.html?s=failed">Send failed</a>
+  · <a href="opt1-inline.html?s=already">Already pending</a>
+  · <a href="opt1-inline.html?s=resent">Resent</a>
+  · <a href="opt1-inline.html?s=edit-pending">Edit, Pending</a>
+  · <a href="opt1-inline.html?s=history-pending">History, Pending</a>
+  · <a href="opt1-inline.html?s=offer&amp;phone=1">390 offer</a>
+  · <a href="opt1-inline.html?s=sent&amp;phone=1">390 sent</a>
+</li>
+<li><a href="opt2-dialog.html"><b>Option 2. Confirm dialog after Save</b></a>
+  · <a href="opt2-dialog.html?s=add">Add</a>
+  · <a href="opt2-dialog.html?s=offer">Offer shown</a>
+  · <a href="opt2-dialog.html?s=sending">Sending</a>
+  · <a href="opt2-dialog.html?s=sent">Sent, Pending row</a>
+  · <a href="opt2-dialog.html?s=failed">Send failed</a>
+  · <a href="opt2-dialog.html?s=already">Already pending</a>
+  · <a href="opt2-dialog.html?s=resent">Resent</a>
+  · <a href="opt2-dialog.html?s=offer&amp;phone=1">390 offer</a>
+  · <a href="opt2-dialog.html?s=sent&amp;phone=1">390 sent</a>
+</li>
+<li><a href="opt3-row.html"><b>Option 3. Offer on the row, no blocking step</b></a>
+  · <a href="opt3-row.html?s=add">Add</a>
+  · <a href="opt3-row.html?s=offer">Offer shown</a>
+  · <a href="opt3-row.html?s=sending">Sending</a>
+  · <a href="opt3-row.html?s=sent">Sent, Pending row</a>
+  · <a href="opt3-row.html?s=failed">Send failed</a>
+  · <a href="opt3-row.html?s=already">Already pending</a>
+  · <a href="opt3-row.html?s=resent">Resent</a>
+  · <a href="opt3-row.html?s=offer&amp;phone=1">390 offer</a>
+  · <a href="opt3-row.html?s=sent&amp;phone=1">390 sent</a>
+</li>
+<li><a href="build-contract.html">Build contract addendum</a> · <a href="build-contract.md">.md</a></li>
+</ul>
+<p class="muted">Not agent-ready. Soft Dev hold until a direction is picked.</p>
+</body>
+</html>
