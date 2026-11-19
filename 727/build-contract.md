@@ -1,129 +1,110 @@
-# #727 One-step website connection (onboarding step 2 of 5): build contract
+# #727 Advisor-started one-step WordPress connection (Website tab)
 
-Mocks: [hub](index.html) · [A. Detected path, one card](a-detected.html) (**recommended**) · [B. Platform tiles](b-tabs.html) · [Today](today.html). This follows [#724](../724/) A and uses the same shell, banner and badge styles.
+**Status:** Not agent-ready. Soft Dev hold until a direction is picked.
 
-> **Not agent-ready. Soft Dev hold until a direction is picked.**
+**Risk:** **high.** This flow changes a live advisor website: it adds a server rule (`.htaccess` Authorization pass-through) and stores a WordPress application password. A backup must be saved **before** any server-rule change, the change must be verifiable and reversible, and it goes to staging first, then FC Tester, then Alex merges.
 
-## Today (main `14c9cce`, read only)
-
-- **Website > Settings** shows `WebsiteDeliveryChooser` with two cards: "Article list on your site" (embed, set by `advisorConfig.setWebsiteDelivery(advisorId,'embed')`) and "Full articles on your domain" (WordPress). WordPress needs `wordpressSetup.status === 'ready'`.
-- **Asking for WordPress setup:** `wordpress.requestSetup(siteUrl)` sets `wordpressSetup.status='requested'` and pings an internal Slack channel. Staff then enter credentials by hand (`wordpress-credentials.js`, JWT via `/wp-json/jwt-auth/v1/token`, so the advisor's WordPress needs the JWT plugin) and the status moves `in_progress → ready`. Statuses in `websiteDeliveryHelpers.js`: none / requested / in_progress / ready / failed.
-- **Embed:** `WebsiteEmbeddingGuide.jsx` shows a sample `<script src=".../api/embed.js" data-advisor-id=...>`. `server/api/embed.js` sends `Access-Control-Allow-Origin: *` and serves by `advisorId` alone. There is **no key and no domain check**, so any site can show any advisor's list. Article links in the widget go to `${apiBase}/post/:id`, which is FC's own domain (a white-label issue, see open questions).
-- **No platform detection, no "is it connected" check, and no approved-domains setting.** #724's site pull (`advisor-brand-lookup`) already fetches the homepage, so detection can run on the same fetch.
-
-## Directions
-
-| | A. Detected path, one card (recommended) | B. Platform tiles, detected pre-picked |
-|---|---|---|
-| Layout | Website > Settings, "Connect your website · Step 2 of 5" card. A detection line ("WordPress found on yourfirm.ca", Detected badge, "Not right? Change"), then **only that path** | The same card with 6 tiles (Managed by our team / WordPress / Wix / Squarespace / Other site / Not sure). The detected tile is pre-picked with a small "Detected" label; the panel for the picked tile shows below |
-| Own WordPress | One main button, **Connect WordPress**. "Can't sign in to WordPress? Install our plugin instead" reveals the plugin | Two equal option cards: Connect WordPress (Recommended badge) and Install our plugin |
-| Status | Status line in #724 banner style (pending, connected, can't verify) | The same lines plus a 3-step tracker (Add to your site → We check for it → Live) |
-| Decisions shown | None unless detection is wrong | Every platform is visible, which is easier to correct but busier |
-
-Shared by both: the landing banner, WordPress approve screen, the "Email this to my web person" dialog plus the email and the page it opens, Approved websites card, staff queue, and the "not sure" chooser.
-
-**C dropped:** a separate onboarding wizard page. Same reason as #724: steps 3–5 and an onboarding dashboard don't exist yet, so the step lives in Website > Settings plus a landing banner. It can move into a wizard later without a data change.
-
-## Screens and states
-
-Switcher keys: `v` (view), `p` (platform), `s` (status), and `m=plug` (A's plugin reveal). The mock pages carry no estimates.
-
-| Path (`p`) | to do (`setup`) | pending | connected (`live`) | can't verify (`error`) |
-|---|---|---|---|---|
-| Managed by our team (staff-side: "FTT-managed") | Not shown. A queue item is created at signup, so it starts as pending | "We'll connect it for you", tracker Requested → Our team connects it → Live, "Requested Oct 31, 10:45 AM PT. Usually done within 1 business day." | "Your content is live on your website." | "We hit a snag… Our team is on it, so there's nothing you need to do." + Contact us |
-| Own WordPress | Connect WordPress (+ plugin) + "Email this to my web person" link | After the plugin download: "Waiting for the plugin on yourfirm.ca. We check every hour." + Check now | Approve goes straight to live (verified through the API) | "We can't reach WordPress at yourfirm.ca. The connection may have been removed…" + Connect again / Get help |
-| Wix / Squarespace / Other | Snippet + Copy code, platform tabs with steps, **Email this to my web person**, "I've added it, check now" | "Waiting for your site code…" + Check now + "Show the code and steps again" | "Your content is live on your website." Found on yourfirm.ca/insights · checked … | "We couldn't find your site code… in a Code or Embed block." + Check again / Email my web person |
-| Not sure / detection failed or timed out | Chooser: WordPress / Wix / Squarespace / Something else, + Email this to my web person / Ask our team to help (creates a queue item) | n/a | n/a | n/a |
-
-Other views:
-
-- **Landing banner (#724 style):** "Next: connect your website so your content shows there." + Connect website. Managed: "We're connecting yourfirm.ca for you. Nothing to do." Pending: "Almost there. We're checking yourfirm.ca for your site code." Live: "Your content is live on your website." (dismissable). Error: "We couldn't verify yourfirm.ca." + Fix it. This shows after the #724 branding banner, one banner at a time.
-- **WordPress approve screen:** WordPress core's own `wp-admin/authorize-application.php` (Application Passwords, WP 5.6+), with app name "Content Library". It shows what the app can and can't do. "Yes, I approve" returns to the success URL, and we store the app password encrypted (`wordpress-crypto.js`). "No" returns to the to-do state with "Not connected. You can try again anytime."
-- **Email this to my web person:** a dialog with Their email, Note, Preview, and **Send (POST)**. The email comes from Jane Advisor with reply-to set to the advisor. It contains the code, the steps, and an **Open the setup steps** link. **The link only opens a read-only page** (signed, expiring token, GET has no side effects). On that page, "I've added it, check the site" is a **button (POST)** that only queues a check. Nothing is approved or changed by a link click.
-- **Approved websites** (Website > Settings, below the connect card): a list with **✓ Verified** / **Not verified yet** (+ Check) badges, "Found at signup" on the detected domain, × to remove, and Add a website. Copy: "Your article list only shows on these websites. Anyone can see your site code, so this keeps it on your sites."
-- **Staff queue** (admin): Advisor, Site, Platform, Source (Found at signup / Asked for help), Requested, and **Turn on publishing**. This reuses `wordpress.getSetupRequests`, with a source field added.
-
-## Data fields and storage (`advisor_configs`)
-
-| Field | Notes |
-|---|---|
-| `websiteDetection` `{platform: wordpress\|wix\|squarespace\|other\|unknown, managed: bool, signals: [..], checkedAt, via: signup\|refresh}` | Written by the #724 lookup. A failure or timeout gives `unknown` and never blocks |
-| `websiteConnection` `{path: managed\|wp_connect\|wp_plugin\|snippet, status: setup\|pending\|live\|error, lastCheckAt, lastFoundAt, foundUrl, errorCode, connectedAt}` | The single source for the banner and card |
-| `embedPublicKey` (`pk_…`) | Goes in the snippet and plugin. It's public by design and can be rotated |
-| `approvedDomains` `[{host, verified, verifiedAt, source: signup\|advisor\|admin\|seen, addedAt}]` | Pre-filled from `websiteAddress` and the detected host (with and without `www.`) |
-| `wordpressSetup` (existing) | `+ authMethod: jwt\|app_password\|plugin`, `+ requestSource: signup_managed\|advisor_help\|manual` |
-| `webPersonInvites` `[{email, sentAt, tokenHash, expiresAt, openedAt}]` | For resend and audit |
-
-## Detection approach
-
-- It runs on the same homepage fetch as #724, with the same ~20 s cap, and adds no extra request in most cases.
-- **WordPress:** `wp-content/` or `wp-includes/` paths, `<meta name="generator" content="WordPress`, the `Link: <…/wp-json/>` header, or `/wp-json/` returning 200.
-- **Wix:** `X-Wix-Request-Id` header, `static.wixstatic.com`, or the `wix.com` generator.
-- **Squarespace:** `static1.squarespace.com`, or `<!-- This is Squarespace. -->`.
-- **Managed by us:** the host or its DNS matches a staff-maintained list of our hosting IPs and CNAMEs in `utils/managedHosts.js`, editable in admin later.
-- Anything else, or no website, gives `other`. A free or dealer email with no website gives `unknown` (the "not sure" chooser).
-- **Connection check:** a scheduled job fetches the approved pages: hourly for 7 days, then daily. "Check now" is rate-limited to 1 per minute. It looks for `data-key="pk_…"`, a plugin marker `<meta name="…-content" content="pk_…">`, or a successful WordPress REST call. It sets `live` when found and `error` after 3 misses or a 401/403/404 from WordPress. Widget page views from an approved domain (`embed_analytics`) also mark it live. Per AC8, **this work never adds robots or crawler blocks to advisor sites.**
-
-## Precedence and security
-
-- The embed API serves the list only when `key` is valid **and** the request's `Origin`/`Referer` host is in `approvedDomains`. Localhost and preview hosts are allowed only when they're listed.
-- **Migration:** existing embeds get their seen Referer hosts (from `embed_analytics`) and `websiteAddress` pre-filled as approved. Enforcement starts in warn-only mode (log only) for the first 14 days (open question).
-- The plugin zip carries `embedPublicKey` plus a **per-site secret** for publishing. Rotating it from settings invalidates old zips. The WordPress app password is stored encrypted with `wordpress-crypto.js`.
-- Choosing a path never removes an existing working method. It calls `setWebsiteDelivery` only once the path is `live`.
-
-## White-label
-
-- The snippet, plugin, emails and the web-person page show **no FC domain**. In the mock the snippet host is the placeholder `embed.example.com`. The real host is **FC's own domain** unless a neutral or advisor host is chosen (open question 1).
-- Widget article links and Insights share links must open on the advisor's site (in-page reader, or the WordPress post) and never on FC's own domain (AC7). The emailed page is served under the same neutral host.
-- Advisors see "our team"/"Managed by our team". "FTT-managed" appears only in the contract and admin.
-
-## In scope
-
-Detection, the connect card for every path (A or B), the landing banner, the Connect WordPress flow (Application Passwords), the pre-keyed plugin zip, the snippet with tabs for Wix, Squarespace and other, the web-person email, page and dialog, the connection checker, Approved websites, the embed key and domain check, the staff queue source field, and the landing status.
-
-## Out of scope
-
-- Onboarding steps 3–5 and a wizard.
-- Ghost or other adapters.
-- Changing the PHP publishing method (#644). It keeps working, but isn't offered in this step.
-- Auto-inserting code into Wix or Squarespace through their APIs.
-- Robots or crawler changes (AC8).
-- Legal or consent copy for the outbound email. It's a placeholder only: **[legal line TBD]**.
-
-## Mobile (390)
-
-- The card goes full width. In B the tiles are 2 per row. Option cards stack.
-- The code block wraps, with Copy code inside the block.
-- All buttons and tabs are at least 44px. Action buttons go full width.
-- The WordPress approve screen hides the WP menu.
-- Approved websites rows wrap, with a 44px × button.
-
-## Estimates (agent time: cloud agent build + FC Tester + fix loops)
-
-Calibration: #699 took ~30 min from handoff to tested.
-
-| Run | What | A | B |
-|---|---|---|---|
-| 1 | Data fields, detection on the #724 fetch, managed-host list, staff queue source, `embedPublicKey`, approved domains model + embed key/Origin check (warn-only flag) + migration pre-fill | ≈1.5–2.25 h | ≈1.5–2.25 h |
-| 2 | Connect WordPress (Application Passwords authorize + callback + encrypted store + publish via app password) and the pre-keyed plugin zip (small PHP plugin: marker, key, publish endpoint) | ≈2–3 h | ≈2–3 h |
-| 3 | Connection checker job + Check now, the web-person email (Send POST, signed read-only page, check button POST), snippet steps content | ≈1.5–2.25 h | ≈1.5–2.25 h |
-| 4 | UI: connect card, landing banner, Approved websites card, staff queue column | ≈1.5–2 h | ≈2–2.75 h |
-| | **Total** | **≈6.5–9.5 h** | **≈7–10.25 h** |
-
-- Wall-clock is about **3.5–5.25 h for A** if runs 2, 3 and 4 go in parallel after run 1 (B: about 4–6 h).
-- Cutting the plugin zip from the first build (Connect WordPress only, plugin later) saves about 1 h of run 2.
+## Sources (read-only)
+- Issue [#727](https://github.com/kartboy16/content-library/issues/727) (website connection, step 2 of the onboarding series) and its earlier mocks, kept at [`v1/`](v1/index.html) as "Earlier mocks". Those cover onboarding detection, managed-by-us queue, snippet and plugin paths; this set is a different entry point.
+- Request from Alex via Chief of Staff, Nov 19, 2026, 11:13 AM PT: the advisor types their site address on the Website tab and clicks **Connect**; there is no site list; the backend matches the domain to our Cloudways app; the advisor approves once on their own WordPress approval page; we then verify, back up, add the server rule and test publishing; then show Connected.
+- Existing code (read, not changed): `server/website-publisher/wordpress-setup-service.js` already has `patchHtaccess` (adds the `HTTP_AUTHORIZATION` rule, skips if present, writes a `.cl-backup-<timestamp>` copy first) and `runCloudwaysWordpressSetup` over SFTP; `imports/api/cloudwaysApi.js` has `cloudways.getAppList` (admin-only, returns everything, no paging) and `cloudways.patchHtaccessForJwt`; `server/website-publisher/wordpress-credentials.js` holds credentials. The new flow replaces the manual `WordpressSetupWizard.jsx` path for sites we host; it must reuse these steps rather than duplicate them.
+- WordPress core Application Passwords: `/wp-admin/authorize-application.php?app_name=…&success_url=…&reject_url=…&app_id=…`. WordPress shows its own screen (the mock labels it "WordPress screen (context)"); we only control the app name, the success and reject return URLs and the app ID. On approval WordPress redirects to `success_url` with `user_login` and `password`; on reject it redirects to `reject_url` (or `success_url` with `success=false`).
 
 ## Recommendation
+**A. An inline card on Website → Settings with a 4-step stepper. About 12–18.5 agent hours.** One card holds the whole journey (Your website, Approve, Connecting, Connected), so the advisor never loses their place, the return from WordPress lands on the same card, and every error appears in the same spot with its fix. It is the smallest UI build and reuses the existing Website settings page.
 
-**A.** The ask is "one step with no decisions": A shows only the detected path and one main button, and correcting it is one click. It matches #724 A (same detection line, badges and banner style). It also needs about 30 min less UI time than B. B's tiles remain an option if detection proves unreliable in testing.
+- **B. Guided full page (13.5–20.5 h).** A focused page with a progress bar, a short "what happens next" list and full-page result screens. Calmer, but it adds a route and a second place to maintain.
+- **C. Modal over the Website tab (12.5–19.5 h).** A dialog (bottom sheet at 390) on top of a status card. Fast to open, but the return from WordPress has to re-open the dialog and a modal is a poor home for the progress and error detail.
+
+Directions share one backend. They differ only in the UI shell.
+
+## The flow (all directions)
+1. **Enter URL.** One field and **Connect**. The backend normalises the address to a domain and matches it to one of our Cloudways apps. The advisor never sees a list. No match: **Not hosted by us** state, no server changes.
+2. **Approve in WordPress.** Redirect to the advisor's own `/wp-admin/authorize-application.php` with a signed `state` token that ties the return to the advisor and website. If they aren't logged in, WordPress shows its login first (mocked as "Login first"). They see the approval and click Approve or Reject.
+3. **Connecting.** WordPress sends them back to the Website tab. A job runs four plain steps: *Checking your website login*, *Saving a backup of your website*, *Allowing FinancialContent to post*, *Publishing a test post*. The page updates by polling a small status call.
+4. **Connected.** Success state with the website, the time and "Backup saved". Nothing is shown about passwords or server files.
+
+## Screens and scenes
+Scene switcher in every direction (`?s=`), plus `&phone=1` for 390.
+
+| Scene (`?s=`) | Where | Notes |
+| --- | --- | --- |
+| `url` | Website tab | Field + Connect. Sub-states: `v=filled`, `v=empty`, `v=invalid`, `v=checking`. |
+| `wp` | WordPress (context) | Approve screen; `v=login` shows WordPress login first. Same in A, B and C; labelled as a WordPress screen. |
+| `connecting` | Website tab | Four steps; `p=1..4` shows which step is running. Approved-in-WordPress line on top. |
+| `connected` | Website tab | Success, with Done, View my news page, Disconnect website. |
+| `err-domain` | Website tab | Domain isn't hosted by us. Email support. No changes made. |
+| `err-apppw` | Website tab | Application passwords disabled (for example by a security plugin). Names the setting; Try again or Contact support. |
+| `err-reject` | Website tab | Clicked Reject. Connect again or Cancel. No changes made. |
+| `err-role` | Website tab | Not an administrator or editor. Try again with another account or Contact support. |
+| `err-test` | Website tab | Test publish failed after backup and rule. Try the test again or Contact support. |
+
+## States
+| State | Behaviour |
+| --- | --- |
+| Empty | Website tab not connected: field empty, **Connect** enabled. Empty or malformed submit shows the inline hint; nothing is sent. |
+| Loading | `v=checking` (matching the domain) and `connecting` (four steps; the active step shows a spinner, finished steps a tick, later steps are dimmed). Navigating away is safe; the job continues and the Website tab shows "Connecting…" until done. |
+| Error | The five error scenes. Each says what happened, what has and hasn't changed, and the next action. A failed step never leaves a half-applied change: see rules below. |
+| Success | Connected badge, website, time, "Backup saved". Replaces the earlier manual WordPress setup status. |
+
+## Copy
+- Card title: **Connect your website**. Helper: “Enter your website address and we’ll connect it to your news page.” Hint: “No need to log in to anything yet. You’ll approve the connection once in WordPress.”
+- Field: **Website address**, placeholder `example-advisor.ca`. Button: **Connect**. Invalid: “Enter your website address, like example-advisor.ca.”
+- Progress: “Approved in WordPress by Jane Advisor”; **Checking your website login**; **Saving a backup of your website**; **Allowing FinancialContent to post**; **Publishing a test post**. Footer: “Keep this page open. This usually takes under a minute.”
+- Connected: **Your website is connected**. “FinancialContent can now publish your posts to the news page on example-advisor.ca. We published a test post and removed it again.” Buttons: **View my news page**, **Done**, **Disconnect website**.
+- Not hosted: **We can’t connect example-advisor.ca ourselves**. “This website isn’t hosted with us, so we can’t set it up in one step. Our team can help you connect it.” support@financialtechtools.ca. Buttons: **Email support** (mailto, prefilled with name, firm and website), **Try a different address**. Chip: “No changes were made to your website.”
+- App passwords off: **WordPress isn’t allowing connections yet**. “A security setting on example-advisor.ca is blocking the approval step. Switch this setting off, then try again:” In your security plugin (for example Wordfence) find **Disable WordPress application passwords** and make sure it is turned off. “Not sure where to find it? Our team can do this with you.” Buttons: **Try again**, **Contact support**. *(Placeholder: confirm the exact menu name and path for each supported plugin before build; add other plugins only after checking.)*
+- Rejected: **You didn’t approve the connection**. “No problem. You can connect again whenever you’re ready.” Buttons: **Connect again**, **Cancel**.
+- Wrong role: **An administrator or editor needs to approve**. “The WordPress account you used can’t approve this connection. Ask an administrator or editor of example-advisor.ca to approve it, or sign in with that kind of account and try again.” Buttons: **Try again with another account**, **Contact support**.
+- Test failed: **Almost there: the test post didn’t publish**. “Your website approved the connection and your backup is saved, but the test post didn’t go through. Nothing has changed on your news page.” Buttons: **Try the test again**, **Contact support**.
+- WordPress screen (context) is WordPress’s own text; buttons read “Yes, I approve of this connection” and “No, I do not approve of this connection”. The mock uses WordPress’s real wording; we cannot change it.
+- Use “website” and “news page” in all advisor-facing copy. No technical terms (htaccess, REST, token) in advisor copy. Fixtures: Jane Advisor, Your Firm Name, example-advisor.ca.
+
+## Rules for the build
+- **Server-rule changes need a backup first and are high-risk.** Order is fixed: (1) read the current file, (2) save a timestamped backup and confirm it was written, (3) apply the rule only if it isn't already present (idempotent), (4) re-read to confirm, (5) test with an authenticated REST call, (6) on any failure after (3), restore the backup and report **err-test**. Never overwrite the backup. Never edit a file when the backup step failed. Take a per-site lock so two clicks or two tabs can't run the job twice.
+- **Lookups are capped.** The domain match must not call `cloudways.getAppList` and filter in the browser. Use a server-side lookup by normalised domain against a cached or indexed table of managed apps, with `limit` (≤ 20), paging for any staff list, and a field projection (app ID, server ID, domain only). Never send app lists, credentials or server details to the advisor's client. User/advisor lookups in the job use the same limit, paging and projection.
+- **Credentials.** The application password arrives once at our callback over HTTPS, is stored encrypted, is never shown or logged, and is never put in a URL we show. The callback checks the signed `state`, the advisor session and that the returning domain matches the website that started the flow. Disconnect removes our stored password and asks WordPress to revoke it where possible.
+- **Email and links.** No email link approves or changes anything. This flow has no emailed links.
+- **White-label.** Advisor and client pages (Insights posts, share and email links) never link to the FC app domain. This flow lives only in the advisor app; the name FinancialContent appears only in the advisor-facing app and on WordPress’s own approval screen.
+- **Do not regress** existing WordPress publishing via `setWebsiteDelivery`, the PHP method, embed API, or sites already connected. A site that already has the rule and a working login shows Connected without re-running the backup.
+- Never block social or AI crawlers on the advisor’s site.
+- Error handling: map each failure to exactly one scene. Not hosted, application passwords disabled, rejected, wrong role, test failed. Anything unknown falls back to **err-test** wording with Contact support, and logs a support-visible reason code (no secrets).
+
+## In / out of scope
+**In:** one URL field and Connect on the Website tab; server-side domain match; redirect to the advisor’s WordPress approval page; return handler; four-step connect job (login check, backup, rule, test post); Connected state; the five error states with the actions above; Disconnect; 1280 and 390; generic fixtures; tests for each error path and a failed-rule restore.
+
+**Out of scope:** the onboarding platform detection and branding pull (#724 and the `v1/` mocks); Wix, Squarespace and other platforms; sites we don’t host (they only get the support path); plugin download; changing the PHP or embed methods; a site list or picker; staff queue UI; emailing links to a web person; redesigning the Website tab.
+
+## Desktop vs mobile
+- **1280:** A: card inside Website → Settings with a horizontal stepper beside the 90px rail. B: full-width page with a centered 600px panel and a top progress bar. C: a 520px centered dialog over the Settings tab.
+- **390:** rail behind the menu; stepper collapses to dots with only the current label; Connect and every action button are full width and at least 44px tall; B’s panel is full width; C’s dialog becomes a bottom sheet; WordPress screen is WordPress’s own responsive layout.
+
+## Agent-time estimate (real agent hours: cloud agent build + FC Tester + fix loop; no human days)
+| | A (recommended) | B | C |
+| --- | --- | --- | --- |
+| Run 1: domain match (capped lookup), start and callback endpoints, `state` token, role/app-password detection | 2–3 | 2–3 | 2–3 |
+| Run 2: server rule with backup, verify, rollback (high-risk) | 2.5–4 | 2.5–4 | 2.5–4 |
+| Run 3: connect job, progress status call, test post, error mapping, disconnect | 2–3 | 2–3 | 2–3 |
+| Run 4: UI | 2–3 | 3–4.5 | 2.5–3.5 |
+| **Cloud agent build** | **8.5–13** | **9.5–14.5** | **9–13.5** |
+| FC Tester (staging) | 2–3 | 2.5–3.5 | 2–3.5 |
+| Fix loop | 1.5–2.5 | 1.5–2.5 | 1.5–2.5 |
+| **Total** | **12–18.5 h** | **13.5–20.5 h** | **12.5–19.5 h** |
+
+Runs 2 to 4 can run in parallel after run 1; wall-clock for A is roughly 6–9 h. Run 2 has the most risk and should reach staging first with a dry-run mode.
 
 ## Open questions
+1. Is the test post created as a private draft and deleted, or published and removed? (Assumed: created and removed; it must never be visible on the live news page for long.)
+2. Which sites count as hosted by us: all Cloudways apps in our account, or only those with a matching domain record? How is a domain with `www` or a redirect matched?
+3. Sites without HTTPS or on a WordPress version without Application Passwords: use the application-passwords-off scene, or a separate message?
+4. Should a security plugin other than Wordfence be named in the copy? (Placeholder until verified.)
+5. Should “Try again with another account” keep the same signed `state`, or restart?
+6. Which existing connection method wins if a site is already connected another way (embed, PHP)? (Assumed: this flow only adds WordPress publishing and leaves the others.)
+7. Who is notified when the job fails after the rule was applied and restored (support inbox, Alex)?
 
-1. **Embed host (white-label):** the snippet and widget article links point at FC's own domain today. Should they use a neutral host, a per-advisor CNAME (for example `content.yourfirm.ca`), or an in-page reader so readers stay on the advisor's site?
-2. **WordPress auth:** OK to switch from the JWT plugin to core Application Passwords for new connections, keeping JWT for existing sites? Some hosts or security plugins disable Application Passwords; those fall back to the plugin.
-3. **Plugin:** ship it in the first build or later? Keep both options, or only Connect?
-4. **Managed detection:** which hosting IPs or CNAMEs identify sites we host? Should staff be able to edit the list in admin?
-5. **Check schedule:** is hourly for 7 days, then daily, OK? Should the advisor get an email when it goes live or fails?
-6. **Approved domains:** strict from day one for new advisors, plus warn-only for 14 days for existing embeds?
-7. **Web-person email:** which from address (sent as the advisor, through our mail)? How long should the link last (suggest 30 days)? Is a legal or consent line needed (**placeholder**)?
-8. **Not sure → Ask our team to help:** should it create a queue item, and who picks it up?
+## Assumptions in this mock set
+- The WordPress approval screen shows WordPress’s own wording; the mock reproduces it and cannot change it.
+- “Connected” time shown (Nov 19, 11:24 AM PT) is a fixture.
+- Legal or compliance wording: none added; any future line is a placeholder pending review.
+
+Not agent-ready. Soft Dev hold until a direction is picked.
