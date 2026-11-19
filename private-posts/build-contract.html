@@ -1,0 +1,294 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Private posts: build contract</title>
+<style>body{font:15px/1.55 Roboto,Inter,system-ui,sans-serif;max-width:900px;margin:24px auto;padding:0 16px;color:#2c3e50}a{color:#1976d2}code{background:#f4f4f5;padding:.1em .35em;border-radius:4px;font-size:.92em}table{border-collapse:collapse;width:100%;margin:12px 0}th,td{border:1px solid #e0e5eb;padding:6px 8px;text-align:left;vertical-align:top}th{background:#f3f6f9}h1{font-size:26px}h2{font-size:20px;margin-top:28px}h3{font-size:16px}</style></head><body>
+<p><a href="index.html">Private posts hub</a> · <a href="build-contract.md">Markdown</a></p>
+<h1>Private, owner-only posts: build contract</h1>
+<p><strong>Status:</strong> Not agent-ready. Soft Dev hold until Alex picks a direction. No issue has been filed.</p>
+<p><strong>Risk: high.</strong> This is a visibility feature in the same code that leaked private posts in #321 and #330. A single missed query would show one advisor's private post to another advisor, to the shared feed, to Pick for me or to search. Build to staging first, run pstack blast-radius and interrogate on the PR, then FC Tester on staging. Alex merges to main.</p>
+<p>Mock hub: https://kartboy16.github.io/fc-mocks/private-posts/</p>
+<h2>Request</h2>
+<p>Alex (Nov 19, 2026, 2:29 PM PT): "A user wants to create his own posts in our system. I need their posts to never be seen by anyone else but that user."</p>
+<p>An advisor writes his own posts in the app. Nobody else can ever see them: not other advisors, not the shared Content Library feed, not Pick for me, not search.</p>
+<h2>Recommendation</h2>
+<p><strong>Direction A: a "My posts" section in the Content tab. 22–34 agent hours</strong> (cloud agent build plus FC Tester time on staging).</p>
+<ul>
+<li>Private posts are read only by their own endpoint (<code>myPosts.page</code>), scoped to the signed-in owner. They never share a query with the library feed, search or Pick for me, which is the situation that caused #321/#330.</li>
+<li>Almost no new navigation. It is one more pill beside Favorites, Hidden, Topics, Compliance Approved and Pick for me.</li>
+<li>All Content stays FC-only, so there is nothing to forget to filter in the UI.</li>
+</ul>
+<p><strong>Direction B (31–48 h): a visibility control in the editor, and private posts mixed into All Content with a lock badge.</strong> The most natural for the advisor, but private and FC posts then live in the same feed, search and Pick for me queries. That is the highest-risk shape, and it needs the most testing. Not recommended.</p>
+<p><strong>Direction C (25–38 h): a separate private space, with its own "My posts" item in the left rail.</strong> Safest separation and room to grow (a table, a split editor, "Make a private copy" from an FC post). Costs a new route and nav item. A good follow-up if advisors write many posts.</p>
+<h2>What the code does today (read-only audit of content-library at 283972a)</h2>
+<p>These are facts from reading the code. They shape the build.</p>
+<ul>
+<li><strong>Posts have <code>isPublic</code>, and a missing value is private</strong> (<code>imports/utils/htmlPostsLibraryQuery.js</code>, the Oct 1 decision). Advisors only get <code>isPublic: true</code> posts, plus posts in their advisor sources (<code>availableToAdvisorSourceIds</code>), plus posts with <strong><code>privateToUserId</code> equal to their own id</strong>.</li>
+<li><strong>A per-owner field already exists: <code>privateToUserId</code>.</strong> Today it is written only by <code>contentLibrary.materializeRssHtmlPost</code> (a private copy of an RSS article). It is honoured by the library visibility query, <code>HTMLPostsByIds</code>, Pick for me (<code>buildVisibilityQuery</code> and <code>buildPrivatePostProtectionQuery</code>), the trash owner check and the delete guard (which also accepts <code>createdBy</code>).</li>
+<li><strong>No advisor-facing way to author an HTML post exists yet.</strong> <code>CreateContent.jsx</code> has no save call. <code>HTMLPosts.setPublicStatus</code> and the other admin methods are admin-only. So this feature needs new methods.</li>
+<li><strong>Admins see everything.</strong> For an admin the visibility query is <code>{}</code> and <code>htmlPostIsVisibleToViewer</code> returns true. The UI shows the red lock for private posts. That conflicts with "never seen by anyone else", so owner-only posts must be excluded for admins as well, unless Alex says otherwise (open question 1).</li>
+<li><strong>Support impersonation</strong> (<code>server/support-impersonation.js</code>) lets support or admin act as an advisor, so <code>this.userId</code> is the advisor. A check on <code>userId</code> alone does not keep support out. See open question 1.</li>
+<li><strong>Gaps found that matter for owner-only posts:</strong></li>
+<li><code>getPostForView</code> (<code>server/user-methods.js</code>, about line 1273) treats a post with no <code>availableToAdvisorSourceIds</code> as "not found". It does not honour <code>privateToUserId</code>, so an owner could not open their own post there.</li>
+<li><code>/html-post/:id</code> (<code>server/api/html-post-serve.js</code>) serves a <code>rawHtml</code> post by id with <strong>no visibility check</strong>. <code>/api/post/:postId</code> (<code>server/api/embed.js</code>) also appears to look up by id with only a trashed check. Ids are random, but owner-only posts must not be fetchable by id by anyone except through the publish path below.</li>
+<li><code>embed.js</code> and <code>embed-posts.js</code> use <strong>raw collection access</strong> (<code>db.collection('HTMLPosts')</code>), which bypasses the Mongo collection wrappers (like the soft-delete <code>wrapNotTrashed</code> wrapper). A default-deny wrapper alone would not cover them.</li>
+<li><code>server/email-suggestions.js</code> and <code>server/api/post-suggestions.js</code> build their own visibility queries. Every such copy must change.</li>
+<li>Infographic thumbnails use the opposite rule (missing means public) in <code>imports/server/publications.js</code>. That is a different collection, but it shows the codebase has two meanings of "missing". Do not copy that rule.</li>
+</ul>
+<h2>Data model</h2>
+<p>Add no new collection for the first build. Mark owner-only posts so they can be excluded with one rule:</p>
+<ul>
+<li><code>sourceType: 'advisorAuthored'</code></li>
+<li><code>privateToUserId: &lt;ownerId&gt;</code> and <code>createdBy: &lt;ownerId&gt;</code></li>
+<li><code>isPublic: false</code></li>
+<li><code>availableToAdvisorSourceIds: []</code> (forced empty on every write, because the visibility query ORs this in)</li>
+<li>Normal content fields: <code>name</code>, <code>excerpt</code>, <code>content</code>, <code>featuredImage</code>, <code>createdOn</code>, <code>updatedAt</code>, <code>trashedAt</code>.</li>
+</ul>
+<p><strong>Alternative (safer, costs more): a separate collection.</strong> An owner-only post could never match any HTMLPosts query. Every downstream flow (website publish, email campaign, social schedule, trash) keys on an HTMLPosts id, so each would need a second source. Estimate roughly +10–16 h. Raise with Alex only if he wants the strongest guarantee.</p>
+<h2>Enforcement (the important part)</h2>
+<p><strong>Owner-only is enforced on the server in every publication and method. The UI is never the control.</strong> Hiding a card is not enough.</p>
+<ol>
+<li><strong>Default deny at the collection layer.</strong> <code>HTMLPosts.find</code>, <code>findOne</code>, <code>findOneAsync</code> and <code>countDocuments</code> already pass through a wrapper for soft-delete (<code>wrapNotTrashed</code>). Add a second wrapper that ANDs in <code>{ sourceType: { $ne: 'advisorAuthored' } }</code> unless the caller passes <code>{ includeOwnerOnlyFor: &lt;userId&gt; }</code>, which adds <code>privateToUserId: &lt;userId&gt;</code> instead. A new query that forgets the rule then fails safe.</li>
+<li><strong>Raw collection call sites</strong> (<code>rawCollection()</code>, <code>db.collection('HTMLPosts')</code>, aggregate pipelines, change streams, <code>distinct</code>) bypass that wrapper. List every one, and give each the same exclusion. Add a test that fails if a new raw call is added without it.</li>
+<li><strong>Every surface, each with a test (see Tests).</strong> Library live publication and card publication, <code>HTMLPosts.libraryPage</code>, <code>libraryCount</code>, the get-by-id method, <code>HTMLPostsByIds</code>, Pick for me and its outside-access path, search (text and category), Topics, Favorites, Hidden, Compliance Approved, the embed and public APIs, <code>/html-post/:id</code>, <code>getPostForView</code>, email suggestions, scheduled library posts, admin lists (Manage Advisor Posts, Users, trash lists), analytics, RSS, exports, support and impersonation sessions.</li>
+<li><strong><code>myPosts.*</code> methods</strong> (<code>create</code>, <code>update</code>, <code>get</code>, <code>page</code>, <code>trash</code>, <code>restore</code>) check <code>this.userId</code>, then filter by <code>privateToUserId === this.userId</code> <strong>in the query</strong>, not after. A wrong id returns "not found", never "not allowed", so existence is not revealed.</li>
+<li><strong>Publishing is the only way out.</strong> When the owner adds a post to his website, sends it by email or shares it on social, the system writes a <strong>published snapshot</strong> (page content under the owner's site and a stable URL on his domain). The private source post stays owner-only. The by-id endpoints serve owner-only posts only through that published snapshot. Taking the page down removes the snapshot.</li>
+<li><strong>Lists are capped</strong>: <code>limit</code> (default 24, max 50), <code>skip</code>/<code>page</code>, and field projection to card fields only (name, excerpt, featuredImage, createdOn, status, slug). Never return <code>content</code> in a list.</li>
+</ol>
+<h2>Screens and states</h2>
+<p>Scenes are <code>?s=</code> values on each direction page. Add <code>&amp;phone=1</code> for 390. <code>A</code> is <code>a-section.html</code>, <code>B</code> is <code>b-visibility.html</code>, <code>C</code> is <code>c-private-space.html</code>.</p>
+<table>
+<thead>
+<tr>
+<th>Scene (<code>?s=</code>)</th>
+<th>Dir</th>
+<th>What it shows</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>all</code> (A, B), <code>content</code> (C)</td>
+<td>A, B, C</td>
+<td>A: All Content, FC posts only. B: all sources, private posts mixed in with a lock badge and a Source filter. C: Content tab, FC posts only, with the rail item "My posts" added.</td>
+</tr>
+<tr>
+<td><code>list</code> (A, C), <code>mine</code> (B)</td>
+<td>A, B, C</td>
+<td>Owner's posts: A cards under a "My posts" pill, B filtered by Source, C table with Edit and Use. Statuses: Draft, Live on your website, Scheduled, Emailed.</td>
+</tr>
+<tr>
+<td><code>search</code></td>
+<td>B</td>
+<td>Search "tax" shows FC results and the owner's own match with a lock badge.</td>
+</tr>
+<tr>
+<td><code>empty</code></td>
+<td>A, B, C</td>
+<td>"You haven't written any posts yet", a Write a post button.</td>
+</tr>
+<tr>
+<td><code>loading</code></td>
+<td>A, B, C</td>
+<td>Skeleton cards or rows.</td>
+</tr>
+<tr>
+<td><code>error-load</code></td>
+<td>A, B, C</td>
+<td>"Couldn't load your posts", Try again. Nothing was changed.</td>
+</tr>
+<tr>
+<td><code>create</code></td>
+<td>A, B, C</td>
+<td>New post: title, summary, body, featured image. A and C: banner "Only you can see this post". B: a badge by the title and a "Who can see this post" panel with <strong>Only me</strong> selected and "Other advisors" disabled.</td>
+</tr>
+<tr>
+<td><code>error-title</code></td>
+<td>A, B, C</td>
+<td>Title is required. Field error and an alert.</td>
+</tr>
+<tr>
+<td><code>saving</code></td>
+<td>A, B, C</td>
+<td>Fields and buttons disabled, "Saving…". Double submit blocked.</td>
+</tr>
+<tr>
+<td><code>saved</code></td>
+<td>A, B, C</td>
+<td>Toast "Saved. Only you can see this post." and "Saved just now".</td>
+</tr>
+<tr>
+<td><code>error-save</code></td>
+<td>A, B, C</td>
+<td>"Couldn't save your post. Your changes are still on this screen." Nothing is lost.</td>
+</tr>
+<tr>
+<td><code>edit</code></td>
+<td>A, B, C</td>
+<td>Existing post. C shows a list on the left (desktop) and the editor on the right.</td>
+</tr>
+<tr>
+<td><code>copy</code></td>
+<td>C</td>
+<td>"Make a private copy" of an FC post. The copy goes to My posts. The original is unchanged.</td>
+</tr>
+<tr>
+<td><code>use</code></td>
+<td>A, B, C</td>
+<td>Use menu: Add to my website, Email my clients, Share on social, Preview what clients see, Edit, Move to Trash.</td>
+</tr>
+<tr>
+<td><code>site</code></td>
+<td>A, B, C</td>
+<td>Add to your website: publish now or schedule, the URL on the advisor's own domain, and a notice that publishing puts it on his site.</td>
+</tr>
+<tr>
+<td><code>email</code></td>
+<td>A, B, C</td>
+<td>Email my clients: list, From (his own address), subject, link to his own site.</td>
+</tr>
+<tr>
+<td><code>social</code></td>
+<td>A, B, C</td>
+<td>Share on social: accounts, caption, link to his own site.</td>
+</tr>
+<tr>
+<td><code>no-site</code></td>
+<td>A, B, C</td>
+<td>Website not connected. Sharing needs it, so the advisor is asked to connect first.</td>
+</tr>
+<tr>
+<td><code>site-done</code></td>
+<td>A, B, C</td>
+<td>Toast after scheduling. Status chip changes.</td>
+</tr>
+<tr>
+<td><code>pv-web</code>, <code>pv-email</code>, <code>pv-social</code></td>
+<td>A, B, C</td>
+<td>What the advisor's clients see. Domain <code>example-advisor.ca</code>, "Your Firm Name", no FC name, link or logo.</td>
+</tr>
+<tr>
+<td><code>trash</code></td>
+<td>A, B, C</td>
+<td>Move to Trash. Warns that a live post comes off his website. 60-day restore, the same Trash as other posts.</td>
+</tr>
+</tbody>
+</table>
+<h2>Copy</h2>
+<p>Key strings (final wording is a product call):
+- Banner: "Only you can see this post" and "Other advisors, the Content Library, search and Pick for me never show it."
+- Badge: "Only me". Section: "My posts". Empty: "You haven't written any posts yet".
+- Publish notice: "This puts the post on your website. Anyone with the link can read it there. It is still not shared with other advisors."
+- Save error: "Couldn't save your post. Your changes are still on this screen. Try again in a moment."
+- Trash: "It is live on your website, so it will come down from <url> too. You can restore it from Trash for 60 days."
+- <strong>Compliance and legal wording is a flagged placeholder</strong> (shown as PLACEHOLDER in the Website, Email and Social dialogs). Legal supplies the final text. Do not invent it.</p>
+<h2>White label</h2>
+<p>Anything a client sees (published page, email, social card, links, footers, From name) uses the advisor's own domain and firm name. It never links to or shows the FC app domain or brand. The published URL is <code>https://&lt;advisor domain&gt;/news/&lt;slug&gt;</code>. Follow fc-white-label-links. Test fixtures use Jane Advisor, Your Firm Name, example-advisor.ca and example.com only (test-fixture-names).</p>
+<h2>Open questions for Alex</h2>
+<p>Defaults in the mocks are shown in brackets. Each one changes the build.</p>
+<ol>
+<li><strong>Can admins or support sessions see these posts?</strong> [No. Excluded from admin lists too. Support impersonation is a gap, see audit.] If support must be able to help an advisor, add a logged, read-only view.</li>
+<li><strong>Can he schedule, email or share them to his own clients?</strong> [Yes, as an intentional publish. The post then lives on his own site. "Only him" applies to the library, other advisors, search and Pick for me.] If the answer is "never seen by anyone, ever", remove Use and keep Preview only.</li>
+<li><strong>Can he later make one shareable or public? Is that one-way?</strong> [No. Not in scope.] If yes: who approves, and does it become an FC library post, or go only to his firm?</li>
+<li><strong>What happens if the advisor account is deleted or moved to another firm?</strong> [Posts stay with the account owner id. Deleted account: posts are deleted after the normal retention window. Move: posts stay with the advisor, not the firm.]</li>
+<li><strong>Do they count toward limits or billing?</strong> [No limit in v1.] Add a cap per advisor if needed.</li>
+<li><strong>Do they appear in analytics?</strong> [Only his own site and campaign analytics. Never in FC-wide or admin analytics.]</li>
+<li><strong>Can he duplicate an FC post into a private copy?</strong> [Not in A or B. Shown in C as "Make a private copy".]</li>
+<li><strong>Is there a compliance or approval flow?</strong> [Not in v1. Placeholder wording on publish.] Firms that need approval may want the existing compliance step before publish.</li>
+<li><strong>Should his own search include his private posts?</strong> [A: no, My posts is separate. B: yes, with a lock badge.]</li>
+<li><strong>Can he write posts with AI help or import from his site?</strong> [Out of scope.]</li>
+<li><strong>Do private posts get a firm or team owner?</strong> [No. One advisor owner. Teams out of scope.]</li>
+<li><strong>Who can request deletion for compliance or records retention?</strong> [Owner only. Retention rule needs a decision for regulated firms.]</li>
+<li><strong>Can one be previewed by a link before publishing?</strong> [No. Preview is inside the app only.]</li>
+<li><strong>Do admins need a way to find a post an advisor reports as lost?</strong> [Not in v1. Talk to the advisor, or restore from Trash on his account via support.]</li>
+</ol>
+<h2>In scope</h2>
+<ul>
+<li>Direction picked by Alex: owner-only create, edit, list, trash and restore.</li>
+<li>The empty, loading, error and success states in the table above.</li>
+<li>Server enforcement and tests on every surface listed.</li>
+<li>Use flows: add to website, email, share on social, with the advisor's own domain on everything clients see.</li>
+<li>390px layout.</li>
+</ul>
+<h2>Out of scope</h2>
+<ul>
+<li>Making a post public or shared with other advisors, firms or teams.</li>
+<li>Approval workflows, AI drafting, importing, collaboration and comments.</li>
+<li>Billing or limits.</li>
+<li>Webhooks, bulk actions and exports of private posts.</li>
+<li>Admin or support viewing (unless Alex answers yes to question 1).</li>
+</ul>
+<h2>Mobile notes (390)</h2>
+<ul>
+<li>The rail is hidden. The top bar has the menu, logo and avatar.</li>
+<li>Filter pills scroll sideways. Cards are one column. Primary buttons are at least 44px tall.</li>
+<li>Editor: Save draft and Save post sit at the top and stack to equal width. The side panels (featured image, visibility) drop below the body.</li>
+<li>Dialogs become bottom sheets with the primary button first.</li>
+<li>C: the split view becomes list, then editor, on separate screens.</li>
+</ul>
+<h2>Tests (must pass on staging before FC Tester)</h2>
+<p>Use two test advisors, <strong>Jane Advisor</strong> (owner) and <strong>Sam Advisor</strong> (other), plus an admin, a support user and a logged-out visitor. Sample post titles only.
+- Sam cannot fetch Jane's post by id through any method, publication, REST route or embed route. The answer is "not found", never "not allowed".
+- Jane's post is absent from Sam's library feed, <code>libraryPage</code>, <code>libraryCount</code>, search (text, category, topic), Favorites, Hidden, Compliance Approved and Pick for me, including the outside-access path.
+- Jane's post is absent from the admin library, Manage Advisor Posts, Users and trash lists (or present only if Alex answers yes to question 1).
+- A support impersonation session sees Jane's posts only if Alex answers yes to question 1.
+- A logged-out request to <code>/html-post/:id</code>, <code>/api/post/:id</code> and <code>/api/posts/:advisorId</code> returns not found for an unpublished owner-only post.
+- After Jane publishes to her site, the published URL works for visitors, the source post is still hidden from Sam, and taking the page down returns 404.
+- The collection wrapper: a query without <code>includeOwnerOnlyFor</code> never returns an owner-only post. A scan test fails on any raw <code>HTMLPosts</code> access without the exclusion.
+- Every list method caps <code>limit</code>, pages with <code>skip</code>, and returns only card fields. A request for <code>limit: 10000</code> is clamped.
+- Client-facing output (page, email, social) contains no FC domain or brand.
+- Existing <code>privateToUserId</code> RSS posts keep working for their owner.</p>
+<h2>Estimate (real agent hours: cloud agent build plus FC Tester time)</h2>
+<table>
+<thead>
+<tr>
+<th>Piece</th>
+<th>A</th>
+<th>B</th>
+<th>C</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Server model, collection default-deny, raw call site audit and patches</td>
+<td>7–10</td>
+<td>9–13</td>
+<td>7–10</td>
+</tr>
+<tr>
+<td><code>myPosts.*</code> methods with capped, paged, projected lists</td>
+<td>3–4</td>
+<td>3–4</td>
+<td>3–4</td>
+</tr>
+<tr>
+<td>Client: list, empty, loading, error, editor, trash</td>
+<td>7–10</td>
+<td>10–15</td>
+<td>9–13</td>
+</tr>
+<tr>
+<td>Use flows: website, email, social, published snapshot on his domain</td>
+<td>3–6</td>
+<td>3–6</td>
+<td>3–6</td>
+</tr>
+<tr>
+<td>Library, search and Pick for me changes</td>
+<td>0</td>
+<td>3–4</td>
+<td>0</td>
+</tr>
+<tr>
+<td>Tests across all surfaces plus FC Tester on staging</td>
+<td>2–4</td>
+<td>3–6</td>
+<td>3–5</td>
+</tr>
+<tr>
+<td><strong>Total</strong></td>
+<td><strong>22–34</strong></td>
+<td><strong>31–48</strong></td>
+<td><strong>25–38</strong></td>
+</tr>
+</tbody>
+</table>
+<p>Add 10–16 h if Alex wants the separate-collection option. Add 4–8 h for a logged support view if he answers yes to question 1.</p>
+<p>Not agent-ready. Soft Dev hold until a direction is picked.</p></body></html>

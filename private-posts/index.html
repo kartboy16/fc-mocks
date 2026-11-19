@@ -1,0 +1,36 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Private, owner-only posts: mocks</title>
+<style>body{font:15px/1.55 Roboto,Inter,system-ui,sans-serif;max-width:900px;margin:24px auto;padding:0 16px;color:#2c3e50}a{color:#1976d2}h1{font-size:26px}h2{font-size:20px;margin-top:28px}li{margin:6px 0}.muted{color:#5b6572;font-size:13px}.rec{background:#e8f5e9;border:1px solid #a5d6a7;border-radius:8px;padding:10px 12px}.risk{background:#fdecea;border:1px solid #f5c2c0;border-radius:8px;padding:10px 12px}code{background:#f4f4f5;padding:.1em .35em;border-radius:4px}</style></head><body>
+<p><a href="../">All mocks</a></p>
+<h1>Private, owner-only posts</h1>
+<p>Alex, Nov 19, 2026: "A user wants to create his own posts in our system. I need their posts to never be seen by anyone else but that user."</p>
+<p class="risk"><strong>Risk: high.</strong> Same code that leaked private posts in #321 and #330. Owner-only is enforced on the server in every publication and method, not just in the UI. See the build contract.</p>
+<p>Fixtures are fictional (Jane Advisor, Your Firm Name, example-advisor.ca). Every direction has desktop and 390 views, and a scene switcher at the top of each page.</p>
+<h2>Directions</h2>
+<p class="rec"><strong>Recommended: A.</strong> 22–34 agent hours. Private posts have their own endpoint and never share a query with the library feed, search or Pick for me.</p>
+<ul>
+<li><a href="a-section.html"><b>A. A "My posts" section in the Content tab (recommended, 22–34 h)</b></a> · <a href="a-section.html?s=all">All Content (FC only)</a> · <a href="a-section.html?s=list">My posts</a> · <a href="a-section.html?s=empty">Empty</a> · <a href="a-section.html?s=create">Create</a> · <a href="a-section.html?s=edit">Edit</a> · <a href="a-section.html?s=use">Use menu</a> · <a href="a-section.html?s=site">Website</a> · <a href="a-section.html?s=email">Email</a> · <a href="a-section.html?s=social">Social</a> · <a href="a-section.html?s=pv-web">Client view</a> · <a href="a-section.html?s=list&amp;phone=1">390 list</a> · <a href="a-section.html?s=create&amp;phone=1">390 create</a> · <a href="a-section.html?s=empty&amp;phone=1">390 empty</a></li>
+<li><a href="b-visibility.html"><b>B. A visibility control in the editor, private posts mixed into All Content (31–48 h)</b></a> · <a href="b-visibility.html?s=all">All, mixed</a> · <a href="b-visibility.html?s=search">Search</a> · <a href="b-visibility.html?s=mine">My posts filter</a> · <a href="b-visibility.html?s=empty">Empty</a> · <a href="b-visibility.html?s=create">Create</a> · <a href="b-visibility.html?s=site">Website</a> · <a href="b-visibility.html?s=pv-email">Client email</a> · <a href="b-visibility.html?s=all&amp;phone=1">390 all</a> · <a href="b-visibility.html?s=create&amp;phone=1">390 create</a></li>
+<li><a href="c-private-space.html"><b>C. A separate private space in the left rail (25–38 h)</b></a> · <a href="c-private-space.html?s=content">Content tab</a> · <a href="c-private-space.html?s=copy">Private copy</a> · <a href="c-private-space.html?s=list">My posts</a> · <a href="c-private-space.html?s=empty">Empty</a> · <a href="c-private-space.html?s=create">Create</a> · <a href="c-private-space.html?s=edit">Edit</a> · <a href="c-private-space.html?s=social">Social</a> · <a href="c-private-space.html?s=pv-social">Client social</a> · <a href="c-private-space.html?s=list&amp;phone=1">390 list</a> · <a href="c-private-space.html?s=edit&amp;phone=1">390 edit</a></li>
+<li><a href="build-contract.html">Build contract</a> · <a href="build-contract.md">.md</a></li>
+</ul>
+<h2>Open questions for Alex</h2>
+<p class="muted">Defaults in brackets are what the mocks assume.</p>
+<ol>
+<li><strong>Can admins or support sessions see these posts?</strong> [No. Excluded from admin lists too. Support impersonation is a gap, see audit.] If support must be able to help an advisor, add a logged, read-only view.</li>
+<li><strong>Can he schedule, email or share them to his own clients?</strong> [Yes, as an intentional publish. The post then lives on his own site. "Only him" applies to the library, other advisors, search and Pick for me.] If the answer is "never seen by anyone, ever", remove Use and keep Preview only.</li>
+<li><strong>Can he later make one shareable or public? Is that one-way?</strong> [No. Not in scope.] If yes: who approves, and does it become an FC library post, or go only to his firm?</li>
+<li><strong>What happens if the advisor account is deleted or moved to another firm?</strong> [Posts stay with the account owner id. Deleted account: posts are deleted after the normal retention window. Move: posts stay with the advisor, not the firm.]</li>
+<li><strong>Do they count toward limits or billing?</strong> [No limit in v1.] Add a cap per advisor if needed.</li>
+<li><strong>Do they appear in analytics?</strong> [Only his own site and campaign analytics. Never in FC-wide or admin analytics.]</li>
+<li><strong>Can he duplicate an FC post into a private copy?</strong> [Not in A or B. Shown in C as "Make a private copy".]</li>
+<li><strong>Is there a compliance or approval flow?</strong> [Not in v1. Placeholder wording on publish.] Firms that need approval may want the existing compliance step before publish.</li>
+<li><strong>Should his own search include his private posts?</strong> [A: no, My posts is separate. B: yes, with a lock badge.]</li>
+<li><strong>Can he write posts with AI help or import from his site?</strong> [Out of scope.]</li>
+<li><strong>Do private posts get a firm or team owner?</strong> [No. One advisor owner. Teams out of scope.]</li>
+<li><strong>Who can request deletion for compliance or records retention?</strong> [Owner only. Retention rule needs a decision for regulated firms.]</li>
+<li><strong>Can one be previewed by a link before publishing?</strong> [No. Preview is inside the app only.]</li>
+<li><strong>Do admins need a way to find a post an advisor reports as lost?</strong> [Not in v1. Talk to the advisor, or restore from Trash on his account via support.]</li>
+</ol>
+<p class="muted">Not agent-ready. Soft Dev hold until a direction is picked.</p>
+</body></html>
