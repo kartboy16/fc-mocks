@@ -22,7 +22,7 @@
   let NOTE = "";
 
   const SCENES = {
-    a: [["all", "All Content"], ["list", "My posts"], ["empty", "Empty"], ["loading", "Loading"], ["error-load", "Load error"], ["create", "Create"], ["error-title", "Title missing"], ["saving", "Saving"], ["saved", "Saved"], ["error-save", "Save error"], ["edit", "Edit"], ["check-idle", "Check: not run"], ["save-check", "Check on save"], ["checking", "Check: checking"], ["check-found", "Check: findings"], ["check-proof", "Check: proofreading"], ["check-fixed", "Check: some fixed"], ["check-clean", "Check: no findings"], ["check-stale", "Check: out of date"], ["check-error", "Check: error"], ["check-partial", "Check: partial error"], ["use", "Use menu"], ["ack", "Acknowledge: website"], ["ack-checked", "Acknowledge: ticked"], ["ack-email", "Acknowledge: email"], ["ack-social", "Acknowledge: social"], ["ack-stale", "Acknowledge: out of date"], ["ack-error", "Acknowledge: error"], ["ack-clear", "Website: no findings"], ["ack-done", "Website: acknowledged"], ["list-held", "Cards: Held"], ["sched", "Scheduled list"], ["sched-held", "Scheduled: Held"], ["sched-held-only", "Held filter"], ["sched-held-none", "Held: none"], ["sched-empty", "Scheduled: empty"], ["sched-loading", "Scheduled: loading"], ["sched-error", "Scheduled: error"], ["edit-scheduled", "Edit scheduled"], ["edit-warn", "Edit: hold warning"], ["edit-held-saved", "Edit: held saved"], ["held-edit", "Held: editor"], ["held-recheck", "Held: re-check"], ["held-recheck-error", "Re-check error"], ["held-ack", "Held: acknowledge"], ["held-reschedule", "Held: reschedule"], ["held-reschedule-error", "Reschedule error"], ["held-past-time", "Held: past time"], ["held-rescheduled", "Rescheduled"], ["site", "Website"], ["site-done", "Published"], ["email", "Email"], ["social", "Social"], ["no-site", "No website"], ["pv-web", "Client: website"], ["pv-email", "Client: email"], ["pv-social", "Client: social"], ["trash", "Trash"]],
+    a: [["all", "All Content"], ["list", "My posts"], ["empty", "Empty"], ["loading", "Loading"], ["error-load", "Load error"], ["create", "Create"], ["error-title", "Title missing"], ["saving", "Saving"], ["saved", "Saved"], ["error-save", "Save error"], ["edit", "Edit"], ["check-idle", "Check: not run"], ["save-check", "Check on save"], ["checking", "Check: checking"], ["check-found", "Check: findings"], ["check-proof", "Check: proofreading"], ["check-fixed", "Check: some fixed"], ["check-clean", "Check: no findings"], ["check-stale", "Check: out of date"], ["check-error", "Check: error"], ["check-partial", "Check: partial error"], ["use", "Use menu"], ["ack", "Acknowledge: website"], ["ack-checked", "Acknowledge: ticked"], ["ack-email", "Acknowledge: email"], ["ack-social", "Acknowledge: social"], ["ack-stale", "Acknowledge: out of date"], ["ack-error", "Acknowledge: error"], ["ack-clear", "Website: no findings"], ["ack-done", "Website: acknowledged"], ["attr-reviewed", "Attribution: reviewed"], ["attr-dismissed", "Attribution: dismissed"], ["attr-ack", "Attribution: acknowledged"], ["attr-undo", "Attribution: undo"], ["attr-undo-ack", "Attribution: undo acknowledgement"], ["attr-support", "Attribution: support"], ["attr-admin", "Attribution: admin"], ["attr-time", "Attribution: time formats"], ["held-email", "Held: email"], ["list-held", "Cards: Held"], ["sched", "Scheduled list"], ["sched-held", "Scheduled: Held"], ["sched-held-only", "Held filter"], ["sched-held-none", "Held: none"], ["sched-empty", "Scheduled: empty"], ["sched-loading", "Scheduled: loading"], ["sched-error", "Scheduled: error"], ["edit-scheduled", "Edit scheduled"], ["edit-warn", "Edit: hold warning"], ["edit-held-saved", "Edit: held saved"], ["held-edit", "Held: editor"], ["held-recheck", "Held: re-check"], ["held-recheck-error", "Re-check error"], ["held-ack", "Held: acknowledge"], ["held-reschedule", "Held: reschedule"], ["held-reschedule-error", "Reschedule error"], ["held-past-time", "Held: past time"], ["held-rescheduled", "Rescheduled"], ["site", "Website"], ["site-done", "Published"], ["email", "Email"], ["social", "Social"], ["no-site", "No website"], ["pv-web", "Client: website"], ["pv-email", "Client: email"], ["pv-social", "Client: social"], ["trash", "Trash"]],
     b: [["all", "All, mixed"], ["search", "Search"], ["mine", "My posts filter"], ["empty", "Empty"], ["loading", "Loading"], ["error-load", "Load error"], ["create", "Create"], ["error-title", "Title missing"], ["saving", "Saving"], ["saved", "Saved"], ["error-save", "Save error"], ["edit", "Edit"], ["use", "Use menu"], ["site", "Website"], ["site-done", "Published"], ["email", "Email"], ["social", "Social"], ["no-site", "No website"], ["pv-web", "Client: website"], ["pv-email", "Client: email"], ["pv-social", "Client: social"], ["trash", "Trash"]],
     c: [["content", "Content tab"], ["copy", "Private copy"], ["list", "My posts"], ["empty", "Empty"], ["loading", "Loading"], ["error-load", "Load error"], ["create", "Create"], ["error-title", "Title missing"], ["saving", "Saving"], ["saved", "Saved"], ["error-save", "Save error"], ["edit", "Edit"], ["use", "Use menu"], ["site", "Website"], ["site-done", "Published"], ["email", "Email"], ["social", "Social"], ["no-site", "No website"], ["pv-web", "Client: website"], ["pv-email", "Client: email"], ["pv-social", "Client: social"], ["trash", "Trash"]]
   };
@@ -109,8 +109,48 @@
   };
   const ALLOPEN = { c1: "open", c2: "open", c3: "open", p1: "open", p2: "open", p3: "open" };
   const CK_SCENES = ["check-idle", "save-check", "checking", "check-found", "check-proof", "check-fixed", "check-clean", "check-stale", "check-error", "check-partial"];
+  /* ---------- reviewer attribution (A) ---------- */
+  const MON = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+  const ACT = { jane: { n: "Jane Advisor", role: "" }, sam: { n: "Sam Support", role: "Support" }, pat: { n: "Pat Admin", role: "Admin" } };
+  function parts(iso) {
+    const a = iso.split("T"), d = a[0].split("-").map(Number), t = a[1].split(":").map(Number);
+    return { y: d[0], mo: d[1], da: d[2], h: t[0], mi: t[1], se: t[2] || 0 };
+  }
+  const p2 = (n) => String(n).padStart(2, "0");
+  function fmtAt(iso, always) {
+    const p = parts(iso), ap = p.h >= 12 ? "PM" : "AM", h12 = ((p.h + 11) % 12) + 1;
+    const time = h12 + ":" + p2(p.mi) + "\u00a0" + ap;
+    const today = p.y === 2026 && p.mo === 11 && p.da === 19;
+    if (today && !always) return time;
+    if (p.y === 2026) return MON[p.mo - 1] + " " + p.da + ", " + time;
+    return MON[p.mo - 1] + " " + p.da + ", " + p.y + ", " + time;
+  }
+  function fullAt(iso) {
+    const p = parts(iso), ap = p.h >= 12 ? "PM" : "AM", h12 = ((p.h + 11) % 12) + 1;
+    return MON[p.mo - 1] + " " + p.da + ", " + p.y + ", " + h12 + ":" + p2(p.mi) + ":" + p2(p.se) + " " + ap + " PT (America/Vancouver)";
+  }
+  function attrLine(verb, w, always, tip) {
+    const a = ACT[w.by];
+    return `<span class="attr" title="${fullAt(w.iso)}">${verb} by <b>${a.n}</b>${a.role ? ` <span class="role">(${a.role})</span>` : ""}, ${fmtAt(w.iso, always)}${tip ? `<span class="tip">${fullAt(w.iso)}</span>` : ""}</span>`;
+  }
+  const ATTR_SCENES = ["attr-reviewed", "attr-dismissed", "attr-ack", "attr-undo", "attr-undo-ack", "attr-support", "attr-admin", "attr-time"];
+  CK_SCENES.push.apply(CK_SCENES, ATTR_SCENES);
+  function attrModel(s) {
+    const m = ckModel("check-fixed");
+    m.who = { c3: { by: "jane", iso: "2026-11-19T18:40:31" }, p2: { by: "jane", iso: "2026-11-19T18:41:05" } };
+    m.openRes = true; m.tab = "c"; m.ack = null; m.toast = null; m.tip = null;
+    if (s === "attr-dismissed") m.tab = "p";
+    if (s === "attr-ack") m.ack = { by: "jane", iso: "2026-11-19T18:45:20" };
+    if (s === "attr-undo") { m.f.c3 = "open"; delete m.who.c3; m.toast = "Undone. This finding needs review again."; }
+    if (s === "attr-undo-ack") { m.ack = "withdrawn"; m.toast = "Acknowledgement withdrawn. Acknowledge the open findings again before you schedule, email or share."; }
+    if (s === "attr-support") m.who.c3 = { by: "sam", iso: "2026-11-19T18:52:08" };
+    if (s === "attr-admin") { m.who.c3 = { by: "pat", iso: "2026-11-18T16:15:44" }; m.who.p2 = { by: "pat", iso: "2026-11-18T16:16:20" }; m.ack = { by: "jane", iso: "2026-11-19T18:45:20" }; }
+    if (s === "attr-time") { m.who.c3 = { by: "jane", iso: "2026-11-18T16:15:44" }; m.tip = "c3"; }
+    return m;
+  }
   /* state per scene: status, finding states, tab */
   function ckModel(s) {
+    if (ATTR_SCENES.includes(s)) return attrModel(s);
     const m = { status: "idle", f: Object.assign({}, ALLOPEN), tab: "c", stale: false, err: null, time: null };
     if (s === "create" || s === "error-title") m.status = "new";
     else if (s === "check-idle") m.status = "idle";
@@ -173,8 +213,10 @@
     const isC = d.g === "c";
     const done = st !== "open";
     const lbl = { fixed: "Fixed", dismissed: "Dismissed", reviewed: "Reviewed" }[st];
+    const w = m.who && m.who[id];
+    const verb = { fixed: "Fixed", dismissed: "Dismissed", reviewed: "Reviewed" }[st];
     const acts = done
-      ? `<span class="fstate">${lbl}</span><button class="btn link" type="button">Undo</button>`
+      ? `<span class="fstate">${w ? attrLine(verb, w, false, m.tip === id) : lbl}</span><button class="btn link" type="button" ${w && w.by !== "jane" ? `title="You can undo a review made by ${ACT[w.by].role}"` : ""}>Undo</button>`
       : `<button class="btn quiet" type="button" ${m.stale ? "disabled" : ""}>${d.fb}</button><button class="btn quiet" type="button" ${m.stale ? "disabled" : ""}>${isC ? "Mark reviewed" : "Dismiss"}</button>`;
     return `<div class="fd ${d.g}${done ? " done" : ""}${m.stale ? " stale" : ""}"><div class="fh"><span class="fk">${d.k}</span></div><div class="fq">“${d.q}”</div><div class="fm">${d.m}</div>${done ? "" : `<div class="fx">Suggested: <b>${d.fx}</b></div>`}<div class="fa">${acts}</div></div>`;
   }
@@ -206,9 +248,12 @@
         const res = ids.filter((k) => m.f[k] !== "open");
         list += open.map((k) => findingCard(k, m)).join("");
         if (!open.length) list += `<div class="alert ok"><b>Nothing left to review here</b>${res.length} resolved.</div>`;
-        if (res.length) list += `<details class="resd"><summary>Resolved (${res.length})</summary>${res.map((k) => findingCard(k, m)).join("")}</details>`;
+        if (res.length) list += `<details class="resd"${m.openRes ? " open" : ""}><summary>Resolved (${res.length})</summary>${res.map((k) => findingCard(k, m)).join("")}</details>`;
       }
-      inner = tabs + list;
+      let ackc = "";
+      if (m.ack && m.ack !== "withdrawn") ackc = `<div class="ackrec"><div>${attrLine("Acknowledged", m.ack, true)}</div><div class="hintrow">2 open findings, for Website. Valid for this version of the post.</div><button class="btn link" type="button" ${go("attr-undo-ack")}>Undo</button></div>`;
+      else if (m.ack === "withdrawn") ackc = `<div class="ackrec none"><div><b>Not acknowledged</b></div><div class="hintrow">2 findings are still open. Acknowledge them before you schedule, email or share.</div></div>`;
+      inner = ackc + tabs + list;
     }
     let foot = "";
     if (m.time) foot = `<div class="ckf"><span>Checked ${m.time} · ${CK_VER}</span><button class="btn link" type="button" ${go("checking")}>${m.stale ? "Run check" : "Run again"}</button></div>`;
@@ -226,6 +271,7 @@
     else if (m.status === "partial") { tone = "e"; txt = `Compliance: ${n.c} to review. Proofreading couldn't run.`; }
     else if (m.status === "clean" || t === 0) { tone = "g"; txt = "No findings. Compliance and proofreading both checked."; }
     else { tone = "w"; txt = `${t} to review: ${n.c} compliance, ${n.p} proofreading.`; }
+    if (m.ack && m.ack !== "withdrawn") txt += " " + attrLine("Acknowledged", m.ack, true) + ".";
     return `<div class="ckbar ${tone}"><b>Checks</b> ${txt}</div>`;
   }
   window.ckTab = function (t) { state.tab = t; render(); };
@@ -301,6 +347,15 @@
     const trs = rows.map((r) => `<tr class="${r.held ? "heldrow" : ""}"><td><div class="t">${r.t}</div><div class="u">${DOM}/news/${r.slug}</div></td><td>${chn(r.ch, r.held)}</td><td>${when(r)}</td><td>${status(r)}</td><td><div class="acts">${acts(r)}</div></td></tr>`).join("");
     const cards = rows.map((r) => `<div class="pcard ${r.held ? "heldcard" : ""}"><div class="nm">${r.t}</div><div style="margin:6px 0">${chn(r.ch, r.held)}</div><div class="meta">${status(r)} ${r.held ? "" : r.when}</div>${r.held ? `<div class="wh" style="margin-top:6px"><s>${origWhen(s)}</s></div><div class="reason">Held: edited ${EDITED_AT}, after it was scheduled. It will not send.${past ? " The original time has passed." : ""}</div>` : ""}<div class="acts" style="justify-content:flex-start;margin-top:8px">${acts(r)}</div></div>`).join("");
     return `${banner}${tabs}<div class="card list-wrap"><table class="list"><thead><tr><th>Post</th><th>Sends to</th><th>When</th><th>Status</th><th></th></tr></thead><tbody>${trs}</tbody></table><div class="cards">${cards}</div></div>`;
+  }
+  function heldEmail() {
+    return `<div class="ed-top"><button class="btn link" type="button" ${go("sched-held")}>← Scheduled</button><h2>Email to the advisor</h2></div><div class="pvwrap"><div class="mailv"><div class="mh"><b>To:</b> Jane Advisor &lt;jane@example.com&gt;<br><b>From:</b> Your Firm Name &lt;notifications@example.com&gt;<br><b>Subject:</b> Your scheduled post is on hold: ${MINE[2].t}</div>
+      <div class="mb"><p>Hi Jane,</p><p>You edited <b>${MINE[2].t}</b> after it was scheduled, so it is on hold and will not send.</p>
+      <p>It was scheduled for <b>Nov 24, 2026, 9:00 AM PT</b> on Website, Email and Social. Edited ${EDITED_AT}.</p>
+      <a class="cta" href="#" onclick="return false">Review held post</a>
+      <div class="ph">Email wording to be supplied. Link address: the firm's own app address, never the FC domain.</div>
+      <p style="font-size:13px;color:#78909c">To send it, check it and schedule it again. Nothing is sent until you do.</p><p>Your Firm Name</p></div>
+      <div class="mf">You are getting this because you edited a scheduled post.</div></div></div>`;
   }
   function viewToggle(on) {
     const held = HELD_SCENES.includes(state.s) && state.s !== "list-held";
@@ -385,7 +440,7 @@
         <div class="field"><label>Summary</label><textarea placeholder="One or two sentences shown on the card" ${busy ? "disabled" : ""}>${sum}</textarea></div>
         <div class="field" style="margin:0"><label>Post</label><div class="tb"><span>B</span><span><i>I</i></span><span><u>U</u></span><span>❝</span><span>≡</span><span>🔗</span><span>🖼</span></div><div class="ebody">${bodyHtml}</div></div></div>`;
     const side = `<div>${isA ? ckPanel(ckm, mode) : ""}${vis}${img}</div>`;
-    const inner = `${top}${alerts}${lockBanner}${schedEd ? (heldEd ? heldBar("held-edit") : schedBar()) : ""}${isA ? ckBar(ckm) : ""}<div class="ed-grid">${main}${side}</div>`;
+    const inner = `${top}${alerts}${lockBanner}${schedEd ? (heldEd ? heldBar("held-edit") : schedBar()) : ""}${isA ? ckBar(ckm) : ""}<div class="ed-grid${ckScene && ATTR_SCENES.includes(mode) ? " attrfirst" : ""}">${main}${side}</div>`;
     return inner;
   }
 
@@ -481,7 +536,8 @@
     const mine = `<button type="button" class="pbtn${s !== "all" ? " on" : ""}" ${go("list")}>🔒 My posts <span class="n">${s === "empty" ? 0 : MINE.length}</span></button>`;
     if (s === "all") return frame("content", `${libHead("all", mine)}<div class="grid">${FC.map((p) => fcCard(p)).join("")}</div>`);
     if (["pv-web", "pv-email", "pv-social"].includes(s)) return frame("content", { "pv-web": pvWeb, "pv-email": pvEmail, "pv-social": pvSocial }[s]());
-    if (["create", "error-title", "saving", "saved", "error-save", "edit"].concat(CK_SCENES, SCHED_ED).includes(s)) return frame("content", editor(s), s === "saved" ? toast("Saved. Only you can see this post.") : s === "save-check" ? toast("Saved. Running checks…") : s === "edit-warn" ? scrim(editWarnDlg()) : s === "edit-held-saved" ? toast("Saved. This post is on hold until you check it and schedule it again.") : "");
+    if (["create", "error-title", "saving", "saved", "error-save", "edit"].concat(CK_SCENES, SCHED_ED).includes(s)) return frame("content", editor(s), s === "saved" ? toast("Saved. Only you can see this post.") : s === "save-check" ? toast("Saved. Running checks…") : ATTR_SCENES.includes(s) ? (attrModel(s).toast ? toast(attrModel(s).toast) : "") : s === "edit-warn" ? scrim(editWarnDlg()) : s === "edit-held-saved" ? toast("Saved. This post is on hold until you check it and schedule it again.") : "");
+    if (s === "held-email") return frame("content", heldEmail());
     if (/^(sched|held-)/.test(s)) {
       const hd = `${libHead("mine", mine)}<div class="secthead"><h2>My posts</h2>${lock("Only you can see these")}${viewToggle("sched")}<span class="sp"></span><button class="btn pri" type="button" ${go("create")}>+ Write a post</button></div>`;
       let bd;

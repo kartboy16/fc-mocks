@@ -10,6 +10,8 @@ Mock hub: https://kartboy16.github.io/fc-mocks/private-posts/
 
 **Update (Nov 19, 5:40 PM PT):** an edit-time warning and a Held state in Scheduled, for scheduled posts that are edited. See "Held after edit". Added estimate: **16–24 agent hours**, so Direction A is **61–92 h** with the checker and Held.
 
+**Update (Nov 19, 10:29 PM PT):** (1) The contract now reflects Alex's 5:50 PM hold decisions: a featured-image-only change holds the post, the advisor gets an email when a post goes on hold, Discard changes is out of scope, and a held post never expires (questions 20–23 are closed). That adds **3–4 agent hours** to Held, now **19–28 h**. (2) Alex asked for reviewer attribution on checker findings ("Reviewed by Jane Advisor, 6:40 PM"). See "Reviewer attribution". Added estimate: **6–10 agent hours**. Direction A is **70–106 h** with the checker, Held and attribution.
+
 ## Request
 Alex (Nov 19, 2026, 2:29 PM PT): "A user wants to create his own posts in our system. I need their posts to never be seen by anyone else but that user."
 
@@ -199,14 +201,27 @@ Mock: https://kartboy16.github.io/fc-mocks/private-posts/a-section.html?s=edit-w
 | `list-held` | My posts cards with the Held pill. |
 
 ### Server notes
-- **Setting the hold.** `myPosts.update` sets the hold in the **same operation** as the content write, when the new content hash differs from the hash stamped on any pending scheduled item (website queue, social scheduled, SES scheduled campaign). It writes `scheduleHold { heldAt, heldBy, reason: 'post-changed-since-scheduled', originalWhen, channels[ { channel, itemId, originalWhen } ] }` on the post, and moves each pending item to a new status **`held`** instead of leaving it `scheduled` to fail at send time. A save that does not change title, summary or body (the hash) does not hold. (Open question 20: does changing the featured image hold?)
+- **Setting the hold.** `myPosts.update` sets the hold in the **same operation** as the content write, when the new content hash differs from the hash stamped on any pending scheduled item (website queue, social scheduled, SES scheduled campaign). It writes `scheduleHold { heldAt, heldBy, reason: 'post-changed-since-scheduled', originalWhen, channels[ { channel, itemId, originalWhen } ] }` on the post, and moves each pending item to a new status **`held`** instead of leaving it `scheduled` to fail at send time. A save that does not change the title, summary, body or featured image (the hash) does not hold. (Decided by Alex, 5:50 PM PT: a featured-image-only change holds.)
 - **Confirm is enforced on the server.** If the update would hold something and the call does not carry `confirmHold: true`, it fails with `hold-confirm-required` and the client shows the confirm. The UI cannot hold a post silently.
 - **Schedulers keep refusing.** The website, social and SES schedulers already refuse a changed post at send time with `post-changed-since-scheduled`. Keep that as the backstop (for example for an edit that races a send). They must also skip items in status `held`, and never mark them `failed`.
 - **Releasing the hold.** A new `myPosts.rescheduleHeld(postId, when, channels)` requires a check that matches the current hash (the same `assertPostChecked`), an acknowledgement for that hash if findings are open, and a time in the future. It restamps `postCheckHash` on each item, sets them back to `scheduled`, and clears `scheduleHold`, in one operation. A partial failure leaves everything on hold. It is safe to call twice.
 - **The Scheduled list surfaces held state.** Scheduled is queue-first today (`scheduledLibraryPosts.js` reads the queue snapshots) and filters to public posts, so owner-only posts need a path of their own: a new `myPosts.scheduledPage({ filter: 'all' | 'held', limit, skip })` and `myPosts.heldCount()`. **Lists are capped:** limit default 24, max 50, `skip` paging, and field projection to card fields plus `channels`, `when`, `originalWhen`, `heldAt` (never the post body). The count comes from a count query, not from loading the list. Owner-scoped in the query, like every `myPosts.*` method.
-- **Tell the advisor.** In-app: the banner, the Held pill, and the dot on Scheduled. Optional: one email when something goes on hold close to its send time (open question 21).
+- **Tell the advisor (decided by Alex, 5:50 PM PT): in-app and by email.** In-app: the banner, the Held pill and the dot on Scheduled. By email: one message when a post goes on hold. See "Held email" below.
+- **A featured-image-only change holds the post (decided).** The featured image URL is part of the content hash with the title, summary and body. Changing only the image therefore makes the stamped hash differ and holds every pending item, with the same confirm. The hash is defined in one place (`computePostContentHash`), used by the checker gate, the schedulers and the hold. Because the private-posts feature and this hash ship together, no existing check, acknowledgement or scheduled item carries an older hash. If the hash definition ever changes again, restamp or version it first, or every pending item would hold at once.
+- **A held post never expires (decided).** It stays held until the advisor re-checks and reschedules it, or trashes it. No timer, no auto-cancel and no reminder email in v1.
+- **Discard changes is out of scope (decided).** It would need the server to keep a copy of the text as scheduled. Not built, not mocked.
 - **Other edits.** Trashing a held post cancels its items. Editing a held post again keeps it held. The advisor never has to choose between the old and new text: there is only the new text.
 - **White label.** Nothing here is client-facing. Clients never see held, because nothing is sent.
+
+### Held email (decided by Alex, 5:50 PM PT)
+Scene: https://kartboy16.github.io/fc-mocks/private-posts/a-section.html?s=held-email (add `&phone=1` for 390).
+- **Trigger.** The moment a post goes on hold (the edit that sets the hold). Sent once per hold: guarded by a `holdEmailSentAt` stamp, so editing a held post again, or a retried save, does not send a second one. Releasing the hold clears the stamp, so a later hold sends a new email.
+- **Recipient.** The post owner only, at their account email. Never other advisors, never admins or support, never the advisor's clients. One email per post, even when the post is held on Website, Email and Social.
+- **Content.** Post title, the original scheduled date and time (advisor's time zone), the channels held, the edit time, and one button, "Review held post", that opens Scheduled filtered to Held. No post body and no client data.
+- **Copy is a placeholder.** Subject, wording and footer are flagged "wording to be supplied" in the mock.
+- **White label.** The email is advisor-facing, not client-facing, but it carries no link to the FC domain and no FC branding: the From name is the firm's name, the footer is plain text, and the button uses the firm's own app address. Which address that is, is open question 24.
+- **Failure.** If the send fails, the hold still stands and the advisor still sees the banner and pill. The failure is logged and retried once. It never blocks or undoes the hold.
+- **Estimate.** Template, trigger with the once-per-hold guard, the send path, the failure log and tests: 2–3 h. The featured-image hash rule with tests: about 1 h.
 
 ### Tests added by this add-on
 - Saving a changed scheduled post holds every pending item on all three channels, in one operation, and requires `confirmHold`. Saving an unchanged one does not hold.
@@ -215,9 +230,66 @@ Mock: https://kartboy16.github.io/fc-mocks/private-posts/a-section.html?s=edit-w
 - Another advisor cannot see, count or reschedule Jane Advisor's held items (`post-not-found`).
 - `scheduledPage` clamps `limit`, pages with `skip`, and returns no body. `heldCount` matches the list.
 - A partial reschedule failure leaves every item held.
+- A change to only the featured image holds the post. A change to nothing does not.
+- The hold email goes to the owner only, once per hold, with no link to the FC domain. A second edit while held sends nothing. A failed send does not undo the hold.
+- A held item is still held after any amount of time. No job expires or cancels it.
 
 ### Reused
 The acknowledge dialog pattern and the acknowledgement log from the checker, the Checks panel, the existing `post-changed-since-scheduled` refusal in the schedulers, and the queue-first Scheduled list. The toggle All / Scheduled / Published matches the one in the Content tab.
+
+## Reviewer attribution (Direction A, #964 follow-up)
+Alex (Nov 19, 10:29 PM PT): "Yes, have FC Designer mock it." Show who reviewed each checker finding and when, for example "Reviewed by Jane Advisor, 6:40 PM", instead of the plain "Reviewed" label. Built on the approved checker mock.
+
+Mock: https://kartboy16.github.io/fc-mocks/private-posts/a-section.html?s=attr-reviewed (each scene works with `&phone=1`). The status is the same as the rest: **Not agent-ready until Alex approves it.**
+
+### Display rules
+- **Format.** `<Action> by <Name>, <time>` on its own line under the finding, with Undo below it. Actions: Reviewed (compliance findings), Dismissed (proofreading findings), Acknowledged (the acknowledgement).
+- **Time.** Findings: today = time only ("6:40 PM"); earlier this year = date and time ("Nov 18, 4:15 PM"); an earlier year adds the year ("Nov 19, 2025, 4:02 PM"). The acknowledgement always shows date and time ("Nov 19, 6:45 PM") because it is the compliance record. Times are in the viewer's time zone. Hovering the time (title text; on a phone, a long press) gives the full timestamp and zone: "Nov 18, 2026, 4:15:44 PM PT (America/Vancouver)".
+- **Who.** The owner shows as their name. Support and admin reviewers show with their role in brackets, in a small badge: "Sam Support (Support)", "Pat Admin (Admin)". A deleted or unknown user shows "a former user".
+- **Fixed.** A Fix is an edit of the text, not a review: `applyFix` writes the text through the normal update and the server stamps no person on the finding. It keeps the plain label "Fixed" with no name.
+- **After Undo.** The finding returns to open with no attribution line and a toast, "Undone. This finding needs review again." The server sets `stateBy` and `stateAt` to null when a finding is reopened, so there is nothing to show. Showing "Reopened by Jane Advisor, 6:43 PM" would need one new field (open question 25).
+- **Undo on the acknowledgement.** The green acknowledgement card has Undo. After it, the card becomes "Not acknowledged", with the toast "Acknowledgement withdrawn. Acknowledge the open findings again before you schedule, email or share." Undo is only offered while no scheduled or sent item depends on that acknowledgement. Otherwise the card says so and has no Undo.
+- **Stale checks.** When the post is edited after the check, the lines stay but are dimmed with the findings.
+
+### Who can Undo another person's review
+- **Proposed default: the owner can undo their own, and can also undo a review made by support or an admin.** Support and admin reviews carry the badge so the owner sees them first. Support and admin can undo too, since they can see the post. Another advisor never can: they never see the post.
+- **Today the question is moot.** On staging the server refuses review, dismiss, fix and acknowledge from a support session (`refuseSupport`, error `support-cannot-acknowledge`), findings are looked up by owner, and the contract already says only the owner acknowledges (question 19). So every attribution line shows the owner. The support and admin scenes are the label design for the day Alex allows a support or admin review. Until then they never appear. This is open question 26.
+
+### States and screens (`a-section.html?s=`; add `&phone=1` for 390)
+| Scene (`?s=`) | What it shows |
+| --- | --- |
+| `attr-reviewed` | Compliance tab, Resolved list open: "Reviewed by Jane Advisor, 6:40 PM" with Undo. A fixed finding keeps the plain "Fixed". |
+| `attr-dismissed` | Proofreading tab: "Dismissed by Jane Advisor, 6:41 PM" with Undo. |
+| `attr-ack` | The acknowledgement card, "Acknowledged by Jane Advisor, Nov 19, 6:45 PM", with its Undo, and the same line in the bar above the editor. |
+| `attr-undo` | State after Undo on a review: the finding is open again with its highlight, no attribution, and a toast. |
+| `attr-undo-ack` | State after Undo on the acknowledgement: "Not acknowledged", and a toast. |
+| `attr-support` | "Reviewed by Sam Support (Support), 6:52 PM", with the Support badge and Undo. |
+| `attr-admin` | "Reviewed by Pat Admin (Admin), Nov 18, 4:15 PM" (an earlier day shows the date), with the Admin badge and Undo. |
+| `attr-time` | The earlier-day format with the hover text showing the full timestamp and zone. |
+
+### Server fields used
+- **Findings** already store `stateBy`, `stateAt`, `stateContentVersion` and `stateContentHash` (`myPosts.setFindingState`). No new storage for Reviewed and Dismissed.
+- **The acknowledgement** already stores `acknowledgedBy`, `acknowledgedAt` and the content hash (`postCheckAck`, returned by `myPosts.getCheck`).
+- **Display names.** `myPosts.getCheck` resolves each distinct `stateBy` and `acknowledgedBy` id once, with one users lookup: `_id` in the distinct ids (at most 20 per post), `limit` equal to the id count, projection of name and roles only. It returns `actor: { name, role }` next to each, where role is empty for the owner. No email, profile or user id of another person reaches the client. Owner scoped like the rest of `getCheck`.
+- **Undo on a finding** uses the existing `myPosts.setFindingState(postId, findingId, 'open')`. No change.
+- **Undo on the acknowledgement is new.** There is no withdraw method today. Add `myPosts.withdrawAcknowledgement(postId)`: owner only, clears the current `postCheckAck`, and appends a revoke row to the existing acknowledgement log so the history stays. Refused when a pending or sent item was released on that acknowledgement. This is the one new write in the section.
+
+### Tests added by attribution
+- The line shows the right name, action and time format for today, an earlier day and an earlier year, and the title text carries the full timestamp and zone.
+- Another advisor calling `getCheck` for Jane Advisor's post gets `post-not-found`, so no names leak. A support session sees the same lines (view only).
+- Names come from one capped, projected lookup, never one per finding. No email or id of another person is in the response. A deleted user shows "a former user".
+- Undo on a finding clears the line and re-opens it. Undo on the acknowledgement clears the card, keeps the log row, and the next schedule, email or share is refused until acknowledged again. It is refused when an item depends on it.
+- Fixed shows no name. A stale check dims the lines.
+- 390: the line wraps and Undo stays tappable at 40 px.
+
+### Estimate for attribution: 6–10 h added
+| Piece | Hours |
+| --- | --- |
+| Server: one capped, projected name lookup, `actor` on findings and acknowledgement, deleted-user fallback | 1.5–2.5 |
+| Server: `withdrawAcknowledgement` with the dependency check and the log row | 1.5–2 |
+| Client: attribution line, time format, hover text, acknowledgement card and Undo, toasts, 390 | 2–3 |
+| Tests plus FC Tester on staging | 1–2.5 |
+| **Attribution total** | **6–10** |
 
 ## Copy
 Key strings (final wording is a product call):
@@ -254,10 +326,13 @@ Defaults in the mocks are shown in brackets. Each one changes the build.
 18. **Which proofreading engine?** [Reuse the en_CA dictionary for spelling. Grammar needs a rules library or an AI service, which is a build decision and may add hours.]
 19. **Can an admin or support user acknowledge findings on the advisor's behalf?** [No. Only the owner acknowledges, and the log records who.]
 
-20. **Does changing only the featured image of a scheduled post hold it?** [No. The hash covers title, summary and body.]
-21. **Should the advisor get an email when a scheduled post goes on hold?** [No. In-app only: banner, pill and dot.] Add one if a send is close.
-22. **Should there be a "Discard changes" that restores the scheduled version?** [Not mocked. It needs the server to keep a copy of the text as scheduled, which it does not do today. Skipped as not cheap.]
-23. **Does a held post that nobody reschedules expire?** [No. It stays held until the advisor acts or trashes it.]
+20. **Does changing only the featured image of a scheduled post hold it?** [**Decided by Alex, Nov 19, 5:50 PM PT: Yes.** The featured image is part of the content hash.]
+21. **Should the advisor get an email when a scheduled post goes on hold?** [**Decided by Alex, Nov 19, 5:50 PM PT: Yes.** Owner only, once per hold. Wording is a placeholder.]
+22. **Should there be a "Discard changes" that restores the scheduled version?** [**Decided by Alex, Nov 19, 5:50 PM PT: Not for now.** Out of scope.]
+23. **Does a held post that nobody reschedules expire?** [**Decided by Alex, Nov 19, 5:50 PM PT: No.** It never expires.]
+24. **Which address does the "Review held post" button in the hold email use?** [The firm's own app address, so no link to the FC domain. Needs Alex to confirm which address the app answers on for an advisor.]
+25. **After Undo, should the finding show "Reopened by Jane Advisor, 6:43 PM"?** [No. Plain open, because the server clears who and when on reopen and Alex asked for no new storage.] Showing it needs one new field, about 1 h.
+26. **Should a support or admin user ever be allowed to review or dismiss a finding for the advisor?** [No, as in question 19 and in the server today. The Support and Admin labels are mocked only for the day this changes.] If yes, the owner can undo their review (proposed default).
 
 ## In scope
 - Direction picked by Alex: owner-only create, edit, list, trash and restore.
@@ -267,10 +342,12 @@ Defaults in the mocks are shown in brackets. Each one changes the build.
 - 390px layout.
 - Held after edit in Direction A: the edit-time confirm, the Held state in Scheduled, and Re-check & reschedule.
 - Compliance and proofreading checker in Direction A: runs on save, server-stored result and version, the acknowledge step before schedule, email and share, and the acknowledgement log.
+- Reviewer attribution in Direction A: the attribution line, time format, hover text, acknowledgement card and Undo, and the name lookup.
+- The hold email to the owner, and the featured image in the content hash.
 
 ## Out of scope
 - Making a post public or shared with other advisors, firms or teams.
-- Discard changes on a held post, multiple scheduled versions of one post, and per-channel hold.
+- Discard changes on a held post (decided: not for now), multiple scheduled versions of one post, per-channel hold, and held-post reminders or expiry (a held post never expires).
 - A blocking mode beyond the single `postCheck.mode` setting, a rule editor, and per-firm rule sets.
 - Approval workflows, AI drafting, importing, collaboration and comments.
 - Billing or limits.
@@ -318,15 +395,18 @@ Use two test advisors, **Jane Advisor** (owner) and **Sam Advisor** (other), plu
 | Tests across every path plus FC Tester on staging | 3–5 |
 | **Checker total** | **23–34** |
 
-**Held after edit (Direction A only, #964 follow-up): 16–24 h added.**
+**Held after edit (Direction A only, #964 follow-up): 19–28 h added** (16–24 h as first mocked, plus 3–4 h for the hold decisions).
 | Held piece | Hours |
 | --- | --- |
 | Server: hold flag set with the edit, new `held` status across the website, social and SES queues, `confirmHold`, `rescheduleHeld`, `scheduledPage` and `heldCount` (capped, paged, projected), owner scope | 6–9 |
+| Server: featured image in the content hash, and the hold email (template, once-per-hold guard, send, failure log) | 3–4 |
 | Client: edit confirm, Held banner and pill, Scheduled list (all and held, rows and 390 cards), the three-step re-check flow with errors and past time | 7–10 |
 | Tests across the three schedulers, races, owner-only and caps, plus FC Tester on staging | 3–5 |
-| **Held total** | **16–24** |
+| **Held total** | **19–28** |
 
-**Direction A with the checker and Held: 61–92 h.** (A alone 22–34, checker 23–34, Held 16–24.)
+**Reviewer attribution (Direction A only, #964 follow-up): 6–10 h added.** See the table in "Reviewer attribution".
+
+**Direction A with the checker, Held and attribution: 70–106 h.** (A alone 22–34, checker 23–34, Held 19–28, attribution 6–10.) Without attribution: 64–96 h.
 
 **Direction A with the checker: 45–68 h.** The grammar engine (open question 18) is the main swing. An AI-based grammar service could add 4–8 h.
 

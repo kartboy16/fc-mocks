@@ -7,7 +7,7 @@
 <p class="risk"><strong>Risk: high.</strong> Same code that leaked private posts in #321 and #330. Owner-only is enforced on the server in every publication and method, not just in the UI. See the build contract.</p>
 <p>Fixtures are fictional (Jane Advisor, Your Firm Name, example-advisor.ca). Every direction has desktop and 390 views, and a scene switcher at the top of each page.</p>
 <h2>Directions</h2>
-<p class="rec"><strong>Recommended: A.</strong> 22–34 agent hours (61–92 h with the checker and Held below). Private posts have their own endpoint and never share a query with the library feed, search or Pick for me.</p>
+<p class="rec"><strong>Recommended: A.</strong> 22–34 agent hours (70–106 h with the checker, Held and attribution below). Private posts have their own endpoint and never share a query with the library feed, search or Pick for me.</p>
 <ul>
 <li><a href="a-section.html"><b>A. A "My posts" section in the Content tab (recommended, 22–34 h)</b></a> · <a href="a-section.html?s=all">All Content (FC only)</a> · <a href="a-section.html?s=list">My posts</a> · <a href="a-section.html?s=empty">Empty</a> · <a href="a-section.html?s=create">Create</a> · <a href="a-section.html?s=edit">Edit</a> · <a href="a-section.html?s=use">Use menu</a> · <a href="a-section.html?s=site">Website</a> · <a href="a-section.html?s=email">Email</a> · <a href="a-section.html?s=social">Social</a> · <a href="a-section.html?s=pv-web">Client view</a> · <a href="a-section.html?s=list&amp;phone=1">390 list</a> · <a href="a-section.html?s=create&amp;phone=1">390 create</a> · <a href="a-section.html?s=empty&amp;phone=1">390 empty</a></li>
 <li><a href="b-visibility.html"><b>B. A visibility control in the editor, private posts mixed into All Content (31–48 h)</b></a> · <a href="b-visibility.html?s=all">All, mixed</a> · <a href="b-visibility.html?s=search">Search</a> · <a href="b-visibility.html?s=mine">My posts filter</a> · <a href="b-visibility.html?s=empty">Empty</a> · <a href="b-visibility.html?s=create">Create</a> · <a href="b-visibility.html?s=site">Website</a> · <a href="b-visibility.html?s=pv-email">Client email</a> · <a href="b-visibility.html?s=all&amp;phone=1">390 all</a> · <a href="b-visibility.html?s=create&amp;phone=1">390 create</a></li>
@@ -22,12 +22,21 @@
 <li>390: <a href="a-section.html?s=check-found&amp;phone=1">findings</a> · <a href="a-section.html?s=check-stale&amp;phone=1">out of date</a> · <a href="a-section.html?s=check-error&amp;phone=1">error</a> · <a href="a-section.html?s=ack&amp;phone=1">acknowledge</a> · <a href="a-section.html?s=ack-stale&amp;phone=1">acknowledge, out of date</a></li>
 </ul>
 <h2>Held after edit (Direction A)</h2>
-<p>Alex, Nov 19, 5:40 PM PT: "Yes, have FC Designer mock an edit-time warning and a Held state in the Scheduled list." When an advisor edits a scheduled post, the server holds it. Today the advisor only finds out when the send fails. These mocks warn at save time and show the post as Held in Scheduled, with a Re-check &amp; reschedule path. Added estimate: <strong>16–24 agent hours</strong>, so Direction A is 61–92 h with the checker and Held.</p>
+<p>Alex, Nov 19, 5:40 PM PT: "Yes, have FC Designer mock an edit-time warning and a Held state in the Scheduled list." When an advisor edits a scheduled post, the server holds it. Today the advisor only finds out when the send fails. These mocks warn at save time and show the post as Held in Scheduled, with a Re-check &amp; reschedule path. Alex decided at 5:50 PM PT: a change to only the featured image holds the post, the advisor gets an email when a post goes on hold, there is no Discard changes for now, and a held post never expires. Estimate: <strong>19–28 agent hours</strong> (16–24 plus 3–4 for the email and the image rule).</p>
 <ul>
 <li>Edit-time warning: <a href="a-section.html?s=edit-scheduled">Edit a scheduled post</a> · <a href="a-section.html?s=edit-warn">Hold warning</a> · <a href="a-section.html?s=edit-held-saved">Saved and held</a> · <a href="a-section.html?s=held-edit">Held post in the editor</a></li>
 <li>Scheduled list: <a href="a-section.html?s=sched">All scheduled</a> · <a href="a-section.html?s=sched-held">Held row</a> · <a href="a-section.html?s=sched-held-only">Held filter</a> · <a href="a-section.html?s=sched-held-none">No held</a> · <a href="a-section.html?s=sched-empty">Empty</a> · <a href="a-section.html?s=sched-loading">Loading</a> · <a href="a-section.html?s=sched-error">Error</a> · <a href="a-section.html?s=list-held">My posts cards</a></li>
 <li>Re-check &amp; reschedule: <a href="a-section.html?s=held-recheck">Checking</a> · <a href="a-section.html?s=held-recheck-error">Check error</a> · <a href="a-section.html?s=held-ack">Acknowledge</a> · <a href="a-section.html?s=held-reschedule">Reschedule</a> · <a href="a-section.html?s=held-reschedule-error">Reschedule error</a> · <a href="a-section.html?s=held-past-time">Past time</a> · <a href="a-section.html?s=held-rescheduled">Rescheduled</a></li>
 <li>390: <a href="a-section.html?s=edit-warn&amp;phone=1">warning</a> · <a href="a-section.html?s=sched-held&amp;phone=1">Held row</a> · <a href="a-section.html?s=held-ack&amp;phone=1">acknowledge</a> · <a href="a-section.html?s=held-past-time&amp;phone=1">past time</a> · <a href="a-section.html?s=edit-held-saved&amp;phone=1">held saved</a></li>
+<li>Email to the advisor when a post goes on hold: <a href="a-section.html?s=held-email">Hold email</a> · <a href="a-section.html?s=held-email&amp;phone=1">390</a></li>
+</ul>
+<h2>Reviewer attribution (Direction A)</h2>
+<p>Alex, Nov 19, 10:29 PM PT: "Yes, have FC Designer mock it." Each checker finding shows who reviewed it and when, for example "Reviewed by Jane Advisor, 6:40 PM". Undo is on each. Today shows the time only, an earlier day adds the date, and hovering gives the full timestamp and zone. The server already stores who and when for Reviewed and Dismissed and for the acknowledgement. Added estimate: <strong>6–10 agent hours</strong>, so Direction A is 70–106 h. <strong>Not agent-ready until Alex approves it.</strong> Support and admin labels are mocked, but today only the advisor can review (questions 19 and 26).</p>
+<ul>
+<li>Attribution: <a href="a-section.html?s=attr-reviewed">Reviewed</a> · <a href="a-section.html?s=attr-dismissed">Dismissed</a> · <a href="a-section.html?s=attr-ack">Acknowledged</a> · <a href="a-section.html?s=attr-time">Time format and hover</a></li>
+<li>Undo: <a href="a-section.html?s=attr-undo">After undo on a review</a> · <a href="a-section.html?s=attr-undo-ack">After undo on the acknowledgement</a></li>
+<li>Support and admin: <a href="a-section.html?s=attr-support">Sam Support (Support)</a> · <a href="a-section.html?s=attr-admin">Pat Admin (Admin)</a></li>
+<li>390: <a href="a-section.html?s=attr-reviewed&amp;phone=1">reviewed</a> · <a href="a-section.html?s=attr-dismissed&amp;phone=1">dismissed</a> · <a href="a-section.html?s=attr-ack&amp;phone=1">acknowledged</a> · <a href="a-section.html?s=attr-undo&amp;phone=1">undo</a> · <a href="a-section.html?s=attr-undo-ack&amp;phone=1">undo acknowledgement</a> · <a href="a-section.html?s=attr-support&amp;phone=1">support</a> · <a href="a-section.html?s=attr-admin&amp;phone=1">admin</a> · <a href="a-section.html?s=attr-time&amp;phone=1">time format</a></li>
 </ul>
 <h2>Open questions for Alex</h2>
 <p class="muted">Defaults in brackets are what the mocks assume.</p>
@@ -50,15 +59,14 @@
 <li><strong>If a scheduled post is edited after it was scheduled, what happens?</strong> [Hold the send and tell the advisor, because the check is for the old text.]</li>
 <li><strong>Who owns the compliance rule list and the wording?</strong> [Legal. Placeholder in the mocks.] How often does it change, and does a new rule re-flag posts already published?</li>
 <li><strong>Which proofreading engine?</strong> [Reuse the en_CA dictionary for spelling. Grammar needs a rules library or an AI service, which is a build decision and may add hours.]</li>
-<li>
-<p><strong>Can an admin or support user acknowledge findings on the advisor's behalf?</strong> [No. Only the owner acknowledges, and the log records who.]</p>
-</li>
-<li>
-<p><strong>Does changing only the featured image of a scheduled post hold it?</strong> [No. The hash covers title, summary and body.]</p>
-</li>
-<li><strong>Should the advisor get an email when a scheduled post goes on hold?</strong> [No. In-app only: banner, pill and dot.] Add one if a send is close.</li>
-<li><strong>Should there be a "Discard changes" that restores the scheduled version?</strong> [Not mocked. It needs the server to keep a copy of the text as scheduled, which it does not do today. Skipped as not cheap.]</li>
-<li><strong>Does a held post that nobody reschedules expire?</strong> [No. It stays held until the advisor acts or trashes it.]</li>
+<li><strong>Can an admin or support user acknowledge findings on the advisor's behalf?</strong> [No. Only the owner acknowledges, and the log records who.]</li>
+<li><strong>Does changing only the featured image of a scheduled post hold it?</strong> [<strong>Decided by Alex, Nov 19, 5:50 PM PT: Yes.</strong> The featured image is part of the content hash.]</li>
+<li><strong>Should the advisor get an email when a scheduled post goes on hold?</strong> [<strong>Decided by Alex, Nov 19, 5:50 PM PT: Yes.</strong> Owner only, once per hold. Wording is a placeholder.]</li>
+<li><strong>Should there be a "Discard changes" that restores the scheduled version?</strong> [<strong>Decided by Alex, Nov 19, 5:50 PM PT: Not for now.</strong> Out of scope.]</li>
+<li><strong>Does a held post that nobody reschedules expire?</strong> [<strong>Decided by Alex, Nov 19, 5:50 PM PT: No.</strong> It never expires.]</li>
+<li><strong>Which address does the "Review held post" button in the hold email use?</strong> [The firm's own app address, so no link to the FC domain. Needs Alex to confirm which address the app answers on for an advisor.]</li>
+<li><strong>After Undo, should the finding show "Reopened by Jane Advisor, 6:43 PM"?</strong> [No. Plain open, because the server clears who and when on reopen and Alex asked for no new storage.] Showing it needs one new field, about 1 h.</li>
+<li><strong>Should a support or admin user ever be allowed to review or dismiss a finding for the advisor?</strong> [No, as in question 19 and in the server today. The Support and Admin labels are mocked only for the day this changes.] If yes, the owner can undo their review (proposed default).</li>
 </ol>
 <p class="muted">Not agent-ready. Soft Dev hold until a direction is picked.</p>
 </body></html>
