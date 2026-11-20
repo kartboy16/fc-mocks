@@ -22,7 +22,7 @@
   let NOTE = "";
 
   const SCENES = {
-    a: [["all", "All Content"], ["list", "My posts"], ["empty", "Empty"], ["loading", "Loading"], ["error-load", "Load error"], ["create", "Create"], ["error-title", "Title missing"], ["saving", "Saving"], ["saved", "Saved"], ["error-save", "Save error"], ["edit", "Edit"], ["check-idle", "Check: not run"], ["save-check", "Check on save"], ["checking", "Check: checking"], ["check-found", "Check: findings"], ["check-proof", "Check: proofreading"], ["check-fixed", "Check: some fixed"], ["check-clean", "Check: no findings"], ["check-stale", "Check: out of date"], ["check-error", "Check: error"], ["check-partial", "Check: partial error"], ["use", "Use menu"], ["ack", "Acknowledge: website"], ["ack-checked", "Acknowledge: ticked"], ["ack-email", "Acknowledge: email"], ["ack-social", "Acknowledge: social"], ["ack-stale", "Acknowledge: out of date"], ["ack-error", "Acknowledge: error"], ["ack-clear", "Website: no findings"], ["ack-done", "Website: acknowledged"], ["site", "Website"], ["site-done", "Published"], ["email", "Email"], ["social", "Social"], ["no-site", "No website"], ["pv-web", "Client: website"], ["pv-email", "Client: email"], ["pv-social", "Client: social"], ["trash", "Trash"]],
+    a: [["all", "All Content"], ["list", "My posts"], ["empty", "Empty"], ["loading", "Loading"], ["error-load", "Load error"], ["create", "Create"], ["error-title", "Title missing"], ["saving", "Saving"], ["saved", "Saved"], ["error-save", "Save error"], ["edit", "Edit"], ["check-idle", "Check: not run"], ["save-check", "Check on save"], ["checking", "Check: checking"], ["check-found", "Check: findings"], ["check-proof", "Check: proofreading"], ["check-fixed", "Check: some fixed"], ["check-clean", "Check: no findings"], ["check-stale", "Check: out of date"], ["check-error", "Check: error"], ["check-partial", "Check: partial error"], ["use", "Use menu"], ["ack", "Acknowledge: website"], ["ack-checked", "Acknowledge: ticked"], ["ack-email", "Acknowledge: email"], ["ack-social", "Acknowledge: social"], ["ack-stale", "Acknowledge: out of date"], ["ack-error", "Acknowledge: error"], ["ack-clear", "Website: no findings"], ["ack-done", "Website: acknowledged"], ["list-held", "Cards: Held"], ["sched", "Scheduled list"], ["sched-held", "Scheduled: Held"], ["sched-held-only", "Held filter"], ["sched-held-none", "Held: none"], ["sched-empty", "Scheduled: empty"], ["sched-loading", "Scheduled: loading"], ["sched-error", "Scheduled: error"], ["edit-scheduled", "Edit scheduled"], ["edit-warn", "Edit: hold warning"], ["edit-held-saved", "Edit: held saved"], ["held-edit", "Held: editor"], ["held-recheck", "Held: re-check"], ["held-recheck-error", "Re-check error"], ["held-ack", "Held: acknowledge"], ["held-reschedule", "Held: reschedule"], ["held-reschedule-error", "Reschedule error"], ["held-past-time", "Held: past time"], ["held-rescheduled", "Rescheduled"], ["site", "Website"], ["site-done", "Published"], ["email", "Email"], ["social", "Social"], ["no-site", "No website"], ["pv-web", "Client: website"], ["pv-email", "Client: email"], ["pv-social", "Client: social"], ["trash", "Trash"]],
     b: [["all", "All, mixed"], ["search", "Search"], ["mine", "My posts filter"], ["empty", "Empty"], ["loading", "Loading"], ["error-load", "Load error"], ["create", "Create"], ["error-title", "Title missing"], ["saving", "Saving"], ["saved", "Saved"], ["error-save", "Save error"], ["edit", "Edit"], ["use", "Use menu"], ["site", "Website"], ["site-done", "Published"], ["email", "Email"], ["social", "Social"], ["no-site", "No website"], ["pv-web", "Client: website"], ["pv-email", "Client: email"], ["pv-social", "Client: social"], ["trash", "Trash"]],
     c: [["content", "Content tab"], ["copy", "Private copy"], ["list", "My posts"], ["empty", "Empty"], ["loading", "Loading"], ["error-load", "Load error"], ["create", "Create"], ["error-title", "Title missing"], ["saving", "Saving"], ["saved", "Saved"], ["error-save", "Save error"], ["edit", "Edit"], ["use", "Use menu"], ["site", "Website"], ["site-done", "Published"], ["email", "Email"], ["social", "Social"], ["no-site", "No website"], ["pv-web", "Client: website"], ["pv-email", "Client: email"], ["pv-social", "Client: social"], ["trash", "Trash"]]
   };
@@ -71,7 +71,7 @@
     return `<h2 class="grad">What will you share today?</h2><div class="pillsearch"><span>🔍</span> ${state.s === "search" ? "tax" : "Search"}</div>
       <div class="pills">${p("All Content", "all")}${p("Favorites", "fav")}${p("Hidden", "hid")}${p("Topics", "top")}${p("Compliance Approved", "ca")}${p("Pick for me", "pfm")}${extraPill || ""}</div>`;
   }
-  const chipFor = (m) => `<span class="chip ${m.st === "live" ? "live" : m.st === "sched" ? "sched2" : m.st === "sent" ? "sent2" : "draft2"}">${m.stl}</span>`;
+  const chipFor = (m) => (state.s === "list-held" && m.id === "m3") ? `<span class="chip heldchip">⏸ Held</span>` : `<span class="chip ${m.st === "live" ? "live" : m.st === "sched" ? "sched2" : m.st === "sent" ? "sent2" : "draft2"}">${m.stl}</span>`;
   function privCard(m, withMenu) {
     return `<div class="pc"><div class="th ${m.bg}">${lock()}</div><div class="cb"><div class="ct">${m.t}</div><div class="ce">${m.x}</div><div class="cm">${m.d} ${chipFor(m)}${ckChip(m)}</div></div>
       <div class="ca"><button class="btn quiet" type="button" ${go("edit")}>Edit</button><button class="btn" type="button" ${go("use")}>Use ▾</button>${withMenu ? useMenu() : ""}</div></div>`;
@@ -259,19 +259,109 @@
       `<button class="btn quiet" type="button" ${go("list")}>Cancel</button><button class="btn pri" type="button" ${go("checking")}>Try again</button>`);
   }
 
+  /* ---------- held after edit (direction A, #964 follow-up) ---------- */
+  const SCHED = [
+    { t: MINE[2].t, slug: MINE[2].slug, ch: ["Website", "Email", "Social"], when: "Nov 24, 9:00 AM", held: true },
+    { t: "Open house invitation", slug: "open-house-invitation", ch: ["Email"], when: "Nov 27, 10:00 AM" },
+    { t: "Holiday office hours", slug: "holiday-office-hours", ch: ["Website", "Social"], when: "Dec 2, 8:30 AM" }
+  ];
+  const EDITED_AT = "Nov 19, 5:42 PM PT";
+  const HELD_SCENES = ["sched-held", "sched-held-only", "held-edit", "edit-held-saved", "held-recheck", "held-recheck-error", "held-ack", "held-reschedule", "held-reschedule-error", "held-past-time", "list-held"];
+  const SCHED_ED = ["edit-scheduled", "edit-warn", "edit-held-saved", "held-edit"];
+  const isHeld = (s) => HELD_SCENES.includes(s);
+  const origWhen = (s) => (s === "held-past-time" ? "Nov 19, 4:00 PM" : "Nov 24, 9:00 AM");
+  function stepper(n) {
+    const st = (i, l) => `<span class="${n === i ? "on" : n > i ? "done" : ""}">${i} ${l}</span>`;
+    return `<div class="steps">${st(1, "Check")}${st(2, "Review")}${st(3, "Schedule")}</div>`;
+  }
+  function heldBar(s) {
+    return `<div class="heldbar"><span class="hi">⏸</span><div><b>Held: edited after scheduling</b><div>It will not send. It was scheduled for ${origWhen(s)} on Website, Email and Social. Edited ${EDITED_AT}.</div></div><button class="btn pri" type="button" ${go("held-recheck")}>Re-check &amp; reschedule</button></div>`;
+  }
+  function schedBar() {
+    return `<div class="schedbar"><span class="hi">📅</span><div><b>Scheduled for Nov 24, 2026, 9:00 AM</b><div>Website, Email and Social. Saving changes holds it until you check it and schedule it again.</div></div></div>`;
+  }
+  function chn(list, off) { return list.map((c) => `<span class="chn${off ? " off" : ""}">${c}</span>`).join(""); }
+  function schedList(s) {
+    const held = isHeld(s) && !["list-held"].includes(s);
+    const onlyHeld = s === "sched-held-only";
+    const past = s === "held-past-time";
+    let rows = SCHED.map((r, i) => Object.assign({}, r, { held: i === 0 && held }));
+    if (onlyHeld) rows = rows.filter((r) => r.held);
+    const nHeld = held ? 1 : 0;
+    const tabs = `<div class="fchips"><button type="button" class="${onlyHeld ? "" : "on"}" ${go(held ? "sched-held" : "sched")}>All scheduled <span class="n">${SCHED.length}</span></button><button type="button" class="held ${onlyHeld ? "on" : ""}" ${go(held ? "sched-held-only" : "sched-held-none")}>⏸ Held <span class="n">${nHeld}</span></button></div>`;
+    if (s === "sched-held-none") {
+      return `${tabs}<div class="empty" style="padding:32px 24px"><div class="big">✓</div><h3>Nothing is on hold</h3><p>Everything you scheduled is ready to send.</p><button class="btn" type="button" ${go("sched")}>Show all scheduled</button></div>`;
+    }
+    const banner = held ? `<div class="alert warn"><b>1 post is on hold</b>You edited it after it was scheduled. Held posts are not sent until you check them and schedule them again.</div>` : "";
+    const when = (r) => r.held ? `<div class="wh"><s>${origWhen(s)}</s></div><div class="reason">Held: edited ${EDITED_AT}, after it was scheduled. It will not send.${past ? " The original time has passed." : ""}</div>` : `<div>${r.when}</div>`;
+    const status = (r) => r.held ? `<span class="chip heldchip">⏸ Held</span>` : `<span class="chip sched2">Scheduled</span>`;
+    const acts = (r) => r.held
+      ? `<button class="btn pri sm" type="button" ${go("held-recheck")}>Re-check &amp; reschedule</button><button class="btn quiet sm" type="button" ${go("held-edit")}>Edit</button>`
+      : `<button class="btn quiet sm" type="button" ${go("edit-scheduled")}>Edit</button>`;
+    const trs = rows.map((r) => `<tr class="${r.held ? "heldrow" : ""}"><td><div class="t">${r.t}</div><div class="u">${DOM}/news/${r.slug}</div></td><td>${chn(r.ch, r.held)}</td><td>${when(r)}</td><td>${status(r)}</td><td><div class="acts">${acts(r)}</div></td></tr>`).join("");
+    const cards = rows.map((r) => `<div class="pcard ${r.held ? "heldcard" : ""}"><div class="nm">${r.t}</div><div style="margin:6px 0">${chn(r.ch, r.held)}</div><div class="meta">${status(r)} ${r.held ? "" : r.when}</div>${r.held ? `<div class="wh" style="margin-top:6px"><s>${origWhen(s)}</s></div><div class="reason">Held: edited ${EDITED_AT}, after it was scheduled. It will not send.${past ? " The original time has passed." : ""}</div>` : ""}<div class="acts" style="justify-content:flex-start;margin-top:8px">${acts(r)}</div></div>`).join("");
+    return `${banner}${tabs}<div class="card list-wrap"><table class="list"><thead><tr><th>Post</th><th>Sends to</th><th>When</th><th>Status</th><th></th></tr></thead><tbody>${trs}</tbody></table><div class="cards">${cards}</div></div>`;
+  }
+  function viewToggle(on) {
+    const held = HELD_SCENES.includes(state.s) && state.s !== "list-held";
+    return `<div class="seg"><button type="button" class="${on === "all" ? "on" : ""}" ${go("list")}>All</button><button type="button" class="${on === "sched" ? "on" : ""}" ${go("sched")}>Scheduled${held ? ' <span class="hdot"></span>' : ""}</button><button type="button" disabled>Published</button></div>`;
+  }
+  function schedChan() {
+    return `<div class="checkline"><input type="checkbox" checked> Website <span class="hintrow" style="margin:0 0 0 4px">${DOM}/news/${MINE[2].slug}</span></div>
+      <div class="checkline"><input type="checkbox" checked> Email: Newsletter (128 contacts)</div>
+      <div class="checkline"><input type="checkbox" checked> Social: LinkedIn and Facebook</div>`;
+  }
+  const heldFoot = (back, label, next) => `<button class="btn quiet" type="button" ${go(back)}>Back</button><button class="btn pri" type="button" ${go(next)}>${label}</button>`;
+  function heldDlg(s) {
+    POST = MINE[2];
+    const sub = `Re-check &amp; reschedule · ${POST.t}`;
+    if (s === "held-recheck") return dlg(`Checking your post${stepper(1)}`, sub, `<div class="ckwait"><span class="spin"></span><div><b>Checking compliance and proofreading…</b><div class="hintrow">Your post is still on hold. Nothing is sent while this runs.</div></div></div>`, `<button class="btn quiet" type="button" ${go("sched-held")}>Close</button>`);
+    if (s === "held-recheck-error") return dlg(`The checks couldn't run${stepper(1)}`, sub, `<div class="alert error"><b>Your post is still on hold</b>Nothing was sent and nothing was changed. Try again in a moment.</div>`, `<button class="btn quiet" type="button" ${go("sched-held")}>Close</button><button class="btn pri" type="button" ${go("held-recheck")}>Try again</button>`);
+    if (s === "held-ack") {
+      const body = `<div class="alert warn"><b>2 findings are still unresolved</b>You can continue, but you need to confirm you've reviewed them. Your confirmation is saved with the time and your name.</div>${ackList(["c2", "p3"])}
+        <label class="checkline" style="margin-top:12px"><input type="checkbox" onchange="document.getElementById('ackgo').disabled=!this.checked"> I've reviewed these findings and want to continue.</label>
+        <div class="ph">Acknowledgement wording to be supplied by legal.</div><div class="hintrow">Checked Nov 19, 2026, 5:44 PM PT · ${CK_VER}</div>`;
+      return dlg(`Review before you continue${stepper(2)}`, sub, body, `<button class="btn quiet" type="button" ${go("held-edit")}>Go back and fix</button><button id="ackgo" class="btn pri" type="button" disabled ${go("held-reschedule")}>Continue</button>`);
+    }
+    if (s === "held-reschedule") return dlg(`Schedule again${stepper(3)}`, sub,
+      `<div class="alert ok"><b>Checks done</b>You acknowledged 2 findings, Nov 19, 2026, 5:45 PM PT, by Jane Advisor.</div>
+       <div class="row2"><div class="field"><label>Date</label><input value="Nov 24, 2026"></div><div class="field"><label>Time</label><input value="9:00 AM"></div></div>
+       <div class="hintrow" style="margin:-6px 0 12px">Your original date and time are filled in. Change them if you like.</div>${schedChan()}
+       <div class="ph">Compliance wording to be supplied by legal.</div>`, heldFoot("held-ack", "Schedule again for Nov 24", "held-rescheduled"));
+    if (s === "held-reschedule-error") return dlg(`Schedule again${stepper(3)}`, sub,
+      `<div class="alert error"><b>Couldn't schedule it again</b>Your post is still on hold and nothing was sent. Try again in a moment.</div>
+       <div class="row2"><div class="field"><label>Date</label><input value="Nov 24, 2026"></div><div class="field"><label>Time</label><input value="9:00 AM"></div></div>${schedChan()}`, heldFoot("held-ack", "Try again", "held-rescheduled"));
+    if (s === "held-past-time") return dlg(`Schedule again${stepper(3)}`, sub,
+      `<div class="alert warn"><b>The original time has passed</b>It was scheduled for Nov 19, 2026, 4:00 PM. Pick a new date and time.</div>
+       <div class="row2"><div class="field"><label>Date</label><input class="bad" value="Nov 20, 2026"></div><div class="field"><label>Time</label><input class="bad" value="9:00 AM"></div></div>
+       <div class="hintrow" style="margin:-6px 0 12px">Suggested: tomorrow at 9:00 AM. The time must be in the future.</div>${schedChan()}
+       <div class="ph">Compliance wording to be supplied by legal.</div>`, heldFoot("held-ack", "Schedule for Nov 20", "held-rescheduled"));
+    return "";
+  }
+  function editWarnDlg() {
+    POST = MINE[2];
+    const it = (c, d, w) => `<div class="ackit ch"><span class="tg">${c}</span><div><b>${d}</b><div class="hintrow" style="margin:2px 0 0">${w}</div></div></div>`;
+    const body = `<div class="alert warn"><b>This post is scheduled for Nov 24, 2026, 9:00 AM</b>Saving changes holds it until you check it and schedule it again. Nothing is sent while it is on hold.</div>
+      ${it("Website", `${DOM}/news/${POST.slug}`, "Nov 24, 9:00 AM")}${it("Email", "Newsletter (128 contacts)", "Nov 24, 9:00 AM")}${it("Social", "LinkedIn and Facebook", "Nov 24, 9:00 AM")}
+      <div class="hintrow">You'll find it in Scheduled, under Held. Your original time is kept for when you schedule it again.</div>`;
+    return dlg("Saving will hold this post", POST.t, body, `<button class="btn quiet" type="button" ${go("edit-scheduled")}>Cancel</button><button class="btn pri" type="button" ${go("edit-held-saved")}>Save and hold</button>`);
+  }
+
   /* ---------- editor ---------- */
   function editor(mode) {
     const edit = mode === "edit" || mode === "saved" || mode === "saving" && false;
     const isA = state.dir === "a";
     const ckScene = isA && CK_SCENES.includes(mode);
     const filled = mode !== "create" && mode !== "error-title";
-    const ckm = isA ? ckModel(mode === "saving" ? "create" : mode) : null;
+    const schedEd = isA && SCHED_ED.includes(mode);
+    const heldEd = schedEd && (mode === "edit-held-saved" || mode === "held-edit");
+    const ckm = !isA ? null : schedEd ? (mode === "edit-scheduled" ? ckModel("check-clean") : mode === "edit-warn" ? { status: "idle", f: {}, tab: "c" } : ckModel("check-fixed")) : ckModel(mode === "saving" ? "create" : mode);
     const busy = mode === "saving" || (isA && ckm.status === "checking");
     const m = ckScene ? MINE[1] : SEL;
-    const title = filled ? m.t : mode === "error-title" ? "" : "";
-    const sum = filled ? m.x : "";
+    const title = filled ? (schedEd ? MINE[2].t : m.t) : mode === "error-title" ? "" : "";
+    const sum = filled ? (schedEd ? MINE[2].x : m.x) : "";
     const h = mode === "create" || mode === "error-title" ? "New post" : "Edit post";
-    const bodyHtml = ckScene ? ckBodyHtml(ckm) : filled
+    const bodyHtml = schedEd ? (mode === "edit-warn" ? ckBodyHtml(ckModel("check-clean")) + ` <p><span class="edited">I also offer a short call in January for anyone who wants a second look.</span></p>` : ckBodyHtml(mode === "edit-scheduled" ? ckModel("check-clean") : ckModel("check-fixed"))) : ckScene ? ckBodyHtml(ckm) : filled
       ? `<p>Every spring I sit down with each family and walk through what changed: income, goals, insurance and the plan itself.</p><p>It takes about an hour, and most years we make two or three small adjustments. Some years nothing needs to move, which is a good result too.</p><p>If it has been more than a year since we last spoke, reply to this note and we will find a time.</p>`
       : `<p class="ph2">Start writing your post…</p>`;
     const vis = state.dir === "b"
@@ -286,16 +376,16 @@
       (mode === "error-title" ? `<div class="alert error"><b>Add a title</b>A post needs a title before it can be saved.</div>` : "");
     const back = state.dir === "c" ? "← My posts" : state.dir === "a" ? "← My posts" : "← Content";
     const backTo = state.dir === "b" ? "mine" : "list";
-    const top = `<div class="ed-top"><button class="btn link" type="button" ${go(backTo)}>${back}</button><h2>${h}</h2>${state.dir === "b" ? lock() : ""}<span class="sp"></span>
+    const top = `<div class="ed-top"><button class="btn link" type="button" ${go(backTo)}>${back}</button><h2>${h}</h2>${heldEd ? `<span class="chip heldchip">⏸ Held</span>` : ""}${state.dir === "b" ? lock() : ""}<span class="sp"></span>
       ${mode === "saved" || mode === "save-check" ? `<span class="saved-note">Saved just now</span>` : ""}
-      <button class="btn quiet" type="button" ${busy ? "disabled" : ""} ${go(isA ? "save-check" : "saved")}>Save draft</button>
-      <button class="btn pri" type="button" ${busy ? "disabled" : ""} ${go(isA ? "save-check" : "saving")}>${mode === "saving" ? "Saving…" : "Save post"}</button></div>`;
+      <button class="btn quiet" type="button" ${busy ? "disabled" : ""} ${go(isA ? (schedEd ? (heldEd ? "edit-held-saved" : "edit-warn") : "save-check") : "saved")}>Save draft</button>
+      <button class="btn pri" type="button" ${busy ? "disabled" : ""} ${go(isA ? (schedEd ? (heldEd ? "edit-held-saved" : "edit-warn") : "save-check") : "saving")}>${mode === "saving" ? "Saving…" : "Save post"}</button></div>`;
     const main = `<div class="panel">
         <div class="field"><label>Title</label><input class="${mode === "error-title" ? "bad" : ""}" value="${title}" placeholder="Post title" ${busy ? "disabled" : ""}>${mode === "error-title" ? `<span class="err">Title is required</span>` : ""}</div>
         <div class="field"><label>Summary</label><textarea placeholder="One or two sentences shown on the card" ${busy ? "disabled" : ""}>${sum}</textarea></div>
         <div class="field" style="margin:0"><label>Post</label><div class="tb"><span>B</span><span><i>I</i></span><span><u>U</u></span><span>❝</span><span>≡</span><span>🔗</span><span>🖼</span></div><div class="ebody">${bodyHtml}</div></div></div>`;
     const side = `<div>${isA ? ckPanel(ckm, mode) : ""}${vis}${img}</div>`;
-    const inner = `${top}${alerts}${lockBanner}${isA ? ckBar(ckm) : ""}<div class="ed-grid">${main}${side}</div>`;
+    const inner = `${top}${alerts}${lockBanner}${schedEd ? (heldEd ? heldBar("held-edit") : schedBar()) : ""}${isA ? ckBar(ckm) : ""}<div class="ed-grid">${main}${side}</div>`;
     return inner;
   }
 
@@ -303,7 +393,7 @@
   function dlg(title, sub, body, foot) {
     return `<div class="dlg sm" style="max-width:520px"><div class="dh"><div>${title}${sub ? `<div class="sub">${sub}</div>` : ""}</div><button class="ico-btn" type="button" ${go(baseList())}>✕</button></div><div class="db">${body}</div><div class="df">${foot}</div></div>`;
   }
-  function baseList() { return state.dir === "b" ? "mine" : "list"; }
+  function baseList() { if (state.dir === "a" && /^(held-|sched)/.test(state.s)) return "sched-held"; return state.dir === "b" ? "mine" : "list"; }
   function siteDlg() {
     return dlg("Add to your website", POST.t,
       `<div class="timing"><label><input type="radio" name="t"> Publish now</label><label><input type="radio" name="t" checked> Schedule</label></div>
@@ -391,11 +481,22 @@
     const mine = `<button type="button" class="pbtn${s !== "all" ? " on" : ""}" ${go("list")}>🔒 My posts <span class="n">${s === "empty" ? 0 : MINE.length}</span></button>`;
     if (s === "all") return frame("content", `${libHead("all", mine)}<div class="grid">${FC.map((p) => fcCard(p)).join("")}</div>`);
     if (["pv-web", "pv-email", "pv-social"].includes(s)) return frame("content", { "pv-web": pvWeb, "pv-email": pvEmail, "pv-social": pvSocial }[s]());
-    if (["create", "error-title", "saving", "saved", "error-save", "edit"].concat(CK_SCENES).includes(s)) return frame("content", editor(s), s === "saved" ? toast("Saved. Only you can see this post.") : s === "save-check" ? toast("Saved. Running checks…") : "");
+    if (["create", "error-title", "saving", "saved", "error-save", "edit"].concat(CK_SCENES, SCHED_ED).includes(s)) return frame("content", editor(s), s === "saved" ? toast("Saved. Only you can see this post.") : s === "save-check" ? toast("Saved. Running checks…") : s === "edit-warn" ? scrim(editWarnDlg()) : s === "edit-held-saved" ? toast("Saved. This post is on hold until you check it and schedule it again.") : "");
+    if (/^(sched|held-)/.test(s)) {
+      const hd = `${libHead("mine", mine)}<div class="secthead"><h2>My posts</h2>${lock("Only you can see these")}${viewToggle("sched")}<span class="sp"></span><button class="btn pri" type="button" ${go("create")}>+ Write a post</button></div>`;
+      let bd;
+      if (s === "sched-empty") bd = `<div class="empty"><div class="big">📅</div><h3>Nothing is scheduled</h3><p>Posts you schedule to your website, email or social show up here.</p><button class="btn" type="button" ${go("list")}>Back to My posts</button></div>`;
+      else if (s === "sched-loading") bd = `<div class="card" style="padding:16px">${[1, 2, 3].map(() => `<div class="skel" style="height:56px;margin:0 0 10px"></div>`).join("")}</div>`;
+      else if (s === "sched-error") bd = `<div class="errbox"><div class="alert error" style="text-align:left"><b>Couldn't load your scheduled posts</b>Check your connection and try again. Nothing was changed, and nothing was sent.</div><button class="btn pri" type="button" ${go("sched")}>Try again</button></div>`;
+      else bd = schedList(s);
+      const ov = s === "held-rescheduled" ? toast("Scheduled again for Nov 24, 9:00 AM on Website, Email and Social.") : (heldDlg(s) ? scrim(heldDlg(s)) : "");
+      return frame("content", hd + bd, ov);
+    }
     POST = MINE[1]; NOTE = "";
+    if (s === "list") { /* toggle shown below */ }
     if (s === "ack-clear") { POST = MINE[2]; NOTE = `<div class="alert ok"><b>Checked, no findings</b>Compliance and proofreading, ${CK_TIME}.</div>`; }
     if (s === "ack-done") NOTE = `<div class="alert ok"><b>You acknowledged 2 findings</b>Nov 19, 2026, 3:20 PM PT, by Jane Advisor. This is saved with the post.</div>`;
-    const head = `${libHead("mine", mine)}<div class="secthead"><h2>My posts</h2>${lock("Only you can see these")}<span class="sp"></span><button class="btn pri" type="button" ${go("create")}>+ Write a post</button></div>`;
+    const head = `${libHead("mine", mine)}<div class="secthead"><h2>My posts</h2>${lock("Only you can see these")}${viewToggle("all")}<span class="sp"></span><button class="btn pri" type="button" ${go("create")}>+ Write a post</button></div>`;
     let body;
     if (s === "empty") body = emptyBox();
     else if (s === "loading") body = skeletons(4);

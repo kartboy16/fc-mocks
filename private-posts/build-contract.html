@@ -7,6 +7,7 @@
 <p><strong>Risk: high.</strong> This is a visibility feature in the same code that leaked private posts in #321 and #330. A single missed query would show one advisor's private post to another advisor, to the shared feed, to Pick for me or to search. Build to staging first, run pstack blast-radius and interrogate on the PR, then FC Tester on staging. Alex merges to main.</p>
 <p>Mock hub: https://kartboy16.github.io/fc-mocks/private-posts/</p>
 <p><strong>Update (Nov 19, #964):</strong> Alex added a required compliance and proofreading checker for every created post. It is mocked in Direction A only. See the section "Compliance and proofreading checker" below. Added estimate: <strong>23–34 agent hours</strong>, so Direction A is <strong>45–68 h</strong> with the checker.</p>
+<p><strong>Update (Nov 19, 5:40 PM PT):</strong> an edit-time warning and a Held state in Scheduled, for scheduled posts that are edited. See "Held after edit". Added estimate: <strong>16–24 agent hours</strong>, so Direction A is <strong>61–92 h</strong> with the checker and Held.</p>
 <h2>Request</h2>
 <p>Alex (Nov 19, 2026, 2:29 PM PT): "A user wants to create his own posts in our system. I need their posts to never be seen by anyone else but that user."</p>
 <p>An advisor writes his own posts in the app. Nobody else can ever see them: not other advisors, not the shared Content Library feed, not Pick for me, not search.</p>
@@ -295,6 +296,126 @@
 <li>Each of website queue, email and social is covered, including REST and scheduler paths.</li>
 <li>Proofreading and compliance fail independently (<code>check-partial</code>). The check list is capped and paged, and returns no post body.</li>
 </ul>
+<h2>Held after edit (Direction A, #964 follow-up)</h2>
+<p>Alex (Nov 19, 5:40 PM PT, via Chief of Staff): "Yes, have FC Designer mock an edit-time warning and a Held state in the Scheduled list."</p>
+<p>Today, when an advisor edits a post that is already scheduled, the server holds it. At send time the website, social and SES schedulers refuse it with <code>post-changed-since-scheduled</code> and mark the item failed. The advisor only finds out after the send time passes. This add-on tells them at the moment they save, and shows the post as <strong>Held</strong> in Scheduled, with a way back.</p>
+<p>Mock: https://kartboy16.github.io/fc-mocks/private-posts/a-section.html?s=edit-warn (all scenes are in the switcher; each works with <code>&amp;phone=1</code>). The status of this mock is the same as the rest: <strong>Not agent-ready. Soft Dev hold until a direction is picked.</strong></p>
+<h3>What the advisor sees</h3>
+<ol>
+<li><strong>Before saving an edit to a scheduled post</strong> (<code>edit-scheduled</code>, <code>edit-warn</code>): a blue bar in the editor says the post is scheduled. Saving opens a confirm that uses the acknowledge pattern: "This post is scheduled for Nov 24, 2026, 9:00 AM. Saving changes holds it until you check it and schedule it again." It lists each affected channel (website with its address, email with the list, social with the accounts) and its time. Buttons: <strong>Save and hold</strong> (primary) and <strong>Cancel</strong>. If the post has no scheduled items, there is no confirm.</li>
+<li><strong>After saving</strong> (<code>edit-held-saved</code>, <code>held-edit</code>): a toast, a <strong>Held</strong> pill beside the title, and an amber banner in the editor: "Held: edited after scheduling. It will not send." with the original time and a <strong>Re-check &amp; reschedule</strong> button.</li>
+<li><strong>In Scheduled</strong> (<code>sched-held</code>, <code>sched-held-only</code>, <code>sched</code>, <code>sched-held-none</code>): a toggle All / Scheduled / Published on My posts, a dot on Scheduled when something is held, a banner "1 post is on hold", and chips <strong>All scheduled</strong> and <strong>Held</strong> with counts. A held row is tinted, shows a Held pill, the original time <strong>struck through and grey</strong>, the channels greyed, the reason line ("Held: edited Nov 19, 5:42 PM PT, after it was scheduled. It will not send."), and the actions <strong>Re-check &amp; reschedule</strong> and <strong>Edit</strong>. Held rows sort first. At 390 each row is a card. On the My posts cards a held post shows the Held pill (<code>list-held</code>).</li>
+<li><strong>Re-check &amp; reschedule</strong> is a short three-step flow in one dialog (Check, Review, Schedule):</li>
+<li><strong>Check</strong> (<code>held-recheck</code>): runs the compliance and proofreading checker on the current text. (The save already ran it. The server reuses that result when the content hash still matches and runs it again when it does not or when it errored.)</li>
+<li><strong>Review</strong> (<code>held-ack</code>): only when findings are unresolved. The same acknowledge step as before: tick the box, Continue.</li>
+<li><strong>Schedule</strong> (<code>held-reschedule</code>): the original date, time and channels are filled in. <strong>Schedule again for Nov 24</strong>. On success (<code>held-rescheduled</code>) the row goes back to Scheduled, the Held count drops to 0, and a toast confirms.</li>
+<li>If the <strong>original time has passed</strong> (<code>held-past-time</code>), the picker says so, suggests the next morning at 9:00 AM, and will not accept a past time.</li>
+</ol>
+<h3>States</h3>
+<table>
+<thead>
+<tr>
+<th>Scene (<code>?s=</code>)</th>
+<th>What it shows</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>edit-scheduled</code></td>
+<td>Editor for a scheduled post. Blue "Scheduled for Nov 24" bar.</td>
+</tr>
+<tr>
+<td><code>edit-warn</code></td>
+<td>The "Saving will hold this post" confirm, with the three channels and times.</td>
+</tr>
+<tr>
+<td><code>edit-held-saved</code></td>
+<td>Saved. Toast, Held pill, amber Held banner.</td>
+</tr>
+<tr>
+<td><code>held-edit</code></td>
+<td>Opening a held post later. Same banner, Re-check &amp; reschedule.</td>
+</tr>
+<tr>
+<td><code>sched</code></td>
+<td>Scheduled list, nothing held.</td>
+</tr>
+<tr>
+<td><code>sched-held</code></td>
+<td>One held row, the banner, the Held chip with a count.</td>
+</tr>
+<tr>
+<td><code>sched-held-only</code></td>
+<td>The Held chip active.</td>
+</tr>
+<tr>
+<td><code>sched-held-none</code></td>
+<td>Held chip active with none: "Nothing is on hold".</td>
+</tr>
+<tr>
+<td><code>sched-empty</code></td>
+<td>"Nothing is scheduled."</td>
+</tr>
+<tr>
+<td><code>sched-loading</code>, <code>sched-error</code></td>
+<td>Skeleton rows. "Couldn't load your scheduled posts. Nothing was changed, and nothing was sent." Try again.</td>
+</tr>
+<tr>
+<td><code>held-recheck</code></td>
+<td>Step 1, checking. Still on hold.</td>
+</tr>
+<tr>
+<td><code>held-recheck-error</code></td>
+<td>The checks couldn't run. Still on hold, nothing sent. Try again. A checker error never lets the post be rescheduled.</td>
+</tr>
+<tr>
+<td><code>held-ack</code></td>
+<td>Step 2, acknowledge unresolved findings.</td>
+</tr>
+<tr>
+<td><code>held-reschedule</code></td>
+<td>Step 3, original time prefilled, channels ticked.</td>
+</tr>
+<tr>
+<td><code>held-reschedule-error</code></td>
+<td>"Couldn't schedule it again. Your post is still on hold and nothing was sent." Try again.</td>
+</tr>
+<tr>
+<td><code>held-past-time</code></td>
+<td>The original time has passed. New time suggested.</td>
+</tr>
+<tr>
+<td><code>held-rescheduled</code></td>
+<td>Back in Scheduled, Held 0, toast.</td>
+</tr>
+<tr>
+<td><code>list-held</code></td>
+<td>My posts cards with the Held pill.</td>
+</tr>
+</tbody>
+</table>
+<h3>Server notes</h3>
+<ul>
+<li><strong>Setting the hold.</strong> <code>myPosts.update</code> sets the hold in the <strong>same operation</strong> as the content write, when the new content hash differs from the hash stamped on any pending scheduled item (website queue, social scheduled, SES scheduled campaign). It writes <code>scheduleHold { heldAt, heldBy, reason: 'post-changed-since-scheduled', originalWhen, channels[ { channel, itemId, originalWhen } ] }</code> on the post, and moves each pending item to a new status <strong><code>held</code></strong> instead of leaving it <code>scheduled</code> to fail at send time. A save that does not change title, summary or body (the hash) does not hold. (Open question 20: does changing the featured image hold?)</li>
+<li><strong>Confirm is enforced on the server.</strong> If the update would hold something and the call does not carry <code>confirmHold: true</code>, it fails with <code>hold-confirm-required</code> and the client shows the confirm. The UI cannot hold a post silently.</li>
+<li><strong>Schedulers keep refusing.</strong> The website, social and SES schedulers already refuse a changed post at send time with <code>post-changed-since-scheduled</code>. Keep that as the backstop (for example for an edit that races a send). They must also skip items in status <code>held</code>, and never mark them <code>failed</code>.</li>
+<li><strong>Releasing the hold.</strong> A new <code>myPosts.rescheduleHeld(postId, when, channels)</code> requires a check that matches the current hash (the same <code>assertPostChecked</code>), an acknowledgement for that hash if findings are open, and a time in the future. It restamps <code>postCheckHash</code> on each item, sets them back to <code>scheduled</code>, and clears <code>scheduleHold</code>, in one operation. A partial failure leaves everything on hold. It is safe to call twice.</li>
+<li><strong>The Scheduled list surfaces held state.</strong> Scheduled is queue-first today (<code>scheduledLibraryPosts.js</code> reads the queue snapshots) and filters to public posts, so owner-only posts need a path of their own: a new <code>myPosts.scheduledPage({ filter: 'all' | 'held', limit, skip })</code> and <code>myPosts.heldCount()</code>. <strong>Lists are capped:</strong> limit default 24, max 50, <code>skip</code> paging, and field projection to card fields plus <code>channels</code>, <code>when</code>, <code>originalWhen</code>, <code>heldAt</code> (never the post body). The count comes from a count query, not from loading the list. Owner-scoped in the query, like every <code>myPosts.*</code> method.</li>
+<li><strong>Tell the advisor.</strong> In-app: the banner, the Held pill, and the dot on Scheduled. Optional: one email when something goes on hold close to its send time (open question 21).</li>
+<li><strong>Other edits.</strong> Trashing a held post cancels its items. Editing a held post again keeps it held. The advisor never has to choose between the old and new text: there is only the new text.</li>
+<li><strong>White label.</strong> Nothing here is client-facing. Clients never see held, because nothing is sent.</li>
+</ul>
+<h3>Tests added by this add-on</h3>
+<ul>
+<li>Saving a changed scheduled post holds every pending item on all three channels, in one operation, and requires <code>confirmHold</code>. Saving an unchanged one does not hold.</li>
+<li>A held item is never sent and never marked failed by the three schedulers. A forced send of an edit that raced the hold is still refused (backstop).</li>
+<li><code>rescheduleHeld</code> is refused with no check, a stale or errored check, open findings with no acknowledgement, and a past time. It succeeds with a current check and acknowledgement and a future time. It is idempotent.</li>
+<li>Another advisor cannot see, count or reschedule Jane Advisor's held items (<code>post-not-found</code>).</li>
+<li><code>scheduledPage</code> clamps <code>limit</code>, pages with <code>skip</code>, and returns no body. <code>heldCount</code> matches the list.</li>
+<li>A partial reschedule failure leaves every item held.</li>
+</ul>
+<h3>Reused</h3>
+<p>The acknowledge dialog pattern and the acknowledgement log from the checker, the Checks panel, the existing <code>post-changed-since-scheduled</code> refusal in the schedulers, and the queue-first Scheduled list. The toggle All / Scheduled / Published matches the one in the Content tab.</p>
 <h2>Copy</h2>
 <p>Key strings (final wording is a product call):
 - Banner: "Only you can see this post" and "Other advisors, the Content Library, search and Pick for me never show it."
@@ -326,7 +447,15 @@
 <li><strong>If a scheduled post is edited after it was scheduled, what happens?</strong> [Hold the send and tell the advisor, because the check is for the old text.]</li>
 <li><strong>Who owns the compliance rule list and the wording?</strong> [Legal. Placeholder in the mocks.] How often does it change, and does a new rule re-flag posts already published?</li>
 <li><strong>Which proofreading engine?</strong> [Reuse the en_CA dictionary for spelling. Grammar needs a rules library or an AI service, which is a build decision and may add hours.]</li>
-<li><strong>Can an admin or support user acknowledge findings on the advisor's behalf?</strong> [No. Only the owner acknowledges, and the log records who.]</li>
+<li>
+<p><strong>Can an admin or support user acknowledge findings on the advisor's behalf?</strong> [No. Only the owner acknowledges, and the log records who.]</p>
+</li>
+<li>
+<p><strong>Does changing only the featured image of a scheduled post hold it?</strong> [No. The hash covers title, summary and body.]</p>
+</li>
+<li><strong>Should the advisor get an email when a scheduled post goes on hold?</strong> [No. In-app only: banner, pill and dot.] Add one if a send is close.</li>
+<li><strong>Should there be a "Discard changes" that restores the scheduled version?</strong> [Not mocked. It needs the server to keep a copy of the text as scheduled, which it does not do today. Skipped as not cheap.]</li>
+<li><strong>Does a held post that nobody reschedules expire?</strong> [No. It stays held until the advisor acts or trashes it.]</li>
 </ol>
 <h2>In scope</h2>
 <ul>
@@ -335,11 +464,13 @@
 <li>Server enforcement and tests on every surface listed.</li>
 <li>Use flows: add to website, email, share on social, with the advisor's own domain on everything clients see.</li>
 <li>390px layout.</li>
+<li>Held after edit in Direction A: the edit-time confirm, the Held state in Scheduled, and Re-check &amp; reschedule.</li>
 <li>Compliance and proofreading checker in Direction A: runs on save, server-stored result and version, the acknowledge step before schedule, email and share, and the acknowledgement log.</li>
 </ul>
 <h2>Out of scope</h2>
 <ul>
 <li>Making a post public or shared with other advisors, firms or teams.</li>
+<li>Discard changes on a held post, multiple scheduled versions of one post, and per-channel hold.</li>
 <li>A blocking mode beyond the single <code>postCheck.mode</code> setting, a rule editor, and per-firm rule sets.</li>
 <li>Approval workflows, AI drafting, importing, collaboration and comments.</li>
 <li>Billing or limits.</li>
@@ -430,6 +561,14 @@
 | Acknowledge step in three flows, list chips | 3–4 |
 | Tests across every path plus FC Tester on staging | 3–5 |
 | <strong>Checker total</strong> | <strong>23–34</strong> |</p>
+<p><strong>Held after edit (Direction A only, #964 follow-up): 16–24 h added.</strong>
+| Held piece | Hours |
+| --- | --- |
+| Server: hold flag set with the edit, new <code>held</code> status across the website, social and SES queues, <code>confirmHold</code>, <code>rescheduleHeld</code>, <code>scheduledPage</code> and <code>heldCount</code> (capped, paged, projected), owner scope | 6–9 |
+| Client: edit confirm, Held banner and pill, Scheduled list (all and held, rows and 390 cards), the three-step re-check flow with errors and past time | 7–10 |
+| Tests across the three schedulers, races, owner-only and caps, plus FC Tester on staging | 3–5 |
+| <strong>Held total</strong> | <strong>16–24</strong> |</p>
+<p><strong>Direction A with the checker and Held: 61–92 h.</strong> (A alone 22–34, checker 23–34, Held 16–24.)</p>
 <p><strong>Direction A with the checker: 45–68 h.</strong> The grammar engine (open question 18) is the main swing. An AI-based grammar service could add 4–8 h.</p>
 <p>Add 10–16 h if Alex wants the separate-collection option. Admin and support visibility needs no extra time.</p>
 <p>Not agent-ready. Soft Dev hold until a direction is picked.</p></body></html>
