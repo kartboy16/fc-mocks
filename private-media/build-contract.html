@@ -3,7 +3,7 @@
 <style>body{font:15px/1.55 Roboto,Inter,system-ui,sans-serif;max-width:900px;margin:24px auto;padding:0 16px;color:#2c3e50}a{color:#1976d2}code{background:#f4f4f5;padding:.1em .35em;border-radius:4px;font-size:.92em}table{border-collapse:collapse;width:100%;margin:12px 0}th,td{border:1px solid #e0e5eb;padding:6px 8px;text-align:left;vertical-align:top}th{background:#f3f6f9}h1{font-size:26px}h2{font-size:20px;margin-top:28px}h3{font-size:16px}</style></head><body>
 <p><a href="index.html">Private media hub</a> · <a href="build-contract.md">Markdown</a></p>
 <h1>Private posts: featured image upload and a private "My media" library: build contract</h1>
-<p><strong>Status:</strong> Not agent-ready. Soft Dev hold until Alex picks a direction. Mock first.</p>
+<p><strong>Status:</strong> <strong>Picked: Direction A (picker dialog) plus the My media page. Alex, Nov 19, 2026, 10:55 PM PT</strong>, relayed by Chief of Staff. He accepted all seven proposed defaults (questions 1–7 are closed below). Direction B and Direction C are <strong>not picked</strong>. The build was handed to Software developer by Chief of Staff. Build scope and estimate: <strong>A plus My media, 24–35 agent hours.</strong></p>
 <p><strong>Risk: high.</strong> This stores files that belong to one advisor and serves them back. A missed access check would show one advisor's images to another advisor, or make a private image guessable by URL. Same care as private posts (#964): build to staging, run pstack blast-radius and interrogate on the PR, then FC Tester on staging. Alex merges to main.</p>
 <p>Mock hub: https://kartboy16.github.io/fc-mocks/private-media/</p>
 <h2>Request</h2>
@@ -16,20 +16,22 @@
 <li>It is <strong>separate from the shared library</strong>. It is its own mock and its own build. It does not reuse, merge with or depend on the #260 (My Media Library) or #417 (advisor media list with copyable links) directions.</li>
 </ul>
 <p>Related: private posts #964 (hub https://kartboy16.github.io/fc-mocks/private-posts/, approved Direction A, a separate "My posts" section).</p>
-<h2>Recommendation</h2>
+<h2>Pick</h2>
+<p><strong>Direction A plus the My media page, picked by Alex on Nov 19, 2026 at 10:55 PM PT.</strong> B and C are not picked and stay in the mocks for reference only. Do not build them.</p>
+<h2>Recommendation (as presented, now picked)</h2>
 <p><strong>Direction A: an inline "Featured image" field plus a picker dialog with two tabs, "Upload from computer" and "My media".</strong> It is the smallest build, it reads the same on desktop and as a full-screen sheet at 390, and the same grid component is reused by the optional My media page.</p>
 <ul>
-<li><strong>A (recommended):</strong> 21–30 agent hours. 24–35 h with the My media page.</li>
-<li><strong>B, a side drawer picker:</strong> 22–31 agent hours. 25–36 h with the page.</li>
-<li><strong>C, an upload-first dropzone with a recent-uploads strip:</strong> 24–34 agent hours. 27–39 h with the page.</li>
+<li><strong>A (picked, with the My media page):</strong> 21–30 agent hours. <strong>24–35 h with the My media page.</strong></li>
+<li><strong>B, a side drawer picker (not picked):</strong> 22–31 agent hours. 25–36 h with the page.</li>
+<li><strong>C, an upload-first dropzone with a recent-uploads strip (not picked):</strong> 24–34 agent hours. 27–39 h with the page.</li>
 </ul>
 <p>All three share the same server work and the same rules. They differ only in the editor and picker UI.</p>
 <h2>The three directions</h2>
-<p><strong>A. Inline field + dialog (recommended).</strong> The editor's side panel has a "Featured image" field. "Choose image" opens a dialog with two tabs: Upload from computer (drag and drop, or browse) and My media (a paged grid). Pick one, then "Use this image". Once set, the field shows the thumbnail with Replace and Remove. Two clear sources, one place to look.</p>
-<p><strong>B. Side drawer.</strong> "Choose image" opens a drawer from the right. Upload is always at the top (a compact drop strip), and the My media grid sits right under it, with no tabs. Good for quick uploads, because you see your library the whole time. The grid is narrower (4 columns), so more pages.</p>
-<p><strong>C. Upload-first dropzone.</strong> The featured image sits above the title as a wide dropzone: drop or browse, with a strip of your 7 most recent uploads right under it (click one to use it), and "Browse all {71}" opening the full My media grid in a dialog. Fastest for a person who uploads a new photo each time. It takes the most room in the editor and the most build time.</p>
-<h2>The My media page (optional, direction-independent)</h2>
-<p>A standalone "My media" page under My posts (<code>my-media.html</code>). It has upload, search, newest-first sort, a paged grid, a tile menu with "Delete from My media…", and "In use" tags. It is also where an admin or support viewer sees someone's library (see below). If Alex does not want a page, the delete confirm still ships in the picker (every direction mocks it), so an advisor can always remove an image. The page is a separate line in the estimate.</p>
+<p><strong>A. Inline field + dialog (PICKED, Nov 19, 10:55 PM PT).</strong> The editor's side panel has a "Featured image" field. "Choose image" opens a dialog with two tabs: Upload from computer (drag and drop, or browse) and My media (a paged grid). Pick one, then "Use this image". Once set, the field shows the thumbnail with Replace and Remove. Two clear sources, one place to look.</p>
+<p><strong>B. Side drawer (not picked).</strong> "Choose image" opens a drawer from the right. Upload is always at the top (a compact drop strip), and the My media grid sits right under it, with no tabs. Good for quick uploads, because you see your library the whole time. The grid is narrower (4 columns), so more pages.</p>
+<p><strong>C. Upload-first dropzone (not picked).</strong> The featured image sits above the title as a wide dropzone: drop or browse, with a strip of your 7 most recent uploads right under it (click one to use it), and "Browse all {71}" opening the full My media grid in a dialog. Fastest for a person who uploads a new photo each time. It takes the most room in the editor and the most build time.</p>
+<h2>The My media page (picked, in scope)</h2>
+<p>A standalone "My media" page under My posts (<code>my-media.html</code>). It has upload, search, newest-first sort, a paged grid, a tile menu with "Delete from My media…", and "In use" tags. It is also where an admin or support viewer sees someone's library (see below). Alex picked the page together with Direction A. It is a separate line in the estimate (+3–5 h).</p>
 <h2>Screens and states</h2>
 <p>Every scene below exists at desktop and with <code>&amp;phone=1</code> for 390.</p>
 <h3>Featured image field (in the editor)</h3>
@@ -598,7 +600,7 @@
 <ul>
 <li>Featured image of <strong>private posts</strong> (#964) is an upload from the computer or a pick from the advisor's own My media.</li>
 <li>A per-advisor private library, "My media", with upload, search by file name, newest-first sort, paging, and delete.</li>
-<li>Access for the owner, plus admins and support (read only by default; see questions).</li>
+<li>Access for the owner, plus admins and support (view only, decided: question 1).</li>
 <li>States: empty library, loading, load error, uploading with progress, upload errors (too large, wrong type, too small, network, library full), selected, set, removed, delete confirm and delete-in-use warning, viewer banner.</li>
 <li>The optional My media page.</li>
 </ul>
@@ -608,7 +610,7 @@
 <li><strong>Any link field or "copy link".</strong> No URL input and no copyable image address anywhere, including the library.</li>
 <li><strong>The shared library.</strong> It is not a tab or a source, and no image moves between it and My media.</li>
 <li>Video, PDFs and other files. Images only.</li>
-<li>Body images in the post editor (the toolbar picture button). Open question 5.</li>
+<li>Body images in the post editor (the toolbar picture button). Decided (question 5): not in this build.</li>
 <li>Editing images (crop, rotate, filters).</li>
 <li>Sharing My media with other advisors or a team.</li>
 <li>Existing private posts with a link-based image: none exist, because private posts are not built yet.</li>
@@ -626,7 +628,7 @@
 <h3>Upload (<code>privateMedia.upload</code>, one HTTP route)</h3>
 <ul>
 <li>Authenticated owner only. A multipart upload, streamed to storage, with a hard byte cap enforced while streaming, not after.</li>
-<li><strong>Validate on the server:</strong> type by reading the file's magic bytes (JPEG, PNG, WebP, GIF only; no SVG; the extension and the client mime are ignored), size (placeholder: 5 MB), dimensions (placeholder: min 600 × 315, max 8000 × 8000), pixel count (decompression-bomb guard), and a per-owner count cap (placeholder: 200).</li>
+<li><strong>Validate on the server:</strong> type by reading the file's magic bytes (JPEG, PNG, WebP, GIF only; no SVG; the extension and the client mime are ignored), size (decided: 5 MB), dimensions (decided: min 600 × 315, max 8000 × 8000), pixel count (decompression-bomb guard), and a per-owner count cap (decided: 200).</li>
 <li><strong>Re-encode and strip metadata.</strong> Remove EXIF, including GPS location. Advisors upload phone photos; location must never leave with them. Generate a thumbnail (about 320 px) and a post-size rendition at upload time.</li>
 <li>Return a typed error the UI can show: <code>too-large</code>, <code>wrong-type</code>, <code>too-small</code>, <code>library-full</code>, <code>network</code> is client-side. The error copy above is keyed to these.</li>
 <li>Rate-limit uploads per owner.</li>
@@ -665,16 +667,16 @@
 <td>Upload</td>
 <td>Yes</td>
 <td>n/a</td>
-<td><strong>No (default)</strong></td>
-<td><strong>No (default)</strong></td>
+<td><strong>No (decided)</strong></td>
+<td><strong>No (decided)</strong></td>
 <td>No</td>
 </tr>
 <tr>
 <td>Delete</td>
 <td>Yes</td>
 <td>No (404)</td>
-<td><strong>No (default)</strong></td>
-<td><strong>No (default)</strong></td>
+<td><strong>No (decided)</strong></td>
+<td><strong>No (decided)</strong></td>
 <td>No</td>
 </tr>
 </tbody>
@@ -701,15 +703,15 @@
 <h3>Delete, and delete when in use</h3>
 <ul>
 <li><code>privateMedia.usage(id)</code> returns the posts that use the image (title, status, a count, capped at 10). The confirm calls it. The usage check is a query on <code>featuredImage.mediaId</code>, indexed.</li>
-<li><strong>Default (to confirm with Alex): delete anyway, with the warning.</strong> The server then, in one operation: soft-deletes the media (URLs 404 at once), clears <code>featuredImage</code> on each post that used it, <strong>removes the published copy</strong>, and recomputes each post's content hash. A scheduled post therefore becomes <strong>Held</strong> under the existing hold rule, with the existing once-per-hold email. A purge job removes the stored files after a short grace period (placeholder: 7 days) so an accidental delete can be fixed by support.</li>
-<li>Alternative: block the delete while a live or scheduled post uses the image. It is simpler and safer, and an advisor then has to swap the image first. Open question 3.</li>
+<li><strong>Decided by Alex (question 3): delete anyway, with the warning.</strong> The server then, in one operation: soft-deletes the media (URLs 404 at once), clears <code>featuredImage</code> on each post that used it, <strong>removes the published copy</strong>, and recomputes each post's content hash. A scheduled post therefore becomes <strong>Held</strong> under the existing hold rule, with the existing once-per-hold email. A purge job removes the stored files after a short grace period (placeholder: 7 days) so an accidental delete can be fixed by support.</li>
+<li>Alternative: block the delete while a live or scheduled post uses the image. It is simpler and safer, and an advisor then has to swap the image first. Decided (question 3): not chosen. The default (allow with a warning) is what is built.</li>
 <li>Deleting a user (or their private posts) deletes their My media.</li>
 </ul>
 <h3>Tests (must pass on staging before FC Tester)</h3>
 <ul>
 <li>Owner can upload, list, serve and delete their own image.</li>
 <li><strong>Advisor B can never list, serve or delete advisor A's image</strong>, by id, by search, by a guessed or reused signed URL, by an expired signed URL, or through the post methods. The response is the same as for a missing image.</li>
-<li>Support and admin can list and serve any advisor's images. Support and admin cannot upload or delete (default). An impersonation session cannot upload or delete.</li>
+<li>Support and admin can list and serve any advisor's images. Support and admin cannot upload or delete (decided). An impersonation session cannot upload or delete.</li>
 <li>A signed-out request to the list or serve route fails. A tampered or expired signature fails.</li>
 <li><code>featuredImage</code> as a string or URL is rejected by create and update. A <code>mediaId</code> owned by someone else is rejected.</li>
 <li>Upload validation: wrong type with a renamed extension, SVG, a file over the byte cap (stops while streaming), too-small and too-large dimensions, a decompression bomb, the 200 cap, and a duplicate.</li>
@@ -723,6 +725,7 @@
 <h2>White label</h2>
 <p>Fixtures only: Jane Advisor, Sam Support, Pat Admin, Your Firm Name, and files like team-photo.jpg. No firm name, no vendor name, no real client or advisor on any page. No link to the platform's own domain is visible anywhere in the mock, the picker or the library.</p>
 <h2>Estimate (real agent hours: cloud agent build plus FC Tester time)</h2>
+<p><strong>Picked scope: Direction A plus the My media page = 24–35 agent hours.</strong> The B and C columns are kept for reference only (not picked).</p>
 <table>
 <thead>
 <tr>
@@ -772,15 +775,17 @@
 </tbody>
 </table>
 <p>The server row is the risk. Do not cut its tests to hit a number.</p>
-<h2>Open questions for Alex</h2>
+<h2>Decisions (all seven questions closed, Alex, Nov 19, 10:55 PM PT)</h2>
+<p>Alex accepted every proposed default.</p>
 <ol>
-<li><strong>Should support and admin be able to upload or delete in an advisor's My media?</strong> [Proposed default: no. View only, as mocked. If yes, delete is the one to allow, for example for an image that should not be there.]</li>
-<li><strong>The limits.</strong> [Placeholders: JPG, PNG, WebP or GIF, up to 5 MB, at least 600 × 315 px, up to 200 images per advisor.] Confirm or change.</li>
-<li><strong>Deleting an image that a post uses.</strong> [Proposed default: allow, with the warning as mocked. The post loses the image, the published copy is removed, a scheduled post goes on hold. The safer alternative is to block it until the advisor swaps the image.]</li>
-<li><strong>When an image is deleted from a live post, should it disappear from the website too?</strong> [Proposed default: yes. Emails already sent cannot be recalled.]</li>
-<li><strong>Should the picture button in the post body also pick from My media?</strong> [Proposed default: out of scope for this build. Featured image only. It is a small add-on later because the picker is the same.]</li>
-<li><strong>Should My media be deleted with the account?</strong> [Proposed default: yes.]</li>
-<li><strong>Alt text.</strong> [Proposed default: none for now. Add an optional alt text field in the dialog later if Alex wants it.]</li>
+<li><strong>Support and admin: upload or delete in an advisor's My media?</strong> <strong>Decided: no. View only</strong>, as mocked. The server refuses upload and delete for admin, support and impersonation sessions.</li>
+<li><strong>Limits.</strong> <strong>Decided: JPG, PNG, WebP or GIF, up to 5 MB, at least 600 × 315 px, up to 200 images per advisor.</strong> The copy flagged [P] for these limits is now final.</li>
+<li><strong>Deleting an image that a post uses.</strong> <strong>Decided: allowed, with the warning as mocked.</strong> The post loses the image, the published copy is removed, and a scheduled post goes <strong>Held</strong> (the existing hold rule and once-per-hold email).</li>
+<li><strong>A live post whose image is deleted.</strong> <strong>Decided: it loses the image on the website too.</strong> Emails already sent cannot be recalled.</li>
+<li><strong>Body picture button in the post editor.</strong> <strong>Decided: it does not pick from My media in this build.</strong> Featured image only.</li>
+<li><strong>My media and the account.</strong> <strong>Decided: My media is deleted with the account.</strong></li>
+<li><strong>Alt text.</strong> <strong>Decided: none for now.</strong></li>
 </ol>
-<p>Not agent-ready. Soft Dev hold until a direction is picked.</p>
+<p>Nothing is left open.</p>
+<p>Direction A plus My media page is picked. B and C are not picked. Software developer holds the build (handed over by Chief of Staff).</p>
 </body></html>
