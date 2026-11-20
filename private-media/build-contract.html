@@ -1,0 +1,786 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Private media: build contract</title>
+<style>body{font:15px/1.55 Roboto,Inter,system-ui,sans-serif;max-width:900px;margin:24px auto;padding:0 16px;color:#2c3e50}a{color:#1976d2}code{background:#f4f4f5;padding:.1em .35em;border-radius:4px;font-size:.92em}table{border-collapse:collapse;width:100%;margin:12px 0}th,td{border:1px solid #e0e5eb;padding:6px 8px;text-align:left;vertical-align:top}th{background:#f3f6f9}h1{font-size:26px}h2{font-size:20px;margin-top:28px}h3{font-size:16px}</style></head><body>
+<p><a href="index.html">Private media hub</a> · <a href="build-contract.md">Markdown</a></p>
+<h1>Private posts: featured image upload and a private "My media" library: build contract</h1>
+<p><strong>Status:</strong> Not agent-ready. Soft Dev hold until Alex picks a direction. Mock first.</p>
+<p><strong>Risk: high.</strong> This stores files that belong to one advisor and serves them back. A missed access check would show one advisor's images to another advisor, or make a private image guessable by URL. Same care as private posts (#964): build to staging, run pstack blast-radius and interrogate on the PR, then FC Tester on staging. Alex merges to main.</p>
+<p>Mock hub: https://kartboy16.github.io/fc-mocks/private-media/</p>
+<h2>Request</h2>
+<p>Alex, Nov 19, 2026, 10:35 PM PT: "When creating a new private post, the featured image needs to be an upload, not a link. Each user needs their own private media library separate from ours."</p>
+<p>At 10:37 PM PT he answered "Yes, but keep it separate from #260/#417."</p>
+<p>So:</p>
+<ul>
+<li>The featured image of a private post is <strong>an upload, never a link</strong>. There is no URL or link field anywhere: not in the editor, not in the dialog, not on the server.</li>
+<li>Each advisor gets <strong>their own private media library, "My media"</strong>, visible only to the owner, plus admins and support.</li>
+<li>It is <strong>separate from the shared library</strong>. It is its own mock and its own build. It does not reuse, merge with or depend on the #260 (My Media Library) or #417 (advisor media list with copyable links) directions.</li>
+</ul>
+<p>Related: private posts #964 (hub https://kartboy16.github.io/fc-mocks/private-posts/, approved Direction A, a separate "My posts" section).</p>
+<h2>Recommendation</h2>
+<p><strong>Direction A: an inline "Featured image" field plus a picker dialog with two tabs, "Upload from computer" and "My media".</strong> It is the smallest build, it reads the same on desktop and as a full-screen sheet at 390, and the same grid component is reused by the optional My media page.</p>
+<ul>
+<li><strong>A (recommended):</strong> 21–30 agent hours. 24–35 h with the My media page.</li>
+<li><strong>B, a side drawer picker:</strong> 22–31 agent hours. 25–36 h with the page.</li>
+<li><strong>C, an upload-first dropzone with a recent-uploads strip:</strong> 24–34 agent hours. 27–39 h with the page.</li>
+</ul>
+<p>All three share the same server work and the same rules. They differ only in the editor and picker UI.</p>
+<h2>The three directions</h2>
+<p><strong>A. Inline field + dialog (recommended).</strong> The editor's side panel has a "Featured image" field. "Choose image" opens a dialog with two tabs: Upload from computer (drag and drop, or browse) and My media (a paged grid). Pick one, then "Use this image". Once set, the field shows the thumbnail with Replace and Remove. Two clear sources, one place to look.</p>
+<p><strong>B. Side drawer.</strong> "Choose image" opens a drawer from the right. Upload is always at the top (a compact drop strip), and the My media grid sits right under it, with no tabs. Good for quick uploads, because you see your library the whole time. The grid is narrower (4 columns), so more pages.</p>
+<p><strong>C. Upload-first dropzone.</strong> The featured image sits above the title as a wide dropzone: drop or browse, with a strip of your 7 most recent uploads right under it (click one to use it), and "Browse all {71}" opening the full My media grid in a dialog. Fastest for a person who uploads a new photo each time. It takes the most room in the editor and the most build time.</p>
+<h2>The My media page (optional, direction-independent)</h2>
+<p>A standalone "My media" page under My posts (<code>my-media.html</code>). It has upload, search, newest-first sort, a paged grid, a tile menu with "Delete from My media…", and "In use" tags. It is also where an admin or support viewer sees someone's library (see below). If Alex does not want a page, the delete confirm still ships in the picker (every direction mocks it), so an advisor can always remove an image. The page is a separate line in the estimate.</p>
+<h2>Screens and states</h2>
+<p>Every scene below exists at desktop and with <code>&amp;phone=1</code> for 390.</p>
+<h3>Featured image field (in the editor)</h3>
+<ul>
+<li><strong>Empty:</strong> "No featured image yet. Upload one from your computer, or pick one from My media." with <strong>Choose image</strong> (A, B). C shows the dropzone instead.</li>
+<li><strong>Set:</strong> thumbnail, file name, size, "from My media", <strong>Replace</strong>, <strong>Remove</strong>, and a line saying it is kept in the advisor's private My media and only shown to others once the post is published.</li>
+<li><strong>Removed:</strong> toast "Featured image removed. It is still in My media." Remove never deletes the file.</li>
+<li><strong>No link field.</strong> There is no "paste an image address" anywhere. A pasted URL is not accepted (see Server).</li>
+</ul>
+<h3>Direction A: <code>a-dialog.html</code></h3>
+<table>
+<thead>
+<tr>
+<th>Scene</th>
+<th>Link (add <code>&amp;phone=1</code> for 390)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Field: empty</td>
+<td><code>a-dialog.html?s=field-empty</code></td>
+</tr>
+<tr>
+<td>Field: set</td>
+<td><code>a-dialog.html?s=field-set</code></td>
+</tr>
+<tr>
+<td>Field: removed</td>
+<td><code>a-dialog.html?s=field-removed</code></td>
+</tr>
+<tr>
+<td>Upload tab</td>
+<td><code>a-dialog.html?s=dlg-upload</code></td>
+</tr>
+<tr>
+<td>Dragging a file</td>
+<td><code>a-dialog.html?s=dlg-drag</code></td>
+</tr>
+<tr>
+<td>Uploading</td>
+<td><code>a-dialog.html?s=dlg-uploading</code></td>
+</tr>
+<tr>
+<td>Error: too large</td>
+<td><code>a-dialog.html?s=dlg-err-large</code></td>
+</tr>
+<tr>
+<td>Error: wrong type</td>
+<td><code>a-dialog.html?s=dlg-err-type</code></td>
+</tr>
+<tr>
+<td>Error: too small</td>
+<td><code>a-dialog.html?s=dlg-err-dim</code></td>
+</tr>
+<tr>
+<td>Error: network</td>
+<td><code>a-dialog.html?s=dlg-err-net</code></td>
+</tr>
+<tr>
+<td>Error: library full</td>
+<td><code>a-dialog.html?s=dlg-err-full</code></td>
+</tr>
+<tr>
+<td>My media</td>
+<td><code>a-dialog.html?s=dlg-lib</code></td>
+</tr>
+<tr>
+<td>Selected</td>
+<td><code>a-dialog.html?s=dlg-selected</code></td>
+</tr>
+<tr>
+<td>Just uploaded</td>
+<td><code>a-dialog.html?s=dlg-uploaded</code></td>
+</tr>
+<tr>
+<td>Page 2</td>
+<td><code>a-dialog.html?s=dlg-page2</code></td>
+</tr>
+<tr>
+<td>Search</td>
+<td><code>a-dialog.html?s=dlg-search</code></td>
+</tr>
+<tr>
+<td>Search: none</td>
+<td><code>a-dialog.html?s=dlg-search-none</code></td>
+</tr>
+<tr>
+<td>Loading</td>
+<td><code>a-dialog.html?s=dlg-loading</code></td>
+</tr>
+<tr>
+<td>Load error</td>
+<td><code>a-dialog.html?s=dlg-load-error</code></td>
+</tr>
+<tr>
+<td>Empty library</td>
+<td><code>a-dialog.html?s=dlg-empty</code></td>
+</tr>
+<tr>
+<td>Replace</td>
+<td><code>a-dialog.html?s=dlg-replace</code></td>
+</tr>
+<tr>
+<td>Support viewer</td>
+<td><code>a-dialog.html?s=dlg-support</code></td>
+</tr>
+<tr>
+<td>Delete: confirm</td>
+<td><code>a-dialog.html?s=del-confirm</code></td>
+</tr>
+<tr>
+<td>Delete: in use</td>
+<td><code>a-dialog.html?s=del-used</code></td>
+</tr>
+<tr>
+<td>Delete: error</td>
+<td><code>a-dialog.html?s=del-error</code></td>
+</tr>
+<tr>
+<td>Deleted</td>
+<td><code>a-dialog.html?s=deleted</code></td>
+</tr>
+</tbody>
+</table>
+<h3>Direction B: <code>b-drawer.html</code></h3>
+<table>
+<thead>
+<tr>
+<th>Scene</th>
+<th>Link (add <code>&amp;phone=1</code> for 390)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Field: empty</td>
+<td><code>b-drawer.html?s=field-empty</code></td>
+</tr>
+<tr>
+<td>Field: set</td>
+<td><code>b-drawer.html?s=field-set</code></td>
+</tr>
+<tr>
+<td>Field: removed</td>
+<td><code>b-drawer.html?s=field-removed</code></td>
+</tr>
+<tr>
+<td>Drawer</td>
+<td><code>b-drawer.html?s=drawer-upload</code></td>
+</tr>
+<tr>
+<td>Dragging a file</td>
+<td><code>b-drawer.html?s=drawer-drag</code></td>
+</tr>
+<tr>
+<td>Uploading</td>
+<td><code>b-drawer.html?s=drawer-uploading</code></td>
+</tr>
+<tr>
+<td>Error: too large</td>
+<td><code>b-drawer.html?s=drawer-err-large</code></td>
+</tr>
+<tr>
+<td>Error: wrong type</td>
+<td><code>b-drawer.html?s=drawer-err-type</code></td>
+</tr>
+<tr>
+<td>Error: too small</td>
+<td><code>b-drawer.html?s=drawer-err-dim</code></td>
+</tr>
+<tr>
+<td>Error: network</td>
+<td><code>b-drawer.html?s=drawer-err-net</code></td>
+</tr>
+<tr>
+<td>Error: library full</td>
+<td><code>b-drawer.html?s=drawer-err-full</code></td>
+</tr>
+<tr>
+<td>Selected</td>
+<td><code>b-drawer.html?s=drawer-selected</code></td>
+</tr>
+<tr>
+<td>Just uploaded</td>
+<td><code>b-drawer.html?s=drawer-uploaded</code></td>
+</tr>
+<tr>
+<td>Page 2</td>
+<td><code>b-drawer.html?s=drawer-page2</code></td>
+</tr>
+<tr>
+<td>Search</td>
+<td><code>b-drawer.html?s=drawer-search</code></td>
+</tr>
+<tr>
+<td>Search: none</td>
+<td><code>b-drawer.html?s=drawer-search-none</code></td>
+</tr>
+<tr>
+<td>Loading</td>
+<td><code>b-drawer.html?s=drawer-loading</code></td>
+</tr>
+<tr>
+<td>Load error</td>
+<td><code>b-drawer.html?s=drawer-load-error</code></td>
+</tr>
+<tr>
+<td>Empty library</td>
+<td><code>b-drawer.html?s=drawer-empty</code></td>
+</tr>
+<tr>
+<td>Replace</td>
+<td><code>b-drawer.html?s=drawer-replace</code></td>
+</tr>
+<tr>
+<td>Support viewer</td>
+<td><code>b-drawer.html?s=drawer-support</code></td>
+</tr>
+<tr>
+<td>Delete: confirm</td>
+<td><code>b-drawer.html?s=del-confirm</code></td>
+</tr>
+<tr>
+<td>Delete: in use</td>
+<td><code>b-drawer.html?s=del-used</code></td>
+</tr>
+<tr>
+<td>Delete: error</td>
+<td><code>b-drawer.html?s=del-error</code></td>
+</tr>
+<tr>
+<td>Deleted</td>
+<td><code>b-drawer.html?s=deleted</code></td>
+</tr>
+</tbody>
+</table>
+<h3>Direction C: <code>c-dropzone.html</code></h3>
+<table>
+<thead>
+<tr>
+<th>Scene</th>
+<th>Link (add <code>&amp;phone=1</code> for 390)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Field: empty</td>
+<td><code>c-dropzone.html?s=field-empty</code></td>
+</tr>
+<tr>
+<td>Dragging a file</td>
+<td><code>c-dropzone.html?s=field-drag</code></td>
+</tr>
+<tr>
+<td>Uploading</td>
+<td><code>c-dropzone.html?s=field-uploading</code></td>
+</tr>
+<tr>
+<td>Error: too large</td>
+<td><code>c-dropzone.html?s=field-err-large</code></td>
+</tr>
+<tr>
+<td>Error: wrong type</td>
+<td><code>c-dropzone.html?s=field-err-type</code></td>
+</tr>
+<tr>
+<td>Error: too small</td>
+<td><code>c-dropzone.html?s=field-err-dim</code></td>
+</tr>
+<tr>
+<td>Error: network</td>
+<td><code>c-dropzone.html?s=field-err-net</code></td>
+</tr>
+<tr>
+<td>Error: library full</td>
+<td><code>c-dropzone.html?s=field-err-full</code></td>
+</tr>
+<tr>
+<td>Recent: loading</td>
+<td><code>c-dropzone.html?s=strip-loading</code></td>
+</tr>
+<tr>
+<td>Recent: error</td>
+<td><code>c-dropzone.html?s=strip-error</code></td>
+</tr>
+<tr>
+<td>Recent: none yet</td>
+<td><code>c-dropzone.html?s=strip-empty</code></td>
+</tr>
+<tr>
+<td>Field: set</td>
+<td><code>c-dropzone.html?s=field-set</code></td>
+</tr>
+<tr>
+<td>Field: removed</td>
+<td><code>c-dropzone.html?s=field-removed</code></td>
+</tr>
+<tr>
+<td>My media</td>
+<td><code>c-dropzone.html?s=browse-lib</code></td>
+</tr>
+<tr>
+<td>Selected</td>
+<td><code>c-dropzone.html?s=browse-selected</code></td>
+</tr>
+<tr>
+<td>Page 2</td>
+<td><code>c-dropzone.html?s=browse-page2</code></td>
+</tr>
+<tr>
+<td>Search</td>
+<td><code>c-dropzone.html?s=browse-search</code></td>
+</tr>
+<tr>
+<td>Search: none</td>
+<td><code>c-dropzone.html?s=browse-search-none</code></td>
+</tr>
+<tr>
+<td>Loading</td>
+<td><code>c-dropzone.html?s=browse-loading</code></td>
+</tr>
+<tr>
+<td>Load error</td>
+<td><code>c-dropzone.html?s=browse-load-error</code></td>
+</tr>
+<tr>
+<td>Replace</td>
+<td><code>c-dropzone.html?s=browse-replace</code></td>
+</tr>
+<tr>
+<td>Support viewer</td>
+<td><code>c-dropzone.html?s=browse-support</code></td>
+</tr>
+<tr>
+<td>Delete: confirm</td>
+<td><code>c-dropzone.html?s=del-confirm</code></td>
+</tr>
+<tr>
+<td>Delete: in use</td>
+<td><code>c-dropzone.html?s=del-used</code></td>
+</tr>
+<tr>
+<td>Delete: error</td>
+<td><code>c-dropzone.html?s=del-error</code></td>
+</tr>
+<tr>
+<td>Deleted</td>
+<td><code>c-dropzone.html?s=deleted</code></td>
+</tr>
+</tbody>
+</table>
+<h3>My media page: <code>my-media.html</code></h3>
+<table>
+<thead>
+<tr>
+<th>Scene</th>
+<th>Link (add <code>&amp;phone=1</code> for 390)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>My media</td>
+<td><code>my-media.html?s=lib</code></td>
+</tr>
+<tr>
+<td>Page 2</td>
+<td><code>my-media.html?s=lib-page2</code></td>
+</tr>
+<tr>
+<td>Search</td>
+<td><code>my-media.html?s=lib-search</code></td>
+</tr>
+<tr>
+<td>Search: none</td>
+<td><code>my-media.html?s=lib-search-none</code></td>
+</tr>
+<tr>
+<td>Loading</td>
+<td><code>my-media.html?s=lib-loading</code></td>
+</tr>
+<tr>
+<td>Load error</td>
+<td><code>my-media.html?s=lib-load-error</code></td>
+</tr>
+<tr>
+<td>Empty</td>
+<td><code>my-media.html?s=lib-empty</code></td>
+</tr>
+<tr>
+<td>Dragging a file</td>
+<td><code>my-media.html?s=lib-drag</code></td>
+</tr>
+<tr>
+<td>Uploading</td>
+<td><code>my-media.html?s=lib-uploading</code></td>
+</tr>
+<tr>
+<td>Error: too large</td>
+<td><code>my-media.html?s=lib-err-large</code></td>
+</tr>
+<tr>
+<td>Error: wrong type</td>
+<td><code>my-media.html?s=lib-err-type</code></td>
+</tr>
+<tr>
+<td>Error: too small</td>
+<td><code>my-media.html?s=lib-err-dim</code></td>
+</tr>
+<tr>
+<td>Error: network</td>
+<td><code>my-media.html?s=lib-err-net</code></td>
+</tr>
+<tr>
+<td>Error: full</td>
+<td><code>my-media.html?s=lib-err-full</code></td>
+</tr>
+<tr>
+<td>Tile menu</td>
+<td><code>my-media.html?s=lib-menu</code></td>
+</tr>
+<tr>
+<td>Delete: confirm</td>
+<td><code>my-media.html?s=lib-delete</code></td>
+</tr>
+<tr>
+<td>Delete: in use</td>
+<td><code>my-media.html?s=lib-delete-used</code></td>
+</tr>
+<tr>
+<td>Delete: error</td>
+<td><code>my-media.html?s=lib-delete-error</code></td>
+</tr>
+<tr>
+<td>Deleted</td>
+<td><code>my-media.html?s=lib-deleted</code></td>
+</tr>
+<tr>
+<td>Support viewer</td>
+<td><code>my-media.html?s=lib-support</code></td>
+</tr>
+<tr>
+<td>Admin viewer</td>
+<td><code>my-media.html?s=lib-admin</code></td>
+</tr>
+</tbody>
+</table>
+<h2>Behaviour</h2>
+<ul>
+<li><strong>Two sources only:</strong> Upload from computer (drag and drop plus browse) or pick from My media. The shared library is <strong>not a tab</strong> and is not shown. No link source.</li>
+<li><strong>Upload:</strong> one or several files. Every upload is saved to My media first. The advisor then picks one. After an upload from the field, the new image is selected ("Just uploaded") so one click uses it.</li>
+<li><strong>Grid:</strong> 24 per page, search by file name, sort Newest first (default; Oldest first and Name are listed in the sort control). The pager shows "1–24 of 71", Prev, page numbers, Next. At 390 it shows "Page 1 of 3".</li>
+<li><strong>Selecting:</strong> click a tile. It gets a check and a blue outline. "Use this image" enables. Replace opens the same picker with the current image tagged "Current image".</li>
+<li><strong>Delete from My media:</strong> the tile menu opens a confirm. If the image is used by any post, the confirm lists each post (title, status and what happens) and the button reads "Delete anyway". Emails already sent keep their copy.</li>
+<li><strong>Support or admin viewer:</strong> a dark banner, "Viewing Jane Advisor's private media (Support)", with a Read only tag. Upload, Use and Delete are not shown. The banner reads "(Admin)" for an admin. Fixtures only: Sam Support, Pat Admin.</li>
+<li><strong>Mobile (390):</strong> the dialog and the drawer become full-screen sheets. Tiles are 3 across (2 across on the My media page). The dropzone says "Choose a photo to upload" and drops the "drag" wording. Buttons stack to full width. In the editor the Featured image panel moves above the title.</li>
+</ul>
+<h2>Copy</h2>
+<p>Placeholders are flagged: <strong>[P]</strong> means the wording or number needs Alex or legal.</p>
+<table>
+<thead>
+<tr>
+<th>Where</th>
+<th>Copy</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Field title</td>
+<td>Featured image</td>
+</tr>
+<tr>
+<td>Field empty</td>
+<td>No featured image yet. Upload one from your computer, or pick one from My media.</td>
+</tr>
+<tr>
+<td>Button</td>
+<td>Choose image</td>
+</tr>
+<tr>
+<td>Lock pill</td>
+<td>Private to you</td>
+</tr>
+<tr>
+<td>Dialog title and sub</td>
+<td>Featured image / For your private post "{post title}"</td>
+</tr>
+<tr>
+<td>Dropzone</td>
+<td>Drag an image here, or Browse your computer. Phone: Choose a photo to upload</td>
+</tr>
+<tr>
+<td>Dropzone, drag over</td>
+<td>Drop to upload to My media</td>
+</tr>
+<tr>
+<td>Limits line <strong>[P]</strong></td>
+<td>JPG, PNG, WebP or GIF · up to 5 MB · at least 600 × 315 px</td>
+</tr>
+<tr>
+<td>Library full <strong>[P]</strong></td>
+<td>You have 200 images, the most My media can hold. Delete some you no longer need, then upload again.</td>
+</tr>
+<tr>
+<td>Too large</td>
+<td>{file} is too large. It is 14.2 MB. The limit is 5 MB. Try a smaller copy.</td>
+</tr>
+<tr>
+<td>Wrong type</td>
+<td>{file} isn't an image. Use a JPG, PNG, WebP or GIF.</td>
+</tr>
+<tr>
+<td>Too small</td>
+<td>{file} is too small. It is 120 × 80 px. Use at least 600 × 315 px so it looks sharp on your post.</td>
+</tr>
+<tr>
+<td>Network</td>
+<td>{file} didn't upload. The connection dropped at 64%. Check your connection and try again.</td>
+</tr>
+<tr>
+<td>Library load error</td>
+<td>We couldn't load My media. Your images are safe. Check your connection and try again.</td>
+</tr>
+<tr>
+<td>Library empty</td>
+<td>No images in My media yet. Images you upload appear here. Only you can see them.</td>
+</tr>
+<tr>
+<td>Search, none</td>
+<td>No images match "{query}". Check the spelling, or search for part of the file name.</td>
+</tr>
+<tr>
+<td>Delete, unused</td>
+<td>Delete this image from My media? It will be removed for good. None of your posts use it.</td>
+</tr>
+<tr>
+<td>Delete, in use</td>
+<td>This image is used by {n} post(s). If you delete it: {title}, {status}. {effect} Emails you have already sent keep their copy of the image.</td>
+</tr>
+<tr>
+<td>Delete, scheduled post <strong>[P]</strong></td>
+<td>It will be put on hold until you check it and schedule it again.</td>
+</tr>
+<tr>
+<td>Delete, live post <strong>[P]</strong></td>
+<td>It loses its featured image on your website.</td>
+</tr>
+<tr>
+<td>Delete error</td>
+<td>Couldn't delete the image. Nothing was removed. Try again in a moment.</td>
+</tr>
+<tr>
+<td>Viewer banner</td>
+<td>Viewing Jane Advisor's private media (Support). Read only.</td>
+</tr>
+<tr>
+<td>Page subtitle</td>
+<td>Images you upload for your private posts. They are separate from the Content Library and are never shared with other advisors.</td>
+</tr>
+<tr>
+<td>Remove toast</td>
+<td>Featured image removed. It is still in My media.</td>
+</tr>
+</tbody>
+</table>
+<p>Legal has not reviewed any wording on the privacy line.</p>
+<h2>In scope</h2>
+<ul>
+<li>Featured image of <strong>private posts</strong> (#964) is an upload from the computer or a pick from the advisor's own My media.</li>
+<li>A per-advisor private library, "My media", with upload, search by file name, newest-first sort, paging, and delete.</li>
+<li>Access for the owner, plus admins and support (read only by default; see questions).</li>
+<li>States: empty library, loading, load error, uploading with progress, upload errors (too large, wrong type, too small, network, library full), selected, set, removed, delete confirm and delete-in-use warning, viewer banner.</li>
+<li>The optional My media page.</li>
+</ul>
+<h2>Out of scope</h2>
+<ul>
+<li><strong>#260 (My Media Library) and #417 (advisor media list with copyable links).</strong> No shared code path, no shared collection, no shared screens, no shared UI. Nothing here changes or waits on them.</li>
+<li><strong>Any link field or "copy link".</strong> No URL input and no copyable image address anywhere, including the library.</li>
+<li><strong>The shared library.</strong> It is not a tab or a source, and no image moves between it and My media.</li>
+<li>Video, PDFs and other files. Images only.</li>
+<li>Body images in the post editor (the toolbar picture button). Open question 5.</li>
+<li>Editing images (crop, rotate, filters).</li>
+<li>Sharing My media with other advisors or a team.</li>
+<li>Existing private posts with a link-based image: none exist, because private posts are not built yet.</li>
+</ul>
+<h2>Server notes</h2>
+<p><strong>Owner-only is enforced on the server in every method and route. The UI is never the control.</strong></p>
+<h3>Storage and data</h3>
+<ul>
+<li><strong>A new owner-scoped collection, <code>PrivateMedia</code>.</strong> Fields: <code>_id</code> (random), <code>ownerId</code>, <code>createdAt</code>, <code>filename</code> (display name, sanitised), <code>mime</code> (sniffed, not trusted from the client), <code>bytes</code>, <code>width</code>, <code>height</code>, <code>sha256</code>, <code>storageKey</code>, <code>deletedAt</code>. A first-build alternative is a per-owner storage prefix (<code>private-media/&lt;ownerId&gt;/&lt;id&gt;</code>) with the same collection. Do the prefix too: it makes a bulk delete, an export and an audit one operation.</li>
+<li><strong>No new meaning for existing media code.</strong> Do not add a flag to a shared media or infographic collection. A query on those can never return a private image.</li>
+<li><strong>Default deny at the collection layer.</strong> <code>PrivateMedia</code> is reachable only through one module whose every query ANDs in <code>ownerId</code>. Raw collection access to it is a lint error. Add a test that fails if a new raw call appears.</li>
+<li><strong>The post holds a reference, not a URL.</strong> For owner-only posts, <code>featuredImage</code> is <code>{ mediaId }</code>. <code>myPosts.create</code> and <code>myPosts.update</code> <strong>reject a string or URL</strong> for <code>featuredImage</code> and reject a <code>mediaId</code> that is not owned by the caller. That is how "no link field" is enforced server-side.</li>
+<li><strong>Content hash.</strong> The featured image counts in <code>computePostContentHash</code> (decided for the Held feature). The hash uses <code>mediaId</code>. Media are immutable, so the id is enough. Changing, replacing or removing the image on a scheduled post holds it, as already decided.</li>
+</ul>
+<h3>Upload (<code>privateMedia.upload</code>, one HTTP route)</h3>
+<ul>
+<li>Authenticated owner only. A multipart upload, streamed to storage, with a hard byte cap enforced while streaming, not after.</li>
+<li><strong>Validate on the server:</strong> type by reading the file's magic bytes (JPEG, PNG, WebP, GIF only; no SVG; the extension and the client mime are ignored), size (placeholder: 5 MB), dimensions (placeholder: min 600 × 315, max 8000 × 8000), pixel count (decompression-bomb guard), and a per-owner count cap (placeholder: 200).</li>
+<li><strong>Re-encode and strip metadata.</strong> Remove EXIF, including GPS location. Advisors upload phone photos; location must never leave with them. Generate a thumbnail (about 320 px) and a post-size rendition at upload time.</li>
+<li>Return a typed error the UI can show: <code>too-large</code>, <code>wrong-type</code>, <code>too-small</code>, <code>library-full</code>, <code>network</code> is client-side. The error copy above is keyed to these.</li>
+<li>Rate-limit uploads per owner.</li>
+<li>A duplicate (same <code>sha256</code> for the same owner) returns the existing item instead of storing a second copy.</li>
+</ul>
+<h3>Access checks (list, serve, delete)</h3>
+<table>
+<thead>
+<tr>
+<th>Action</th>
+<th>Owner</th>
+<th>Other advisor</th>
+<th>Support</th>
+<th>Admin</th>
+<th>Signed-out</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>List</td>
+<td>Own only</td>
+<td>Never. Not found, never "not allowed".</td>
+<td>Any advisor's, read only</td>
+<td>Any advisor's, read only</td>
+<td>No</td>
+</tr>
+<tr>
+<td>Serve an image</td>
+<td>Yes</td>
+<td>No (404)</td>
+<td>Yes</td>
+<td>Yes</td>
+<td>No</td>
+</tr>
+<tr>
+<td>Upload</td>
+<td>Yes</td>
+<td>n/a</td>
+<td><strong>No (default)</strong></td>
+<td><strong>No (default)</strong></td>
+<td>No</td>
+</tr>
+<tr>
+<td>Delete</td>
+<td>Yes</td>
+<td>No (404)</td>
+<td><strong>No (default)</strong></td>
+<td><strong>No (default)</strong></td>
+<td>No</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>Every method filters by <code>ownerId</code> <strong>in the query</strong>, not after. A wrong id returns not found, so existence is not revealed.</li>
+<li><strong>Impersonation.</strong> <code>server/support-impersonation.js</code> makes <code>this.userId</code> the advisor. If support must be read only, the upload and delete methods must also check the impersonation flag and refuse. Otherwise a support session could delete the advisor's images. Add a test.</li>
+<li>Admin and support list through a separate method (<code>privateMedia.listForOwner(ownerId)</code>) that checks the caller's role and writes an access log line (who, which owner, when).</li>
+</ul>
+<h3>Serving images without leaking them</h3>
+<ul>
+<li>Files are never publicly listed and the storage path is never guessable.</li>
+<li>The picker thumbnails and the field preview load from a <strong>signed URL</strong>: <code>id</code>, an expiry (placeholder: 10 minutes) and an HMAC. The list method issues them only after the access check. An <code>&lt;img&gt;</code> tag cannot send a login header, so a signed URL is the simple way. The alternative is a cookie-checked route that re-runs the same access check on every request.</li>
+<li>Serve with <code>Cache-Control: private, no-store</code>, <code>X-Content-Type-Options: nosniff</code>, <code>X-Robots-Tag: noindex</code>, and the stored sniffed type. Never serve SVG or HTML.</li>
+<li><strong>Publishing is the only way out.</strong> When the owner publishes the post (website, email, social), the system writes a <strong>published copy</strong> of the post-size rendition under a random 128-bit token path, referenced by the published snapshot (as private posts already do for the page). The private original and the My media list stay owner-only. Images on client-facing pages may be served from the platform's shared image host, but there is no visible link and no branding on the page, the email or the social card.</li>
+<li>Taking the page down removes the published copy. An email already sent keeps its image, because it cannot be recalled.</li>
+</ul>
+<h3>Lists</h3>
+<ul>
+<li><code>privateMedia.page({ limit, skip or cursor, q, sort })</code>: <code>limit</code> default 24, <strong>max 48</strong>, paging, and <strong>field projection</strong> to tile fields only (<code>_id</code>, <code>filename</code>, <code>createdAt</code>, <code>bytes</code>, <code>width</code>, <code>height</code>, <code>thumbUrl</code>, <code>usedCount</code>). Never return the storage key or the original URL in a list.</li>
+<li>Index <code>{ ownerId: 1, createdAt: -1 }</code>. Search is a case-insensitive prefix or contains match on <code>filename</code>, always scoped by <code>ownerId</code> (regex input escaped, length-capped).</li>
+<li><code>privateMedia.count</code> for the "71 images" line and the pager.</li>
+</ul>
+<h3>Delete, and delete when in use</h3>
+<ul>
+<li><code>privateMedia.usage(id)</code> returns the posts that use the image (title, status, a count, capped at 10). The confirm calls it. The usage check is a query on <code>featuredImage.mediaId</code>, indexed.</li>
+<li><strong>Default (to confirm with Alex): delete anyway, with the warning.</strong> The server then, in one operation: soft-deletes the media (URLs 404 at once), clears <code>featuredImage</code> on each post that used it, <strong>removes the published copy</strong>, and recomputes each post's content hash. A scheduled post therefore becomes <strong>Held</strong> under the existing hold rule, with the existing once-per-hold email. A purge job removes the stored files after a short grace period (placeholder: 7 days) so an accidental delete can be fixed by support.</li>
+<li>Alternative: block the delete while a live or scheduled post uses the image. It is simpler and safer, and an advisor then has to swap the image first. Open question 3.</li>
+<li>Deleting a user (or their private posts) deletes their My media.</li>
+</ul>
+<h3>Tests (must pass on staging before FC Tester)</h3>
+<ul>
+<li>Owner can upload, list, serve and delete their own image.</li>
+<li><strong>Advisor B can never list, serve or delete advisor A's image</strong>, by id, by search, by a guessed or reused signed URL, by an expired signed URL, or through the post methods. The response is the same as for a missing image.</li>
+<li>Support and admin can list and serve any advisor's images. Support and admin cannot upload or delete (default). An impersonation session cannot upload or delete.</li>
+<li>A signed-out request to the list or serve route fails. A tampered or expired signature fails.</li>
+<li><code>featuredImage</code> as a string or URL is rejected by create and update. A <code>mediaId</code> owned by someone else is rejected.</li>
+<li>Upload validation: wrong type with a renamed extension, SVG, a file over the byte cap (stops while streaming), too-small and too-large dimensions, a decompression bomb, the 200 cap, and a duplicate.</li>
+<li>EXIF and GPS are gone from the stored and published images.</li>
+<li>Lists respect <code>limit</code> (default 24, max 48), paging and projection (no storage key). Search is scoped to the owner.</li>
+<li>Delete when in use: the post loses the image, the published copy is gone, a scheduled post is Held with one email, the confirm lists the right posts.</li>
+<li>The image never appears in the shared library, Pick for me, search, the embed APIs or the public routes.</li>
+<li>The hash changes when the image is set, replaced or removed.</li>
+<li>UI (FC Tester): every scene above, at desktop and 390, including drag over, progress, each error, empty, loading, load error, paging, search, delete confirm and the viewer banner.</li>
+</ul>
+<h2>White label</h2>
+<p>Fixtures only: Jane Advisor, Sam Support, Pat Admin, Your Firm Name, and files like team-photo.jpg. No firm name, no vendor name, no real client or advisor on any page. No link to the platform's own domain is visible anywhere in the mock, the picker or the library.</p>
+<h2>Estimate (real agent hours: cloud agent build plus FC Tester time)</h2>
+<table>
+<thead>
+<tr>
+<th>Piece</th>
+<th>A</th>
+<th>B</th>
+<th>C</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Server: collection, upload route with validation and re-encode, list/serve/delete with access checks, signed URLs, published copy, in-use and delete rule, tests</td>
+<td>12–17</td>
+<td>12–17</td>
+<td>12–17</td>
+</tr>
+<tr>
+<td>Picker and field UI (all states, 390)</td>
+<td>5–7</td>
+<td>6–8</td>
+<td>7–10</td>
+</tr>
+<tr>
+<td>FC Tester on staging</td>
+<td>4–6</td>
+<td>4–6</td>
+<td>5–7</td>
+</tr>
+<tr>
+<td><strong>Total</strong></td>
+<td><strong>21–30</strong></td>
+<td><strong>22–31</strong></td>
+<td><strong>24–34</strong></td>
+</tr>
+<tr>
+<td>Optional My media page (grid reuse, viewer banner, delete, FC Tester)</td>
+<td>+3–5</td>
+<td>+3–5</td>
+<td>+3–5</td>
+</tr>
+<tr>
+<td><strong>Total with the page</strong></td>
+<td><strong>24–35</strong></td>
+<td><strong>25–36</strong></td>
+<td><strong>27–39</strong></td>
+</tr>
+</tbody>
+</table>
+<p>The server row is the risk. Do not cut its tests to hit a number.</p>
+<h2>Open questions for Alex</h2>
+<ol>
+<li><strong>Should support and admin be able to upload or delete in an advisor's My media?</strong> [Proposed default: no. View only, as mocked. If yes, delete is the one to allow, for example for an image that should not be there.]</li>
+<li><strong>The limits.</strong> [Placeholders: JPG, PNG, WebP or GIF, up to 5 MB, at least 600 × 315 px, up to 200 images per advisor.] Confirm or change.</li>
+<li><strong>Deleting an image that a post uses.</strong> [Proposed default: allow, with the warning as mocked. The post loses the image, the published copy is removed, a scheduled post goes on hold. The safer alternative is to block it until the advisor swaps the image.]</li>
+<li><strong>When an image is deleted from a live post, should it disappear from the website too?</strong> [Proposed default: yes. Emails already sent cannot be recalled.]</li>
+<li><strong>Should the picture button in the post body also pick from My media?</strong> [Proposed default: out of scope for this build. Featured image only. It is a small add-on later because the picker is the same.]</li>
+<li><strong>Should My media be deleted with the account?</strong> [Proposed default: yes.]</li>
+<li><strong>Alt text.</strong> [Proposed default: none for now. Add an optional alt text field in the dialog later if Alex wants it.]</li>
+</ol>
+<p>Not agent-ready. Soft Dev hold until a direction is picked.</p>
+</body></html>

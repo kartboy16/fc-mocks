@@ -8,7 +8,8 @@
 <p>Mock hub: https://kartboy16.github.io/fc-mocks/private-posts/</p>
 <p><strong>Update (Nov 19, #964):</strong> Alex added a required compliance and proofreading checker for every created post. It is mocked in Direction A only. See the section "Compliance and proofreading checker" below. Added estimate: <strong>23–34 agent hours</strong>, so Direction A is <strong>45–68 h</strong> with the checker.</p>
 <p><strong>Update (Nov 19, 5:40 PM PT):</strong> an edit-time warning and a Held state in Scheduled, for scheduled posts that are edited. See "Held after edit". Added estimate: <strong>16–24 agent hours</strong>, so Direction A is <strong>61–92 h</strong> with the checker and Held.</p>
-<p><strong>Update (Nov 19, 10:29 PM PT):</strong> (1) The contract now reflects Alex's 5:50 PM hold decisions: a featured-image-only change holds the post, the advisor gets an email when a post goes on hold, Discard changes is out of scope, and a held post never expires (questions 20–23 are closed). That adds <strong>3–4 agent hours</strong> to Held, now <strong>19–28 h</strong>. (2) Alex asked for reviewer attribution on checker findings ("Reviewed by Jane Advisor, 6:40 PM"). See "Reviewer attribution". Added estimate: <strong>6–10 agent hours</strong>. Direction A is <strong>70–106 h</strong> with the checker, Held and attribution.</p>
+<p><strong>Update (Nov 19, 10:29 PM PT, estimates superseded by the 10:43 PM update below):</strong> (1) The contract now reflects Alex's 5:50 PM hold decisions: a featured-image-only change holds the post, the advisor gets an email when a post goes on hold, Discard changes is out of scope, and a held post never expires (questions 20–23 are closed). That adds <strong>3–4 agent hours</strong> to Held, now <strong>19–28 h</strong>. (2) Alex asked for reviewer attribution on checker findings ("Reviewed by Jane Advisor, 6:40 PM"). See "Reviewer attribution". Added estimate: <strong>6–10 agent hours</strong>. Direction A is <strong>70–106 h</strong> with the checker, Held and attribution.</p>
+<p><strong>Update (Nov 19, 10:43 PM PT):</strong> Reviewer attribution is <strong>approved by Alex and going to build</strong> (10:42 PM). Questions 24, 25 and 26 are decided: the hold email button opens the post in the FC app; Undo on a finding shows "Reopened by <name>, <time>" (a new field); support and admin can review, dismiss and acknowledge findings, labelled "Sam Support (Support)" and "Pat Admin (Admin)", and the owner can undo those. The contract and mocks are also lined up with what is built on staging (PR #984 and its follow-up #986). See "Delta vs staging build" for exactly what remains. Attribution is now <strong>10–15 agent hours</strong>, Held is <strong>20–29 h</strong>, and Direction A is <strong>75–112 h</strong>.</p>
 <h2>Request</h2>
 <p>Alex (Nov 19, 2026, 2:29 PM PT): "A user wants to create his own posts in our system. I need their posts to never be seen by anyone else but that user."</p>
 <p>An advisor writes his own posts in the app. Nobody else can ever see them: not other advisors, not the shared Content Library feed, not Pick for me, not search.</p>
@@ -403,21 +404,31 @@
 <li><strong>Releasing the hold.</strong> A new <code>myPosts.rescheduleHeld(postId, when, channels)</code> requires a check that matches the current hash (the same <code>assertPostChecked</code>), an acknowledgement for that hash if findings are open, and a time in the future. It restamps <code>postCheckHash</code> on each item, sets them back to <code>scheduled</code>, and clears <code>scheduleHold</code>, in one operation. A partial failure leaves everything on hold. It is safe to call twice.</li>
 <li><strong>The Scheduled list surfaces held state.</strong> Scheduled is queue-first today (<code>scheduledLibraryPosts.js</code> reads the queue snapshots) and filters to public posts, so owner-only posts need a path of their own: a new <code>myPosts.scheduledPage({ filter: 'all' | 'held', limit, skip })</code> and <code>myPosts.heldCount()</code>. <strong>Lists are capped:</strong> limit default 24, max 50, <code>skip</code> paging, and field projection to card fields plus <code>channels</code>, <code>when</code>, <code>originalWhen</code>, <code>heldAt</code> (never the post body). The count comes from a count query, not from loading the list. Owner-scoped in the query, like every <code>myPosts.*</code> method.</li>
 <li><strong>Tell the advisor (decided by Alex, 5:50 PM PT): in-app and by email.</strong> In-app: the banner, the Held pill and the dot on Scheduled. By email: one message when a post goes on hold. See "Held email" below.</li>
-<li><strong>A featured-image-only change holds the post (decided).</strong> The featured image URL is part of the content hash with the title, summary and body. Changing only the image therefore makes the stamped hash differ and holds every pending item, with the same confirm. The hash is defined in one place (<code>computePostContentHash</code>), used by the checker gate, the schedulers and the hold. Because the private-posts feature and this hash ship together, no existing check, acknowledgement or scheduled item carries an older hash. If the hash definition ever changes again, restamp or version it first, or every pending item would hold at once.</li>
+<li><strong>A featured-image-only change holds the post (decided).</strong> The featured image URL is part of the content hash with the title, summary and body. Changing only the image therefore makes the stamped hash differ and holds every pending item, with the same confirm. The hash is defined in one place (<code>computePostContentHash</code>), used by the checker gate, the schedulers and the hold. As built in #986, every queue row now carries a version marker (<code>postCheckHashVersion</code>, currently 2) next to <code>postCheckHash</code>. A row scheduled before that marker existed has no version, and its hash ignores the image, so <strong>a post scheduled before the deploy is not held for an image-only change</strong>. Text, summary and body changes still hold it. Rows scheduled or rescheduled after the deploy are version 2 and hold on an image-only change. Any other version value fails closed (holds). No backfill. If the hash definition ever changes again, bump the version rather than restamping.</li>
 <li><strong>A held post never expires (decided).</strong> It stays held until the advisor re-checks and reschedules it, or trashes it. No timer, no auto-cancel and no reminder email in v1.</li>
 <li><strong>Discard changes is out of scope (decided).</strong> It would need the server to keep a copy of the text as scheduled. Not built, not mocked.</li>
 <li><strong>Other edits.</strong> Trashing a held post cancels its items. Editing a held post again keeps it held. The advisor never has to choose between the old and new text: there is only the new text.</li>
 <li><strong>White label.</strong> Nothing here is client-facing. Clients never see held, because nothing is sent.</li>
 </ul>
-<h3>Held email (decided by Alex, 5:50 PM PT)</h3>
-<p>Scene: https://kartboy16.github.io/fc-mocks/private-posts/a-section.html?s=held-email (add <code>&amp;phone=1</code> for 390).
-- <strong>Trigger.</strong> The moment a post goes on hold (the edit that sets the hold). Sent once per hold: guarded by a <code>holdEmailSentAt</code> stamp, so editing a held post again, or a retried save, does not send a second one. Releasing the hold clears the stamp, so a later hold sends a new email.
-- <strong>Recipient.</strong> The post owner only, at their account email. Never other advisors, never admins or support, never the advisor's clients. One email per post, even when the post is held on Website, Email and Social.
-- <strong>Content.</strong> Post title, the original scheduled date and time (advisor's time zone), the channels held, the edit time, and one button, "Review held post", that opens Scheduled filtered to Held. No post body and no client data.
-- <strong>Copy is a placeholder.</strong> Subject, wording and footer are flagged "wording to be supplied" in the mock.
-- <strong>White label.</strong> The email is advisor-facing, not client-facing, but it carries no link to the FC domain and no FC branding: the From name is the firm's name, the footer is plain text, and the button uses the firm's own app address. Which address that is, is open question 24.
-- <strong>Failure.</strong> If the send fails, the hold still stands and the advisor still sees the banner and pill. The failure is logged and retried once. It never blocks or undoes the hold.
-- <strong>Estimate.</strong> Template, trigger with the once-per-hold guard, the send path, the failure log and tests: 2–3 h. The featured-image hash rule with tests: about 1 h.</p>
+<h3>Re-check &amp; reschedule: channels and email (as built in #984, now mocked)</h3>
+<p>Scenes: <code>held-reschedule</code>, <code>held-reschedule-cancel</code>, <code>held-rescheduled</code>, <code>held-rescheduled-cancel</code> (add <code>&amp;phone=1</code> for 390).
+- <strong>The channel checkboxes are editable.</strong> The dialog prefills the original channels. Unticking one cancels that held item, and the dialog says so ("Social will be cancelled. It won't be sent."). At least one channel must stay ticked. The hint line above the checkboxes reads "Untick a channel to cancel it. At least one stays ticked."
+- <strong>A held email campaign is not rescheduled in place.</strong> Its HTML is a snapshot of the old text, so Re-check &amp; reschedule sends it back to Drafts and the advisor rebuilds it. The dialog says "Email goes back to Drafts to rebuild" next to the Email checkbox, and the result dialog (<code>held-rescheduled</code>) lists it as "Newsletter: back in Drafts", with a Go to Drafts button. Website and Social are scheduled for the chosen time. Nothing is sent.
+- <strong>When a channel was unticked,</strong> the result dialog (<code>held-rescheduled-cancel</code>) shows it as cancelled.
+- <strong>Support sessions</strong> can run checks but cannot edit, delete or reschedule (refused on staging, kept). Review, dismiss and acknowledge are now allowed (question 26, see "Reviewer attribution").</p>
+<h3>Held email (decided by Alex, 5:50 PM PT; button decided 10:43 PM PT)</h3>
+<p>Scene: https://kartboy16.github.io/fc-mocks/private-posts/a-section.html?s=held-email (add <code>&amp;phone=1</code> for 390). Clicking the button in the mock opens the held post (<code>held-edit</code>).
+- <strong>Trigger.</strong> The moment a post goes on hold, from the edit that sets the hold, and from the scheduler backstop if an edit races a send. Sent once per held row: each row is claimed with <code>holdEmailSentAt</code>, and releasing the hold clears it, so a later hold sends a new email.
+- <strong>Recipient.</strong> The post owner only, at their account email. Never other advisors, never admins or support, never the advisor's clients.
+- <strong>Content as built.</strong> Subject "Your scheduled post is on hold: <title>". Body: the post title, what was held (Website, Email, Social, each with its original time in Pacific time), the edit time, and how to release it. No post body and no client data. The mock now matches this list.
+- <strong>The button (decided, not built yet).</strong> "Review held post" opens the held post in the FC app: My posts, then Scheduled, then Held, with that post open. Alex (10:43 PM): this email goes to the advisor, not to clients, so a link into the FC app is allowed. Below the button the email repeats the address as plain text in case the button doesn't work. Build notes:
+  - The link is <code>&lt;app address&gt;/my-posts/scheduled/held/&lt;postId&gt;</code> (a path the app routes to the Scheduled list with the Held filter on and the post open). The <code>postId</code> is not a secret and there is no sign-in token in the link.
+  - If the advisor is signed out, the app asks them to sign in and then returns to the link. If the signed-in user isn't the owner, they get the usual "post not found" (owner-only, no leak). If the post is no longer held (already rescheduled or trashed), it opens Scheduled and shows that.
+  - One link per email. When a save holds several posts, each post has its own email and link.
+- <strong>White label.</strong> The email is advisor-facing, not client-facing, so the FC app link is allowed. It carries no FC branding: the From name is the firm's name and the footer is plain text. Nothing in it is ever shown to clients.
+- <strong>Copy is a placeholder.</strong> Final subject and wording are flagged "wording to be supplied" in the mock.
+- <strong>Failure.</strong> If the send fails, the hold still stands and the advisor still sees the banner and pill. It never blocks or undoes the hold.
+- <strong>Estimate.</strong> The email and its once-per-row guard are built (#984). The button, deep link route and "open this post" state add about 1 h with tests.</p>
 <h3>Tests added by this add-on</h3>
 <ul>
 <li>Saving a changed scheduled post holds every pending item on all three channels, in one operation, and requires <code>confirmHold</code>. Saving an unchanged one does not hold.</li>
@@ -427,28 +438,32 @@
 <li><code>scheduledPage</code> clamps <code>limit</code>, pages with <code>skip</code>, and returns no body. <code>heldCount</code> matches the list.</li>
 <li>A partial reschedule failure leaves every item held.</li>
 <li>A change to only the featured image holds the post. A change to nothing does not.</li>
-<li>The hold email goes to the owner only, once per hold, with no link to the FC domain. A second edit while held sends nothing. A failed send does not undo the hold.</li>
+<li>The hold email goes to the owner only, once per held row. A second edit while held sends nothing. A failed send does not undo the hold. The button link opens Scheduled with the Held filter and that post open for the owner, asks a signed-out user to sign in first, and shows "post not found" to anyone else.</li>
+<li>Unticking a channel in the reschedule dialog cancels that item. A held email campaign goes back to Drafts and is never sent. A legacy row (no version marker) is not held for an image-only change, and a version 2 row is.</li>
 <li>A held item is still held after any amount of time. No job expires or cancels it.</li>
 </ul>
 <h3>Reused</h3>
 <p>The acknowledge dialog pattern and the acknowledgement log from the checker, the Checks panel, the existing <code>post-changed-since-scheduled</code> refusal in the schedulers, and the queue-first Scheduled list. The toggle All / Scheduled / Published matches the one in the Content tab.</p>
 <h2>Reviewer attribution (Direction A, #964 follow-up)</h2>
-<p>Alex (Nov 19, 10:29 PM PT): "Yes, have FC Designer mock it." Show who reviewed each checker finding and when, for example "Reviewed by Jane Advisor, 6:40 PM", instead of the plain "Reviewed" label. Built on the approved checker mock.</p>
-<p>Mock: https://kartboy16.github.io/fc-mocks/private-posts/a-section.html?s=attr-reviewed (each scene works with <code>&amp;phone=1</code>). The status is the same as the rest: <strong>Not agent-ready until Alex approves it.</strong></p>
+<p><strong>Status: approved by Alex, Nov 19, 10:42 PM PT, going to build.</strong> (The rest of this contract is unchanged in status.)</p>
+<p>Alex (Nov 19, 10:29 PM PT): "Yes, have FC Designer mock it." Show who reviewed each checker finding and when, for example "Reviewed by Jane Advisor, 6:40 PM", instead of the plain "Reviewed" label. Alex at 10:42 PM: Undo shows "Reopened by <name>, <time>", and support and admin can review, dismiss and acknowledge, with the owner able to undo those.</p>
+<p>Mock: https://kartboy16.github.io/fc-mocks/private-posts/a-section.html?s=attr-reviewed (each scene works with <code>&amp;phone=1</code>).</p>
 <h3>Display rules</h3>
 <ul>
-<li><strong>Format.</strong> <code>&lt;Action&gt; by &lt;Name&gt;, &lt;time&gt;</code> on its own line under the finding, with Undo below it. Actions: Reviewed (compliance findings), Dismissed (proofreading findings), Acknowledged (the acknowledgement).</li>
+<li><strong>Format.</strong> <code>&lt;Action&gt; by &lt;Name&gt;, &lt;time&gt;</code> on its own line under the finding, with Undo below it. Actions: Reviewed (compliance findings), Dismissed (proofreading findings), Acknowledged (the acknowledgement), Reopened (an open finding that was undone), Acknowledgement withdrawn.</li>
 <li><strong>Time.</strong> Findings: today = time only ("6:40 PM"); earlier this year = date and time ("Nov 18, 4:15 PM"); an earlier year adds the year ("Nov 19, 2025, 4:02 PM"). The acknowledgement always shows date and time ("Nov 19, 6:45 PM") because it is the compliance record. Times are in the viewer's time zone. Hovering the time (title text; on a phone, a long press) gives the full timestamp and zone: "Nov 18, 2026, 4:15:44 PM PT (America/Vancouver)".</li>
-<li><strong>Who.</strong> The owner shows as their name. Support and admin reviewers show with their role in brackets, in a small badge: "Sam Support (Support)", "Pat Admin (Admin)". A deleted or unknown user shows "a former user".</li>
-<li><strong>Fixed.</strong> A Fix is an edit of the text, not a review: <code>applyFix</code> writes the text through the normal update and the server stamps no person on the finding. It keeps the plain label "Fixed" with no name.</li>
-<li><strong>After Undo.</strong> The finding returns to open with no attribution line and a toast, "Undone. This finding needs review again." The server sets <code>stateBy</code> and <code>stateAt</code> to null when a finding is reopened, so there is nothing to show. Showing "Reopened by Jane Advisor, 6:43 PM" would need one new field (open question 25).</li>
-<li><strong>Undo on the acknowledgement.</strong> The green acknowledgement card has Undo. After it, the card becomes "Not acknowledged", with the toast "Acknowledgement withdrawn. Acknowledge the open findings again before you schedule, email or share." Undo is only offered while no scheduled or sent item depends on that acknowledgement. Otherwise the card says so and has no Undo.</li>
+<li><strong>Who.</strong> The owner shows as their name. Support and admin show with their role in brackets, in a small badge: "Sam Support (Support)", "Pat Admin (Admin)". The role shown is the role recorded when they acted, not their role today. A deleted or unknown user shows "a former user".</li>
+<li><strong>Fixed.</strong> A Fix is an edit of the text, not a review: <code>applyFix</code> writes the text through the normal update and stamps no person on the finding. It keeps the plain label "Fixed" with no name. Support cannot Fix (it is an edit).</li>
+<li><strong>After Undo (decided).</strong> The finding returns to open and shows "Reopened by Jane Advisor, 6:43 PM" above its buttons, plus a toast, "Undone. This finding needs review again." The line stays until the finding is reviewed or dismissed again, or the check runs again (new findings, no history). This needs the new field below.</li>
+<li><strong>Undo on the acknowledgement.</strong> The green acknowledgement card has Undo. After it, the card becomes "Not acknowledged" with "Acknowledgement withdrawn by Jane Advisor, Nov 19, 6:46 PM" and a toast. Undo is only offered while no scheduled or sent item depends on that acknowledgement. Otherwise the card says so and has no Undo.</li>
 <li><strong>Stale checks.</strong> When the post is edited after the check, the lines stay but are dimmed with the findings.</li>
 </ul>
-<h3>Who can Undo another person's review</h3>
+<h3>Who can review and who can Undo (decided by Alex, 10:42 PM PT)</h3>
 <ul>
-<li><strong>Proposed default: the owner can undo their own, and can also undo a review made by support or an admin.</strong> Support and admin reviews carry the badge so the owner sees them first. Support and admin can undo too, since they can see the post. Another advisor never can: they never see the post.</li>
-<li><strong>Today the question is moot.</strong> On staging the server refuses review, dismiss, fix and acknowledge from a support session (<code>refuseSupport</code>, error <code>support-cannot-acknowledge</code>), findings are looked up by owner, and the contract already says only the owner acknowledges (question 19). So every attribution line shows the owner. The support and admin scenes are the label design for the day Alex allows a support or admin review. Until then they never appear. This is open question 26.</li>
+<li><strong>Support and admin can review, dismiss and acknowledge</strong> findings on the advisor's post, through a support "Log in as" session. Their reviews carry the role badge so the advisor sees them.</li>
+<li><strong>The owner can undo a review or acknowledgement made by support or an admin</strong>, and can undo their own. Support and admin can undo too. Another advisor never can: they never see the post.</li>
+<li><strong>Still refused for support and admin:</strong> editing, Fix, trashing and Re-check &amp; reschedule. They can run checks. So an acknowledgement by support never schedules anything; the advisor still schedules the post.</li>
+<li>Because an acknowledgement is a compliance record, the card shows the actor's role in the line itself, and the server logs the real actor and role.</li>
 </ul>
 <h3>States and screens (<code>a-section.html?s=</code>; add <code>&amp;phone=1</code> for 390)</h3>
 <table>
@@ -473,11 +488,15 @@
 </tr>
 <tr>
 <td><code>attr-undo</code></td>
-<td>State after Undo on a review: the finding is open again with its highlight, no attribution, and a toast.</td>
+<td>After the owner undoes a review: the finding is open again with its highlight, "Reopened by Jane Advisor, 6:43 PM", and a toast.</td>
+</tr>
+<tr>
+<td><code>attr-undo-support</code></td>
+<td>The owner undoes a review that Sam Support made: "Reopened by Jane Advisor, 6:55 PM".</td>
 </tr>
 <tr>
 <td><code>attr-undo-ack</code></td>
-<td>State after Undo on the acknowledgement: "Not acknowledged", and a toast.</td>
+<td>After Undo on the acknowledgement: "Not acknowledged", "Acknowledgement withdrawn by Jane Advisor, Nov 19, 6:46 PM", and a toast.</td>
 </tr>
 <tr>
 <td><code>attr-support</code></td>
@@ -488,29 +507,35 @@
 <td>"Reviewed by Pat Admin (Admin), Nov 18, 4:15 PM" (an earlier day shows the date), with the Admin badge and Undo.</td>
 </tr>
 <tr>
+<td><code>attr-ack-support</code></td>
+<td>"Acknowledged by Sam Support (Support), Nov 19, 6:53 PM", with the owner's Undo.</td>
+</tr>
+<tr>
 <td><code>attr-time</code></td>
 <td>The earlier-day format with the hover text showing the full timestamp and zone.</td>
 </tr>
 </tbody>
 </table>
-<h3>Server fields used</h3>
-<ul>
-<li><strong>Findings</strong> already store <code>stateBy</code>, <code>stateAt</code>, <code>stateContentVersion</code> and <code>stateContentHash</code> (<code>myPosts.setFindingState</code>). No new storage for Reviewed and Dismissed.</li>
-<li><strong>The acknowledgement</strong> already stores <code>acknowledgedBy</code>, <code>acknowledgedAt</code> and the content hash (<code>postCheckAck</code>, returned by <code>myPosts.getCheck</code>).</li>
-<li><strong>Display names.</strong> <code>myPosts.getCheck</code> resolves each distinct <code>stateBy</code> and <code>acknowledgedBy</code> id once, with one users lookup: <code>_id</code> in the distinct ids (at most 20 per post), <code>limit</code> equal to the id count, projection of name and roles only. It returns <code>actor: { name, role }</code> next to each, where role is empty for the owner. No email, profile or user id of another person reaches the client. Owner scoped like the rest of <code>getCheck</code>.</li>
-<li><strong>Undo on a finding</strong> uses the existing <code>myPosts.setFindingState(postId, findingId, 'open')</code>. No change.</li>
-<li><strong>Undo on the acknowledgement is new.</strong> There is no withdraw method today. Add <code>myPosts.withdrawAcknowledgement(postId)</code>: owner only, clears the current <code>postCheckAck</code>, and appends a revoke row to the existing acknowledgement log so the history stays. Refused when a pending or sent item was released on that acknowledgement. This is the one new write in the section.</li>
-</ul>
+<h3>Server changes</h3>
+<p>Built on staging today: <code>myPosts.setFindingState</code> writes <code>stateBy</code>, <code>stateAt</code>, <code>stateContentVersion</code>, <code>stateContentHash</code>, and sets <code>stateBy</code> and <code>stateAt</code> back to null on reopen. <code>myPosts.acknowledge</code> writes <code>postCheckAck</code> with <code>acknowledgedBy</code> and <code>acknowledgedAt</code>. Both refuse a support session (<code>refuseSupport</code>, <code>support-cannot-acknowledge</code>). What remains:
+1. <strong>Allow review, dismiss and acknowledge from support and admin sessions.</strong> Remove <code>refuseSupport</code> from <code>myPosts.setFindingState</code> and <code>myPosts.acknowledge</code> only. Keep the refusal on <code>update</code>, <code>applyFix</code>, <code>trash</code>, <code>rescheduleHeld</code> and <code>create</code> (<code>support-cannot-edit</code>, <code>support-cannot-reschedule</code>). The post is still looked up by owner, so the owner scope does not change. Do not widen <code>ownerSelector</code>.
+2. <strong>Record the real actor and role.</strong> In a "Log in as" session <code>this.userId</code> is the advisor, so today <code>stateBy</code> would record the advisor even when support clicked. Resolve the actor from the impersonation session (the support or admin user id) and write that as <code>stateBy</code> and <code>acknowledgedBy</code>. Add <code>stateByRole</code> and <code>acknowledgedByRole</code> (<code>owner</code>, <code>support</code> or <code>admin</code>), written at action time from the actor's roles. A support user who is also an admin records <code>admin</code>.
+3. <strong>Reopened-by (new field, decided).</strong> When <code>setFindingState(..., 'open')</code> runs, keep clearing <code>stateBy</code>, <code>stateAt</code>, <code>stateContentVersion</code> and <code>stateContentHash</code>, and write <code>reopenedBy</code>, <code>reopenedByRole</code> and <code>reopenedAt</code> on the finding. They are cleared when the finding is reviewed or dismissed again. A new check run makes new findings, so they start clean. No index and no new collection.
+4. <strong>Withdraw the acknowledgement (new method).</strong> <code>myPosts.withdrawAcknowledgement(postId)</code>: allowed for the owner and for support and admin sessions; clears the current <code>postCheckAck</code>; appends a revoke row (actor, role, time) to the existing acknowledgement log so the history stays. Refused when a pending or sent item was released on that acknowledgement. The withdrawn line on the card reads the revoke row.
+5. <strong>Display names.</strong> <code>myPosts.getCheck</code> resolves each distinct <code>stateBy</code>, <code>reopenedBy</code>, <code>acknowledgedBy</code> and withdrawn-by id once, with one users lookup: <code>_id</code> in the distinct ids (at most 20 per post), <code>limit</code> equal to the id count, projection of name only. It returns <code>actor: { name, role }</code> next to each, using the stored role. No email, profile or user id of another person reaches the client. Owner scoped like the rest of <code>getCheck</code>.
+6. <strong>Gate.</strong> The send gate still checks only the acknowledgement's content hash, not who acknowledged, so an acknowledgement by support counts the same.</p>
 <h3>Tests added by attribution</h3>
 <ul>
 <li>The line shows the right name, action and time format for today, an earlier day and an earlier year, and the title text carries the full timestamp and zone.</li>
-<li>Another advisor calling <code>getCheck</code> for Jane Advisor's post gets <code>post-not-found</code>, so no names leak. A support session sees the same lines (view only).</li>
+<li>A support session as Jane can run checks, review, dismiss and acknowledge. The finding records the support user as <code>stateBy</code> and <code>support</code> as the role, not Jane. An admin session records <code>admin</code>. A support session is still refused on update, Fix, trash and reschedule.</li>
+<li>The owner can undo a review and an acknowledgement made by support. The reopened line then shows the owner. Support and admin can undo too. Another advisor gets <code>post-not-found</code> on every one of these methods and on <code>getCheck</code>, so no names leak.</li>
+<li>Reopen writes <code>reopenedBy</code>, <code>reopenedByRole</code> and <code>reopenedAt</code> and clears <code>stateBy</code> and <code>stateAt</code>. Reviewing it again clears the reopened fields. Running the check again starts clean.</li>
+<li><code>withdrawAcknowledgement</code> clears the card, keeps the old log row and appends a revoke row. The next schedule, email or share is refused until acknowledged again. It is refused when an item depends on it.</li>
 <li>Names come from one capped, projected lookup, never one per finding. No email or id of another person is in the response. A deleted user shows "a former user".</li>
-<li>Undo on a finding clears the line and re-opens it. Undo on the acknowledgement clears the card, keeps the log row, and the next schedule, email or share is refused until acknowledged again. It is refused when an item depends on it.</li>
-<li>Fixed shows no name. A stale check dims the lines.</li>
-<li>390: the line wraps and Undo stays tappable at 40 px.</li>
+<li>Fixed shows no name. A stale check dims the lines. At 390 the line wraps and Undo stays tappable at 40 px.</li>
+<li>The existing tests that expect <code>support-cannot-acknowledge</code> are changed to the new rule.</li>
 </ul>
-<h3>Estimate for attribution: 6–10 h added</h3>
+<h3>Estimate for attribution: 10–15 h added (was 6–10)</h3>
 <table>
 <thead>
 <tr>
@@ -520,27 +545,53 @@
 </thead>
 <tbody>
 <tr>
-<td>Server: one capped, projected name lookup, <code>actor</code> on findings and acknowledgement, deleted-user fallback</td>
+<td>Server: one capped, projected name lookup, <code>actor</code> with the stored role on findings, reopen and acknowledgement, deleted-user fallback</td>
 <td>1.5–2.5</td>
 </tr>
 <tr>
-<td>Server: <code>withdrawAcknowledgement</code> with the dependency check and the log row</td>
+<td>Server: allow review, dismiss and acknowledge from support and admin sessions, resolve the real actor from the impersonation session, record <code>stateByRole</code> and <code>acknowledgedByRole</code>, keep edit, Fix, trash and reschedule refused</td>
+<td>2–2.5</td>
+</tr>
+<tr>
+<td>Server: Reopened-by fields on reopen, cleared on re-review and re-check</td>
+<td>1–1.5</td>
+</tr>
+<tr>
+<td>Server: <code>withdrawAcknowledgement</code> with the dependency check and the revoke row</td>
 <td>1.5–2</td>
 </tr>
 <tr>
-<td>Client: attribution line, time format, hover text, acknowledgement card and Undo, toasts, 390</td>
-<td>2–3</td>
+<td>Client: attribution lines (Reviewed, Dismissed, Acknowledged, Reopened, Withdrawn), time format, hover text, role badge, acknowledgement card and Undo, toasts, 390</td>
+<td>2.5–3.5</td>
 </tr>
 <tr>
-<td>Tests plus FC Tester on staging</td>
-<td>1–2.5</td>
+<td>Tests (support and admin sessions, role at write time, owner undo of support, no leak) plus FC Tester on staging</td>
+<td>1.5–3</td>
 </tr>
 <tr>
 <td><strong>Attribution total</strong></td>
-<td><strong>6–10</strong></td>
+<td><strong>10–15</strong></td>
 </tr>
 </tbody>
 </table>
+<h2>Delta vs staging build</h2>
+<p>What Software developer built on staging in PR #984 (hold, hold email, hash with image, support refused on edit) and the follow-up #986 (version marker), which Alex OK'd at 10:18 PM PT, compared with this contract and the mocks. Mocks and contract now match what was built where it deviated.</p>
+<p><strong>Already built, mocks and contract now match (no new hours):</strong>
+- A held email campaign can't be rescheduled in place, so Re-check &amp; reschedule sends it back to Drafts. Shown in <code>held-reschedule</code>, <code>held-rescheduled</code>.
+- Channel checkboxes in the reschedule dialog are editable and unticked channels are cancelled. Shown in <code>held-reschedule-cancel</code>, <code>held-rescheduled-cancel</code>.
+- Posts scheduled before the deploy are not held for an image-only change (version marker, #986).
+- Support sessions are refused on edit, delete and reschedule, and can run checks.</p>
+<p><strong>Remaining for Soft Dev (in order):</strong>
+| # | What | Hours |
+| --- | --- | --- |
+| 1 | <strong>Hold email button.</strong> Add "Review held post" with the deep link and plain-text address, and the "open this post" state in My posts &gt; Scheduled &gt; Held (<code>held-email</code>). The email body already matches. | 1 |
+| 2 | <strong>UI conformance for the reschedule dialog.</strong> Check the email-to-Drafts note, the cancel note on an unticked channel and the result dialog against the four scenes above. | 0.5–1 |
+| 3 | <strong>Attribution UI</strong> (<code>attr-*</code> scenes): lines, time format, hover text, badges, acknowledgement card, Undo, toasts, 390. | in the 10–15 |
+| 4 | <strong>Support and admin review permission:</strong> allow review, dismiss and acknowledge, record the real actor and role, keep edit, Fix, trash and reschedule refused. | in the 10–15 |
+| 5 | <strong>Reopened-by field:</strong> <code>reopenedBy</code>, <code>reopenedByRole</code>, <code>reopenedAt</code>. | in the 10–15 |
+| 6 | <strong><code>withdrawAcknowledgement</code></strong> with the revoke row. | in the 10–15 |
+| | <strong>Remaining total</strong> | <strong>12–17</strong> |</p>
+<p>Not part of this: Mailchimp scheduled campaigns are still not held (known gap, Alex). Rows that failed before #984 stay failed.</p>
 <h2>Copy</h2>
 <p>Key strings (final wording is a product call):
 - Banner: "Only you can see this post" and "Other advisors, the Content Library, search and Pick for me never show it."
@@ -573,7 +624,7 @@
 <li><strong>Who owns the compliance rule list and the wording?</strong> [Legal. Placeholder in the mocks.] How often does it change, and does a new rule re-flag posts already published?</li>
 <li><strong>Which proofreading engine?</strong> [Reuse the en_CA dictionary for spelling. Grammar needs a rules library or an AI service, which is a build decision and may add hours.]</li>
 <li>
-<p><strong>Can an admin or support user acknowledge findings on the advisor's behalf?</strong> [No. Only the owner acknowledges, and the log records who.]</p>
+<p><strong>Can an admin or support user acknowledge findings on the advisor's behalf?</strong> [<strong>Changed by Alex, Nov 19, 10:42 PM PT: Yes.</strong> See question 26. The log records who and their role.]</p>
 </li>
 <li>
 <p><strong>Does changing only the featured image of a scheduled post hold it?</strong> [<strong>Decided by Alex, Nov 19, 5:50 PM PT: Yes.</strong> The featured image is part of the content hash.]</p>
@@ -581,9 +632,9 @@
 <li><strong>Should the advisor get an email when a scheduled post goes on hold?</strong> [<strong>Decided by Alex, Nov 19, 5:50 PM PT: Yes.</strong> Owner only, once per hold. Wording is a placeholder.]</li>
 <li><strong>Should there be a "Discard changes" that restores the scheduled version?</strong> [<strong>Decided by Alex, Nov 19, 5:50 PM PT: Not for now.</strong> Out of scope.]</li>
 <li><strong>Does a held post that nobody reschedules expire?</strong> [<strong>Decided by Alex, Nov 19, 5:50 PM PT: No.</strong> It never expires.]</li>
-<li><strong>Which address does the "Review held post" button in the hold email use?</strong> [The firm's own app address, so no link to the FC domain. Needs Alex to confirm which address the app answers on for an advisor.]</li>
-<li><strong>After Undo, should the finding show "Reopened by Jane Advisor, 6:43 PM"?</strong> [No. Plain open, because the server clears who and when on reopen and Alex asked for no new storage.] Showing it needs one new field, about 1 h.</li>
-<li><strong>Should a support or admin user ever be allowed to review or dismiss a finding for the advisor?</strong> [No, as in question 19 and in the server today. The Support and Admin labels are mocked only for the day this changes.] If yes, the owner can undo their review (proposed default).</li>
+<li><strong>Which address does the "Review held post" button in the hold email use?</strong> [<strong>Decided by Alex, Nov 19, 10:43 PM PT: Yes, link to the post in the FC app.</strong> The button opens My posts, Scheduled, Held with that post open. The email goes to the advisor, not clients, so the FC app link is allowed.]</li>
+<li><strong>After Undo, should the finding show "Reopened by Jane Advisor, 6:43 PM"?</strong> [<strong>Decided by Alex, Nov 19, 10:42 PM PT: Yes.</strong> Needs the new <code>reopenedBy</code>, <code>reopenedByRole</code> and <code>reopenedAt</code> fields.]</li>
+<li><strong>Should a support or admin user be allowed to review or dismiss a finding for the advisor?</strong> [<strong>Decided by Alex, Nov 19, 10:42 PM PT: Yes.</strong> Support and admin can review, dismiss and acknowledge, labelled "Sam Support (Support)" and "Pat Admin (Admin)". The owner can undo those too.]</li>
 </ol>
 <h2>In scope</h2>
 <ul>
@@ -594,8 +645,8 @@
 <li>390px layout.</li>
 <li>Held after edit in Direction A: the edit-time confirm, the Held state in Scheduled, and Re-check &amp; reschedule.</li>
 <li>Compliance and proofreading checker in Direction A: runs on save, server-stored result and version, the acknowledge step before schedule, email and share, and the acknowledgement log.</li>
-<li>Reviewer attribution in Direction A: the attribution line, time format, hover text, acknowledgement card and Undo, and the name lookup.</li>
-<li>The hold email to the owner, and the featured image in the content hash.</li>
+<li>Reviewer attribution in Direction A (approved): the attribution lines, time format, hover text, role badge, acknowledgement card and Undo, Reopened-by, support and admin review permission, and <code>withdrawAcknowledgement</code>.</li>
+<li>The hold email to the owner with its "Review held post" button, and the featured image in the content hash.</li>
 </ul>
 <h2>Out of scope</h2>
 <ul>
@@ -691,16 +742,17 @@
 | Acknowledge step in three flows, list chips | 3–4 |
 | Tests across every path plus FC Tester on staging | 3–5 |
 | <strong>Checker total</strong> | <strong>23–34</strong> |</p>
-<p><strong>Held after edit (Direction A only, #964 follow-up): 19–28 h added</strong> (16–24 h as first mocked, plus 3–4 h for the hold decisions).
+<p><strong>Held after edit (Direction A only, #964 follow-up): 20–29 h added</strong> (16–24 h as first mocked, plus 3–4 h for the hold decisions, plus 1 h for the email button). Most of this is built on staging; see "Delta vs staging build".
 | Held piece | Hours |
 | --- | --- |
 | Server: hold flag set with the edit, new <code>held</code> status across the website, social and SES queues, <code>confirmHold</code>, <code>rescheduleHeld</code>, <code>scheduledPage</code> and <code>heldCount</code> (capped, paged, projected), owner scope | 6–9 |
 | Server: featured image in the content hash, and the hold email (template, once-per-hold guard, send, failure log) | 3–4 |
+| Hold email button: deep link into Scheduled &gt; Held with the post open, sign-in return | 1 |
 | Client: edit confirm, Held banner and pill, Scheduled list (all and held, rows and 390 cards), the three-step re-check flow with errors and past time | 7–10 |
 | Tests across the three schedulers, races, owner-only and caps, plus FC Tester on staging | 3–5 |
-| <strong>Held total</strong> | <strong>19–28</strong> |</p>
-<p><strong>Reviewer attribution (Direction A only, #964 follow-up): 6–10 h added.</strong> See the table in "Reviewer attribution".</p>
-<p><strong>Direction A with the checker, Held and attribution: 70–106 h.</strong> (A alone 22–34, checker 23–34, Held 19–28, attribution 6–10.) Without attribution: 64–96 h.</p>
+| <strong>Held total</strong> | <strong>20–29</strong> |</p>
+<p><strong>Reviewer attribution (Direction A only, #964 follow-up): 10–15 h added.</strong> Approved. See the table in "Reviewer attribution".</p>
+<p><strong>Direction A with the checker, Held and attribution: 75–112 h.</strong> (A alone 22–34, checker 23–34, Held 20–29, attribution 10–15.) Without attribution: 65–97 h. Still to build after the staging work (#984, #986): 12–17 h, listed in "Delta vs staging build".</p>
 <p><strong>Direction A with the checker: 45–68 h.</strong> The grammar engine (open question 18) is the main swing. An AI-based grammar service could add 4–8 h.</p>
 <p>Add 10–16 h if Alex wants the separate-collection option. Admin and support visibility needs no extra time.</p>
 <p>Not agent-ready. Soft Dev hold until a direction is picked.</p>

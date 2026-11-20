@@ -22,7 +22,7 @@
   let NOTE = "";
 
   const SCENES = {
-    a: [["all", "All Content"], ["list", "My posts"], ["empty", "Empty"], ["loading", "Loading"], ["error-load", "Load error"], ["create", "Create"], ["error-title", "Title missing"], ["saving", "Saving"], ["saved", "Saved"], ["error-save", "Save error"], ["edit", "Edit"], ["check-idle", "Check: not run"], ["save-check", "Check on save"], ["checking", "Check: checking"], ["check-found", "Check: findings"], ["check-proof", "Check: proofreading"], ["check-fixed", "Check: some fixed"], ["check-clean", "Check: no findings"], ["check-stale", "Check: out of date"], ["check-error", "Check: error"], ["check-partial", "Check: partial error"], ["use", "Use menu"], ["ack", "Acknowledge: website"], ["ack-checked", "Acknowledge: ticked"], ["ack-email", "Acknowledge: email"], ["ack-social", "Acknowledge: social"], ["ack-stale", "Acknowledge: out of date"], ["ack-error", "Acknowledge: error"], ["ack-clear", "Website: no findings"], ["ack-done", "Website: acknowledged"], ["attr-reviewed", "Attribution: reviewed"], ["attr-dismissed", "Attribution: dismissed"], ["attr-ack", "Attribution: acknowledged"], ["attr-undo", "Attribution: undo"], ["attr-undo-ack", "Attribution: undo acknowledgement"], ["attr-support", "Attribution: support"], ["attr-admin", "Attribution: admin"], ["attr-time", "Attribution: time formats"], ["held-email", "Held: email"], ["list-held", "Cards: Held"], ["sched", "Scheduled list"], ["sched-held", "Scheduled: Held"], ["sched-held-only", "Held filter"], ["sched-held-none", "Held: none"], ["sched-empty", "Scheduled: empty"], ["sched-loading", "Scheduled: loading"], ["sched-error", "Scheduled: error"], ["edit-scheduled", "Edit scheduled"], ["edit-warn", "Edit: hold warning"], ["edit-held-saved", "Edit: held saved"], ["held-edit", "Held: editor"], ["held-recheck", "Held: re-check"], ["held-recheck-error", "Re-check error"], ["held-ack", "Held: acknowledge"], ["held-reschedule", "Held: reschedule"], ["held-reschedule-error", "Reschedule error"], ["held-past-time", "Held: past time"], ["held-rescheduled", "Rescheduled"], ["site", "Website"], ["site-done", "Published"], ["email", "Email"], ["social", "Social"], ["no-site", "No website"], ["pv-web", "Client: website"], ["pv-email", "Client: email"], ["pv-social", "Client: social"], ["trash", "Trash"]],
+    a: [["all", "All Content"], ["list", "My posts"], ["empty", "Empty"], ["loading", "Loading"], ["error-load", "Load error"], ["create", "Create"], ["error-title", "Title missing"], ["saving", "Saving"], ["saved", "Saved"], ["error-save", "Save error"], ["edit", "Edit"], ["check-idle", "Check: not run"], ["save-check", "Check on save"], ["checking", "Check: checking"], ["check-found", "Check: findings"], ["check-proof", "Check: proofreading"], ["check-fixed", "Check: some fixed"], ["check-clean", "Check: no findings"], ["check-stale", "Check: out of date"], ["check-error", "Check: error"], ["check-partial", "Check: partial error"], ["use", "Use menu"], ["ack", "Acknowledge: website"], ["ack-checked", "Acknowledge: ticked"], ["ack-email", "Acknowledge: email"], ["ack-social", "Acknowledge: social"], ["ack-stale", "Acknowledge: out of date"], ["ack-error", "Acknowledge: error"], ["ack-clear", "Website: no findings"], ["ack-done", "Website: acknowledged"], ["attr-reviewed", "Attribution: reviewed"], ["attr-dismissed", "Attribution: dismissed"], ["attr-ack", "Attribution: acknowledged"], ["attr-undo", "Attribution: undo"], ["attr-undo-support", "Attribution: owner undoes a support review"], ["attr-undo-ack", "Attribution: undo acknowledgement"], ["attr-support", "Attribution: support"], ["attr-admin", "Attribution: admin"], ["attr-ack-support", "Attribution: support acknowledged"], ["attr-time", "Attribution: time formats"], ["held-reschedule-cancel", "Held: reschedule, channel unticked"], ["held-rescheduled-cancel", "Held: rescheduled, channel cancelled"], ["held-email", "Held: email"], ["list-held", "Cards: Held"], ["sched", "Scheduled list"], ["sched-held", "Scheduled: Held"], ["sched-held-only", "Held filter"], ["sched-held-none", "Held: none"], ["sched-empty", "Scheduled: empty"], ["sched-loading", "Scheduled: loading"], ["sched-error", "Scheduled: error"], ["edit-scheduled", "Edit scheduled"], ["edit-warn", "Edit: hold warning"], ["edit-held-saved", "Edit: held saved"], ["held-edit", "Held: editor"], ["held-recheck", "Held: re-check"], ["held-recheck-error", "Re-check error"], ["held-ack", "Held: acknowledge"], ["held-reschedule", "Held: reschedule"], ["held-reschedule-error", "Reschedule error"], ["held-past-time", "Held: past time"], ["held-rescheduled", "Rescheduled"], ["site", "Website"], ["site-done", "Published"], ["email", "Email"], ["social", "Social"], ["no-site", "No website"], ["pv-web", "Client: website"], ["pv-email", "Client: email"], ["pv-social", "Client: social"], ["trash", "Trash"]],
     b: [["all", "All, mixed"], ["search", "Search"], ["mine", "My posts filter"], ["empty", "Empty"], ["loading", "Loading"], ["error-load", "Load error"], ["create", "Create"], ["error-title", "Title missing"], ["saving", "Saving"], ["saved", "Saved"], ["error-save", "Save error"], ["edit", "Edit"], ["use", "Use menu"], ["site", "Website"], ["site-done", "Published"], ["email", "Email"], ["social", "Social"], ["no-site", "No website"], ["pv-web", "Client: website"], ["pv-email", "Client: email"], ["pv-social", "Client: social"], ["trash", "Trash"]],
     c: [["content", "Content tab"], ["copy", "Private copy"], ["list", "My posts"], ["empty", "Empty"], ["loading", "Loading"], ["error-load", "Load error"], ["create", "Create"], ["error-title", "Title missing"], ["saving", "Saving"], ["saved", "Saved"], ["error-save", "Save error"], ["edit", "Edit"], ["use", "Use menu"], ["site", "Website"], ["site-done", "Published"], ["email", "Email"], ["social", "Social"], ["no-site", "No website"], ["pv-web", "Client: website"], ["pv-email", "Client: email"], ["pv-social", "Client: social"], ["trash", "Trash"]]
   };
@@ -133,17 +133,19 @@
     const a = ACT[w.by];
     return `<span class="attr" title="${fullAt(w.iso)}">${verb} by <b>${a.n}</b>${a.role ? ` <span class="role">(${a.role})</span>` : ""}, ${fmtAt(w.iso, always)}${tip ? `<span class="tip">${fullAt(w.iso)}</span>` : ""}</span>`;
   }
-  const ATTR_SCENES = ["attr-reviewed", "attr-dismissed", "attr-ack", "attr-undo", "attr-undo-ack", "attr-support", "attr-admin", "attr-time"];
+  const ATTR_SCENES = ["attr-reviewed", "attr-dismissed", "attr-ack", "attr-undo", "attr-undo-support", "attr-undo-ack", "attr-support", "attr-admin", "attr-ack-support", "attr-time"];
   CK_SCENES.push.apply(CK_SCENES, ATTR_SCENES);
   function attrModel(s) {
     const m = ckModel("check-fixed");
     m.who = { c3: { by: "jane", iso: "2026-11-19T18:40:31" }, p2: { by: "jane", iso: "2026-11-19T18:41:05" } };
-    m.openRes = true; m.tab = "c"; m.ack = null; m.toast = null; m.tip = null;
+    m.openRes = true; m.tab = "c"; m.ack = null; m.toast = null; m.tip = null; m.reopen = {};
     if (s === "attr-dismissed") m.tab = "p";
     if (s === "attr-ack") m.ack = { by: "jane", iso: "2026-11-19T18:45:20" };
-    if (s === "attr-undo") { m.f.c3 = "open"; delete m.who.c3; m.toast = "Undone. This finding needs review again."; }
-    if (s === "attr-undo-ack") { m.ack = "withdrawn"; m.toast = "Acknowledgement withdrawn. Acknowledge the open findings again before you schedule, email or share."; }
-    if (s === "attr-support") m.who.c3 = { by: "sam", iso: "2026-11-19T18:52:08" };
+    if (s === "attr-undo") { m.f.c3 = "open"; delete m.who.c3; m.reopen.c3 = { by: "jane", iso: "2026-11-19T18:43:10" }; m.toast = "Undone. This finding needs review again."; }
+    if (s === "attr-undo-support") { m.f.c3 = "open"; delete m.who.c3; m.reopen.c3 = { by: "jane", iso: "2026-11-19T18:55:42" }; m.toast = "Undone. You reopened a review made by Sam Support."; }
+    if (s === "attr-undo-ack") { m.ack = "withdrawn"; m.wd = { by: "jane", iso: "2026-11-19T18:46:30" }; m.toast = "Acknowledgement withdrawn. Acknowledge the open findings again before you schedule, email or share."; }
+    if (s === "attr-support") { m.who.c3 = { by: "sam", iso: "2026-11-19T18:52:08" }; m.who.p2 = { by: "sam", iso: "2026-11-19T18:52:40" }; }
+    if (s === "attr-ack-support") { m.ack = { by: "sam", iso: "2026-11-19T18:53:15" }; m.who.c3 = { by: "sam", iso: "2026-11-19T18:52:08" }; }
     if (s === "attr-admin") { m.who.c3 = { by: "pat", iso: "2026-11-18T16:15:44" }; m.who.p2 = { by: "pat", iso: "2026-11-18T16:16:20" }; m.ack = { by: "jane", iso: "2026-11-19T18:45:20" }; }
     if (s === "attr-time") { m.who.c3 = { by: "jane", iso: "2026-11-18T16:15:44" }; m.tip = "c3"; }
     return m;
@@ -218,7 +220,7 @@
     const acts = done
       ? `<span class="fstate">${w ? attrLine(verb, w, false, m.tip === id) : lbl}</span><button class="btn link" type="button" ${w && w.by !== "jane" ? `title="You can undo a review made by ${ACT[w.by].role}"` : ""}>Undo</button>`
       : `<button class="btn quiet" type="button" ${m.stale ? "disabled" : ""}>${d.fb}</button><button class="btn quiet" type="button" ${m.stale ? "disabled" : ""}>${isC ? "Mark reviewed" : "Dismiss"}</button>`;
-    return `<div class="fd ${d.g}${done ? " done" : ""}${m.stale ? " stale" : ""}"><div class="fh"><span class="fk">${d.k}</span></div><div class="fq">“${d.q}”</div><div class="fm">${d.m}</div>${done ? "" : `<div class="fx">Suggested: <b>${d.fx}</b></div>`}<div class="fa">${acts}</div></div>`;
+    return `<div class="fd ${d.g}${done ? " done" : ""}${m.stale ? " stale" : ""}"><div class="fh"><span class="fk">${d.k}</span></div><div class="fq">“${d.q}”</div><div class="fm">${d.m}</div>${!done && m.reopen && m.reopen[id] ? `<div class="fm">${attrLine("Reopened", m.reopen[id], false)}</div>` : ""}${done ? "" : `<div class="fx">Suggested: <b>${d.fx}</b></div>`}<div class="fa">${acts}</div></div>`;
   }
   function ckPanel(m, s) {
     const n = ckCounts(m);
@@ -251,8 +253,8 @@
         if (res.length) list += `<details class="resd"${m.openRes ? " open" : ""}><summary>Resolved (${res.length})</summary>${res.map((k) => findingCard(k, m)).join("")}</details>`;
       }
       let ackc = "";
-      if (m.ack && m.ack !== "withdrawn") ackc = `<div class="ackrec"><div>${attrLine("Acknowledged", m.ack, true)}</div><div class="hintrow">2 open findings, for Website. Valid for this version of the post.</div><button class="btn link" type="button" ${go("attr-undo-ack")}>Undo</button></div>`;
-      else if (m.ack === "withdrawn") ackc = `<div class="ackrec none"><div><b>Not acknowledged</b></div><div class="hintrow">2 findings are still open. Acknowledge them before you schedule, email or share.</div></div>`;
+      if (m.ack && m.ack !== "withdrawn") ackc = `<div class="ackrec"><div>${attrLine("Acknowledged", m.ack, true)}</div><div class="hintrow">2 open findings, for Website. Valid for this version of the post.</div><button class="btn link" type="button" ${m.ack.by !== "jane" ? `title="You can undo an acknowledgement made by ${ACT[m.ack.by].role}"` : ""} ${go("attr-undo-ack")}>Undo</button></div>`;
+      else if (m.ack === "withdrawn") ackc = `<div class="ackrec none"><div><b>Not acknowledged</b></div>${m.wd ? `<div class="hintrow">${attrLine("Acknowledgement withdrawn", m.wd, true)}</div>` : ""}<div class="hintrow">2 findings are still open. Acknowledge them before you schedule, email or share.</div></div>`;
       inner = ackc + tabs + list;
     }
     let foot = "";
@@ -312,7 +314,7 @@
     { t: "Holiday office hours", slug: "holiday-office-hours", ch: ["Website", "Social"], when: "Dec 2, 8:30 AM" }
   ];
   const EDITED_AT = "Nov 19, 5:42 PM PT";
-  const HELD_SCENES = ["sched-held", "sched-held-only", "held-edit", "edit-held-saved", "held-recheck", "held-recheck-error", "held-ack", "held-reschedule", "held-reschedule-error", "held-past-time", "list-held"];
+  const HELD_SCENES = ["held-reschedule-cancel", "sched-held", "sched-held-only", "held-edit", "edit-held-saved", "held-recheck", "held-recheck-error", "held-ack", "held-reschedule", "held-reschedule-error", "held-past-time", "list-held"];
   const SCHED_ED = ["edit-scheduled", "edit-warn", "edit-held-saved", "held-edit"];
   const isHeld = (s) => HELD_SCENES.includes(s);
   const origWhen = (s) => (s === "held-past-time" ? "Nov 19, 4:00 PM" : "Nov 24, 9:00 AM");
@@ -332,6 +334,8 @@
     const onlyHeld = s === "sched-held-only";
     const past = s === "held-past-time";
     let rows = SCHED.map((r, i) => Object.assign({}, r, { held: i === 0 && held }));
+    if (s === "held-rescheduled") rows[0].ch = ["Website", "Social"];
+    if (s === "held-rescheduled-cancel") rows[0].ch = ["Website"];
     if (onlyHeld) rows = rows.filter((r) => r.held);
     const nHeld = held ? 1 : 0;
     const tabs = `<div class="fchips"><button type="button" class="${onlyHeld ? "" : "on"}" ${go(held ? "sched-held" : "sched")}>All scheduled <span class="n">${SCHED.length}</span></button><button type="button" class="held ${onlyHeld ? "on" : ""}" ${go(held ? "sched-held-only" : "sched-held-none")}>⏸ Held <span class="n">${nHeld}</span></button></div>`;
@@ -351,20 +355,23 @@
   function heldEmail() {
     return `<div class="ed-top"><button class="btn link" type="button" ${go("sched-held")}>← Scheduled</button><h2>Email to the advisor</h2></div><div class="pvwrap"><div class="mailv"><div class="mh"><b>To:</b> Jane Advisor &lt;jane@example.com&gt;<br><b>From:</b> Your Firm Name &lt;notifications@example.com&gt;<br><b>Subject:</b> Your scheduled post is on hold: ${MINE[2].t}</div>
       <div class="mb"><p>Hi Jane,</p><p>You edited <b>${MINE[2].t}</b> after it was scheduled, so it is on hold and will not send.</p>
-      <p>It was scheduled for <b>Nov 24, 2026, 9:00 AM PT</b> on Website, Email and Social. Edited ${EDITED_AT}.</p>
-      <a class="cta" href="#" onclick="return false">Review held post</a>
-      <div class="ph">Email wording to be supplied. Link address: the firm's own app address, never the FC domain.</div>
-      <p style="font-size:13px;color:#78909c">To send it, check it and schedule it again. Nothing is sent until you do.</p><p>Your Firm Name</p></div>
+      <p>Held:</p><ul style="margin:0 0 12px;padding-left:20px"><li>Website: was scheduled for Nov 24, 2026, 9:00 AM PT</li><li>Email: was scheduled for Nov 24, 2026, 9:00 AM PT</li><li>Social: was scheduled for Nov 24, 2026, 9:00 AM PT</li></ul><p>Edited ${EDITED_AT}.</p>
+      <a class="cta" href="#" ${go("held-edit")}>Review held post</a>
+      <div class="ph">Email wording to be supplied. The button opens this post in the app: My posts, Scheduled, Held, with the post open.</div>
+      <p style="font-size:13px;color:#78909c">Button not working? Copy this address into your browser:<br>app.example.com/my-posts/scheduled/held/9f3c2a</p>
+      <p style="font-size:13px;color:#78909c">To send it, check it and schedule it again. Nothing is sent until you do. If you didn't edit this post, contact support.</p></div>
       <div class="mf">You are getting this because you edited a scheduled post.</div></div></div>`;
   }
   function viewToggle(on) {
     const held = HELD_SCENES.includes(state.s) && state.s !== "list-held";
     return `<div class="seg"><button type="button" class="${on === "all" ? "on" : ""}" ${go("list")}>All</button><button type="button" class="${on === "sched" ? "on" : ""}" ${go("sched")}>Scheduled${held ? ' <span class="hdot"></span>' : ""}</button><button type="button" disabled>Published</button></div>`;
   }
-  function schedChan() {
-    return `<div class="checkline"><input type="checkbox" checked> Website <span class="hintrow" style="margin:0 0 0 4px">${DOM}/news/${MINE[2].slug}</span></div>
+  function schedChan(noSocial) {
+    return `<div class="hintrow" style="margin:0 0 6px">Untick a channel to cancel it. At least one stays ticked.</div>
+      <div class="checkline"><input type="checkbox" checked> Website <span class="hintrow" style="margin:0 0 0 4px">${DOM}/news/${MINE[2].slug}</span></div>
       <div class="checkline"><input type="checkbox" checked> Email: Newsletter (128 contacts)</div>
-      <div class="checkline"><input type="checkbox" checked> Social: LinkedIn and Facebook</div>`;
+      <div class="chnote">Email goes back to Drafts to rebuild. Its text is a snapshot of the old post, so it can't be rescheduled in place.</div>
+      <div class="checkline"><input type="checkbox" ${noSocial ? "" : "checked"}> Social: LinkedIn and Facebook</div>${noSocial ? `<div class="chnote off">Social will be cancelled. It won't be sent.</div>` : ""}`;
   }
   const heldFoot = (back, label, next) => `<button class="btn quiet" type="button" ${go(back)}>Back</button><button class="btn pri" type="button" ${go(next)}>${label}</button>`;
   function heldDlg(s) {
@@ -383,7 +390,11 @@
        <div class="row2"><div class="field"><label>Date</label><input value="Nov 24, 2026"></div><div class="field"><label>Time</label><input value="9:00 AM"></div></div>
        <div class="hintrow" style="margin:-6px 0 12px">Your original date and time are filled in. Change them if you like.</div>${schedChan()}
        <div class="ph">Compliance wording to be supplied by legal.</div>`, heldFoot("held-ack", "Schedule again for Nov 24", "held-rescheduled"));
-    if (s === "held-reschedule-error") return dlg(`Schedule again${stepper(3)}`, sub,
+    if (s === "held-reschedule-cancel") return dlg(`Schedule again${stepper(3)}`, sub,
+        `<div class="alert ok"><b>Checks done</b>You acknowledged 2 findings, Nov 19, 2026, 5:45 PM PT, by Jane Advisor.</div>
+         <div class="row2"><div class="field"><label>Date</label><input value="Nov 24, 2026"></div><div class="field"><label>Time</label><input value="9:00 AM"></div></div>${schedChan(true)}
+         <div class="ph">Compliance wording to be supplied by legal.</div>`, heldFoot("held-ack", "Schedule again for Nov 24", "held-rescheduled-cancel"));
+      if (s === "held-reschedule-error") return dlg(`Schedule again${stepper(3)}`, sub,
       `<div class="alert error"><b>Couldn't schedule it again</b>Your post is still on hold and nothing was sent. Try again in a moment.</div>
        <div class="row2"><div class="field"><label>Date</label><input value="Nov 24, 2026"></div><div class="field"><label>Time</label><input value="9:00 AM"></div></div>${schedChan()}`, heldFoot("held-ack", "Try again", "held-rescheduled"));
     if (s === "held-past-time") return dlg(`Schedule again${stepper(3)}`, sub,
@@ -392,6 +403,16 @@
        <div class="hintrow" style="margin:-6px 0 12px">Suggested: tomorrow at 9:00 AM. The time must be in the future.</div>${schedChan()}
        <div class="ph">Compliance wording to be supplied by legal.</div>`, heldFoot("held-ack", "Schedule for Nov 20", "held-rescheduled"));
     return "";
+  }
+  function resultDlg(s) {
+    POST = MINE[2];
+    const cancel = s === "held-rescheduled-cancel";
+    const row = (c, d, w, cls) => `<div class="ackit ${cls || "ch"}"><span class="tg">${c}</span><div><b>${d}</b><div class="hintrow" style="margin:2px 0 0">${w}</div></div></div>`;
+    const body = `<div class="alert ok"><b>${cancel ? "Scheduled again on Website" : "Scheduled again on Website and Social"}</b>Nov 24, 2026, 9:00 AM. Your post is no longer on hold.</div>
+      ${row("Website", `${DOM}/news/${POST.slug}`, "Scheduled for Nov 24, 9:00 AM")}
+      ${row("Email", "Newsletter: back in Drafts", "Rebuild the email from the post, then schedule it. Nothing was sent.", "drafts")}
+      ${cancel ? row("Social", "LinkedIn and Facebook: cancelled", "You unticked it. It won't be sent.", "off") : row("Social", "LinkedIn and Facebook", "Scheduled for Nov 24, 9:00 AM")}`;
+    return dlg("Scheduled again", POST.t, body, `<button class="btn quiet" type="button" ${go("list")}>Go to Drafts</button><button class="btn pri" type="button" ${go("sched")}>Done</button>`);
   }
   function editWarnDlg() {
     POST = MINE[2];
@@ -545,7 +566,7 @@
       else if (s === "sched-loading") bd = `<div class="card" style="padding:16px">${[1, 2, 3].map(() => `<div class="skel" style="height:56px;margin:0 0 10px"></div>`).join("")}</div>`;
       else if (s === "sched-error") bd = `<div class="errbox"><div class="alert error" style="text-align:left"><b>Couldn't load your scheduled posts</b>Check your connection and try again. Nothing was changed, and nothing was sent.</div><button class="btn pri" type="button" ${go("sched")}>Try again</button></div>`;
       else bd = schedList(s);
-      const ov = s === "held-rescheduled" ? toast("Scheduled again for Nov 24, 9:00 AM on Website, Email and Social.") : (heldDlg(s) ? scrim(heldDlg(s)) : "");
+      const ov = (s === "held-rescheduled" || s === "held-rescheduled-cancel") ? scrim(resultDlg(s)) : (heldDlg(s) ? scrim(heldDlg(s)) : "");
       return frame("content", hd + bd, ov);
     }
     POST = MINE[1]; NOTE = "";

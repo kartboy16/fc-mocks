@@ -234,3 +234,9 @@ mark.mk.old{background:#eceff1;border-bottom:2px dashed #90a4ae}
 .phone .attrfirst .ck .resd{order:-3}
 .phone .attrfirst .fd.done .fm{display:none}
 .phone .attrfirst .ackrec{margin:12px 0}
+/* reschedule notes, result dialog */
+.chnote{font-size:12.5px;color:#8a4b00;background:#fff8e1;border-radius:4px;padding:6px 10px;margin:0 0 8px 24px}
+.chnote.off{color:#455a64;background:#eceff1}
+.ackit.drafts{border-left-color:#ef6c00}
+.ackit.off{border-left-color:#b0bec5;background:#fafafa}
+.role{background:none;padding:0;border-radius:0}
