@@ -1,0 +1,18 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>#1002 Confirm before Log in as: mocks</title>
+<style>body{font:15px/1.55 Roboto,Inter,system-ui,sans-serif;max-width:900px;margin:24px auto;padding:0 16px;color:#2c3e50}a{color:#1976d2}h1{font-size:26px}h2{font-size:20px;margin-top:28px}li{margin:6px 0}.rec{background:#e8f5e9;border:1px solid #a5d6a7;border-radius:8px;padding:10px 12px}.risk{background:#fdecea;border:1px solid #f5c2c0;border-radius:8px;padding:10px 12px}</style></head><body>
+<p><a href="../">All mocks</a></p>
+<h1>Confirm before an alert-email link starts Log in as</h1>
+<p>The #1002 alert email's "Open the campaign" admin link currently starts a Log in as (support) session as the advisor with no confirmation. These mocks add a confirm step. Log in as sessions have full advisor parity, with actions attributed to the support person. Fixtures are fictional (Jane Advisor, Sam Support, Your Firm Name, example.com). Pages work at desktop and 390.</p>
+<p class="risk"><strong>Risk: medium.</strong> The confirm must be enforced before the session starts, not only hidden in the UI.</p>
+<p class="rec"><strong>Recommended: A.</strong> One extra click, and it works on a phone. The admin sees who and what before anything starts, and View only is one tap away.</p>
+<h2>Directions</h2>
+<ul>
+<li><a href="a-modal.html"><b>A. Modal confirm on Email Campaigns (recommended)</b></a> · <a href="a-modal.html?s=confirm">Confirm</a> · <a href="a-modal.html?s=started">Continue</a> · <a href="a-modal.html?s=cancel">Cancel</a> · <a href="a-modal.html?s=view">View only</a> · <a href="a-modal.html?s=missing">Missing campaign</a> · <a href="a-modal.html?s=noadv">Missing advisor</a></li>
+<li><a href="b-page.html"><b>B. Full-page confirm with more detail</b></a> · <a href="b-page.html?s=confirm">Confirm</a> · <a href="b-page.html?s=started">Continue</a> · <a href="b-page.html?s=cancel">Cancel</a> · <a href="b-page.html?s=view">View only</a> · <a href="b-page.html?s=missing">Missing campaign</a> · <a href="b-page.html?s=noadv">Missing advisor</a></li>
+<li><a href="c-view-first.html"><b>C. Land in view only, Log in as on demand</b></a> · <a href="c-view-first.html?s=view">View only</a> · <a href="c-view-first.html?s=confirm">Log in as confirm</a> · <a href="c-view-first.html?s=started">Continue</a> · <a href="c-view-first.html?s=cancel">Cancel</a> · <a href="c-view-first.html?s=missing">Missing campaign</a> · <a href="c-view-first.html?s=noadv">Missing advisor</a></li>
+</ul>
+<p><a href="build-contract.html">Build contract</a> · <a href="build-contract.md">.md</a></p>
+<h2>Open questions for Alex</h2>
+<ol><li>Pick A, B or C.</li><li>Is View only read only for an admin, and is that already allowed today without a session? (Assumed yes. If not, drop View only from A and B.)</li><li>Where should Cancel land: the Advisors list (assumed) or the previous page?</li></ol>
+</body></html>
