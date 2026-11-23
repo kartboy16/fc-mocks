@@ -150,6 +150,54 @@ This is on top of the Direction A total above (12–18.5 h); it reuses A’s con
 2. Who may see the tool: both support and admin (assumed), or admin only?
 3. Should resolved requests stay listed (assumed: 30 days, then hidden)?
 
+## Addition: Reconnect (Direction A, separate pick)
+Alex, Nov 23, 12:05 AM PT (via Chief of Staff): “Why wouldn’t we allow reconnect? What if something weird breaks and they need to reconnect.” This addition is separate from the support/admin tool above and needs its own pick. It extends Direction A only.
+
+**Mock:** `a-inline.html?s=` `connected` (now shows Reconnect), `rc-url`, `rc-wp` (`v=login` too), `rc-connecting` (`p=1..4`), `rc-done`, `rc-fail` (default: approval not completed; `v=test`: new approval didn’t pass our check). Add `&phone=1` for 390.
+
+### Behaviour
+- The Connect card is hidden once connected, so the Connected status gets a small text link **Reconnect**, after View my news page, Done and Disconnect website (secondary). Disconnect and the other Connected controls are unchanged.
+- Reconnect reruns the same card and flow and **shows which website it is connecting to** (example-advisor.ca, Your Firm Name, Jane Advisor). The address is fixed, not editable. To use a different website the advisor disconnects first.
+- **Delivery mode stays the same.** Reconnect never changes how news is delivered (`setWebsiteDelivery` is not touched).
+- **The stored password is replaced only after a successful approval and check.** The new application password is held as pending, never overwriting the current one. It is promoted (replacing the old one, then revoking the old one in WordPress where possible) only after approval and the login check and test post succeed. Any failure, rejection, cancel, timeout or browser close **discards the pending one and leaves the existing credentials, status and Connected state untouched**. The mock never implies the password was overwritten: the failed state keeps the Connected badge and a “Current connection … still working” row.
+- While reconnecting, the current connection keeps publishing. The server rule is only re-applied if missing, with a backup first, exactly as in the main flow; a failed rule step restores the backup.
+- The reconnect state is per advisor/website and idempotent: a second click or tab joins the running job.
+
+### Screens and states
+| Scene | State |
+| --- | --- |
+| `connected` | Connected status with Reconnect link (desktop and 390). |
+| `rc-url` | Reconnect card: site shown (read-only row with Connected badge), **Reconnect** and **Cancel**, note that delivery is unchanged and the current connection keeps working. |
+| `rc-wp` | WordPress screen (context), same as the first connect. |
+| `rc-connecting` | Four steps as before; “Your current connection stays active until this finishes.” |
+| `rc-done` | Success: “Your website is reconnected”, updated time (Nov 23, 12:10 AM PT), Backup saved; still Connected. |
+| `rc-fail` | Failure with “Your existing connection is unchanged”, current connection row (Connected, still working), **Try again**, **Cancel**, Contact support. Two causes: approval not completed (including Reject), or the check failed after approval (`v=test`, shows the steps with the test post failed). |
+| Cancel | From `rc-url` or `rc-fail`, returns to the Connected status with nothing changed. |
+
+### Copy
+Link: **Reconnect**. Card title: **Reconnect your website**; row label “Reconnecting this website”. Note: “News delivery stays the same. Your current connection keeps working until the new approval succeeds.” Success: **Your website is reconnected**, “The new approval replaced the old one. FinancialContent can still publish to the news page on example-advisor.ca, and news delivery is unchanged.” Failure: **We couldn’t reconnect your website** / **We couldn’t finish reconnecting**; chip “Your existing connection is unchanged”; “The approval in WordPress wasn’t completed. Your website is still connected and publishing as before.” / “The new approval didn’t pass our check, so we didn’t use it. Your website is still connected and publishing as before.” Buttons: **Try again**, **Cancel**, **Contact support**.
+
+### In / out of scope
+**In:** Reconnect link on Connected; rerun of the card with the site shown; pending-then-promote credential handling; the five states above; 1280 and 390; tests that every failure and cancel path leaves the old credential and status unchanged.
+**Out of scope:** changing delivery mode; switching to a different website (disconnect first); the support/admin tool; automatic reconnect or health monitoring; Wix, Squarespace and other platforms.
+
+### Desktop vs mobile
+Same as the main flow. At 390 the Reconnect link sits as a centered text link under the stacked buttons; the site row, stepper and buttons stack full width at 44px.
+
+### Agent-time delta for Reconnect (real agent hours, cloud build + FC Tester + fix loop)
+| Part | Hours |
+| --- | --- |
+| Server: reconnect start reusing the connect job, pending credential then promote or discard, revoke old, idempotency | 1–1.75 |
+| UI: link, rerun card with site, success and failure states, 390 | 0.75–1.25 |
+| FC Tester (success, reject, check failed, cancel, credentials untouched) | 1–1.5 |
+| Fix loop | 0.5–1 |
+| **Delta total** | **3.25–5.5 h** |
+
+The prior Direction A total (12–18.5 h) still holds and does not include Reconnect. The support/admin tool (7.75–12.75 h) is a separate pick; if both are picked they share the connect job, so allow roughly 1 h less than the sum.
+
+### Assumptions (Reconnect)
+The pending-then-promote rule goes slightly beyond “replace only after approval”: it also requires the login check and test post to pass. Old application password is revoked in WordPress best-effort. The site address can’t be edited during Reconnect.
+
 ## Open questions
 1. Is the test post created as a private draft and deleted, or published and removed? (Assumed: created and removed; it must never be visible on the live news page for long.)
 2. Which sites count as hosted by us: all Cloudways apps in our account, or only those with a matching domain record? How is a domain with `www` or a redirect matched?

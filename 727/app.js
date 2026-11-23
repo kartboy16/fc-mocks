@@ -8,10 +8,12 @@
     ["err-domain", "Not hosted by us"], ["err-apppw", "App passwords off"], ["err-reject", "Rejected"],
     ["err-role", "Not admin/editor"], ["err-test", "Test post failed"]
   ];
+  var RC = [["rc-url", "R1 Reconnect card"], ["rc-wp", "R2 WordPress approve"], ["rc-connecting", "R3 Reconnecting"], ["rc-done", "R4 Reconnected"], ["rc-fail", "R5 Failed, unchanged"]];
   var DIRS = { a: "A Inline card", b: "B Guided page", c: "C Modal" };
   var FILES = { a: "a-inline.html", b: "b-wizard.html", c: "c-modal.html" };
   var STEPS = ["Your website", "Approve", "Connecting", "Connected"];
   var PLIST = ["Checking your website login", "Saving a backup of your website", "Allowing FinancialContent to post", "Publishing a test post"];
+  function isRc(s) { return s.indexOf("rc-") === 0; }
   var S = { dir: "a", s: "url", dev: "desk", v: "", p: 2 };
 
   function $(id) { return document.getElementById(id); }
@@ -24,6 +26,11 @@
     }).join("") + '</div>';
   }
   function stepInfo(s) {
+    if (s === "rc-url") return { cur: 0, fail: -1, n: 1 };
+    if (s === "rc-wp") return { cur: 1, fail: -1, n: 2 };
+    if (s === "rc-connecting") return { cur: 2, fail: -1, n: 3 };
+    if (s === "rc-done") return { cur: 4, fail: -1, n: 4 };
+    if (s === "rc-fail") return { cur: 1, fail: S.v === "test" ? 3 : 1, n: 2 };
     if (s === "url") return { cur: 0, fail: -1, n: 1 };
     if (s === "wp") return { cur: 1, fail: -1, n: 2 };
     if (s === "connecting") return { cur: 2, fail: -1, n: 3 };
@@ -64,7 +71,7 @@
     return '<div class="' + (big ? "big" : "res") + '"><div class="rico ok">✓</div><div><h3>' + (big ? "" : "") + 'Your website is connected</h3>' +
       '<p>FinancialContent can now publish your posts to the news page on ' + SITE + '. We published a test post and removed it again.</p>' +
       '<div class="facts"><div>Website<b>' + SITE + '</b></div><div>Connected<b>Nov 19, 11:24 AM PT</b></div><div>Backup<b>Saved</b></div></div>' +
-      '<div class="acts"><a class="btn pri" href="#" onclick="return false">View my news page</a><button class="btn quiet" type="button" onclick="FC.go(\'url\')">Done</button><button class="btn link" type="button">Disconnect website</button></div></div></div>';
+      '<div class="acts"><a class="btn pri" href="#" onclick="return false">View my news page</a><button class="btn quiet" type="button" onclick="FC.go(\'url\')">Done</button><button class="btn link" type="button">Disconnect website</button>' + (S.dir === "a" ? '<button class="btn link" type="button" onclick="FC.go(\'rc-url\')">Reconnect</button>' : "") + '</div></div></div>';
   }
 
   var ERR = {
@@ -98,14 +105,14 @@
     var login = S.v === "login";
     var inner;
     if (login) {
-      inner = '<div class="wplogin"><div class="wlogo">W</div><div class="wpbox"><label>Username or Email Address</label><input value="jane.advisor" aria-label="Username"><label>Password</label><input type="password" value="••••••••••" aria-label="Password"><button class="wpbtn p" type="button" onclick="FC.go(\'wp\',\'\')">Log In</button><div style="clear:both"></div></div><p class="small" style="margin-top:16px;color:#50575e">Lost your password?</p></div>';
+      inner = '<div class="wplogin"><div class="wlogo">W</div><div class="wpbox"><label>Username or Email Address</label><input value="jane.advisor" aria-label="Username"><label>Password</label><input type="password" value="••••••••••" aria-label="Password"><button class="wpbtn p" type="button" onclick="FC.go(\'' + S.s + '\',\'\')">Log In</button><div style="clear:both"></div></div><p class="small" style="margin-top:16px;color:#50575e">Lost your password?</p></div>';
     } else {
       inner = '<div class="wpbar"><span class="wl">W</span><span>Your Firm Name</span><span class="sp"></span><span>Howdy, Jane Advisor</span></div><div class="wpbody"><div class="wpside"><div>Dashboard</div><div>Posts</div><div>Media</div><div>Pages</div><div>Users</div><div class="on">Profile</div><div>Settings</div></div>' +
         '<div class="wpmain"><div class="wpbox"><h1>Authorize Application</h1>' +
         '<p>Howdy, <strong>Jane Advisor</strong>! An application would like to connect to your account on <strong>Your Firm Name</strong>.</p>' +
         '<p><strong>FinancialContent</strong> would like to connect. Would you like to give it access to your account? You should only do this if you trust it.</p>' +
         '<p class="small">Approving creates an application password named <code>FinancialContent</code>. You can revoke it at any time from your profile. You will be sent back to FinancialContent after approving.</p>' +
-        '<p style="margin-top:18px"><button class="wpbtn p b" type="button" onclick="FC.go(\'connecting\',\'\',1)">Yes, I approve of this connection</button> <button class="wpbtn b" type="button" onclick="FC.go(\'err-reject\')">No, I do not approve of this connection</button></p></div></div></div>';
+        '<p style="margin-top:18px"><button class="wpbtn p b" type="button" onclick="FC.go(\'' + (isRc(S.s) ? 'rc-connecting' : 'connecting') + '\',\'\',1)">Yes, I approve of this connection</button> <button class="wpbtn b" type="button" onclick="FC.go(\'' + (isRc(S.s) ? 'rc-fail' : 'err-reject') + '\')">No, I do not approve of this connection</button></p></div></div></div>';
     }
     return '<div class="ctxlab"><span class="pill">WORDPRESS</span>WordPress screen (context)</div><div class="bw"><div class="browser"><div class="bbar"><span class="dots"><i></i><i></i><i></i></span><span class="url">https://' + SITE + (login ? '/wp-login.php?redirect_to=…authorize-application.php' : '/wp-admin/authorize-application.php?app_name=FinancialContent') + '</span></div><div class="wpa">' + inner + '</div></div></div>';
   }
@@ -125,7 +132,35 @@
   }
 
   /* ---------- Direction A: inline card + stepper ---------- */
+  function renderRc() {
+    var s = S.s, i = stepInfo(s);
+    var site = '<div class="mc" style="margin:0 0 14px"><div class="grow"><small>Reconnecting this website</small><b style="font-size:16px">' + SITE + '</b><small>Your Firm Name · Jane Advisor</small></div><span class="badge g">Connected</span></div>';
+    var keep = '<p class="fhelp">News delivery stays the same. Your current connection keeps working until the new approval succeeds.</p>';
+    var title = s === "rc-done" ? "Website connection" : "Reconnect your website";
+    var body;
+    if (s === "rc-url") {
+      body = site + '<div class="acts" style="margin-top:0"><button class="btn pri" type="button" onclick="FC.go(\'rc-wp\')">Reconnect</button><button class="btn quiet" type="button" onclick="FC.go(\'connected\')">Cancel</button></div>' + keep;
+    } else if (s === "rc-connecting") {
+      body = site + '<div class="okline">✓ Approved in WordPress by Jane Advisor</div>' + plist(Math.min(4, Math.max(1, S.p)), 0) + '<p class="fhelp">Keep this page open. Your current connection stays active until this finishes.</p>';
+    } else if (s === "rc-done") {
+      body = '<div class="res"><div class="rico ok">✓</div><div><h3>Your website is reconnected</h3><p>The new approval replaced the old one. FinancialContent can still publish to the news page on ' + SITE + ', and news delivery is unchanged.</p>' +
+        '<div class="facts"><div>Website<b>' + SITE + '</b></div><div>Reconnected<b>Nov 23, 12:10 AM PT</b></div><div>Backup<b>Saved</b></div></div>' +
+        '<div class="acts"><a class="btn pri" href="#" onclick="return false">View my news page</a><button class="btn quiet" type="button" onclick="FC.go(\'connected\')">Done</button></div></div></div>';
+    } else {
+      var t = S.v === "test";
+      body = '<div class="res"><div class="rico warn">!</div><div><h3>' + (t ? "We couldn’t finish reconnecting" : "We couldn’t reconnect your website") + '</h3>' +
+        '<div class="nochg">✓ Your existing connection is unchanged</div>' +
+        '<p>' + (t ? "The new approval didn’t pass our check, so we didn’t use it. " : "The approval in WordPress wasn’t completed. ") + 'Your website is still connected and publishing as before.</p>' +
+        (t ? plist(4, 4) : "") +
+        '<div class="mc" style="max-width:620px"><div class="grow"><small>Current connection</small><b>' + SITE + '</b><small>Connected Nov 19, 11:24 AM PT · still working</small></div><span class="badge g">Connected</span></div>' +
+        '<div class="acts"><button class="btn pri" type="button" onclick="FC.go(\'rc-wp\')">Try again</button><button class="btn quiet" type="button" onclick="FC.go(\'connected\')">Cancel</button><a class="btn link" href="' + MAIL + '">Contact support</a></div></div></div>';
+    }
+    var badge = s === "rc-connecting" ? '<span class="badge b">Reconnecting…</span>' : '<span class="badge g">Connected</span>';
+    var head = '<div class="status"><div class="grow"><h2>' + title + '</h2><p class="sub" style="margin-bottom:0">' + SITE + '</p></div>' + badge + '</div><div style="height:16px"></div>';
+    return shell('<div class="card pad">' + head + (s === "rc-done" ? "" : stepper(i.cur, i.fail)) + body + '</div>');
+  }
   function renderA() {
+    if (isRc(S.s)) return renderRc();
     var s = S.s, i = stepInfo(s);
     var badge = s === "connected" ? '<span class="badge g">Connected</span>' : s === "connecting" ? '<span class="badge b">Connecting…</span>' : '<span class="badge n">Not connected</span>';
     var head = '<div class="status"><div class="grow"><h2>' + (s === "connected" ? "Website connection" : "Connect your website") + '</h2><p class="sub" style="margin-bottom:0">' +
@@ -185,15 +220,17 @@
     h += ' · <a href="build-contract.html">Contract</a><span class="sp"></span>';
     h += '<button type="button" data-k="dev:desk" onclick="FC.dev(\'desk\')">Desktop</button><button type="button" data-k="dev:phone" onclick="FC.dev(\'phone\')">390</button><span class="gap"></span>';
     h += SCENES.map(function (x) { return '<button type="button" data-k="s:' + x[0] + '" onclick="FC.go(\'' + x[0] + '\')">' + x[1] + '</button>'; }).join("");
+    if (S.dir === "a") h += '<span class="gap"></span>' + RC.map(function (x) { return '<button type="button" data-k="s:' + x[0] + '" onclick="FC.go(\'' + x[0] + '\')">' + x[1] + '</button>'; }).join("");
+    if (S.s === "rc-fail") h += '<span class="gap"></span><button type="button" data-k="v:" onclick="FC.go(\'rc-fail\',\'\')">Not approved</button><button type="button" data-k="v:test" onclick="FC.go(\'rc-fail\',\'test\')">Check failed</button>';
     if (S.s === "url") h += '<span class="gap"></span>' + [["filled", "Filled"], ["empty", "Empty"], ["invalid", "Invalid"], ["checking", "Checking"]].map(function (x) { return '<button type="button" data-k="v:' + x[0] + '" onclick="FC.go(\'url\',\'' + x[0] + '\')">' + x[1] + '</button>'; }).join("");
-    if (S.s === "wp") h += '<span class="gap"></span><button type="button" data-k="v:" onclick="FC.go(\'wp\',\'\')">Approve screen</button><button type="button" data-k="v:login" onclick="FC.go(\'wp\',\'login\')">Login first</button>';
-    if (S.s === "connecting") h += '<span class="gap"></span>' + [1, 2, 3, 4].map(function (n) { return '<button type="button" data-k="p:' + n + '" onclick="FC.go(\'connecting\',\'\',' + n + ')">Step ' + n + '</button>'; }).join("");
+    if (S.s === "wp" || S.s === "rc-wp") h += '<span class="gap"></span><button type="button" data-k="v:" onclick="FC.go(\'' + S.s + '\',\'\')">Approve screen</button><button type="button" data-k="v:login" onclick="FC.go(\'' + S.s + '\',\'login\')">Login first</button>';
+    if (S.s === "connecting" || S.s === "rc-connecting") h += '<span class="gap"></span>' + [1, 2, 3, 4].map(function (n) { return '<button type="button" data-k="p:' + n + '" onclick="FC.go(\'' + S.s + '\',\'\',' + n + ')">Step ' + n + '</button>'; }).join("");
     return h;
   }
   function render() {
-    var inner = S.s === "wp" ? wpScreen() : S.dir === "b" ? renderB() : S.dir === "c" ? renderC() : renderA();
+    var inner = S.s === "wp" || S.s === "rc-wp" ? wpScreen() : S.dir === "b" ? renderB() : S.dir === "c" ? renderC() : renderA();
     $("bar").innerHTML = bar();
-    $("root").innerHTML = '<div class="stagewrap"><div id="stage" class="' + S.dev + (S.s === 'wp' ? ' wps' : '') + '">' + inner + '</div></div>';
+    $("root").innerHTML = '<div class="stagewrap"><div id="stage" class="' + S.dev + (S.s === 'wp' || S.s === 'rc-wp' ? ' wps' : '') + '">' + inner + '</div></div>';
     Array.prototype.forEach.call(document.querySelectorAll("#bar button[data-k]"), function (b) {
       var k = b.getAttribute("data-k").split(":"), on = false;
       if (k[0] === "dev") on = S.dev === k[1];
@@ -208,12 +245,12 @@
     var q = new URLSearchParams();
     q.set("s", S.s);
     if (S.v) q.set("v", S.v);
-    if (S.s === "connecting" && S.p !== 2) q.set("p", S.p);
+    if ((S.s === "connecting" || S.s === "rc-connecting") && S.p !== 2) q.set("p", S.p);
     if (S.dev === "phone") q.set("phone", "1");
     history.replaceState(null, "", "?" + q.toString());
   }
   window.FC = {
-    go: function (s, v, p) { S.s = s; S.v = v || ""; if (p) S.p = p; else if (s !== "connecting") S.p = 2; sync(); render(); window.scrollTo(0, 0); },
+    go: function (s, v, p) { S.s = s; S.v = v || ""; if (p) S.p = p; else if (s !== "connecting" && s !== "rc-connecting") S.p = 2; sync(); render(); window.scrollTo(0, 0); },
     dev: function (d) { S.dev = d; sync(); render(); },
     connect: function () {
       var el = $("u"), val = (el && el.value || "").trim();
@@ -225,7 +262,7 @@
       var q = new URLSearchParams(location.search);
       S.dir = o.dir;
       var s = q.get("s");
-      if (SCENES.some(function (x) { return x[0] === s; })) S.s = s;
+      if (SCENES.concat(RC).some(function (x) { return x[0] === s; })) S.s = s;
       S.v = q.get("v") || "";
       S.p = Number(q.get("p")) || 2;
       S.dev = q.has("phone") || q.get("dev") === "phone" ? "phone" : "desk";

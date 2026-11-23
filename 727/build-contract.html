@@ -319,6 +319,98 @@ Copy (advisor): “We got your request for example-advisor.ca. Our team will con
 <li>Who may see the tool: both support and admin (assumed), or admin only?</li>
 <li>Should resolved requests stay listed (assumed: 30 days, then hidden)?</li>
 </ol>
+<h2>Addition: Reconnect (Direction A, separate pick)</h2>
+<p>Alex, Nov 23, 12:05 AM PT (via Chief of Staff): “Why wouldn’t we allow reconnect? What if something weird breaks and they need to reconnect.” This addition is separate from the support/admin tool above and needs its own pick. It extends Direction A only.</p>
+<p><strong>Mock:</strong> <code>a-inline.html?s=</code> <code>connected</code> (now shows Reconnect), <code>rc-url</code>, <code>rc-wp</code> (<code>v=login</code> too), <code>rc-connecting</code> (<code>p=1..4</code>), <code>rc-done</code>, <code>rc-fail</code> (default: approval not completed; <code>v=test</code>: new approval didn’t pass our check). Add <code>&amp;phone=1</code> for 390.</p>
+<h3>Behaviour</h3>
+<ul>
+<li>The Connect card is hidden once connected, so the Connected status gets a small text link <strong>Reconnect</strong>, after View my news page, Done and Disconnect website (secondary). Disconnect and the other Connected controls are unchanged.</li>
+<li>Reconnect reruns the same card and flow and <strong>shows which website it is connecting to</strong> (example-advisor.ca, Your Firm Name, Jane Advisor). The address is fixed, not editable. To use a different website the advisor disconnects first.</li>
+<li><strong>Delivery mode stays the same.</strong> Reconnect never changes how news is delivered (<code>setWebsiteDelivery</code> is not touched).</li>
+<li><strong>The stored password is replaced only after a successful approval and check.</strong> The new application password is held as pending, never overwriting the current one. It is promoted (replacing the old one, then revoking the old one in WordPress where possible) only after approval and the login check and test post succeed. Any failure, rejection, cancel, timeout or browser close <strong>discards the pending one and leaves the existing credentials, status and Connected state untouched</strong>. The mock never implies the password was overwritten: the failed state keeps the Connected badge and a “Current connection … still working” row.</li>
+<li>While reconnecting, the current connection keeps publishing. The server rule is only re-applied if missing, with a backup first, exactly as in the main flow; a failed rule step restores the backup.</li>
+<li>The reconnect state is per advisor/website and idempotent: a second click or tab joins the running job.</li>
+</ul>
+<h3>Screens and states</h3>
+<table>
+<thead>
+<tr>
+<th>Scene</th>
+<th>State</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>connected</code></td>
+<td>Connected status with Reconnect link (desktop and 390).</td>
+</tr>
+<tr>
+<td><code>rc-url</code></td>
+<td>Reconnect card: site shown (read-only row with Connected badge), <strong>Reconnect</strong> and <strong>Cancel</strong>, note that delivery is unchanged and the current connection keeps working.</td>
+</tr>
+<tr>
+<td><code>rc-wp</code></td>
+<td>WordPress screen (context), same as the first connect.</td>
+</tr>
+<tr>
+<td><code>rc-connecting</code></td>
+<td>Four steps as before; “Your current connection stays active until this finishes.”</td>
+</tr>
+<tr>
+<td><code>rc-done</code></td>
+<td>Success: “Your website is reconnected”, updated time (Nov 23, 12:10 AM PT), Backup saved; still Connected.</td>
+</tr>
+<tr>
+<td><code>rc-fail</code></td>
+<td>Failure with “Your existing connection is unchanged”, current connection row (Connected, still working), <strong>Try again</strong>, <strong>Cancel</strong>, Contact support. Two causes: approval not completed (including Reject), or the check failed after approval (<code>v=test</code>, shows the steps with the test post failed).</td>
+</tr>
+<tr>
+<td>Cancel</td>
+<td>From <code>rc-url</code> or <code>rc-fail</code>, returns to the Connected status with nothing changed.</td>
+</tr>
+</tbody>
+</table>
+<h3>Copy</h3>
+<p>Link: <strong>Reconnect</strong>. Card title: <strong>Reconnect your website</strong>; row label “Reconnecting this website”. Note: “News delivery stays the same. Your current connection keeps working until the new approval succeeds.” Success: <strong>Your website is reconnected</strong>, “The new approval replaced the old one. FinancialContent can still publish to the news page on example-advisor.ca, and news delivery is unchanged.” Failure: <strong>We couldn’t reconnect your website</strong> / <strong>We couldn’t finish reconnecting</strong>; chip “Your existing connection is unchanged”; “The approval in WordPress wasn’t completed. Your website is still connected and publishing as before.” / “The new approval didn’t pass our check, so we didn’t use it. Your website is still connected and publishing as before.” Buttons: <strong>Try again</strong>, <strong>Cancel</strong>, <strong>Contact support</strong>.</p>
+<h3>In / out of scope</h3>
+<p><strong>In:</strong> Reconnect link on Connected; rerun of the card with the site shown; pending-then-promote credential handling; the five states above; 1280 and 390; tests that every failure and cancel path leaves the old credential and status unchanged.
+<strong>Out of scope:</strong> changing delivery mode; switching to a different website (disconnect first); the support/admin tool; automatic reconnect or health monitoring; Wix, Squarespace and other platforms.</p>
+<h3>Desktop vs mobile</h3>
+<p>Same as the main flow. At 390 the Reconnect link sits as a centered text link under the stacked buttons; the site row, stepper and buttons stack full width at 44px.</p>
+<h3>Agent-time delta for Reconnect (real agent hours, cloud build + FC Tester + fix loop)</h3>
+<table>
+<thead>
+<tr>
+<th>Part</th>
+<th>Hours</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Server: reconnect start reusing the connect job, pending credential then promote or discard, revoke old, idempotency</td>
+<td>1–1.75</td>
+</tr>
+<tr>
+<td>UI: link, rerun card with site, success and failure states, 390</td>
+<td>0.75–1.25</td>
+</tr>
+<tr>
+<td>FC Tester (success, reject, check failed, cancel, credentials untouched)</td>
+<td>1–1.5</td>
+</tr>
+<tr>
+<td>Fix loop</td>
+<td>0.5–1</td>
+</tr>
+<tr>
+<td><strong>Delta total</strong></td>
+<td><strong>3.25–5.5 h</strong></td>
+</tr>
+</tbody>
+</table>
+<p>The prior Direction A total (12–18.5 h) still holds and does not include Reconnect. The support/admin tool (7.75–12.75 h) is a separate pick; if both are picked they share the connect job, so allow roughly 1 h less than the sum.</p>
+<h3>Assumptions (Reconnect)</h3>
+<p>The pending-then-promote rule goes slightly beyond “replace only after approval”: it also requires the login check and test post to pass. Old application password is revoked in WordPress best-effort. The site address can’t be edited during Reconnect.</p>
 <h2>Open questions</h2>
 <ol>
 <li>Is the test post created as a private draft and deleted, or published and removed? (Assumed: created and removed; it must never be visible on the live news page for long.)</li>
