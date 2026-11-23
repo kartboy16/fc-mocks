@@ -73,7 +73,7 @@ Scene switcher in every direction (`?s=`), plus `&phone=1` for 390.
 ## In / out of scope
 **In:** one URL field and Connect on the Website tab; server-side domain match; redirect to the advisor’s WordPress approval page; return handler; four-step connect job (login check, backup, rule, test post); Connected state; the five error states with the actions above; Disconnect; 1280 and 390; generic fixtures; tests for each error path and a failed-rule restore.
 
-**Out of scope:** the onboarding platform detection and branding pull (#724 and the `v1/` mocks); Wix, Squarespace and other platforms; sites we don’t host (they only get the support path); plugin download; changing the PHP or embed methods; a site list or picker; staff queue UI; emailing links to a web person; redesigning the Website tab.
+**Out of scope:** the onboarding platform detection and branding pull (#724 and the `v1/` mocks); Wix, Squarespace and other platforms; sites we don’t host (they only get the support path); plugin download; changing the PHP or embed methods; a site list or picker; the staff queue for onboarding detection (the separate support and admin tool below is its own pick); emailing links to a web person; redesigning the Website tab.
 
 ## Desktop vs mobile
 - **1280:** A: card inside Website → Settings with a horizontal stepper beside the 90px rail. B: full-width page with a centered 600px panel and a top progress bar. C: a 520px centered dialog over the Settings tab.
@@ -92,6 +92,63 @@ Scene switcher in every direction (`?s=`), plus `&phone=1` for 390.
 | **Total** | **12–18.5 h** | **13.5–20.5 h** | **12.5–19.5 h** |
 
 Runs 2 to 4 can run in parallel after run 1; wall-clock for A is roughly 6–9 h. Run 2 has the most risk and should reach staging first with a dry-run mode.
+
+## Addition: support and admin manual setup tool (separate pick)
+Alex, Nov 23, 12:06 AM PT (via Chief of Staff): bring back a manual setup path, but for **support and admin only**. The advisor’s only path stays the Connect card above. Reconnect is coming as a separate addition and is **not** part of this pick.
+
+**Mock:** `support-setup.html` (`?s=queue|req|progress|failed|done|noaccess|adv-requested|adv-progress|adv-failed`, `&phone=1` for 390). Staff scenes use Pat Admin and Sam Support; advisor scenes use Jane Advisor, example-advisor.ca, Your Firm Name.
+
+### Rules
+- **Staff only.** The page, the queue and every server method behind it check the role (support or admin) on the server, not just in the UI. An advisor who opens the URL gets **No access** (`noaccess`) and no data.
+- **No username/password form for advisors, ever.** The old WordPress username and application-password fields are removed from every advisor-facing screen. Advisors see only the Connect card, or a status message when our team is helping (`adv-requested`, `adv-progress`, `adv-failed`). No credential fields, no technical error text, no rule snippets.
+- **Covers:** (1) websites we don’t host; (2) advisors stuck partway through a manual setup. Statuses: **Requested**, **In progress**, **Failed**, plus **Connected** when done.
+- **How a request is created (assumption):** the advisor’s “Email support” or “Contact support” on the Connect card (not hosted, app passwords off, test failed) also opens a request automatically, with the reason. Staff can also open a request for an advisor. Existing half-finished manual setups are listed as “Stuck partway”.
+- **Same job as the Connect card.** The tool runs the same four steps (confirm address, check login, save backup, test post). Servers we host get the same backup-first server rule. For servers we don’t host we **never** change the server: if the test post fails for a missing login header, staff see the rule text to send to the host or web person.
+- **Credentials.** The application password is stored encrypted, never shown again after save and never logged. To replace it, staff paste a new one. Only Save progress and Check login and connect read it, server-side.
+- **Capped lookups.** The queue is paged (default 20, max 50) with `limit`, `skip`/cursor, field projection (advisor name, email, domain, reason, status, updated) and filters by reason and status. Never load all advisors, apps or credentials. The advisor status call returns only their own request status.
+- **Activity log.** Every action (request, start, save login, check, note, email, resolve) records who and when, shown on the request.
+- **Email advisor** opens a prefilled draft for staff to send; the tool never sends mail by itself, and no email link approves or changes anything.
+
+### Screens and states
+| Scene | Who | What |
+| --- | --- | --- |
+| `queue` | Pat Admin | Paged list with filters (All, Not hosted by us, Stuck partway, Requested, In progress, Failed), status badges, Open. At 390 rows stack as cards. |
+| `req` | Sam Support | Requested, not hosted by us. Steps all pending; form empty; note that we can’t change the server; **Start setup**. |
+| `progress` | Sam Support | Stuck partway, In progress. Steps done up to the test post; login saved (masked); **Check login and connect**, Save progress. |
+| `failed` | Sam Support | Failed at test post. Plain reason, last step reached, rule text for the host, **Check login and retry**, Add note, Email advisor. |
+| `done` | Sam Support | Connected. Fields locked; advisor now sees Connected. |
+| `noaccess` | Advisor | Only support and admin can open this page. |
+| `adv-requested` / `adv-progress` / `adv-failed` | Advisor | Connect card replaced by “Our team will set up your website” / “is setting up” / “We’re still working on your website”. Contact support and Cancel request only. |
+
+Empty queue: “No website setup requests.” Loading: skeleton rows. Error loading: “Couldn’t load requests. Try again.” Failed check: the **failed** state keeps the saved login and never half-applies a change; any server-rule change follows the backup-first order above.
+
+### Copy (staff)
+Page title **Website setup requests**; “Visible to support and admin only”; **Manual setup**; “Use this only when the advisor can’t connect on their own. The advisor never sees these fields.”; “We don’t host this website, so we can’t change its server. We’ll check the login and test publishing only.”; **Start setup**, **Save progress**, **Check login and connect**, **Check login and retry**, **Add note**, **Email advisor**; “Saved and encrypted. It can’t be shown again; paste a new one to replace it.”
+Copy (advisor): “We got your request for example-advisor.ca. Our team will connect it for you and email you when it’s done. You don’t need to do anything.”
+
+### In / out of scope
+**In:** staff queue and detail; manual setup form (staff only); not-hosted and stuck-partway cases; requested / in progress / failed / connected; role checks on every method; advisor status messages; removal of the advisor-facing username/password form; activity log; 1280 and 390.
+**Out of scope:** Reconnect (separate addition); Wix, Squarespace and other platforms; changing servers we don’t host; automatic emails; bulk actions; a staff dashboard beyond this queue.
+
+### Desktop vs mobile
+1280: dark admin rail, queue as a table, detail as steps and activity on the left with the form on the right. 390: queue rows as cards, detail stacks (steps, activity, form), full-width 44px buttons.
+
+### Agent-time estimate for the tool (real agent hours: cloud build + FC Tester + fix loop)
+| Part | Hours |
+| --- | --- |
+| Server: role-checked, capped queue and detail methods, request creation from Contact support, save/check/retry reusing the connect job, activity log | 2–3.5 |
+| Advisor card status states, removal of the advisor username/password path | 0.75–1.25 |
+| Admin UI (queue, detail, form, states, 390) | 2–3 |
+| FC Tester (staff vs advisor access, each state, credentials never shown) | 2–3 |
+| Fix loop | 1–2 |
+| **Total** | **7.75–12.75 h** |
+
+This is on top of the Direction A total above (12–18.5 h); it reuses A’s connect job, so it can start after run 3. It is high risk because it handles credentials and can change a website’s server rule on servers we host.
+
+### Open questions (tool)
+1. Do staff also see requests automatically created from Contact support, or only manually opened ones?
+2. Who may see the tool: both support and admin (assumed), or admin only?
+3. Should resolved requests stay listed (assumed: 30 days, then hidden)?
 
 ## Open questions
 1. Is the test post created as a private draft and deleted, or published and removed? (Assumed: created and removed; it must never be visible on the live news page for long.)
