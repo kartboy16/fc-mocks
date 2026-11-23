@@ -198,6 +198,59 @@ The prior Direction A total (12–18.5 h) still holds and does not include Recon
 ### Assumptions (Reconnect)
 The pending-then-promote rule goes slightly beyond “replace only after approval”: it also requires the login check and test post to pass. Old application password is revoked in WordPress best-effort. The site address can’t be edited during Reconnect.
 
+## Addition: Staff opens request (separate pick)
+Alex, Nov 23, 12:32 PM PT (via Chief of Staff): “Add a screen so staff can open a request for an advisor, instead of server-method only.” This sits alongside the support/admin tool and Reconnect above (both already picked; their scenes are unchanged apart from the queue gaining one row, a Source line and the Open request button).
+
+**Mock:** `support-setup.html?s=` `nav`, `new`, `new-search`, `new-picked`, `new-dup`, `new-done`, and `a-inline.html?s=rc-fail&v=sent` (also `v=test-sent`). Add `&phone=1` for 390. Staff scenes use Sam Support (and Pat Admin); fixtures are example addresses only. The `noaccess` scene still applies: an advisor who opens any of these URLs sees no data.
+
+### Alex’s two other choices (where they touch these screens)
+1. **Support nav.** Support has a **Website setup** entry in the staff nav that lands on the queue (`nav`; at 390 it is in the menu). Support sees only Advisor Posts and Website setup; admin sees the fuller nav.
+2. **Failed reconnect opens a request automatically.** On a failed Reconnect, **Contact support** creates a request at once and the card shows **Request sent to support** (`rc-fail&v=sent`; the existing Connected status stays untouched). The queue shows it with Source **Reconnect failed** and reason “Reconnect failed”. No mail client opens. The advisor’s own request-creation uses the same duplicate guard as below: if one is already open for that website, a note is added to it instead and the advisor still sees “Request sent to support”. (The queue fixture row uses a different example advisor and website than the Reconnect card.)
+
+### Screens and states
+| Scene | State |
+| --- | --- |
+| `queue` | **+ Open request** button next to the filters. Each row shows a Source line (Advisor asked for help, Opened by Sam Support, Reconnect failed). |
+| `new` | Empty form: advisor search, other fields disabled until an advisor is picked, **Open request** disabled. |
+| `new-search` | Typed “jane”: 10 results, name, email and firm only, “Showing 1–10 of 37 · Prev · Next”, note that search never loads all advisors. |
+| `new-picked` | Advisor chosen (with **Change**). Website address prefilled from the advisor’s profile and editable; Hosting (Hosted by us / Not hosted by us); reason or note (required); **Notify advisor by email** off by default; **Open request** enabled once the note is filled. |
+| `new-dup` | The advisor already has an open request for that website: **Open request is blocked**, a link **Open existing request**, and **Add a note to the existing request** (textarea + **Add note**). |
+| `new-done` | Back on the queue with “Request opened for Taylor Advisor … The advisor was not notified.” and the new row at the top: Requested, **Source: Opened by Sam Support**. |
+| Empty / loading / error | Search with fewer than 2 letters: hint “Type at least 2 letters.” Loading: skeleton rows. No match: “No advisors match. Check the spelling or try their email.” Error: “Couldn’t search. Try again.” Save error: “Couldn’t open the request. Nothing was saved.” |
+
+### Copy
+Button: **+ Open request**. Title: **Open a setup request**; helper “For an advisor who needs our team’s help connecting their website.” Fields: **Advisor** (“Search by name, email or firm”), **Website address** (“From the advisor’s profile. You can edit it.”), **Hosting** (Hosted by us / Not hosted by us), **Reason or note (required)**, **Notify advisor by email** (“Off by default. When on, the advisor gets a plain ‘our team is helping’ email with no links that change anything.”). Buttons: **Open request**, **Cancel**. Search note: “Search shows 10 at a time and only name, email and firm. It never loads all advisors.” Duplicate: “Sam Advisor already has an open request for example.ca. In progress since Nov 22, 1:32 PM PT, assigned to Sam Support. We keep one open request per advisor and website.” Advisor card after Contact support: “Request sent to support” and “Our team will look at example-advisor.ca and email you. Your existing connection is unchanged.”
+
+### Rules
+- **Staff only, enforced on the server.** Support and admin only, checked in every method. Advisors get no access and no data.
+- **Capped advisor search (server-side).** `limit` fixed at 10 (never client-chosen above 10), `skip` or cursor paging, a minimum query of 2 characters, and **field projection** to advisor ID, name, email and firm only (no credentials, website delivery settings or other fields). The count (“of 37”) comes from a count query on the same filter; the search must never load all advisors, and queries are rate-limited.
+- **Duplicate guard: one open request per advisor + website.** Open means Requested, In progress or Failed. Enforced by a server check and a unique index on (advisor, normalised website) for open requests, so two staff clicking at once can’t create two. A blocked attempt returns the existing request, which the UI links to and lets staff add a note to. Requests from the advisor’s Contact support, the failed Reconnect and staff all use the same guard.
+- **Website address:** prefilled from the advisor’s profile when known and editable; normalised to a domain before the guard check.
+- **Notify advisor** is off by default. If on, one plain email is sent; no email link approves or changes anything.
+- Each request records who opened it and the source (Advisor asked for help, Opened by <staff>, Reconnect failed) in the activity log.
+- Creating a request never changes the advisor’s website, credentials or connection.
+
+### In / out of scope
+**In:** + Open request button; the form and its states; capped advisor search; prefill; duplicate guard and add-note; optional notify; source on queue rows; Website setup nav entry for support; auto-request on failed Reconnect and the “Request sent to support” state; 1280 and 390; role checks and tests (access, cap of 10, projection, duplicate race).
+**Out of scope:** bulk opening; editing an advisor’s profile; opening a request for a user who isn’t an advisor; changing the manual setup form itself; automatic emails beyond the optional notify.
+
+### Desktop vs mobile
+1280: the form is a 720px card; the search list sits under the field; queue is a table. 390: the form is full width with 44px controls; search results stack; the Open request button sits full width above the queue cards; the staff nav is in the menu.
+
+### Agent-time estimate for this addition (real agent hours: cloud build + FC Tester + fix loop)
+| Part | Hours |
+| --- | --- |
+| Server: role-checked capped advisor search, create-request with unique-index duplicate guard, add-note, optional notify email, source field, auto-create from failed Reconnect | 2–3.25 |
+| UI: Open request form and states, search paging, duplicate state, queue source and button, support nav entry, “Request sent to support” on the card, 390 | 1.75–2.75 |
+| FC Tester (support vs admin vs advisor access, search cap and projection, duplicate and race, notify off by default, auto-request) | 1.5–2.5 |
+| Fix loop | 0.75–1.5 |
+| **Total** | **6–10 h** |
+
+It reuses the queue and request model from the support tool, so it is cheapest built with or after it. Separate pick; no earlier estimate changes.
+
+### Recommendation
+Build it with the support tool: staff otherwise can only create requests through a server method, which support can’t use. The duplicate guard is the part to review closely.
+
 ## Open questions
 1. Is the test post created as a private draft and deleted, or published and removed? (Assumed: created and removed; it must never be visible on the live news page for long.)
 2. Which sites count as hosted by us: all Cloudways apps in our account, or only those with a matching domain record? How is a domain with `www` or a redirect matched?

@@ -30,7 +30,7 @@
     if (s === "rc-wp") return { cur: 1, fail: -1, n: 2 };
     if (s === "rc-connecting") return { cur: 2, fail: -1, n: 3 };
     if (s === "rc-done") return { cur: 4, fail: -1, n: 4 };
-    if (s === "rc-fail") return { cur: 1, fail: S.v === "test" ? 3 : 1, n: 2 };
+    if (s === "rc-fail") return { cur: 1, fail: S.v.indexOf("test") === 0 ? 3 : 1, n: 2 };
     if (s === "url") return { cur: 0, fail: -1, n: 1 };
     if (s === "wp") return { cur: 1, fail: -1, n: 2 };
     if (s === "connecting") return { cur: 2, fail: -1, n: 3 };
@@ -147,13 +147,13 @@
         '<div class="facts"><div>Website<b>' + SITE + '</b></div><div>Reconnected<b>Nov 23, 12:10 AM PT</b></div><div>Backup<b>Saved</b></div></div>' +
         '<div class="acts"><a class="btn pri" href="#" onclick="return false">View my news page</a><button class="btn quiet" type="button" onclick="FC.go(\'connected\')">Done</button></div></div></div>';
     } else {
-      var t = S.v === "test";
+      var t = S.v.indexOf("test") === 0, sent = /sent/.test(S.v);
       body = '<div class="res"><div class="rico warn">!</div><div><h3>' + (t ? "We couldn’t finish reconnecting" : "We couldn’t reconnect your website") + '</h3>' +
         '<div class="nochg">✓ Your existing connection is unchanged</div>' +
         '<p>' + (t ? "The new approval didn’t pass our check, so we didn’t use it. " : "The approval in WordPress wasn’t completed. ") + 'Your website is still connected and publishing as before.</p>' +
         (t ? plist(4, 4) : "") +
         '<div class="mc" style="max-width:620px"><div class="grow"><small>Current connection</small><b>' + SITE + '</b><small>Connected Nov 19, 11:24 AM PT · still working</small></div><span class="badge g">Connected</span></div>' +
-        '<div class="acts"><button class="btn pri" type="button" onclick="FC.go(\'rc-wp\')">Try again</button><button class="btn quiet" type="button" onclick="FC.go(\'connected\')">Cancel</button><a class="btn link" href="' + MAIL + '">Contact support</a></div></div></div>';
+        '<div class="acts"><button class="btn pri" type="button" onclick="FC.go(\'rc-wp\')">Try again</button><button class="btn quiet" type="button" onclick="FC.go(\'connected\')">Cancel</button>' + (sent ? '<span class="sent">✓ Request sent to support</span>' : '<button class="btn link" type="button" onclick="FC.go(\'rc-fail\',\'' + (t ? "test-sent" : "sent") + '\')">Contact support</button>') + '</div>' + (sent ? '<p class="fhelp">Our team will look at example-advisor.ca and email you. Your existing connection is unchanged.</p>' : "") + '</div></div>';
     }
     var badge = s === "rc-connecting" ? '<span class="badge b">Reconnecting…</span>' : '<span class="badge g">Connected</span>';
     var head = '<div class="status"><div class="grow"><h2>' + title + '</h2><p class="sub" style="margin-bottom:0">' + SITE + '</p></div>' + badge + '</div><div style="height:16px"></div>';
@@ -221,7 +221,7 @@
     h += '<button type="button" data-k="dev:desk" onclick="FC.dev(\'desk\')">Desktop</button><button type="button" data-k="dev:phone" onclick="FC.dev(\'phone\')">390</button><span class="gap"></span>';
     h += SCENES.map(function (x) { return '<button type="button" data-k="s:' + x[0] + '" onclick="FC.go(\'' + x[0] + '\')">' + x[1] + '</button>'; }).join("");
     if (S.dir === "a") h += '<span class="gap"></span>' + RC.map(function (x) { return '<button type="button" data-k="s:' + x[0] + '" onclick="FC.go(\'' + x[0] + '\')">' + x[1] + '</button>'; }).join("");
-    if (S.s === "rc-fail") h += '<span class="gap"></span><button type="button" data-k="v:" onclick="FC.go(\'rc-fail\',\'\')">Not approved</button><button type="button" data-k="v:test" onclick="FC.go(\'rc-fail\',\'test\')">Check failed</button>';
+    if (S.s === "rc-fail") h += '<span class="gap"></span><button type="button" data-k="v:" onclick="FC.go(\'rc-fail\',\'\')">Not approved</button><button type="button" data-k="v:test" onclick="FC.go(\'rc-fail\',\'test\')">Check failed</button><button type="button" data-k="v:sent" onclick="FC.go(\'rc-fail\',\'sent\')">Request sent</button>';
     if (S.s === "url") h += '<span class="gap"></span>' + [["filled", "Filled"], ["empty", "Empty"], ["invalid", "Invalid"], ["checking", "Checking"]].map(function (x) { return '<button type="button" data-k="v:' + x[0] + '" onclick="FC.go(\'url\',\'' + x[0] + '\')">' + x[1] + '</button>'; }).join("");
     if (S.s === "wp" || S.s === "rc-wp") h += '<span class="gap"></span><button type="button" data-k="v:" onclick="FC.go(\'' + S.s + '\',\'\')">Approve screen</button><button type="button" data-k="v:login" onclick="FC.go(\'' + S.s + '\',\'login\')">Login first</button>';
     if (S.s === "connecting" || S.s === "rc-connecting") h += '<span class="gap"></span>' + [1, 2, 3, 4].map(function (n) { return '<button type="button" data-k="p:' + n + '" onclick="FC.go(\'' + S.s + '\',\'\',' + n + ')">Step ' + n + '</button>'; }).join("");

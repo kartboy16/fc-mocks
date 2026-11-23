@@ -1,7 +1,7 @@
 (function () {
   var SITE = "example-advisor.ca";
   var MAIL = "mailto:jane.advisor@example.com?subject=" + encodeURIComponent("Your website setup") + "&body=" + encodeURIComponent("Hi Jane,\n\nAn update on connecting example-advisor.ca.\n\nSam Support");
-  var SC = [["queue", "Queue"], ["req", "Requested (not hosted)"], ["progress", "In progress (stuck partway)"], ["failed", "Failed"], ["done", "Connected"], ["noaccess", "No access"],
+  var SC = [["queue", "Queue"], ["req", "Requested (not hosted)"], ["progress", "In progress (stuck partway)"], ["failed", "Failed"], ["done", "Connected"], ["noaccess", "No access"], ["nav", "Support nav"], ["new", "Open request"], ["new-search", "Search advisor"], ["new-picked", "Advisor picked"], ["new-dup", "Duplicate blocked"], ["new-done", "Request opened"],
     ["adv-requested", "Advisor: requested"], ["adv-progress", "Advisor: in progress"], ["adv-failed", "Advisor: failed"]];
   var S = { s: "queue", dev: "desk", v: "" };
   var $ = function (i) { return document.getElementById(i); };
@@ -12,6 +12,9 @@
     ["Sam Advisor", "sam.advisor@example.com", "example.ca", "Stuck partway", "p", "In progress", "b", "Nov 22, 1:32 PM PT", "progress"],
     ["Lee Advisor", "lee.advisor@example.com", "example.org", "Stuck partway", "p", "Failed", "r", "Nov 21, 9:05 AM PT", "failed"]
   ];
+  var SRC = ["Advisor asked for help", "Opened by Sam Support", "Advisor asked for help"];
+  var ROW_RC = ["Kim Advisor", "kim.advisor@example.com", "example-kim.ca", "Reconnect failed", "p", "Requested", "n", "Nov 23, 11:48 AM PT", "req", "Reconnect failed"];
+  var ROW_NEW = ["Taylor Advisor", "taylor.advisor@example.com", "example-taylor.ca", "Not hosted by us", "r", "Requested", "n", "Nov 23, 12:40 PM PT", "req", "Opened by Sam Support"];
   function item(state, t, cap) {
     var ic = state === "done" ? "✓" : state === "fail" ? "!" : state === "cur" ? spin : "•";
     return '<li class="' + state + '"><span class="ic">' + ic + '</span>' + t + '<span class="cap">' + (cap || "") + '</span></li>';
@@ -29,14 +32,57 @@
 
   function who(n, role) { return '<div class="who">Signed in as <b>' + n + '</b><span class="role">' + role + '</span><span>Visible to support and admin only</span></div>'; }
 
-  function queue() {
-    var h = who("Pat Admin", "Admin") +
-      '<div class="filters"><span class="fchip on">All (3)</span><span class="fchip">Not hosted by us (1)</span><span class="fchip">Stuck partway (2)</span><span class="fchip">Requested</span><span class="fchip">In progress</span><span class="fchip">Failed</span></div>' +
+  function rowHtml(r, src) {
+    return '<div class="reqrow"><div><b>' + r[0] + '</b><small>' + r[1] + '</small></div><div class="c2">' + r[2] + '</div><div class="c3">' + r[3] + '<small>Source: ' + src + '</small></div><div><span class="badge ' + r[6] + '">' + r[5] + '</span></div><div class="c5"><small style="font-size:12.5px">' + r[7] + '</small></div><div><button class="btn" style="min-height:34px" type="button" onclick="SP.go(\'' + r[8] + '\')">Open</button></div></div>';
+  }
+  function queue(opts) {
+    opts = opts || {};
+    var rows = [[ROW_RC, ROW_RC[9]]].concat(ROWS.map(function (r, k) { return [r, SRC[k]]; }));
+    if (opts.added) rows.unshift([ROW_NEW, ROW_NEW[9]]);
+    var n = rows.length;
+    var h = who(opts.name || "Pat Admin", opts.role || "Admin") +
+      (opts.added ? '<div class="alertb info">✓ Request opened for Taylor Advisor (example-taylor.ca). The advisor was not notified.</div>' : '') +
+      '<div class="toolbar2"><div class="filters" style="margin:0"><span class="fchip on">All (' + n + ')</span><span class="fchip">Not hosted by us</span><span class="fchip">Stuck partway</span><span class="fchip">Requested</span><span class="fchip">In progress</span><span class="fchip">Failed</span></div><button class="btn pri" type="button" onclick="SP.go(\'new\')">+ Open request</button></div>' +
       '<div class="card"><div class="reqrow h"><div>Advisor</div><div>Website</div><div>Reason</div><div>Status</div><div>Updated</div><div></div></div>';
-    h += ROWS.map(function (r) {
-      return '<div class="reqrow"><div><b>' + r[0] + '</b><small>' + r[1] + '</small></div><div class="c2">' + r[2] + '</div><div class="c3">' + r[3] + '</div><div><span class="badge ' + r[6] + '">' + r[5] + '</span></div><div class="c5"><small style="font-size:12.5px">' + r[7] + '</small></div><div><button class="btn" style="min-height:34px" type="button" onclick="SP.go(\'' + r[8] + '\')">Open</button></div></div>';
-    }).join("");
-    return h + '<div class="pager"><span>1–3 of 3 · 20 per page</span><span>‹ Prev · Next ›</span></div></div>';
+    h += rows.map(function (x) { return rowHtml(x[0], x[1]); }).join("");
+    return h + '<div class="pager"><span>1–' + n + ' of ' + n + ' · 20 per page</span><span>‹ Prev · Next ›</span></div></div>';
+  }
+  /* staff opens a request */
+  var ADV = [["Jane Advisor", "jane.advisor@example.com", "Your Firm Name"], ["Janet Sample", "janet.sample@example.com", "Sample Firm One"], ["Jan Example", "jan.example@example.com", "Sample Firm Two"], ["Janice Demo", "janice.demo@example.com", "Sample Firm Three"], ["Jane Test", "jane.test@example.com", "Sample Firm Four"], ["Janelle Sample", "janelle.sample@example.com", "Sample Firm Five"], ["Jana Example", "jana.example@example.com", "Sample Firm Six"], ["Janine Demo", "janine.demo@example.com", "Sample Firm Seven"], ["Janae Test", "janae.test@example.com", "Sample Firm Eight"], ["Janessa Sample", "janessa.sample@example.com", "Sample Firm Nine"]];
+  function newForm(k) {
+    var picked = k === "new-picked" || k === "new-dup";
+    var dup = k === "new-dup";
+    var adv = dup ? ["Sam Advisor", "sam.advisor@example.com", "Your Firm Name"] : ["Taylor Advisor", "taylor.advisor@example.com", "Sample Firm Two"];
+    var site = dup ? "example.ca" : "example-taylor.ca";
+    var search = k === "new-search";
+    var h = who("Sam Support", "Support") + '<button class="btn link back" type="button" onclick="SP.go(\'queue\')">← All requests</button><div class="card pad" style="max-width:720px"><h2>Open a setup request</h2><p class="sub">For an advisor who needs our team’s help connecting their website.</p>';
+    h += '<div class="fld"><label>Advisor</label>';
+    if (picked) h += '<div class="mc" style="margin:0"><div class="grow"><b>' + adv[0] + '</b><small>' + adv[1] + ' · ' + adv[2] + '</small></div><button class="btn link" type="button" onclick="SP.go(\'new\')">Change</button></div>';
+    else h += '<input value="' + (search ? "jane" : "") + '" placeholder="Search by name, email or firm" aria-label="Search advisors">';
+    h += '</div>';
+    if (search) {
+      h += '<div class="pick">' + ADV.map(function (a, n) { return '<div class="pr' + (n === 0 ? " hi" : "") + '" onclick="SP.go(\'new-picked\')"><b>' + a[0] + '</b><small>' + a[1] + ' · ' + a[2] + '</small></div>'; }).join("") +
+        '<div class="pager" style="padding:8px 12px"><span>Showing 1–10 of 37</span><span>‹ Prev · <b>Next ›</b></span></div></div><p class="fhelp">Search shows 10 at a time and only name, email and firm. It never loads all advisors.</p>';
+    } else if (!picked) {
+      h += '<p class="fhelp">Type at least 2 letters. Results show 10 at a time.</p>';
+    }
+    if (dup) {
+      h += '<div class="alertb warn"><b>Sam Advisor already has an open request for example.ca.</b> In progress since Nov 22, 1:32 PM PT, assigned to Sam Support. We keep one open request per advisor and website.<div class="acts" style="margin-top:8px"><button class="btn" type="button" onclick="SP.go(\'progress\')">Open existing request</button></div></div>' +
+        '<div class="fld"><label>Add a note to the existing request</label><textarea rows="3" style="border:1px solid #c4c4c4;border-radius:6px;padding:8px 10px">Advisor phoned again; still can’t publish the test post.</textarea></div><div class="acts" style="margin:0"><button class="btn pri" type="button">Add note</button><button class="btn quiet" type="button" onclick="SP.go(\'queue\')">Cancel</button></div></div>';
+      return h;
+    }
+    var dis = picked ? "" : " disabled";
+    h += '<div class="fld"><label>Website address</label><input value="' + (picked ? "https://" + site : "") + '" placeholder="https://example-advisor.ca"' + dis + '>' + (picked ? '<span class="fhelp" style="margin:2px 0 0">From the advisor’s profile. You can edit it.</span>' : "") + '</div>' +
+      '<div class="fld"><label>Hosting</label><div class="radios2"><label><input type="radio" name="h"' + dis + '> Hosted by us</label><label><input type="radio" name="h"' + (picked ? " checked" : " disabled") + '> Not hosted by us</label></div></div>' +
+      '<div class="fld"><label>Reason or note (required)</label><textarea rows="3" style="border:1px solid #c4c4c4;border-radius:6px;padding:8px 10px"' + dis + ' placeholder="What does the advisor need?">' + (picked ? "Advisor emailed to say the Connect card can’t reach their website." : "") + '</textarea></div>' +
+      '<div class="fld"><label class="tgrow"><span class="tgl' + (picked ? "" : "") + '"></span> Notify advisor by email</label><span class="fhelp" style="margin:0">Off by default. When on, the advisor gets a plain “our team is helping” email with no links that change anything.</span></div>' +
+      '<div class="acts" style="margin:0"><button class="btn pri" type="button"' + (picked ? ' onclick="SP.go(\'new-done\')"' : " disabled") + '>Open request</button><button class="btn quiet" type="button" onclick="SP.go(\'queue\')">Cancel</button></div></div>';
+    return h;
+  }
+  function navScene() {
+    var rail = '<div class="ri"><span class="ico">📄</span>Advisor Posts</div><div class="ri on"><span class="ico">🌐</span>Website setup</div>';
+    return '<div class="app adm"><nav class="rail"><div class="logo">ADMIN<small>Staff only</small></div>' + rail + '</nav><div class="col"><div class="mbar"><button type="button">☰</button><div class="logo" style="height:40px;width:auto;padding:0 8px;margin:0">ADMIN</div><div class="av">SS</div></div>' +
+      '<div class="navdrop"><div class="ri">Advisor Posts</div><div class="ri on">Website setup</div></div><main class="main"><h1 class="page">Website setup requests</h1>' + queue({ name: "Sam Support", role: "Support" }) + '</main></div></div>';
   }
   function head(name, site, reason, st, cls) {
     return '<button class="btn link back" type="button" onclick="SP.go(\'queue\')">← All requests</button>' +
@@ -91,7 +137,10 @@
   }
   function render() {
     var s = S.s, inner;
-    if (s === "queue") inner = shell("Website setup requests", null, queue(), true);
+    if (s === "nav") inner = navScene();
+    else if (s === "new-done") inner = shell("Website setup requests", null, queue({ added: true, name: "Sam Support", role: "Support" }), true);
+    else if (s.indexOf("new") === 0) inner = shell("Open request", null, newForm(s), true);
+    else if (s === "queue") inner = shell("Website setup requests", null, queue(), true);
     else if (s === "noaccess") inner = shell("Website setup requests", null, noaccess(), false);
     else if (s.indexOf("adv-") === 0) inner = adv(s);
     else inner = shell("Website setup", null, detail(s), true);

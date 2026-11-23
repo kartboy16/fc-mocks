@@ -411,6 +411,104 @@ Copy (advisor): “We got your request for example-advisor.ca. Our team will con
 <p>The prior Direction A total (12–18.5 h) still holds and does not include Reconnect. The support/admin tool (7.75–12.75 h) is a separate pick; if both are picked they share the connect job, so allow roughly 1 h less than the sum.</p>
 <h3>Assumptions (Reconnect)</h3>
 <p>The pending-then-promote rule goes slightly beyond “replace only after approval”: it also requires the login check and test post to pass. Old application password is revoked in WordPress best-effort. The site address can’t be edited during Reconnect.</p>
+<h2>Addition: Staff opens request (separate pick)</h2>
+<p>Alex, Nov 23, 12:32 PM PT (via Chief of Staff): “Add a screen so staff can open a request for an advisor, instead of server-method only.” This sits alongside the support/admin tool and Reconnect above (both already picked; their scenes are unchanged apart from the queue gaining one row, a Source line and the Open request button).</p>
+<p><strong>Mock:</strong> <code>support-setup.html?s=</code> <code>nav</code>, <code>new</code>, <code>new-search</code>, <code>new-picked</code>, <code>new-dup</code>, <code>new-done</code>, and <code>a-inline.html?s=rc-fail&amp;v=sent</code> (also <code>v=test-sent</code>). Add <code>&amp;phone=1</code> for 390. Staff scenes use Sam Support (and Pat Admin); fixtures are example addresses only. The <code>noaccess</code> scene still applies: an advisor who opens any of these URLs sees no data.</p>
+<h3>Alex’s two other choices (where they touch these screens)</h3>
+<ol>
+<li><strong>Support nav.</strong> Support has a <strong>Website setup</strong> entry in the staff nav that lands on the queue (<code>nav</code>; at 390 it is in the menu). Support sees only Advisor Posts and Website setup; admin sees the fuller nav.</li>
+<li><strong>Failed reconnect opens a request automatically.</strong> On a failed Reconnect, <strong>Contact support</strong> creates a request at once and the card shows <strong>Request sent to support</strong> (<code>rc-fail&amp;v=sent</code>; the existing Connected status stays untouched). The queue shows it with Source <strong>Reconnect failed</strong> and reason “Reconnect failed”. No mail client opens. The advisor’s own request-creation uses the same duplicate guard as below: if one is already open for that website, a note is added to it instead and the advisor still sees “Request sent to support”. (The queue fixture row uses a different example advisor and website than the Reconnect card.)</li>
+</ol>
+<h3>Screens and states</h3>
+<table>
+<thead>
+<tr>
+<th>Scene</th>
+<th>State</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>queue</code></td>
+<td><strong>+ Open request</strong> button next to the filters. Each row shows a Source line (Advisor asked for help, Opened by Sam Support, Reconnect failed).</td>
+</tr>
+<tr>
+<td><code>new</code></td>
+<td>Empty form: advisor search, other fields disabled until an advisor is picked, <strong>Open request</strong> disabled.</td>
+</tr>
+<tr>
+<td><code>new-search</code></td>
+<td>Typed “jane”: 10 results, name, email and firm only, “Showing 1–10 of 37 · Prev · Next”, note that search never loads all advisors.</td>
+</tr>
+<tr>
+<td><code>new-picked</code></td>
+<td>Advisor chosen (with <strong>Change</strong>). Website address prefilled from the advisor’s profile and editable; Hosting (Hosted by us / Not hosted by us); reason or note (required); <strong>Notify advisor by email</strong> off by default; <strong>Open request</strong> enabled once the note is filled.</td>
+</tr>
+<tr>
+<td><code>new-dup</code></td>
+<td>The advisor already has an open request for that website: <strong>Open request is blocked</strong>, a link <strong>Open existing request</strong>, and <strong>Add a note to the existing request</strong> (textarea + <strong>Add note</strong>).</td>
+</tr>
+<tr>
+<td><code>new-done</code></td>
+<td>Back on the queue with “Request opened for Taylor Advisor … The advisor was not notified.” and the new row at the top: Requested, <strong>Source: Opened by Sam Support</strong>.</td>
+</tr>
+<tr>
+<td>Empty / loading / error</td>
+<td>Search with fewer than 2 letters: hint “Type at least 2 letters.” Loading: skeleton rows. No match: “No advisors match. Check the spelling or try their email.” Error: “Couldn’t search. Try again.” Save error: “Couldn’t open the request. Nothing was saved.”</td>
+</tr>
+</tbody>
+</table>
+<h3>Copy</h3>
+<p>Button: <strong>+ Open request</strong>. Title: <strong>Open a setup request</strong>; helper “For an advisor who needs our team’s help connecting their website.” Fields: <strong>Advisor</strong> (“Search by name, email or firm”), <strong>Website address</strong> (“From the advisor’s profile. You can edit it.”), <strong>Hosting</strong> (Hosted by us / Not hosted by us), <strong>Reason or note (required)</strong>, <strong>Notify advisor by email</strong> (“Off by default. When on, the advisor gets a plain ‘our team is helping’ email with no links that change anything.”). Buttons: <strong>Open request</strong>, <strong>Cancel</strong>. Search note: “Search shows 10 at a time and only name, email and firm. It never loads all advisors.” Duplicate: “Sam Advisor already has an open request for example.ca. In progress since Nov 22, 1:32 PM PT, assigned to Sam Support. We keep one open request per advisor and website.” Advisor card after Contact support: “Request sent to support” and “Our team will look at example-advisor.ca and email you. Your existing connection is unchanged.”</p>
+<h3>Rules</h3>
+<ul>
+<li><strong>Staff only, enforced on the server.</strong> Support and admin only, checked in every method. Advisors get no access and no data.</li>
+<li><strong>Capped advisor search (server-side).</strong> <code>limit</code> fixed at 10 (never client-chosen above 10), <code>skip</code> or cursor paging, a minimum query of 2 characters, and <strong>field projection</strong> to advisor ID, name, email and firm only (no credentials, website delivery settings or other fields). The count (“of 37”) comes from a count query on the same filter; the search must never load all advisors, and queries are rate-limited.</li>
+<li><strong>Duplicate guard: one open request per advisor + website.</strong> Open means Requested, In progress or Failed. Enforced by a server check and a unique index on (advisor, normalised website) for open requests, so two staff clicking at once can’t create two. A blocked attempt returns the existing request, which the UI links to and lets staff add a note to. Requests from the advisor’s Contact support, the failed Reconnect and staff all use the same guard.</li>
+<li><strong>Website address:</strong> prefilled from the advisor’s profile when known and editable; normalised to a domain before the guard check.</li>
+<li><strong>Notify advisor</strong> is off by default. If on, one plain email is sent; no email link approves or changes anything.</li>
+<li>Each request records who opened it and the source (Advisor asked for help, Opened by <staff>, Reconnect failed) in the activity log.</li>
+<li>Creating a request never changes the advisor’s website, credentials or connection.</li>
+</ul>
+<h3>In / out of scope</h3>
+<p><strong>In:</strong> + Open request button; the form and its states; capped advisor search; prefill; duplicate guard and add-note; optional notify; source on queue rows; Website setup nav entry for support; auto-request on failed Reconnect and the “Request sent to support” state; 1280 and 390; role checks and tests (access, cap of 10, projection, duplicate race).
+<strong>Out of scope:</strong> bulk opening; editing an advisor’s profile; opening a request for a user who isn’t an advisor; changing the manual setup form itself; automatic emails beyond the optional notify.</p>
+<h3>Desktop vs mobile</h3>
+<p>1280: the form is a 720px card; the search list sits under the field; queue is a table. 390: the form is full width with 44px controls; search results stack; the Open request button sits full width above the queue cards; the staff nav is in the menu.</p>
+<h3>Agent-time estimate for this addition (real agent hours: cloud build + FC Tester + fix loop)</h3>
+<table>
+<thead>
+<tr>
+<th>Part</th>
+<th>Hours</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Server: role-checked capped advisor search, create-request with unique-index duplicate guard, add-note, optional notify email, source field, auto-create from failed Reconnect</td>
+<td>2–3.25</td>
+</tr>
+<tr>
+<td>UI: Open request form and states, search paging, duplicate state, queue source and button, support nav entry, “Request sent to support” on the card, 390</td>
+<td>1.75–2.75</td>
+</tr>
+<tr>
+<td>FC Tester (support vs admin vs advisor access, search cap and projection, duplicate and race, notify off by default, auto-request)</td>
+<td>1.5–2.5</td>
+</tr>
+<tr>
+<td>Fix loop</td>
+<td>0.75–1.5</td>
+</tr>
+<tr>
+<td><strong>Total</strong></td>
+<td><strong>6–10 h</strong></td>
+</tr>
+</tbody>
+</table>
+<p>It reuses the queue and request model from the support tool, so it is cheapest built with or after it. Separate pick; no earlier estimate changes.</p>
+<h3>Recommendation</h3>
+<p>Build it with the support tool: staff otherwise can only create requests through a server method, which support can’t use. The duplicate guard is the part to review closely.</p>
 <h2>Open questions</h2>
 <ol>
 <li>Is the test post created as a private draft and deleted, or published and removed? (Assumed: created and removed; it must never be visible on the live news page for long.)</li>
