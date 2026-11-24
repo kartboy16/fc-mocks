@@ -9,10 +9,12 @@
     ["err-role", "Not admin/editor"], ["err-test", "Test post failed"]
   ];
   var RC = [["rc-url", "R1 Reconnect card"], ["rc-wp", "R2 WordPress approve"], ["rc-connecting", "R3 Reconnecting"], ["rc-done", "R4 Reconnected"], ["rc-fail", "R5 Failed, unchanged"]];
+  var DC = [["dc-a", "D1 Inline confirm"], ["dc-b", "D2 Modal confirm"], ["dc-c", "D3 Undo toast"], ["dc-done", "D4 Disconnected"]];
   var DIRS = { a: "A Inline card", b: "B Guided page", c: "C Modal" };
   var FILES = { a: "a-inline.html", b: "b-wizard.html", c: "c-modal.html" };
   var STEPS = ["Your website", "Approve", "Connecting", "Connected"];
   var PLIST = ["Checking your website login", "Saving a backup of your website", "Allowing FinancialContent to post", "Publishing a test post"];
+  function isDc(s) { return s.indexOf("dc-") === 0; }
   function isRc(s) { return s.indexOf("rc-") === 0; }
   var S = { dir: "a", s: "url", dev: "desk", v: "", p: 2 };
 
@@ -71,7 +73,7 @@
     return '<div class="' + (big ? "big" : "res") + '"><div class="rico ok">✓</div><div><h3>' + (big ? "" : "") + 'Your website is connected</h3>' +
       '<p>FinancialContent can now publish your posts to the news page on ' + SITE + '. We published a test post and removed it again.</p>' +
       '<div class="facts"><div>Website<b>' + SITE + '</b></div><div>Connected<b>Nov 19, 11:24 AM PT</b></div><div>Backup<b>Saved</b></div></div>' +
-      '<div class="acts"><a class="btn pri" href="#" onclick="return false">View my news page</a><button class="btn quiet" type="button" onclick="FC.go(\'url\')">Done</button><button class="btn link" type="button">Disconnect website</button>' + (S.dir === "a" ? '<button class="btn link" type="button" onclick="FC.go(\'rc-url\')">Reconnect</button>' : "") + '</div></div></div>';
+      '<div class="acts"><a class="btn pri" href="#" onclick="return false">View my news page</a><button class="btn quiet" type="button" onclick="FC.go(\'url\')">Done</button><button class="btn link" type="button"' + (S.dir === "a" ? " onclick=\"FC.go('dc-a')\"" : "") + '>Disconnect website</button>' + (S.dir === "a" ? '<button class="btn link" type="button" onclick="FC.go(\'rc-url\')">Reconnect</button>' : "") + '</div></div></div>';
   }
 
   var ERR = {
@@ -159,7 +161,49 @@
     var head = '<div class="status"><div class="grow"><h2>' + title + '</h2><p class="sub" style="margin-bottom:0">' + SITE + '</p></div>' + badge + '</div><div style="height:16px"></div>';
     return shell('<div class="card pad">' + head + (s === "rc-done" ? "" : stepper(i.cur, i.fail)) + body + '</div>');
   }
+  var PREV = "Embed on your page";
+  function dcList() {
+    return '<ul class="hl" style="margin:0 0 14px">' +
+      '<li><span class="n">•</span><div>Posts stop going to the news page on ' + SITE + '.</div></li>' +
+      '<li><span class="n">•</span><div>Posts already published stay on your website.</div></li>' +
+      '<li><span class="n">•</span><div>Delivery goes back to your previous method: <b>' + PREV + '</b>.</div></li>' +
+      '<li><span class="n">•</span><div>You can reconnect any time.</div></li></ul>' +
+      (S.v === "sched" ? '<div class="alertb warn"><b>2 scheduled posts</b> were going to your news page (Nov 24, 9:00 AM PT and Nov 26, 9:00 AM PT). They will be delivered by ' + PREV + ' instead.</div>' : "") +
+      (S.v === "err" ? '<div class="alertb bad"><b>We couldn’t disconnect your website.</b> It is still connected and publishing as before. Nothing was changed. Try again.</div>' : "");
+  }
+  function connectedCard() {
+    return '<div class="card pad"><div class="status"><div class="grow"><h2>Website connection</h2><p class="sub" style="margin-bottom:0">' + SITE + '</p></div><span class="badge g">Connected</span></div><div style="height:16px"></div>' + connectedBody(false) + '</div>';
+  }
+  function renderDc() {
+    var s = S.s;
+    if (s === "dc-a") {
+      var retry = S.v === "err";
+      return shell('<div class="card pad"><div class="status"><div class="grow"><h2>Disconnect your website?</h2><p class="sub" style="margin-bottom:0">' + SITE + ' · Your Firm Name</p></div><span class="badge g">Connected</span></div><div style="height:16px"></div>' +
+        dcList() + '<div class="acts" style="margin-top:0"><button class="btn dng" type="button" onclick="FC.go(\'dc-done\',\'' + (S.v === "sched" ? "sched" : "") + '\')">' + (retry ? "Try disconnecting again" : "Disconnect") + '</button><button class="btn quiet" type="button" onclick="FC.go(\'connected\')">Keep connected</button></div></div>');
+    }
+    if (s === "dc-b") {
+      var ok = S.v === "ok" || S.v === "sched" || S.v === "err";
+      var body = '<p class="fhelp" style="margin:0 0 10px">' + SITE + ' · Your Firm Name</p>' + dcList() +
+        '<label class="chk"><input type="checkbox"' + (ok ? " checked" : "") + ' onclick="FC.go(\'dc-b\',this.checked?\'ok\':\'\')"> I understand posts will stop going to my news page</label>';
+      var dlg = '<div class="scrim"><div class="dlg" role="dialog" aria-label="Disconnect your website"><div class="dh"><span>Disconnect your website?</span><button class="x" type="button" aria-label="Close" onclick="FC.go(\'connected\')">×</button></div><div class="db">' + body +
+        '<div class="acts"><button class="btn dng" type="button"' + (ok ? ' onclick="FC.go(\'dc-done\',\'' + (S.v === "sched" ? "sched" : "") + '\')"' : " disabled") + '>' + (S.v === "err" ? "Try disconnecting again" : "Disconnect") + '</button><button class="btn quiet" type="button" onclick="FC.go(\'connected\')">Keep connected</button></div></div></div></div>';
+      return shell(connectedCard(), dlg);
+    }
+    if (s === "dc-c") {
+      var err = S.v === "err";
+      var toast = err ? '<div class="toast bad"><span>We couldn’t disconnect your website. It is still connected.</span><button type="button" onclick="FC.go(\'dc-c\',\'err\')">Try again</button></div>'
+        : '<div class="toast"><span>Website disconnected. ' + (S.v === "sched" ? "2 scheduled posts will go out by " + PREV + "." : "Posts now go out by " + PREV + ".") + '</span><button type="button" onclick="FC.go(\'connected\')">Undo</button><i class="tbar"></i></div>';
+      var card = err ? connectedCard() : '<div class="card pad"><div class="status"><div class="grow"><h2>Connect your website</h2><p class="sub" style="margin-bottom:0">Enter your website address and we’ll connect it to your news page.</p></div><span class="badge n">Not connected</span></div><div style="height:16px"></div>' + stepper(0, -1) + urlForm() + '</div>';
+      return shell(card + otherWays(), toast);
+    }
+    var sched = S.v === "sched";
+    return shell('<div class="card pad"><div class="status"><div class="grow"><h2>Connect your website</h2><p class="sub" style="margin-bottom:0">' + SITE + '</p></div><span class="badge n">Not connected</span></div><div style="height:16px"></div>' +
+      '<div class="res"><div class="rico info">✓</div><div><h3>Your website is disconnected</h3><p>Posts no longer go to the news page on ' + SITE + '. Posts already published stay on your website. Delivery is back to your previous method: <b>' + PREV + '</b>.</p>' +
+      (sched ? '<div class="alertb info" style="max-width:620px">2 scheduled posts will be delivered by ' + PREV + ' instead.</div>' : "") +
+      '<div class="acts"><button class="btn pri" type="button" onclick="FC.go(\'url\')">Connect again</button><button class="btn quiet" type="button" onclick="FC.go(\'url\')">Done</button></div></div></div></div>' + otherWays());
+  }
   function renderA() {
+    if (isDc(S.s)) return renderDc();
     if (isRc(S.s)) return renderRc();
     var s = S.s, i = stepInfo(s);
     var badge = s === "connected" ? '<span class="badge g">Connected</span>' : s === "connecting" ? '<span class="badge b">Connecting…</span>' : '<span class="badge n">Not connected</span>';
@@ -221,6 +265,8 @@
     h += '<button type="button" data-k="dev:desk" onclick="FC.dev(\'desk\')">Desktop</button><button type="button" data-k="dev:phone" onclick="FC.dev(\'phone\')">390</button><span class="gap"></span>';
     h += SCENES.map(function (x) { return '<button type="button" data-k="s:' + x[0] + '" onclick="FC.go(\'' + x[0] + '\')">' + x[1] + '</button>'; }).join("");
     if (S.dir === "a") h += '<span class="gap"></span>' + RC.map(function (x) { return '<button type="button" data-k="s:' + x[0] + '" onclick="FC.go(\'' + x[0] + '\')">' + x[1] + '</button>'; }).join("");
+    if (S.dir === "a") h += '<span class="gap"></span>' + DC.map(function (x) { return '<button type="button" data-k="s:' + x[0] + '" onclick="FC.go(\'' + x[0] + '\')">' + x[1] + '</button>'; }).join("");
+    if (isDc(S.s)) h += '<span class="gap"></span>' + (S.s === "dc-b" ? '<button type="button" data-k="v:" onclick="FC.go(\'dc-b\',\'\')">Not ticked</button><button type="button" data-k="v:ok" onclick="FC.go(\'dc-b\',\'ok\')">Ticked</button>' : '<button type="button" data-k="v:" onclick="FC.go(\'' + S.s + '\',\'\')">Default</button>') + '<button type="button" data-k="v:sched" onclick="FC.go(\'' + S.s + '\',\'sched\')">Scheduled posts</button>' + (S.s === "dc-done" ? "" : '<button type="button" data-k="v:err" onclick="FC.go(\'' + S.s + '\',\'err\')">Disconnect failed</button>');
     if (S.s === "rc-fail") h += '<span class="gap"></span><button type="button" data-k="v:" onclick="FC.go(\'rc-fail\',\'\')">Not approved</button><button type="button" data-k="v:test" onclick="FC.go(\'rc-fail\',\'test\')">Check failed</button><button type="button" data-k="v:sent" onclick="FC.go(\'rc-fail\',\'sent\')">Request sent</button>';
     if (S.s === "url") h += '<span class="gap"></span>' + [["filled", "Filled"], ["empty", "Empty"], ["invalid", "Invalid"], ["checking", "Checking"]].map(function (x) { return '<button type="button" data-k="v:' + x[0] + '" onclick="FC.go(\'url\',\'' + x[0] + '\')">' + x[1] + '</button>'; }).join("");
     if (S.s === "wp" || S.s === "rc-wp") h += '<span class="gap"></span><button type="button" data-k="v:" onclick="FC.go(\'' + S.s + '\',\'\')">Approve screen</button><button type="button" data-k="v:login" onclick="FC.go(\'' + S.s + '\',\'login\')">Login first</button>';
@@ -262,7 +308,7 @@
       var q = new URLSearchParams(location.search);
       S.dir = o.dir;
       var s = q.get("s");
-      if (SCENES.concat(RC).some(function (x) { return x[0] === s; })) S.s = s;
+      if (SCENES.concat(RC, DC).some(function (x) { return x[0] === s; })) S.s = s;
       S.v = q.get("v") || "";
       S.p = Number(q.get("p")) || 2;
       S.dev = q.has("phone") || q.get("dev") === "phone" ? "phone" : "desk";

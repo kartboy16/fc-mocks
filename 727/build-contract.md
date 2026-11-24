@@ -251,6 +251,61 @@ It reuses the queue and request model from the support tool, so it is cheapest b
 ### Recommendation
 Build it with the support tool: staff otherwise can only create requests through a server method, which support can’t use. The duplicate guard is the part to review closely.
 
+## Addition: Disconnect confirm (separate pick, does not hold the main PR)
+Alex, Nov 23, 6:09 PM PT (via Chief of Staff): “Yes, have FC Designer mock a confirm step for Disconnect, but don’t hold the main PR for it.” Today **Disconnect website** goes straight to Not connected. The main PR can ship as is; this confirm is a follow-up. Earlier scenes are unchanged apart from the Disconnect website button on `connected` now opening `dc-a` (the entry point).
+
+**Mock:** `a-inline.html?s=` `dc-a`, `dc-b`, `dc-c`, `dc-done`, each with `&v=sched` (scheduled posts) and, except `dc-done`, `&v=err` (disconnect failed). `dc-b` also takes `v=ok` (box ticked). Add `&phone=1` for 390.
+
+### What Disconnect means (all options)
+- Posts stop going to the news page on the advisor’s website (example-advisor.ca).
+- Posts already published stay on the website; we don’t delete or edit anything there.
+- Delivery goes back to the method the advisor had **before** connecting (fixture: **Embed on your page**; it could also be an RSS feed or email). The card says “your previous method” and names it. If there was none, copy says “your posts stay in FinancialContent only” (assumed; confirm).
+- **Scheduled posts:** posts queued to publish to the website are delivered by the previous method instead, at their scheduled time, not dropped or published late. The confirm lists them (count and times).
+- The advisor can reconnect any time (Connect card, or Reconnect flow).
+- **Failure leaves everything as it was:** if the disconnect fails, the website stays Connected, credentials, delivery and the schedule are untouched, and the advisor can try again. Order on the server: switch delivery and move queued posts first, then remove our stored password and revoke it in WordPress best-effort; if any step before removal fails, undo and report the failure.
+
+### Options
+- **A. Inline confirm in the card (recommended).** The Connected card swaps to “Disconnect your website?” with the four consequence lines, the scheduled-posts note when it applies, **Disconnect** (red) and **Keep connected**. Same place, nothing new to build or dismiss; works the same at 390.
+- **B. Modal with “I understand”.** Same content in a dialog (bottom sheet at 390); **Disconnect** stays disabled until the advisor ticks “I understand posts will stop going to my news page”. (Alternative: type the site address.) Strongest guard, but disconnecting is reversible, so it adds friction we don’t need.
+- **C. Disconnect now, Undo toast.** No confirm. The card goes to Not connected and a toast shows “Website disconnected. Posts now go out by Embed on your page. **Undo**” for about 10 seconds. Lightest to use, but the build must **defer removing the stored password and revoking it** until the toast expires, so Undo can restore the connection; that is the most server work.
+
+### Recommendation
+**A.** The change is reversible but affects live publishing, so a short confirm with clear consequences is right. A is the cheapest, shows the scheduled-posts effect before the click, and avoids C’s deferred-delete risk.
+
+### Screens and states
+| Scene | State |
+| --- | --- |
+| `connected` | Disconnect website opens the chosen confirm. |
+| `dc-a`, `dc-a&v=sched`, `dc-a&v=err` | Inline confirm; with 2 scheduled posts; after a failed attempt (red message, **Try disconnecting again**, **Keep connected**; still Connected). |
+| `dc-b`, `dc-b&v=ok`, `dc-b&v=sched`, `dc-b&v=err` | Modal with Disconnect disabled; ticked; with scheduled posts; failed. |
+| `dc-c`, `dc-c&v=sched`, `dc-c&v=err` | Not connected card with Undo toast; toast naming scheduled posts; failure toast “We couldn’t disconnect your website. It is still connected.” with **Try again**. |
+| `dc-done`, `dc-done&v=sched` | Result: “Your website is disconnected”, delivery back to Embed on your page, published posts stay; with the scheduled-posts line. **Connect again**, **Done**. |
+| Loading | While disconnecting the button shows a spinner and is disabled; closing the page doesn’t cancel a started disconnect. |
+
+### Copy
+Title **Disconnect your website?** (subtitle example-advisor.ca · Your Firm Name). Lines: “Posts stop going to the news page on example-advisor.ca.” “Posts already published stay on your website.” “Delivery goes back to your previous method: Embed on your page.” “You can reconnect any time.” Scheduled: “2 scheduled posts were going to your news page (Nov 24, 9:00 AM PT and Nov 26, 9:00 AM PT). They will be delivered by Embed on your page instead.” Buttons **Disconnect**, **Keep connected**, **Try disconnecting again**. Error: “We couldn’t disconnect your website. It is still connected and publishing as before. Nothing was changed. Try again.” Result: “Your website is disconnected. Posts no longer go to the news page on example-advisor.ca. Posts already published stay on your website. Delivery is back to your previous method: Embed on your page.” Toast (C): “Website disconnected. Posts now go out by Embed on your page.” **Undo**.
+
+### In / out of scope
+**In:** the chosen confirm and its states; previous-method lookup and display; scheduled-post handling and listing; failure safety and tests; 1280 and 390; the Disconnect entry on the Connected status.
+**Out of scope:** deleting posts from the advisor’s website; removing the server rule or backup (kept); changing the previous method; the staff-side disconnect; Reconnect and support-tool changes.
+
+### Desktop vs mobile
+1280: A is the card itself, B a 520px dialog, C a toast bottom-center. 390: buttons stack full width at 44px; B becomes a bottom sheet; C’s toast spans the width.
+
+### Agent-time estimate (real agent hours: cloud build + FC Tester + fix loop)
+| Part | A | B | C |
+| --- | --- | --- | --- |
+| Server: disconnect method (switch delivery, move queued posts, remove and revoke password, failure rollback) | 1.25–2 | 1.25–2 | 2.25–3.75 (deferred removal + undo) |
+| UI | 0.5–1 | 0.75–1.5 | 0.75–1.25 |
+| FC Tester (scheduled posts, failure, previous method, 390; C also Undo timing) | 1–1.5 | 1–1.5 | 1.5–2 |
+| Fix loop | 0.5–1 | 0.5–1 | 0.75–1.5 |
+| **Total** | **3.25–5.5 h** | **3.5–6 h** | **5.25–8.5 h** |
+
+The server disconnect work is needed in every option (it is also how the existing button should behave); the estimates are for the follow-up and do not change earlier ones.
+
+### Assumptions
+The previous delivery method is stored when connecting (or can be read from the website delivery settings). “2 scheduled posts” and the times are fixtures. If the advisor never had another method, the copy needs the fallback line above.
+
 ## Open questions
 1. Is the test post created as a private draft and deleted, or published and removed? (Assumed: created and removed; it must never be visible on the live news page for long.)
 2. Which sites count as hosted by us: all Cloudways apps in our account, or only those with a matching domain record? How is a domain with `www` or a redirect matched?

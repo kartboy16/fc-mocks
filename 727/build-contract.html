@@ -509,6 +509,114 @@ Copy (advisor): “We got your request for example-advisor.ca. Our team will con
 <p>It reuses the queue and request model from the support tool, so it is cheapest built with or after it. Separate pick; no earlier estimate changes.</p>
 <h3>Recommendation</h3>
 <p>Build it with the support tool: staff otherwise can only create requests through a server method, which support can’t use. The duplicate guard is the part to review closely.</p>
+<h2>Addition: Disconnect confirm (separate pick, does not hold the main PR)</h2>
+<p>Alex, Nov 23, 6:09 PM PT (via Chief of Staff): “Yes, have FC Designer mock a confirm step for Disconnect, but don’t hold the main PR for it.” Today <strong>Disconnect website</strong> goes straight to Not connected. The main PR can ship as is; this confirm is a follow-up. Earlier scenes are unchanged apart from the Disconnect website button on <code>connected</code> now opening <code>dc-a</code> (the entry point).</p>
+<p><strong>Mock:</strong> <code>a-inline.html?s=</code> <code>dc-a</code>, <code>dc-b</code>, <code>dc-c</code>, <code>dc-done</code>, each with <code>&amp;v=sched</code> (scheduled posts) and, except <code>dc-done</code>, <code>&amp;v=err</code> (disconnect failed). <code>dc-b</code> also takes <code>v=ok</code> (box ticked). Add <code>&amp;phone=1</code> for 390.</p>
+<h3>What Disconnect means (all options)</h3>
+<ul>
+<li>Posts stop going to the news page on the advisor’s website (example-advisor.ca).</li>
+<li>Posts already published stay on the website; we don’t delete or edit anything there.</li>
+<li>Delivery goes back to the method the advisor had <strong>before</strong> connecting (fixture: <strong>Embed on your page</strong>; it could also be an RSS feed or email). The card says “your previous method” and names it. If there was none, copy says “your posts stay in FinancialContent only” (assumed; confirm).</li>
+<li><strong>Scheduled posts:</strong> posts queued to publish to the website are delivered by the previous method instead, at their scheduled time, not dropped or published late. The confirm lists them (count and times).</li>
+<li>The advisor can reconnect any time (Connect card, or Reconnect flow).</li>
+<li><strong>Failure leaves everything as it was:</strong> if the disconnect fails, the website stays Connected, credentials, delivery and the schedule are untouched, and the advisor can try again. Order on the server: switch delivery and move queued posts first, then remove our stored password and revoke it in WordPress best-effort; if any step before removal fails, undo and report the failure.</li>
+</ul>
+<h3>Options</h3>
+<ul>
+<li><strong>A. Inline confirm in the card (recommended).</strong> The Connected card swaps to “Disconnect your website?” with the four consequence lines, the scheduled-posts note when it applies, <strong>Disconnect</strong> (red) and <strong>Keep connected</strong>. Same place, nothing new to build or dismiss; works the same at 390.</li>
+<li><strong>B. Modal with “I understand”.</strong> Same content in a dialog (bottom sheet at 390); <strong>Disconnect</strong> stays disabled until the advisor ticks “I understand posts will stop going to my news page”. (Alternative: type the site address.) Strongest guard, but disconnecting is reversible, so it adds friction we don’t need.</li>
+<li><strong>C. Disconnect now, Undo toast.</strong> No confirm. The card goes to Not connected and a toast shows “Website disconnected. Posts now go out by Embed on your page. <strong>Undo</strong>” for about 10 seconds. Lightest to use, but the build must <strong>defer removing the stored password and revoking it</strong> until the toast expires, so Undo can restore the connection; that is the most server work.</li>
+</ul>
+<h3>Recommendation</h3>
+<p><strong>A.</strong> The change is reversible but affects live publishing, so a short confirm with clear consequences is right. A is the cheapest, shows the scheduled-posts effect before the click, and avoids C’s deferred-delete risk.</p>
+<h3>Screens and states</h3>
+<table>
+<thead>
+<tr>
+<th>Scene</th>
+<th>State</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>connected</code></td>
+<td>Disconnect website opens the chosen confirm.</td>
+</tr>
+<tr>
+<td><code>dc-a</code>, <code>dc-a&amp;v=sched</code>, <code>dc-a&amp;v=err</code></td>
+<td>Inline confirm; with 2 scheduled posts; after a failed attempt (red message, <strong>Try disconnecting again</strong>, <strong>Keep connected</strong>; still Connected).</td>
+</tr>
+<tr>
+<td><code>dc-b</code>, <code>dc-b&amp;v=ok</code>, <code>dc-b&amp;v=sched</code>, <code>dc-b&amp;v=err</code></td>
+<td>Modal with Disconnect disabled; ticked; with scheduled posts; failed.</td>
+</tr>
+<tr>
+<td><code>dc-c</code>, <code>dc-c&amp;v=sched</code>, <code>dc-c&amp;v=err</code></td>
+<td>Not connected card with Undo toast; toast naming scheduled posts; failure toast “We couldn’t disconnect your website. It is still connected.” with <strong>Try again</strong>.</td>
+</tr>
+<tr>
+<td><code>dc-done</code>, <code>dc-done&amp;v=sched</code></td>
+<td>Result: “Your website is disconnected”, delivery back to Embed on your page, published posts stay; with the scheduled-posts line. <strong>Connect again</strong>, <strong>Done</strong>.</td>
+</tr>
+<tr>
+<td>Loading</td>
+<td>While disconnecting the button shows a spinner and is disabled; closing the page doesn’t cancel a started disconnect.</td>
+</tr>
+</tbody>
+</table>
+<h3>Copy</h3>
+<p>Title <strong>Disconnect your website?</strong> (subtitle example-advisor.ca · Your Firm Name). Lines: “Posts stop going to the news page on example-advisor.ca.” “Posts already published stay on your website.” “Delivery goes back to your previous method: Embed on your page.” “You can reconnect any time.” Scheduled: “2 scheduled posts were going to your news page (Nov 24, 9:00 AM PT and Nov 26, 9:00 AM PT). They will be delivered by Embed on your page instead.” Buttons <strong>Disconnect</strong>, <strong>Keep connected</strong>, <strong>Try disconnecting again</strong>. Error: “We couldn’t disconnect your website. It is still connected and publishing as before. Nothing was changed. Try again.” Result: “Your website is disconnected. Posts no longer go to the news page on example-advisor.ca. Posts already published stay on your website. Delivery is back to your previous method: Embed on your page.” Toast (C): “Website disconnected. Posts now go out by Embed on your page.” <strong>Undo</strong>.</p>
+<h3>In / out of scope</h3>
+<p><strong>In:</strong> the chosen confirm and its states; previous-method lookup and display; scheduled-post handling and listing; failure safety and tests; 1280 and 390; the Disconnect entry on the Connected status.
+<strong>Out of scope:</strong> deleting posts from the advisor’s website; removing the server rule or backup (kept); changing the previous method; the staff-side disconnect; Reconnect and support-tool changes.</p>
+<h3>Desktop vs mobile</h3>
+<p>1280: A is the card itself, B a 520px dialog, C a toast bottom-center. 390: buttons stack full width at 44px; B becomes a bottom sheet; C’s toast spans the width.</p>
+<h3>Agent-time estimate (real agent hours: cloud build + FC Tester + fix loop)</h3>
+<table>
+<thead>
+<tr>
+<th>Part</th>
+<th>A</th>
+<th>B</th>
+<th>C</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Server: disconnect method (switch delivery, move queued posts, remove and revoke password, failure rollback)</td>
+<td>1.25–2</td>
+<td>1.25–2</td>
+<td>2.25–3.75 (deferred removal + undo)</td>
+</tr>
+<tr>
+<td>UI</td>
+<td>0.5–1</td>
+<td>0.75–1.5</td>
+<td>0.75–1.25</td>
+</tr>
+<tr>
+<td>FC Tester (scheduled posts, failure, previous method, 390; C also Undo timing)</td>
+<td>1–1.5</td>
+<td>1–1.5</td>
+<td>1.5–2</td>
+</tr>
+<tr>
+<td>Fix loop</td>
+<td>0.5–1</td>
+<td>0.5–1</td>
+<td>0.75–1.5</td>
+</tr>
+<tr>
+<td><strong>Total</strong></td>
+<td><strong>3.25–5.5 h</strong></td>
+<td><strong>3.5–6 h</strong></td>
+<td><strong>5.25–8.5 h</strong></td>
+</tr>
+</tbody>
+</table>
+<p>The server disconnect work is needed in every option (it is also how the existing button should behave); the estimates are for the follow-up and do not change earlier ones.</p>
+<h3>Assumptions</h3>
+<p>The previous delivery method is stored when connecting (or can be read from the website delivery settings). “2 scheduled posts” and the times are fixtures. If the advisor never had another method, the copy needs the fallback line above.</p>
 <h2>Open questions</h2>
 <ol>
 <li>Is the test post created as a private draft and deleted, or published and removed? (Assumed: created and removed; it must never be visible on the live news page for long.)</li>
