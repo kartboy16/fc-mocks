@@ -1,0 +1,205 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>#1018 build contract</title>
+<style>body{font:15px/1.55 Roboto,Inter,system-ui,sans-serif;max-width:960px;margin:24px auto;padding:0 16px;color:#2c3e50}a{color:#1976d2}table{border-collapse:collapse;width:100%;margin:8px 0}th,td{border:1px solid #dfe5ec;padding:6px 9px;text-align:left;vertical-align:top}th{background:#f5f8fc}code{background:#f1f3f6;padding:1px 4px;border-radius:3px}h2{margin-top:28px}</style></head><body><p><a href="./">#1018 hub</a> · <a href="build-contract.md">.md</a></p><h1>#1018 Paste contacts to add email subscribers: build contract</h1>
+<p>Status: <strong>Not agent-ready.</strong> Soft Dev hold until a direction is picked. Risk: <strong>high</strong> (Email Campaigns UI, <code>imports/ui/EmailCampaigns/**</code>), so Alex merges to main. Track: playground first.</p>
+<p>Mocks: https://kartboy16.github.io/fc-mocks/1018/ (A <code>a-inline.html</code>, B <code>b-wizard.html</code> (recommended), C <code>c-fullpage.html</code>). Scenes use <code>?s=&lt;scene&gt;</code>, and <code>&amp;phone=1</code> gives the 390 view.</p>
+<h2>Recommendation</h2>
+<p><strong>B, the 3-step modal wizard</strong> (1 Paste, 2 Match and preview, 3 Confirm). It matches the existing Import CSV, Import from Mailchimp and Add Contact dialogs on Subscribers. The step gate makes the preview impossible to skip, it goes full screen at 390, and step 2 can later be reused by the CSV import (non-goal for now).</p>
+<h2>Entry point</h2>
+<ul>
+<li>New outlined button <strong>Paste contacts</strong> in the Subscribers toolbar, next to Import CSV (<code>SESContacts.jsx</code>). Visible to advisors, and to admins and support in a Log in as session.</li>
+<li>A opens an inline panel above the table, B opens a dialog (full screen on phones), and C routes to Subscribers › Paste contacts.</li>
+</ul>
+<h2>Screens and states (scene keys)</h2>
+<table>
+<thead>
+<tr>
+<th>Scene</th>
+<th>What it shows</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>empty</code></td>
+<td>Empty paste box with help text. Check rows / Next disabled.</td>
+</tr>
+<tr>
+<td><code>pasted</code></td>
+<td>Rows pasted, line count and detected separator.</td>
+</tr>
+<tr>
+<td><code>map</code></td>
+<td>Column auto-detect with mapping dropdowns (Email / First name / Last name / Ignore this column), header-row toggle, and an inline preview. Continue is disabled if no column, or more than one column, is Email.</td>
+</tr>
+<tr>
+<td><code>emailonly</code></td>
+<td>No header and one column: auto-mapped to Email, names stay blank.</td>
+</tr>
+<tr>
+<td><code>preview</code> / <code>skipped</code></td>
+<td>Counts, a per-row result with a reason, and filter chips (All, Ready, Skipped, each reason).</td>
+</tr>
+<tr>
+<td><code>list</code></td>
+<td>Target list: existing list dropdown, or a new list with a required name.</td>
+</tr>
+<tr>
+<td><code>admin</code></td>
+<td>Log in as session: "Adding to: Jane Advisor" banner, only that advisor's lists, and dedupe checked against that advisor.</td>
+</tr>
+<tr>
+<td><code>picker</code></td>
+<td>Capped, paged advisor picker (admin and support only).</td>
+</tr>
+<tr>
+<td><code>cap</code></td>
+<td>Over the row cap: nothing added, with Keep the first 1,000 rows / Clear options.</td>
+</tr>
+<tr>
+<td><code>importing</code></td>
+<td>Loading: indeterminate bar, buttons disabled.</td>
+</tr>
+<tr>
+<td><code>summary</code></td>
+<td>Success: added N, skipped by reason, Download skipped rows (CSV), totals and pagination refreshed.</td>
+</tr>
+<tr>
+<td><code>error</code></td>
+<td>Import failed, nothing added, pasted rows kept, Try again.</td>
+</tr>
+</tbody>
+</table>
+<h2>Copy (key strings)</h2>
+<ul>
+<li>Help: "One contact per line." / "Email first, then optional first and last name." / "Columns can be separated by commas, tabs (copied from a spreadsheet) or semicolons." / "A header row is optional. We detect it." / "Up to 1,000 rows per paste."</li>
+<li>Mapping note: "We matched the columns from your header row. Change any that look wrong. Email is the only required column."</li>
+<li>Mapping errors: "Pick which column has the email address. Email is the only required column." / "Only one column can be Email."</li>
+<li>Reasons: Already on list ("Already on <list>. Skipped, nothing changes."), Duplicate in paste ("Same email as row N. Only the first one is added."), Invalid email, Unsubscribed ("Unsubscribed earlier. Skipped so they aren't re-subscribed without consent."), Bounced or complained.</li>
+<li>Permission (reuses Add Contact wording, required): "These people gave me permission to email them."</li>
+<li>Cap: "That's 1,240 rows. You can add up to 1,000 per paste."</li>
+<li>Error: "Import failed. Nothing was added."</li>
+<li><strong>Placeholder for Alex:</strong> consent wording for skipped unsubscribed or bounced addresses. Don't invent legal copy.</li>
+</ul>
+<h2>Parsing rules (client, repeated on the server)</h2>
+<ol>
+<li>Split on line breaks (<code>\r\n</code>, <code>\n</code>). Trim each line and drop blank lines.</li>
+<li>Separator: pick tab if any line has a tab, else semicolon if most lines have one, else comma. Support quoted fields ("Sample, Alex").</li>
+<li>Header row: treat row 1 as a header if no cell in it is a valid email and a cell matches email/e-mail/first name/first/last name/last/surname (case-insensitive). The user can toggle it.</li>
+<li>Auto-map from header names, else the first column that holds valid emails becomes Email, then the next two text columns become First name and Last name. Extra columns default to Ignore.</li>
+<li>Email: trim, lowercase for comparison, and use the same validator as Add Contact. Strip a <code>Name &lt;email&gt;</code> wrapper if present.</li>
+<li>Row cap: <strong>1,000 data rows per paste (assumption, see open questions)</strong>. Over the cap, block preview until the user keeps the first 1,000 or clears.</li>
+</ol>
+<h2>Dedupe and suppression rules</h2>
+<ul>
+<li><strong>Duplicate in paste:</strong> the first occurrence (by normalized email) wins, later ones are skipped.</li>
+<li><strong>Already on list:</strong> an existing contact already on the target list is skipped, and its name isn't overwritten.</li>
+<li><strong>Existing contact not on the target list:</strong> Ready. Only the list membership is added, and the name isn't changed (open question).</li>
+<li><strong>Unsubscribed, bounced or complained</strong> (contact status, or a suppression record for that advisor): <strong>always skipped and shown with a reason.</strong> There's no re-subscribe toggle. Server-enforced.</li>
+<li><strong>Invalid:</strong> skipped.</li>
+<li>Flagged rows can't be switched to Ready in v1. The user fixes them at the source and pastes again.</li>
+<li>New list: create the list and add the rows in the same server call. If the import fails, roll back the new list.</li>
+</ul>
+<h2>Server method (sketch)</h2>
+<p><code>contacts.pasteImport({ advisorId?, rows:[{email, firstName?, lastName?}], target:{listId} | {newListName}, permissionConfirmed:true })</code>
+- Auth: the advisor themselves, or admin/support acting as that advisor (Log in as attribution logged). Lists must belong to that advisor.
+- Re-runs every client check: the cap (reject over 1,000), validation, in-paste dedupe, the list check and suppression. Returns <code>{added, skipped:[{email, reason}], listTotals}</code>.
+- Atomic: on failure nothing is added (the <code>error</code> scene).
+- No emails are sent (non-goal).
+- <code>preview</code> is a separate read method, <code>contacts.pastePreview</code>, so flags come from the server and not only the client.</p>
+<h2>Capped advisor search (AC-4, Alex's Nov 13 rule)</h2>
+<ul>
+<li>Only for admin/support outside a Log in as session. Inside Log in as, the advisor is fixed (banner only).</li>
+<li><code>advisors.search({ q, limit: 10, skip })</code>, returning <code>{ items:[{_id, name, email}], total }</code>. Field projection is name and email only. Server-side regex or index on name/email, with <code>limit</code> ≤ 10 enforced on the server.</li>
+<li>UI: "Showing 1–10 of N", Prev/Next. <strong>Never loads all advisors.</strong></li>
+</ul>
+<h2>Mobile vs desktop</h2>
+<ul>
+<li>390: A stacks in the panel, B is a full-screen dialog, and C stacks the preview under the paste box. The preview table hides the Row and Name columns and shows the name under the email. Buttons are full width, ≥44px.</li>
+<li>Desktop: B dialog max 820px wide, and the preview table scrolls inside the dialog.</li>
+</ul>
+<h2>In scope / out of scope</h2>
+<p>In scope: the paste entry point, parsing, mapping, preview, target list (existing/new), admin context, cap, summary with CSV download of skipped rows, refreshing totals and pagination (#129 behaviour), and the server re-check.
+Out of scope: .csv/.xlsx upload changes, Mailchimp import (#149, #916, #908), sending any email, tags on paste (possible follow-up), and editing flagged rows inline.</p>
+<h2>AC mapping</h2>
+<table>
+<thead>
+<tr>
+<th>AC</th>
+<th>Covered by</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>AC-1 entry point and paste box</td>
+<td><code>empty</code>, <code>pasted</code></td>
+</tr>
+<tr>
+<td>AC-2 auto-detect, header, override, Email required</td>
+<td><code>map</code>, <code>emailonly</code></td>
+</tr>
+<tr>
+<td>AC-3 preview, flags, counts, skipped by default</td>
+<td><code>preview</code>, <code>skipped</code></td>
+</tr>
+<tr>
+<td>AC-4 target list, admin acting as advisor, capped picker</td>
+<td><code>list</code>, <code>admin</code>, <code>picker</code></td>
+</tr>
+<tr>
+<td>AC-5 totals refresh and summary</td>
+<td><code>summary</code></td>
+</tr>
+<tr>
+<td>AC-6 no silent re-subscribe</td>
+<td><code>preview</code>, <code>skipped</code>, dedupe rules</td>
+</tr>
+<tr>
+<td>AC-7 cap and server validation</td>
+<td><code>cap</code>, <code>importing</code>, <code>error</code>, server method</td>
+</tr>
+</tbody>
+</table>
+<h2>Open questions</h2>
+<ol>
+<li>Pick A, B or C.</li>
+<li>Row cap: 1,000 is assumed, and the issue suggests a few thousand. Confirm.</li>
+<li>Consent wording for skipped unsubscribed or bounced addresses (placeholder). Should a re-subscribe path ever exist? Assumed no.</li>
+<li>Existing contact not on the target list: add the list only, and don't overwrite the name. OK?</li>
+<li>Is an advisor picker needed outside Log in as, or is the banner enough?</li>
+<li>Keep the permission checkbox required for paste (same wording as Add Contact)?</li>
+</ol>
+<h2>Estimates (real agent hours: cloud agent build + FC Tester + fix loop)</h2>
+<table>
+<thead>
+<tr>
+<th>Direction</th>
+<th>Build</th>
+<th>FC Tester</th>
+<th>Fix loop</th>
+<th>Total</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>A inline panel</td>
+<td>5–8 h</td>
+<td>1–1.5 h</td>
+<td>1–2 h</td>
+<td><strong>7–11.5 h</strong></td>
+</tr>
+<tr>
+<td><strong>B modal wizard (recommended)</strong></td>
+<td>5.5–8.5 h</td>
+<td>1–1.5 h</td>
+<td>1–2 h</td>
+<td><strong>7.5–12 h</strong></td>
+</tr>
+<tr>
+<td>C full page</td>
+<td>7–11 h</td>
+<td>1.5–2 h</td>
+<td>1.5–2.5 h</td>
+<td><strong>10–15.5 h</strong></td>
+</tr>
+</tbody>
+</table>
+<p>These include the shared parser, the server preview and import methods, and tests. Add about 1–1.5 h if the advisor picker is needed outside Log in as.</p></body></html>
