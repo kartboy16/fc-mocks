@@ -86,3 +86,4 @@ textarea.paste:focus{outline:2px solid #1976d2}
 .phone .subtbl td:nth-child(n+3),.phone .subtbl th:nth-child(n+3){display:none}
 .dlg{max-height:760px;overflow:auto}
 .phone .app:has(.scrim) .col{display:none}.phone .scrim{position:static;flex:1}.phone .dlg{max-height:none;overflow:visible}
+.phone .scrim{min-width:0;width:100%}.phone .dlg{min-width:0}.phone .tblwrap{max-width:100%}
