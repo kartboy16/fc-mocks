@@ -1,0 +1,312 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>#601 build contract</title><style>body{font:15px/1.55 Roboto,Inter,system-ui,sans-serif;max-width:960px;margin:24px auto;padding:0 16px;color:#2c3e50}a{color:#1976d2}table{border-collapse:collapse;width:100%;margin:8px 0}th,td{border:1px solid #dfe5ec;padding:6px 9px;text-align:left;vertical-align:top}th{background:#f5f8fc}code{background:#f1f3f6;padding:1px 4px;border-radius:3px}h2{margin-top:28px}</style></head><body><p><a href="./">#601 hub</a> · <a href="a-panel.html">A</a> · <a href="b-tab.html">B</a> · <a href="c-chat.html">C</a> · <a href="build-contract.md">.md</a></p><h1>#601 AI website builder: build contract (mock stage)</h1>
+<p><strong>Status:</strong> mocks for review. Not agent-ready. Soft Dev hold until a direction is picked. Issue #601 is still "idea / parked", and its plan calls for a hand-run hosting pilot before any build.</p>
+<p><strong>Problem in one sentence:</strong> advisors can't build or change their own website inside FC, so they use outside AI site builders that have no compliance check, no FTT hosting and no support contact.</p>
+<p>Mocks: <a href="./">hub</a> · <a href="a-panel.html">A. Checks panel under the preview</a> (recommended) · <a href="b-tab.html">B. Checks tab in the right pane</a> · <a href="c-chat.html">C. Checks posted in the chat</a>. Add <code>?s=&lt;scene&gt;</code> for a scene and <code>&amp;phone=1</code> for the 390 view.</p>
+<h2>1. What stays the same in every direction</h2>
+<ul>
+<li><strong>Layout:</strong> chat on the left (400 px) and a live preview of the draft site on the right. The FC app rail stays on the left. The top bar holds the title, the site and draft version, Version history, and Publish.</li>
+<li><strong>Chat:</strong> an empty state with prompt suggestions. The advisor's messages appear on the right and the assistant's on the left. The assistant replies with a plan and a <strong>Build it</strong> button, then a build progress list, then "Your site is ready". Every edit reply shows a before/after diff with <strong>Show changes</strong> and <strong>Undo this change</strong>.</li>
+<li><strong>Preview:</strong> a browser frame showing the draft address (<code>jane-advisor.example.net</code>, placeholder host) and the page picker. The site's own nav (Home, About, Services, Contact, News) switches pages in the mock. Changed blocks get a green outline with a "Changed" or "Added" tag, and the preview scrolls to the change.</li>
+<li><strong>Publish:</strong> step 1 picks the address (own domain <code>example-advisor.ca</code> or a free subdomain on a generic host). If findings are still open, the real acknowledge step follows. Step 2 confirms, then come the publishing progress, success and error screens.</li>
+<li><strong>Phone (390):</strong> Chat and Preview become tabs under the top bar (B adds a third Checks tab). The preview frame and Checks stack in the Preview tab. Dialogs go full screen, with buttons stacked full width at least 40 px tall.</li>
+</ul>
+<h2>2. Scenes (same ids on A, B and C)</h2>
+<table>
+<thead>
+<tr>
+<th><code>?s=</code></th>
+<th>What it shows</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>start</code></td>
+<td>Empty chat with 4 suggestions, an empty preview skeleton, and Publish off</td>
+</tr>
+<tr>
+<td><code>typed</code></td>
+<td>The sample prompt typed in the composer</td>
+</tr>
+<tr>
+<td><code>plan</code></td>
+<td>The assistant's plan with Build it / Change something</td>
+</tr>
+<tr>
+<td><code>generating</code></td>
+<td>Build progress in chat and a shimmering skeleton</td>
+</tr>
+<tr>
+<td><code>checking</code></td>
+<td>Site generated, checks running ("Checking…"), Publish off while checking</td>
+</tr>
+<tr>
+<td><code>clean</code></td>
+<td>No findings</td>
+</tr>
+<tr>
+<td><code>hero</code></td>
+<td>"Make the hero shorter", with the diff in chat and the changed hero outlined</td>
+</tr>
+<tr>
+<td><code>testi</code></td>
+<td>"Add a testimonials section" with the advisor's own quote. 3 findings (2 compliance, 1 proofreading), highlighted in the preview</td>
+</tr>
+<tr>
+<td><code>jump</code></td>
+<td>Click-to-jump: Show in preview scrolls to and pulses the highlight. Clicking a highlight selects its finding</td>
+</tr>
+<tr>
+<td><code>aifix</code></td>
+<td>Ask AI to fix: 2 fixed, 1 left (past performance), "Fixed. Checks ran again."</td>
+</tr>
+<tr>
+<td><code>reviewed</code></td>
+<td>The past-performance finding marked reviewed (Undo), "Nothing left to review here"</td>
+</tr>
+<tr>
+<td><code>error</code></td>
+<td>The checker couldn't run, so Publish is off</td>
+</tr>
+<tr>
+<td><code>pub-domain</code></td>
+<td>Publish step 1: pick the address</td>
+</tr>
+<tr>
+<td><code>pub-ack</code></td>
+<td>The acknowledge dialog (warn mode, the default) with the tick box</td>
+</tr>
+<tr>
+<td><code>pub-blocked</code></td>
+<td>The same dialog in block-compliance or block-all mode, with Continue disabled</td>
+</tr>
+<tr>
+<td><code>pub-confirm</code></td>
+<td>Publish step 2: confirm</td>
+</tr>
+<tr>
+<td><code>publishing</code></td>
+<td>Progress</td>
+</tr>
+<tr>
+<td><code>success</code></td>
+<td>Live</td>
+</tr>
+<tr>
+<td><code>pub-error</code></td>
+<td>Publish failed and the live site is unchanged. This scene also shows the adapted stale-check message</td>
+</tr>
+</tbody>
+</table>
+<h2>3. The real checker this mock mirrors (read-only code review)</h2>
+<p>Source: <code>kartboy16/content-library</code>, branch <strong>staging @ 8a5e9168</strong> (Nov 24 2026), path <code>imports/features/private-posts/</code>. It came from #964 "Private owner-only advisor posts" through PR #976, merged to staging on Nov 19 2026 at 4:04 PM PT. It is <strong>not on main yet</strong> (main is at eeb5987a, Nov 19). The checker runs when an advisor saves a private ("My posts") post.</p>
+<h3>How it works</h3>
+<ul>
+<li><strong>When it runs:</strong> on every save (create or update) and from the Run check button. The server runs it, and the browser never decides (<code>server/postCheck.js:2-3</code>, <code>shared/checker.js:1-5</code>).</li>
+<li><strong>Two groups:</strong> <code>compliance</code> and <code>proofreading</code> (<code>shared/constants.js:55</code>). Each group runs on its own. If one throws, the status is <code>partial</code>; if both throw, it's <code>error</code>; otherwise it's <code>ok</code> (<code>shared/checker.js:221-247</code>). A failed run is stored as status <code>error</code> (<code>server/postCheck.js:32-33</code>).</li>
+<li><strong>Fields read:</strong> the post's plain text in <code>name</code>, <code>excerpt</code> and <code>bodyText</code> (<code>shared/checker.js:117-123</code>). It returns at most 100 findings (<code>shared/constants.js:57</code>).</li>
+<li><strong>Compliance rules are regex placeholders</strong> until Legal supplies the wording (<code>shared/checker.js:7-8, 13-61</code>, README line 86):</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>Rule id</th>
+<th>Label</th>
+<th>Matches</th>
+<th>Message (verbatim)</th>
+<th>Suggestion</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>guarantee</td>
+<td>Promissory language</td>
+<td>guarantee, guaranteed, guarantees</td>
+<td>Avoid promising outcomes. (PLACEHOLDER rule text)</td>
+<td>Remove the guarantee or describe it as a goal.</td>
+</tr>
+<tr>
+<td>risk-free</td>
+<td>Risk claim</td>
+<td>risk-free, no risk, without (any) risk</td>
+<td>Every investment carries some risk. (PLACEHOLDER rule text)</td>
+<td>Describe the risk level instead.</td>
+</tr>
+<tr>
+<td>cant-lose</td>
+<td>Promissory language</td>
+<td>can't/cannot lose, never lose, sure thing</td>
+<td>Avoid saying an investment cannot lose. (PLACEHOLDER rule text)</td>
+<td>Remove the claim.</td>
+</tr>
+<tr>
+<td>outperform</td>
+<td>Performance promise</td>
+<td>will/always outperform, beat the market</td>
+<td>Avoid predicting future performance. (PLACEHOLDER rule text)</td>
+<td>aims to improve outcomes (replacement, so <strong>Fix</strong> is offered)</td>
+</tr>
+<tr>
+<td>superlative</td>
+<td>Superlative claim</td>
+<td>the best / #1 / number one + advisor, adviser, investment, fund, planner</td>
+<td>Superlatives need support. (PLACEHOLDER rule text)</td>
+<td>Remove the superlative.</td>
+</tr>
+<tr>
+<td>past-performance</td>
+<td>Past performance</td>
+<td>returned / returns of / gained / grew (by) / up + N%</td>
+<td>Mentions of past returns need a disclosure. (PLACEHOLDER rule text)</td>
+<td>Add disclosure: "Past performance is not indicative of future results." (PLACEHOLDER). Skipped when the text already says "past performance is/does not"</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li><strong>Proofreading:</strong> Repeated word, Extra space, Capitalization ("I" and the start of a sentence), Punctuation (a space after a comma), plus Spelling from a dictionary. A missing dictionary is an error, never a silent pass (<code>shared/checker.js:66-106, 185-214</code>).</li>
+<li><strong>There is no testimonial rule.</strong> The mock does not claim testimonials are flagged. In the <code>testi</code> scene the flags come from the <strong>Superlative claim</strong> and <strong>Past performance</strong> rules matching the advisor's quote, and from <strong>Capitalization</strong> on "i".</li>
+<li><strong>What the owner can do with a finding:</strong> compliance findings can be <strong>Mark reviewed</strong> and proofreading findings can be <strong>Dismiss</strong>ed, each with <strong>Undo</strong> (<code>shared/constants.js:60-64</code>, <code>ui/CheckerPanel.jsx:144-190</code>). <strong>Fix</strong> shows only when the suggestion is replacement text (<code>shared/checker.js:139-140, 162</code>). Today that means <code>outperform</code> and the proofreading rules. Past performance has an "Add disclosure" label (<code>ui/CheckerPanel.jsx:148</code>), but the rule has no <code>replace</code>, so the button doesn't show.</li>
+<li><strong>Reviewed and dismissed states carry over only while the content is unchanged</strong> (<code>shared/checker.js:250-268</code>).</li>
+</ul>
+<h3>Send gate (blocking vs warning)</h3>
+<p>Source: <code>shared/sendGate.js:1-69</code> and <code>server/gate.js</code>. The mode comes from the setting <code>private.postCheck.mode</code> (README lines 82-84):
+- <strong>warn (default):</strong> open findings need the owner's acknowledgement. The owner, or a support or admin user acting for them (<code>shared/attribution.js:23</code>), ticks "I've reviewed these findings and want to continue." The acknowledgement is tied to the content hash and to every open finding id.
+- <strong>block-compliance:</strong> open compliance findings block, and proofreading findings need the acknowledgement.
+- <strong>block-all:</strong> any open finding blocks.
+- <strong>Always blocks, in every mode (fail closed):</strong> not checked yet, checked but the content changed since (stale), and a checker error or partial run (<code>shared/sendGate.js:46-50</code>). An unknown mode value is treated as block-all (<code>shared/sendGate.js:16-21</code>).
+- <strong>Error codes and copy</strong> (<code>shared/constants.js:80-98</code>): post-check-required, post-check-stale, post-check-error, post-check-unacknowledged, post-check-blocked, post-changed-since-scheduled.</p>
+<h3>UI copy reused verbatim (<code>ui/CheckerPanel.jsx</code>)</h3>
+<ul>
+<li><strong>Status chip (68-82):</strong> Not checked · Checking… · Out of date · Couldn't run · <em>N</em> to review · No findings</li>
+<li><strong>Status bar (86-110):</strong> "<strong>Checks</strong> Checking compliance and proofreading…", "<strong>Checks</strong> No findings. Compliance and proofreading both checked.", "<strong>Checks</strong> <em>N</em> to review: <em>c</em> compliance, <em>p</em> proofreading."</li>
+<li><strong>Checks panel:</strong> the "Checks" title and the Compliance <em>n</em> and Proofreading <em>n</em> tabs (349-350). The "PLACEHOLDER: compliance rule wording to be supplied by legal." caption (361). Finding cards show the label, the “quote”, the message, "Suggested: …", then Fix, Mark reviewed or Dismiss, and Undo. The "No findings" box says "Nothing to review in compliance." or "No spelling or grammar issues found." (322-324). "Nothing left to review here · <em>n</em> resolved." (335). The footer reads "Checked 10:48 AM · Checker v1" with Run again (376-383).</li>
+<li><strong>Running (288-289):</strong> "Checking compliance and proofreading…" and "This takes a few seconds. You can keep reading. Editing is paused."</li>
+<li><strong>Acknowledge dialog (420-512):</strong> the title is "Review before you continue". The alert is "<em>N</em> findings are still unresolved" with either "You can continue, but you need to confirm you've reviewed them. Your confirmation is saved with the time and your name." (warn) or "Fix or mark reviewed to continue." (blocked). The tick box says "I've reviewed these findings and want to continue." Then the "PLACEHOLDER: acknowledgement wording to be supplied by legal." caption, and the Go back and fix and Continue buttons.</li>
+<li><strong>Snackbar (<code>ui/MyPostEditor.jsx:140</code>):</strong> "Fixed. Checks ran again."</li>
+</ul>
+<h3>Adapted for a website (the wording is new; review it)</h3>
+<ul>
+<li><strong>Channel line:</strong> the real dialog subtitle uses the channel target (<code>ui/CheckerPanel.jsx:391</code>: Add to your website / Email my clients / Share on social). The builder needs a new target: <strong>"Publish your website"</strong>.</li>
+<li><strong>Error copy:</strong> "…You can't schedule, email or share yet." becomes <strong>"…You can't publish yet."</strong> "Your post is saved…" becomes <strong>"Your site is saved…"</strong>. The stale message becomes "This site changed after its last check. Re-run the check, then publish."</li>
+<li><strong>"Checks run automatically when you save."</strong> becomes "Checks run automatically after every change", because each assistant edit counts as a save.</li>
+<li><strong>Findings carry a location</strong> ("Home › What clients say") instead of a post field (<code>name</code>, <code>excerpt</code>, <code>body</code>).</li>
+</ul>
+<h3>New in the builder (not in the real checker)</h3>
+<ul>
+<li><strong>Ask AI to fix:</strong> it sends the selected findings to the assistant as a chat turn. The assistant edits the text, and the check runs again on the new version. The assistant never writes disclosure or legal wording itself.</li>
+<li><strong>Show in preview / click-to-jump,</strong> and highlights drawn in the preview, mapped from finding ranges to the rendered text.</li>
+<li><strong>Checks re-run before go-live:</strong> the publishing step "Checks match this version" is the gate re-check against the content hash, the same way the schedulers re-check at send time.</li>
+</ul>
+<h2>4. How each direction places the checker</h2>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>A. Panel (recommended)</th>
+<th>B. Tab</th>
+<th>C. Chat</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Where results live</td>
+<td>A Checks panel (300 px) docked under the preview, with the status bar above the preview</td>
+<td>A Checks tab next to Preview, with a badge (count, ✓, ! or a spinner)</td>
+<td>Assistant messages in the thread ("<strong>Checks</strong> 3 to review…") with finding cards inside</td>
+</tr>
+<tr>
+<td>After each generation or edit</td>
+<td>The panel and bar update in place</td>
+<td>The badge updates and a toast reads "Checks: 3 to review · Open Checks"</td>
+<td>A new Checks message after the edit reply</td>
+</tr>
+<tr>
+<td>Highlights in preview</td>
+<td>Yes</td>
+<td>Yes. Clicking one opens the Checks tab on that finding</td>
+<td>Yes. Clicking one selects the card in chat</td>
+</tr>
+<tr>
+<td>At Publish</td>
+<td>The acknowledge or blocked dialog</td>
+<td>The Checks tab opens automatically behind the dialog</td>
+<td>An assistant "Before you publish…" message plus the dialog</td>
+</tr>
+<tr>
+<td>Phone</td>
+<td>Preview tab: frame plus panel stacked</td>
+<td>A third Checks tab with the badge</td>
+<td>Cards in the Chat tab, and Show in preview switches tabs</td>
+</tr>
+<tr>
+<td>Reuse of #964 UI</td>
+<td>Highest. Same panel, bar, chip and cards (<code>CheckerPanel.jsx</code>)</td>
+<td>High. The same panel, in a tab</td>
+<td>Lower. Cards re-laid out for chat bubbles, which scroll away</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Recommendation: A.</strong> It matches the checker UI Alex already approved for My posts (a persistent Checks panel plus status bar), so advisors see the same thing in both places, and it reuses <code>CheckerPanel.jsx</code> almost as-is. Findings stay visible while the advisor keeps chatting, so they can't scroll away (C's risk) or hide behind a tab (B's risk). The trade-off is a shorter preview. The panel can collapse to its status bar.</p>
+<h2>5. Rules applied</h2>
+<ul>
+<li><strong>White-label:</strong> the generated site never links to or shows the FC domain or FC branding. It has no "Powered by" and no FC link in the footer. News page links use the advisor's domain (<code>example-advisor.ca/news/…</code>). The FC admin chrome around the builder can say FC. The mocks use the generic "Your Firm Name" logo.</li>
+<li><strong>Generic data only:</strong> Jane Advisor, Alex Client, Your Firm Name, example-advisor.ca, jane-advisor.example.net, jane.advisor@example.com, 604-555-0100, 123 Example St.</li>
+<li><strong>No invented legal copy:</strong> the site footer disclaimer, the licensing line and the form handler are marked placeholders. Rule messages are the code's own placeholder text.</li>
+</ul>
+<h2>6. Hosting note</h2>
+<p>Each published site is a static app on <strong>FTT Cloudways servers, which are capped at 40 sites per server</strong>. Publish puts a new site on a server that still has room. When every server is at 40, publishing a new site waits for a new server, which ops provisions by hand. The advisor sees the generic publish error, and support gets an alert. Staging previews count toward the cap if they run as their own Cloudways app. <strong>Open question:</strong> do previews run as separate apps, or as one shared preview app?</p>
+<h2>7. In scope (for a later build) / out of scope</h2>
+<p><strong>In scope for v1, once a direction is picked:</strong> chat UI; assistant generation and edits of static HTML and CSS; the draft preview; version per edit and rollback; the publish flow (domain step, confirm, progress, success, error); running the #964 checker on the extracted site text after every edit and again at publish; highlights, Checks UI per the chosen direction, and the acknowledge gate; phone layout.</p>
+<p><strong>Out of scope for this mock:</strong> live AI wiring and prompts; hosting provisioning and the Cloudways or GitHub automation; DNS automation (the existing DNS helper is reused, as in #845); real legal or compliance wording; an optional compliance-officer sign-off email before publish (#601 step 4, which would reuse FC's approval email pattern); importing an existing site; image or video uploads; billing.</p>
+<h2>8. Estimates (real agent hours: cloud build + FC Tester + fix loop)</h2>
+<table>
+<thead>
+<tr>
+<th>Piece</th>
+<th>Build</th>
+<th>FC Tester</th>
+<th>Fix loop</th>
+<th>Total</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Shared core (chat, generation, preview, versions and rollback, publish pipeline, domain step, site-text extraction)</td>
+<td>34–52 h</td>
+<td>8–12 h</td>
+<td>6–10 h</td>
+<td><strong>48–74 h</strong></td>
+</tr>
+<tr>
+<td>A. Panel integration</td>
+<td>7–11 h</td>
+<td>2–3 h</td>
+<td>1.5–3 h</td>
+<td><strong>10.5–17 h</strong></td>
+</tr>
+<tr>
+<td>B. Tab integration</td>
+<td>8–12 h</td>
+<td>2.5–3.5 h</td>
+<td>2–3.5 h</td>
+<td><strong>12.5–19 h</strong></td>
+</tr>
+<tr>
+<td>C. Chat integration</td>
+<td>11–16 h</td>
+<td>3–4.5 h</td>
+<td>2.5–4.5 h</td>
+<td><strong>16.5–25 h</strong></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Totals:</strong> A 58.5–91 h · B 60.5–93 h · C 64.5–99 h. These assume the #964 checker is on main first. Hosting server provisioning beyond the 40-site cap is ops work and isn't counted.</p>
+<h2>9. Open questions</h2>
+<ol>
+<li><strong>Mode:</strong> should the builder use the same firm-level <code>private.postCheck.mode</code> as My posts (default warn, which means acknowledge and continue), or always block compliance findings for a public website?</li>
+<li><strong>Testimonials:</strong> the real checker has no testimonial rule. Should Legal add one (for example "client testimonial needs review") before the builder offers a testimonials section, or should the assistant not offer testimonials at all?</li>
+<li><strong>Ask AI to fix:</strong> is it OK for the assistant to rewrite flagged text automatically (the advisor still sees the diff and can undo it)? Should it ever add the past-performance disclosure, or only remove the number?</li>
+<li><strong>Compliance sign-off:</strong> does #601's optional "send the preview to compliance before Publish" step belong in v1?</li>
+<li><strong>Free address host:</strong> which generic host name should the free subdomain use (shown as <code>jane-advisor.example.net</code>)?</li>
+<li><strong>Previews and the 40-site cap:</strong> see section 6.</li>
+<li><strong>Pilot first:</strong> #601 says to pilot by hand (one advisor's static site on GitHub and Cloudways) for 1–2 months before building. Do these mocks wait for that, or does the pilot run alongside?</li>
+</ol></body></html>
