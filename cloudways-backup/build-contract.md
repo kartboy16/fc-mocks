@@ -4,6 +4,19 @@ Status: **Not agent-ready.** No GitHub issue yet. Alex picks a direction before 
 
 Mocks: https://kartboy16.github.io/fc-mocks/cloudways-backup/ · A `a-selfserve.html` · **B `b-request.html` (recommended)** · C `c-admin.html`. Scenes use `?s=<scene>`, and `&phone=1` gives the 390 view. Requested by Alex on Nov 25 2026. It replaces the generic backup idea.
 
+## This site only (revision Nov 25 2026, per Alex: "we are restoring for individual sites, NOT the whole server")
+Every backup and restore in every direction is for **one advisor site** only. UI line used throughout: **"Restore example-advisor.ca only. Other sites on the server are not touched."**
+
+FC calls only these one-app Cloudways API v2 endpoints. Each takes one `server_id` (to locate the app) plus one `app_id`, and acts on that one app:
+| FC action | Endpoint (API v2, `https://api.cloudways.com/api/v2`) | Required fields | Scope |
+|---|---|---|---|
+| Restore one site | `POST /app/manage/restore` | `server_id`, `app_id`, `time`, `type` (`complete` / `web` / `database`) | One app |
+| Back up one site (incl. the locked "fresh backup first") | `POST /app/manage/takeBackup` | `server_id`, `app_id` | One app |
+| Undo the last restore of one site | `POST /app/manage/rollback` | `server_id`, `app_id` | One app |
+| Poll progress | `GET /operation/{id}` | operation id | The one operation |
+
+**No server-level restore endpoint is called.** Re-checked Nov 25 2026, 1:45 PM PT against the official Cloudways API v2 reference (https://developers.cloudways.com/docs/, spec file `https://developers.cloudways.com/api.yaml`, version 2.0.0): the spec has **no server-level restore endpoint at all**. The only restore-type endpoints are `POST /app/manage/restore` and `POST /app/manage/rollback` (both "Flexible - App Management", one app), plus the unrelated security-scan `POST /app/security/{app_id}/files/restore`. FC also does **not** call `POST /server/manage/backup` (server-wide on-demand backup) or `POST /server/manage/backupSettings`. These were removed from the mocks in this revision. The nightly automatic schedule stays configured by an admin in the hosting dashboard; C shows it in one small admin-only note.
+
 ## The problem in one sentence
 Advisors whose WordPress site FTT hosts on Cloudways can't see when their site was last backed up or get it rolled back from FC, and staff have to go into the Cloudways dashboard by hand to do it.
 
@@ -57,37 +70,37 @@ FC publishes to WordPress over the REST API (`server/website-publisher/adapters/
 | Advisor sees list, schedule and retention | ✓ | ✓ | ✓ (read-only) |
 | Advisor "Back up this site now" (`takeBackup`, 1 per 6 h) | ✓ | ✓ | — |
 | Advisor restore | Runs it | Sends a request | Contacts support |
-| Who picks the restore type (whole site, files only, database only) | Staff only, advisor gets whole site | Staff, in the queue review | Staff |
-| Server-wide backup and schedule | Admin | Admin | Admin |
+| Who picks the restore type (this site's files and database, files only, database only) | Staff only, advisor gets files and database | Staff, in the queue review | Staff |
+| Nightly schedule | Admin, in the hosting dashboard (not FC) | same | same, shown in an admin-only note |
 | Staff surface | Console | Console plus **Restore requests queue** (like the #727 Website setup queue) | Console |
 
-**Recommendation: B.** A restore rewrites a live WordPress database that also holds FC's own connection (users and application passwords). It needs a disk-space check on a shared 40-site server, Cloudways keeps only one 24-hour rollback slot, and today every Cloudways method in FC is admin-only (`isAdminUserId`, #523 lockdown). B gives advisors the safe self-serve part (seeing backups, backing up their own site) and routes the risky step through a person, using the same queue pattern as #727. A can follow later once restores have run cleanly for a while. C is the cheapest, but it gives advisors little.
+**Recommendation: B.** A restore rewrites a live WordPress database that also holds FC's own connection (users and application passwords). It needs a disk-space check on the hosting server, Cloudways keeps only one 24-hour rollback slot, and today every Cloudways method in FC is admin-only (`isAdminUserId`, #523 lockdown). B gives advisors the safe self-serve part (seeing backups, backing up their own site) and routes the risky step through a person, using the same queue pattern as #727. A can follow later once restores have run cleanly for a while. C is the cheapest, but it gives advisors little.
 
-**Server-wide "Back up now" decision:** it's admin-only in every direction. Advisors never trigger a server backup. Their "Back up this site now" calls `POST /app/manage/takeBackup`, which backs up only their app (S4), so it doesn't touch the other sites on the server. The copy explains it plainly: "Automatic backups cover your whole hosting server, so we take them for everyone on it, every night. 'Back up this site now' saves only your site, not the others on the server."
+**Backup now decision:** FC only offers "Back up this site now", which calls `POST /app/manage/takeBackup` and backs up only that one app (S4). Other sites on the server are not touched. FC has no button that backs up more than one site.
 
 ## Screens and states (scene keys)
 | Scene | A | B | C | What it shows |
 |---|---|---|---|---|
-| `tab` | ✓ | ✓ | ✓ | Website › **Backups** tab (NEW): last backup, next automatic backup, kept for 2 weeks, server explainer, list (8 shown, Show older, newest first), times labelled PT. |
+| `tab` | ✓ | ✓ | ✓ | Website › **Backups** tab (NEW): last backup, next automatic backup, kept for 2 weeks, a "This site only" badge and line, list (8 shown, Show older, newest first), times labelled PT. |
 | `covers` | ✓ | ✓ | ✓ | "What's in a backup?" dialog with the included and not-included lists. |
 | `bk-confirm` / `bk-progress` / `bk-done` / `bk-failed` / `bk-limit` | ✓ | ✓ | — | The site-only on-demand backup: confirm, running (steps, can leave the page), saved (new row on top), failed (nothing changed, Try again), and the 6-hour limit with the next available time. |
-| `pick` → `preview` → `confirm` | ✓ | ✓ | staff `s-pick`/`s-preview`/`s-confirm` | 3 steps: pick a restore point (radios, PT, staff also see UTC). What will change: the whole site rolls back, later changes are lost, form entries and comments are lost, WP users roll back, and the 3 FC news posts since then will be re-sent. Then confirm: "Take a fresh backup of this site first" checked and **locked**, and the button stays disabled until the advisor types `example-advisor.ca`. |
+| `pick` → `preview` → `confirm` | ✓ | ✓ | staff `s-pick`/`s-preview`/`s-confirm` | 3 steps: pick a restore point (radios, PT, staff also see UTC). What will change: only this site rolls back (other sites not touched), later changes to it are lost, form entries and comments are lost, WP users roll back, and the 3 FC news posts since then will be re-sent. Then confirm: "Take a fresh backup of this site first" checked and **locked**, and the button stays disabled until the advisor types `example-advisor.ca`. |
 | `requested` | | ✓ | | Advisor banner: Restore requested, Waiting for support, Cancel request. Request button disabled (one open request per site). |
 | `queue` / `review` | | ✓ | | Staff queue (filters, 25 per page, search). Review: request details, advisor's note, checks (restore point still kept, free space ≥ 2.5× site size, no other restore running), restore type select, locked fresh backup, typed site address, Run restore or Decline with a note. |
 | `progress` / `run-progress` | ✓ | ✓ | ✓ | Steps: fresh backup saved, (staff) space check, restoring files and database, checking the FC connection, re-sending 3 news posts. |
 | `done` / `run-done` / `adv-done` | ✓ | ✓ | ✓ | Restored to the chosen time, connection OK, posts re-sent, fresh backup kept, **Undo until +24 h**. |
 | `failed` | ✓ | ✓ | ✓ | Didn't finish (example: out of disk space). The fresh backup is safe. Advisor: support alerted. Staff: Retry or Undo. |
 | `rollback` / `rolledback` | ✓ | ✓ | ✓ | Undo confirm (last restore only, 24 h window), then done. |
-| `staff` | ✓ | ✓ | ✓ | Staff console: server chips (Server 1–4, Canada), "Server 3 · 38 of 40 sites", schedule in PT and UTC, retention, last server backup, sites table (25 per page). Back up whole server and Edit schedule are **admin only** (disabled for support). |
+| `staff` | ✓ | ✓ | ✓ | Staff console: server chips (Server 1–4, Canada) to pick which sites to list, then a sites table (25 per page), each row "This site only" with Open this site. C only: one small admin-only note about the nightly schedule. |
 | `site` | | | ✓ | Staff view of one site's backups, with UTC. |
-| `srv-confirm` / `srv-progress` | ✓ | ✓ | ✓ | "Back up all 38 sites on Server 3 now?" (load warning, typed `Server 3`), then running. |
 | `roles` | ✓ | ✓ | ✓ | Permissions table for that direction. |
 | `host` | ✓ | ✓ | ✓ | Connected-only site (not on FTT Cloudways): "Backups are managed by your host." |
 
 ## Key copy
-- Explainer: "Automatic backups cover your whole hosting server, so we take them for everyone on it, every night."
+- Explainer: "Every backup and restore here is for example-advisor.ca only. Other sites on the server are not touched. We back this site up automatically every night."
 - Covers: "Included: your WordPress site … Not included: things kept in FC … Backing up or restoring your website doesn't change them."
-- Preview: "Your whole site rolls back to {time}. Its files and database both go back to that moment. Anything changed on the site after that time is lost."
+- Preview: "Only example-advisor.ca rolls back to {time}. This site's files and database both go back to that moment. Anything changed on this site after that time is lost. Other sites on the server are not touched."
+- Buttons: "Back up this site now", "Restore this site…" / "Request a restore of this site…", "Restore this site only", "Run restore of this site", "Undo restore of this site".
 - Locked checkbox: "Take a fresh backup of this site first · Always on · So you can go back to how the site is right now if the restore isn't what you wanted."
 - Typed confirm: "To confirm, type example-advisor.ca". Mismatch: "That doesn't match. Type example-advisor.ca exactly."
 - Undo: "You can undo this restore until {time + 24 h}. Undo puts the site back exactly as it was at {fresh backup time}."
@@ -98,10 +111,8 @@ FC publishes to WordPress over the REST API (`server/website-publisher/adapters/
 | FC action | Cloudways call | Notes |
 |---|---|---|
 | Find the site's server and app | FC `advisorWebsites.selectedServer` + `appId`, checked against `GET /server` (apps per server) | No `appId` means the site is connected only, so show the `host` empty state. |
-| Show schedule | `GET /server` (`backup_frequency`) + the FC-stored `backup_time`/`backup_retention` | FC stores what admin sets, because GET doesn't return retention or time (S1). |
-| Edit schedule (admin) | `POST /server/manage/backupSettings` | Keep frequency at 6 h or more (S2). |
+| Show "next automatic backup" | `GET /server` (`backup_frequency`, read-only) + FC config for time and retention | Read-only. GET doesn't return retention or time (S1). |
 | Back up this site now | `POST /app/manage/takeBackup` → poll `GET /operation/{id}` | FC enforces 1 per 6 h per site (FC policy). |
-| Back up whole server (admin) | `POST /server/manage/backup` → poll | Block while another server backup is running (assumption). |
 | List restore points | **Not in public API.** See Q1. | Fallback: FC logs every backup it starts (operation done time) plus the scheduled run times it can derive. |
 | Fresh backup first | `POST /app/manage/takeBackup` → wait for `is_completed=1` | Always on, can't be skipped. If it fails, the restore doesn't start. |
 | Restore | `POST /app/manage/restore` (`time`, `type=complete` by default; staff can pick `web` or `database`) → poll | The `time` format must match what Cloudways returns for restore points (Q1). |
@@ -111,17 +122,17 @@ FC publishes to WordPress over the REST API (`server/website-publisher/adapters/
 
 ## Permissions
 - **Advisor (B):** sees the list and schedule, backs up their own site (1 per 6 h), requests a restore, asks for an undo.
-- **Support:** everything in the queue, plus running restores and undo on any FC-hosted site, and choosing the restore type. No server-wide backup or schedule changes.
-- **Admin:** everything, plus server-wide backup and editing the schedule and retention.
+- **Support:** everything in the queue, plus running restores and undo on any FC-hosted site, and choosing the restore type. No schedule changes.
+- **Admin:** everything support can do. The nightly schedule and retention are changed in the hosting dashboard, not in FC.
 - **Log in as** (full advisor parity, Nov 21): staff get the advisor's rights in a session, recorded as "Sam Support (as Jane Advisor)".
 - Every Cloudways call stays on the server side behind the existing admin check (#523). Advisor actions go through narrow FC methods that only act on the caller's own `appId`.
 - Audit log: who, site, server, operation id, restore time, type, and result.
 
 ## In scope
-The Backups tab, on-demand site backup, restore wizard and request, staff queue and console, server backup (admin), undo, the connected-only empty state, emails to the advisor before and after a restore (plain, no legal copy), post re-send after a restore, and the audit log.
+The Backups tab, on-demand site backup, restore wizard and request, staff queue and console, undo, the connected-only empty state, emails to the advisor before and after a restore (plain, no legal copy), post re-send after a restore, and the audit log.
 
 ## Out of scope
-Downloading backups, local backups (`local_backups`), off-Cloudways or SnapShooter storage, staging-app restores, offboarding backups (#165), the AI builder's Git-based versions (#601), and backing up FC-side data.
+Any server-level backup or restore from FC (`/server/manage/backup`, `/server/manage/backupSettings`), downloading backups, local backups (`local_backups`), off-Cloudways or SnapShooter storage, staging-app restores, offboarding backups (#165), the AI builder's Git-based versions (#601), and backing up FC-side data.
 
 ## Mobile (390)
 The rail collapses to a top bar. The backups table becomes one column with the type and who started it under the date. Dialogs go full screen. Buttons stack and are at least 44 px tall. The typed-confirm input is full width. The staff queue keeps Site, Status and Review.
@@ -131,7 +142,6 @@ The rail collapses to a top bar. The backups table becomes one column with the t
 - **A2** The 6-hour limit on site-only backups is an FC policy, not a Cloudways one.
 - **A3** After a restore, FC re-sends the news posts published after the restore time, and re-checks the WordPress connection, because restoring the database can revert WP users and application passwords.
 - **A4** What happens to the site when a restore fails partway (it may be left half restored). Rollback to the fresh backup is the recovery path.
-- **A5** Only one server backup runs at a time.
 - **A6** The FC app sends the advisor emails, and nothing is shown to the advisor's clients. No financial-content domain links appear on any client-facing page.
 
 ## Open questions
